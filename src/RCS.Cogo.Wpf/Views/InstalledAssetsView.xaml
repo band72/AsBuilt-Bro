@@ -68,7 +68,10 @@
                 </Expander>
 
                 <!-- Water Section -->
-                <TextBlock Text="Water" FontWeight="Bold" Foreground="CornflowerBlue" Margin="10,5"/>
+                <StackPanel Orientation="Horizontal" Margin="10,5">
+                    <TextBlock Text="W" Foreground="CornflowerBlue" FontWeight="Bold" Margin="0,0,5,0"/>
+                    <TextBlock Text="Water" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
                 
                 <Expander Header="Water Pipe Run">
                     <DataGrid ItemsSource="{Binding WaterPipes}" RowEditEnding="DataGrid_RowEditEnding">
@@ -236,7 +239,10 @@
                 </Expander>
 
                 <!-- WW Section -->
-                <TextBlock Text="Waste Water" FontWeight="Bold" Foreground="LimeGreen" Margin="10,5"/>
+                <StackPanel Orientation="Horizontal" Margin="10,5">
+                    <TextBlock Text="WW" Foreground="LimeGreen" FontWeight="Bold" Margin="0,0,5,0"/>
+                    <TextBlock Text="Waste Water" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
                 
                 <Expander Header="WW Gravity Pipe Run">
                     <DataGrid ItemsSource="{Binding WWGravityPipes}" RowEditEnding="DataGrid_RowEditEnding">
@@ -430,7 +436,10 @@
                 </Expander>
 
                 <!-- Reclaimed Section -->
-                <TextBlock Text="Reclaimed" FontWeight="Bold" Foreground="Purple" Margin="10,5"/>
+                <StackPanel Orientation="Horizontal" Margin="10,5">
+                    <TextBlock Text="RC" Foreground="Purple" FontWeight="Bold" Margin="0,0,5,0"/>
+                    <TextBlock Text="Reclaimed" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
                 
                 <Expander Header="Reclaimed Pipe Run">
                     <DataGrid ItemsSource="{Binding ReclaimedPipes}" RowEditEnding="DataGrid_RowEditEnding">
@@ -598,7 +607,10 @@
                 </Expander>
 
                 <!-- Chilled Section -->
-                <TextBlock Text="Chilled Water" FontWeight="Bold" Foreground="Aqua" Margin="10,5"/>
+                <StackPanel Orientation="Horizontal" Margin="10,5">
+                    <TextBlock Text="CW" Foreground="Aqua" FontWeight="Bold" Margin="0,0,5,0"/>
+                    <TextBlock Text="Chilled Water" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
 
                 <Expander Header="Chilled Pipe Run">
                     <DataGrid ItemsSource="{Binding ChilledPipes}" RowEditEnding="DataGrid_RowEditEnding">

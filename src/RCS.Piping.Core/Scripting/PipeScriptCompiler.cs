@@ -361,20 +361,29 @@ public sealed class PipeScriptCompiler
             }
 
             var prev = prun.Vertices.Last();
+            
+            // Check if there's an explicit structure type mapped like 'SS-C 1 Manhole'
+            string explicitType = prun.UtilityType;
+            if (tokens.Count > 2 && !double.TryParse(tokens[2], out _))
+            {
+                explicitType = tokens[2];
+            }
+
             if (prev == ptId)
             {
-                result.Diagnostics.Add(new ScriptDiagnostic { LineNumber = lineNo, Severity = "WARN", Message = $"Zero-length segment ignored: {prev}->{ptId}." });
+                // Just an explicit structural update on the same node
+                AddStructure(ptId, explicitType, result);
                 return;
             }
 
             prun.Vertices.Add(ptId);
             
-            // Generate PipeRun with Slope Check if invert available later
+            // Generate PipeRun
             var run = BuildRun(prun, prev, ptId);
             result.Runs.Add(run);
             
-            // Add structure at node
-            AddStructure(ptId, prun.UtilityType, result);
+            // Add/Update structure at node
+            AddStructure(ptId, explicitType, result);
             
             return;
         }
@@ -425,14 +434,22 @@ public sealed class PipeScriptCompiler
 
     private static void AddStructure(string ptId, string type, ScriptCompileResult result)
     {
-        // Simple logic: one structure per point location if not exists in list
-        if (!result.Structures.Any(s => s.PointId == ptId))
+        var existing = result.Structures.FirstOrDefault(s => s.PointId == ptId);
+        if (existing == null)
         {
             result.Structures.Add(new PipeStructure 
             { 
                PointId = ptId,
-               Type = type // Use UtilityType as structure type for now? Or generic?
+               Type = type 
             });
+        }
+        else
+        {
+            // If the script gives us a specific type (e.g. Manhole), overwrite the generic utility prefix
+            if (!string.IsNullOrWhiteSpace(type) && type.Length > 2)
+            {
+                existing.Type = type;
+            }
         }
     }
 

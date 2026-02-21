@@ -1,0 +1,56 @@
+// ===========================================
+// UNIFIED MASTER SCRIPT (COGO + PIPING)
+// ===========================================
+
+// --- PHASE 1: COGO POINT GENERATION ---
+pipe-engine-off
+cogo-engine-on
+
+ECHO "Initializing Survey Datums..."
+units feet
+angles dms
+
+// Define Wastewater Main Control Points
+PT 100 5000 5000 120.0 "WW Node Entry"
+PT 101 5000 5200 119.5 "WW Node Mid"
+PT 102 5000 5400 118.0 "WW Node Exit"
+
+// Define Potable Water Service Drops
+PT 200 5050 5000 120.0 "Water Source"
+PT 201 5050 5150 120.0 "Water Hydrant Tee"
+PT 202 5050 5300 120.0 "Water Meter Drop"
+PT 203 5050 5450 120.0 "Water Valve"
+
+cogo-engine-off
+ECHO "Cogo generation completed."
+
+// --- PHASE 2: PIPING NETWORK GENERATION ---
+pipe-engine-on
+ECHO "Compiling Pipelines..."
+
+// RUN A: SANITARY SEWER 
+// Maps to 8-inch PVC and concrete Manhole symbols
+PRUN START WW DIAM 8 MAT PVC FIG SAN_MAIN
+WW-B 100
+SS-C 100 Manhole
+WW-C 101 
+SS-C 101 Manhole
+WW-C 102
+SS-C 102 Manhole
+PRUN END
+
+// RUN B: POTABLE WATER
+// Maps to 12-inch DIP with Valves, Hydrants, and Vaults
+PRUN START W DIAM 12 MAT DIP FIG WATER_DIST
+W-B 200
+SS-C 200 Valve
+W-C 201
+SS-C 201 Hydrant
+W-C 202
+SS-C 202 Meter
+W-C 203
+SS-C 203 Valve
+PRUN END
+
+pipe-engine-off
+ECHO "--- SCRIPT PROCESSING FULLY COMPLETE ---"

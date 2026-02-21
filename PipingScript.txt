@@ -1,0 +1,95 @@
+// =========================================================
+// JEA VALIDATION CATALOG & ENTERPRISE RUN TEST SCRIPT
+// =========================================================
+
+ECHO "--- MOCKING SURVEY CONTROL POINTS (COGO ENGINE) ---"
+units feet
+angles dms
+
+// 1. Wastewater Force Main (Sanitary)
+PT 100 5000 5000 120.0 "WW Node Entry"
+PT 101 5000 5200 119.5 "WW Node Mid"
+PT 102 5000 5400 118.0 "WW Node Exit"
+
+// 2. High-Pressure Potable Water (Distribution)
+PT 200 5050 5000 120.0 "Water Source"
+PT 201 5050 5150 120.0 "Water Hydrant Tee"
+PT 202 5050 5300 120.0 "Water Meter Drop"
+PT 203 5050 5450 120.0 "Water Valve"
+
+// 3. Storm Drainage Line (Sewer)
+PT 300 4950 5000 115.0 "Storm Inlet A"
+PT 301 4950 5250 114.2 "Storm Inlet B"
+PT 302 4950 5500 113.8 "Storm Discharge"
+
+// 4. Reclaimed Water Main (Irrigation)
+PT 400 4900 5000 121.0 "Reclaimed Start"
+PT 401 4900 5200 121.0 "Reclaimed Bend"
+PT 402 4900 5400 121.0 "Reclaimed Service"
+
+ECHO "--- COMPILING GEOMETRY & MATERIAL SCHEDULE ---"
+pipe-engine-on
+cogo-engine-off
+
+// -----------------------------------------------------
+// RUN A: SANITARY SEWER
+// Verifying 'WW' Discipline, 8-inch 'PVC' pipe
+// Injecting 'Conc' (Concrete) 48in Manholes 
+// Injecting 'Iron' 8in Plug Valves 
+// -----------------------------------------------------
+PRUN START WW DIAM 8 MAT PVC FIG SAN_MAIN
+WW-B 100
+SS-C 100 Manhole
+WW-C 101 
+SS-C 101 Valve
+WW-C 102
+SS-C 102 Manhole
+PRUN END
+
+// -----------------------------------------------------
+// RUN B: POTABLE WATER SYSTEM
+// Verifying 'W' Discipline, 12-inch 'DIP' pipe
+// Injecting 'Iron' Fire Hydrants, Fittings, and Valves
+// Injecting 'Brass' 2in Meters
+// -----------------------------------------------------
+PRUN START W DIAM 12 MAT DIP FIG WATER_DIST
+W-B 200
+SS-C 200 Valve
+W-C 201
+SS-C 201 Hydrant
+W-C 202
+SS-C 202 Meter
+W-C 203
+SS-C 203 Fitting
+PRUN END
+
+// -----------------------------------------------------
+// RUN C: STORM DRAINAGE
+// Verifying 'S' Discipline, 24-inch 'RCP' pipe
+// Injecting 'Conc' Type-2 Curb Inlets
+// -----------------------------------------------------
+PRUN START S DIAM 24 MAT RCP FIG STORM_DRAIN
+S-B 300
+SS-C 300 Inlet
+S-C 301
+SS-C 301 Inlet
+S-C 302
+SS-C 302 Manhole
+PRUN END
+
+// -----------------------------------------------------
+// RUN D: RECLAIMED WATER
+// Verifying 'R' Discipline, 6-inch 'PVC' pipe
+// Injecting 'Brass' Reclaimed Meters & 'Iron' Valves
+// -----------------------------------------------------
+PRUN START R DIAM 6 MAT PVC FIG RECLAIM_RUN
+R-B 400
+SS-C 400 Valve
+R-C 401
+SS-C 401 Fitting
+R-C 402
+SS-C 402 Meter
+PRUN END
+
+pipe-engine-off
+ECHO "--- SYSTEM VALIDATION AND MATERIALS COMPILED ---"

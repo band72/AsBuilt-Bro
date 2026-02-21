@@ -1,0 +1,3682 @@
+﻿[
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Crossing Pipe Type",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Upper Pipe \nType"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Upper Pipe \nSize (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Upper Pipe \nTop Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Cover to Top of Upper Pipe (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Upper Pipe \nBottom Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Crossing Pipe Type",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Lower Pipe \nType"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Lower Pipe \nSize (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Lower Pipe \nTop Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Cover to Top of Lower Pipe (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Separation Between Pipes (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "X Coord \n(State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord \n(State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Pipe Crossing Table",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Run Number (WM#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Water Pipe",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Size (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Water/Reclaimed Pipe Class",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Class"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Water/Reclaimed Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Measured Length (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Location Number (WPOC#, WPOL#, etc)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Location",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Location"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Water Pipe",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Size (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Orientation",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Orientation"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Water/Reclaimed Pipe Class",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Class"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Water/Reclaimed Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Top Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Cover (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Number (WF#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Water Fitting",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Size Primary (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Size Secondary (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Fitting Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Water/Reclaimed Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Top Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Depth (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Number (WV#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Water Valve",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Valve Type",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Type"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Size"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Orientation",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Orientation"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Valve Open Direction",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Open Direction"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Turns to Open"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Nut Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Depth to Nut (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Valve Manufacturer",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Valve",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Hydrants",
+        "Col4":  "",
+        "Crossing Number":  "Hydrant Number (WH#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Hydrants",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Year - Whole Number \u003e 2000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Hydrants",
+        "Col4":  "",
+        "Crossing Number":  "Hydrant Manufacture Date (Year)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Hydrant Model",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Hydrants",
+        "Col4":  "",
+        "Crossing Number":  "Hydrant Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Hydrants",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Hydrants",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Hydrants",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Hydrants",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Hydrants",
+        "Col4":  "",
+        "Crossing Number":  "RFID/Barcode Number"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Meter",
+        "Col4":  "",
+        "Crossing Number":  "Meter Box Number (WM#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Meter Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Meter",
+        "Col4":  "",
+        "Crossing Number":  "Proposed Meter Size"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Water Meter",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Meter",
+        "Col4":  "",
+        "Crossing Number":  "Meter Box Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Meter",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Orientation",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Meter",
+        "Col4":  "",
+        "Crossing Number":  "Meter Box Orientation"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Meter Box Manufacturer",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Meter",
+        "Col4":  "",
+        "Crossing Number":  "Meter Box Manufacturer/Supplier"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Meter Box Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Meter",
+        "Col4":  "",
+        "Crossing Number":  "Meter Box Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Meter",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Meter",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Meter",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Meter",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Locate Box Number (WL#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Locate Box",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Locate Box Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Water Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Sewer Pipe Run Number (GM#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Sewer Gravity Pipe",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Sewer Pipe Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Size (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Sewer Pipe Class",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Class"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Sewer Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Run Length (feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Downstream Pipe Invert Elevation (feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Downstream Grade Elevation at Invert (feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Upstream Pipe Invert Elevation (feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Upstream Grade Elevation at Invert (feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Gravity Pipe Run",
+        "Col4":  "",
+        "Crossing Number":  "Slope (percent)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Pressure Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Run Number (FM#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Sewer Pressure Pipe",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Pressure Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Pressure Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Pressure Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Size (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Sewer Pipe Class",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Pressure Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Class"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Pressure Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Pressure Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Pressure Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Sewer Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Pressure Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Pressure Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Measured Length (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Location Number (WWPOC, WWPOL#, etc)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Location",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Location"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Sewer Pressure Pipe",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Size (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Orientation",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Orientation"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Sewer Pipe Class",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Class"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Sewer Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Top Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Cover (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Number (WWF# or FMF#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Sewer Fitting",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Size Primary (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Size Secondary (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Fitting Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Sewer Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Top Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Depth (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Manhole Number (MH#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Manhole",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Manhole Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Manhole Type",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Manhole Type"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Manhole Drop Type",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Manhole Drop Type"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Manhole Manufacturer",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Manufacturer or Supplier"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Feet",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Manhole Size (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Manhole Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Manhole Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Manhole Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Manhole Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Manhole Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Rim Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Invert Elevations (Feet) with Directions"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Lowest Invert Elevation (feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Exterior Joint Tape Type"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Manhole Exterior Joint Tape Manufacturer",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Exterior Joint Tape Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Manhole",
+        "Col4":  "",
+        "Crossing Number":  "RFID/Barcode Number"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Service Point \u0026 Meter",
+        "Col4":  "",
+        "Crossing Number":  "Wastewater Service Point Number (WWSP# or WWM#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Sewer Customer Point",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Service Point \u0026 Meter",
+        "Col4":  "",
+        "Crossing Number":  "Service Point Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Service Point \u0026 Meter",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation at Service Point"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Service Point \u0026 Meter",
+        "Col4":  "",
+        "Crossing Number":  "Top of Pipe Elevation at Service Point (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Service Point \u0026 Meter",
+        "Col4":  "",
+        "Crossing Number":  "Depth of Cover (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Service Point \u0026 Meter",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Service Point \u0026 Meter",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Service Point \u0026 Meter",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Service Point \u0026 Meter",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text (WWV-#)",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Number (WWV#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Sewer Valve",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Valve Type",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Type"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Size"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Orientation",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Orientation"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Valve Open Direction",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Open Direction"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Turns to Open"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Nut Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Depth to Nut (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Valve Manufacturer",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Valve",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Locate Box Number (WWL#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Locate Box",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Locate Box Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "WW Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Run Number (RM#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Reclaimed Pipe",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Size (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Water/Reclaimed Pipe Class",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Class"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Water/Reclaimed Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Measured Length (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Location Number (RPOC#, RPOL#, etc)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Location",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Location"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Reclaimed Pipe",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Size (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Orientation",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Orientation"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Water/Reclaimed Pipe Class",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Class"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Water/Reclaimed Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Top Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Cover (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Number (RF#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Reclaimed Fitting",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Size Primary (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Size Secondary (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Fitting Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Water/Reclaimed Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Top Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Depth (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Number (RV#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Reclaimed Valve",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Valve Type",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Type"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Size"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Orientation",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Orientation"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Valve Open Direction",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Open Direction"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Turns to Open"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Nut Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Depth to Nut (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Valve Manufacturer",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Valve",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Hydrant",
+        "Col4":  "",
+        "Crossing Number":  "Hydrant Number (RH#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Hydrant",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Year - Whole Number \u003e 2000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Hydrant",
+        "Col4":  "",
+        "Crossing Number":  "Hydrant Manufacture Date (Year)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Hydrant Model",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Hydrant",
+        "Col4":  "",
+        "Crossing Number":  "Hydrant Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Hydrant",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Hydrant",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Hydrant",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Hydrant",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Hydrant",
+        "Col4":  "",
+        "Crossing Number":  "RFID/Barcode Number"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Meter",
+        "Col4":  "",
+        "Crossing Number":  "Meter Box Number (RM#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Meter Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Meter",
+        "Col4":  "",
+        "Crossing Number":  "Proposed Meter Size"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Reclaimed Meter",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Meter",
+        "Col4":  "",
+        "Crossing Number":  "Meter Box Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Meter",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Orientation",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Meter",
+        "Col4":  "",
+        "Crossing Number":  "Meter Box Orientation"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Meter Box Manufacturer",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Meter",
+        "Col4":  "",
+        "Crossing Number":  "Meter Box Manufacturer/Supplier"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Meter Box Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Meter",
+        "Col4":  "",
+        "Crossing Number":  "Meter Box Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Meter",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Meter",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Meter",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Meter",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Locate Box Number (RL#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Locate Box",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Locate Box Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Reclaimed Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Run Number (CM#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Chilled Pipe Role",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Role"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Size (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Chilled Pipe Class",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Class"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Water/Reclaimed Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Pipe Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Pipe Run",
+        "Col4":  "Note: This Table is Optional",
+        "Crossing Number":  "Measured Length (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Location Number (CPOC#, CPOL#, etc)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Location",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Location"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Size (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Orientation",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Orientation"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Chilled Pipe Class",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Class"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Water/Reclaimed Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Top Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Pipe Cover (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Points along Pipe",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Number (CF#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Chilled Fitting",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Size Primary (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Size Secondary (Inches)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Fitting Manufacturers",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Pipe and Fitting Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Lining Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Water/Reclaimed/Chilled Pipe Lining Material",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Lining Material"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Top Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Fitting Depth (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Fitting",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Number (CV#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Valve Type",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Type"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Size"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Orientation",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Orientation"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Valve Open Direction",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Open Direction"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Turns to Open"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Nut Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Finished Grade Elevation (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Depth to Nut (Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Valve Manufacturer",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Valve Manufacturer"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Valve",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Meter",
+        "Col4":  "",
+        "Crossing Number":  "Meter Room Number (CM#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Meter Size Inches",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Meter",
+        "Col4":  "",
+        "Crossing Number":  "Proposed Meter Size"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Facility Owner",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Meter",
+        "Col4":  "",
+        "Crossing Number":  "Facility Owner"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Meter",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Meter",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Meter",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Meter",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Open Text",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Locate Box Number (CL#)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Validation List: Subtype Locate Box",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Locate Box Subtype"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 320,000 and \u003c 590,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "X Coord (State Plane Easting Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 1,920,000 and \u003c 2,370,000",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Y Coord (State Plane Northing Feet)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e 29 and \u003c 31",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Latitude (Decimal Degrees)"
+    },
+    {
+        "Col6":  "",
+        "Open Text":  "Decimal Value \u003e -83 and \u003c -80",
+        "Col7":  "",
+        "Col8":  "",
+        "Col5":  "",
+        "Pipe Crossing Table":  "Chilled Locate Box",
+        "Col4":  "",
+        "Crossing Number":  "Longitude (Decimal Degrees)"
+    }
+]

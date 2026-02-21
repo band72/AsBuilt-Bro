@@ -6,6 +6,9 @@
     <ProjectReference Include="..\RCS.Piping.Core\RCS.Piping.Core.csproj" />
     <ProjectReference Include="..\RCS.Services\RCS.Services.csproj" />
     <ProjectReference Include="..\RCS.Data\RCS.Data.csproj" />
+    <Content Include="validation_rules.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <PropertyGroup>

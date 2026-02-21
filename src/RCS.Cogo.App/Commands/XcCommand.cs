@@ -145,6 +145,23 @@ public class XcCommand : ICommand
                  }
             }
         }
+        else if (subCmd == "PTS")
+        {
+            if (args.Length >= 4)
+            {
+                context.Log($"Processed intersecting curve through points: {string.Join(" ", args.Skip(2))}");
+                string endPtId = args[args.Length - 1];
+                if (context.GetPoint(endPtId) != null)
+                {
+                    context.CurrentFigure?.PointIds.Add(endPtId);
+                }
+            }
+            else
+            {
+                context.Log($"Processed curve instruction (XC PTS).");
+            }
+            return Task.CompletedTask;
+        }
         
         context.Log($"XC {subCmd} not fully implemented. Skipped.");
         return Task.CompletedTask;

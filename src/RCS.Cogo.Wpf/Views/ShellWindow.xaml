@@ -14,6 +14,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/Symbols.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
             <Style TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe UI"/>
@@ -30,6 +31,11 @@
             <Setter Property="Background" Value="#252526"/>
             <Setter Property="Foreground" Value="#D4D4D4"/>
             <Setter Property="BorderBrush" Value="#3E3E42"/>
+        </Style>
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="#2D2D30"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
         <Style TargetType="ListBox">
             <Setter Property="Background" Value="#252526"/>
@@ -95,6 +101,8 @@
                 <MenuItem Header="Process Batch Script..." Command="{Binding ImportBatchCommand}"/>
             </MenuItem>
             <MenuItem Header="_Export">
+                <MenuItem Header="Export Output Log to TXT..." Command="{Binding ExportOutputLogCommand}"/>
+                <Separator/>
                 <MenuItem Header="Export Script..." Command="{Binding ExportScriptCommand}"/>
                 <Separator/>
                 <MenuItem Header="Export Points (TXT)..." Command="{Binding ExportPointsTxtCommand}"/>
@@ -118,16 +126,9 @@
                 <MenuItem Header="Export Database to CSV..." Command="{Binding ExportDbCsvCommand}"/>
                 <Separator/>
                 </MenuItem>
+                <MenuItem Header="General Settings" Command="{Binding OpenGeneralSettingsCommand}"/>
                 <Separator/>
-                <MenuItem StaysOpenOnClick="True">
-                    <MenuItem.Header>
-                        <StackPanel Orientation="Horizontal" Margin="0">
-                            <TextBlock Text="Viewport Symbol Scale:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                            <ComboBox ItemsSource="{Binding AvailableSymbolScales}" SelectedItem="{Binding SymbolScaleMultiplier}" Width="60" />
-                            <TextBlock Text="x" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                        </StackPanel>
-                    </MenuItem.Header>
-                </MenuItem>
+                <MenuItem Header="Validation" Command="{Binding OpenValidationSettingsCommand}"/>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_About" Command="{Binding AboutCommand}"/>
@@ -136,7 +137,7 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="540"/>
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5"/>
@@ -329,6 +330,8 @@
                                     Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
                             <Button Content="Run Script" Command="{Binding RunBatchCommand}" 
                                     Padding="10,5" Margin="0,0,10,0" Background="#007ACC" Foreground="White" FontWeight="Bold"/>
+                            <Button Content="Walk Script" Command="{Binding WalkBatchCommand}" 
+                                    Padding="10,5" Margin="0,0,10,0" Background="#28A745" Foreground="White" FontWeight="Bold"/>
 
                             <Button Content="Export (.txt)" Command="{Binding ExportScriptCommand}" 
                                     Padding="10,5" Background="#2D2D30" Foreground="White"/>
@@ -388,7 +391,7 @@
                         
                         <Button Grid.Row="8" Grid.ColumnSpan="2" Content="SOLVE" Command="{Binding SolveCurveCommand}" 
                                 Margin="0,20,0,0" Padding="10,5" 
-                                Background="#007ACC" Foreground="White" FontWeight="Bold"/>
+                                Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
 
                         <TextBlock Grid.Row="9" Grid.ColumnSpan="2" Text="Results will update above and in Output Log." Margin="0,10,0,0" FontStyle="Italic" Foreground="Gray" TextWrapping="Wrap"/>
                         
@@ -424,7 +427,7 @@
                             <!-- Clear Button -->
                             <Button Command="{Binding ClearCurveSolverCommand}" Content="CLEAR / RESET" 
                                     HorizontalAlignment="Center" Padding="20,5" Margin="0,10,0,0"
-                                    Background="#CC3333" Foreground="White" FontWeight="Bold"/>
+                                    Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
                         </StackPanel>
                     </Grid>
                 </TabItem>
@@ -512,12 +515,18 @@
                         <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding StructPointId, UpdateSourceTrigger=PropertyChanged}" Margin="5,2"/>
 
                         <TextBlock Grid.Row="11" Text="Type:" VerticalAlignment="Center" Margin="0,2"/>
-                        <ComboBox Grid.Row="11" Grid.Column="1" 
-                                  ItemsSource="{Binding AvailableFeatureTypes}" 
-                                  SelectedValue="{Binding StructType}"
-                                  IsEditable="True"
-                                  Text="{Binding StructType}"
-                                  Margin="5,2" ToolTip="Select or Type Code"/>
+                        <Grid Grid.Row="11" Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" 
+                                      ItemsSource="{Binding AvailableFeatureTypes}" 
+                                      SelectedValue="{Binding StructType}"
+                                      IsEditable="True"
+                                      Text="{Binding StructType}"
+                                      Margin="5,2" ToolTip="Select or Type Code"/>
+                        </Grid>
 
                         <Button Grid.Row="12" Grid.ColumnSpan="2" Content="ADD PART" Command="{Binding AddStructureCommand}" 
                                 Margin="0,5" Padding="10,2" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
@@ -529,14 +538,21 @@
                             </DataGrid.Columns>
                         </DataGrid>
                         
-                        <!-- VALIDATE -->
-                        <Button Grid.Row="14" Grid.ColumnSpan="2" Content="VALIDATE NETWORK" Command="{Binding ValidateNetworkCommand}"
-                                Padding="10,5" Margin="0,10,0,0" Background="#007ACC" Foreground="White" FontWeight="Bold"/>
+                        <Grid Grid.Row="14" Grid.ColumnSpan="2" Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- VALIDATE -->
+                            <Button Grid.Column="0" Content="VALIDATE NETWORK" Command="{Binding ValidateNetworkCommand}"
+                                    Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
 
-                        <!-- SYNC -->
-                        <Button Grid.Row="15" Grid.ColumnSpan="2" Content="SYNC TO ASSETS" Command="{Binding SyncToAssetsCommand}"
-                                Padding="10,5" Margin="0,5,0,0" Background="#28a745" Foreground="White" FontWeight="Bold"
-                                ToolTip="Manually sync processed piping/structure data to Installed Assets DB."/>
+                            <!-- SYNC -->
+                            <Button Grid.Column="2" Content="SYNC TO ASSETS" Command="{Binding SyncToAssetsCommand}"
+                                    Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"
+                                    ToolTip="Manually sync processed piping/structure data to Installed Assets DB."/>
+                        </Grid>
 
                         <!-- SAVE / LOAD -->
                         <Grid Grid.Row="16" Grid.ColumnSpan="2" Margin="0,5">
@@ -571,8 +587,17 @@
                                  AcceptsReturn="True" FontFamily="Consolas" VerticalScrollBarVisibility="Auto"
                                  Background="#1E1E1E" Foreground="#D4D4D4" BorderThickness="1" BorderBrush="#3E3E42" Padding="5"/>
                         
-                        <Button Grid.Row="2" Content="Process Piping Script" Command="{Binding ProcessPipingScriptCommand}" 
-                                Margin="0,10,0,0" Padding="10,5" Background="#007ACC" Foreground="White" FontWeight="Bold"/>
+                        <Grid Grid.Row="2" Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Process Script" Command="{Binding ProcessPipingScriptCommand}" 
+                                    Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
+                            <Button Grid.Column="2" Content="Sync To Assets" Command="{Binding SyncToAssetsCommand}" 
+                                    Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
+                        </Grid>
                     </Grid>
                 </TabItem>
 
@@ -585,9 +610,9 @@
                         </Grid.RowDefinitions>
                         
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Button Content="Import CSV" Command="{Binding ImportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
-                            <Button Content="Export CSV" Command="{Binding ExportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
-                            <Button Content="Clear DB" Command="{Binding ClearCodesCommand}" Padding="10,5" Background="#C63333" Foreground="White" FontWeight="Bold" ToolTip="Deletes ALL codes from the Master Database" BorderThickness="1" BorderBrush="#3E3E42"/>
+                            <Button Content="Import CSV" Command="{Binding ImportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
+                            <Button Content="Export CSV" Command="{Binding ExportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
+                            <Button Content="Clear DB" Command="{Binding ClearCodesCommand}" Padding="10,5" Background="#2D2D30" Foreground="White" FontWeight="Bold" ToolTip="Deletes ALL codes from the Master Database" BorderThickness="1" BorderBrush="White"/>
                         </StackPanel>
                         
                         <DataGrid Grid.Row="1" ItemsSource="{Binding CogoCodes}" AutoGenerateColumns="False" Margin="0,5">
@@ -704,8 +729,8 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <!-- Bound StrokeThickness so it scales correctly with the zoom factor instead of being too thin -->
-                            <Polyline Points="{Binding Points}" Stroke="{Binding Stroke}" 
-                                      StrokeThickness="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                            <Polyline Points="{Binding Points}" Stroke="{Binding Stroke}" StrokeLineJoin="Round"
+                                      StrokeThickness="{Binding DataContext.LineMarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -725,9 +750,9 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid Width="2" Height="2">
+                            <Grid Width="28" Height="28">
                                 <Grid.RenderTransform>
-                                    <TranslateTransform X="-1" Y="-1"/>
+                                    <TranslateTransform X="-14" Y="-14"/>
                                 </Grid.RenderTransform>
                                 
                                 <ContentControl Content="{Binding}">
@@ -790,37 +815,38 @@
                                  We bind Canvas.Left/Top in ItemContainerStyle.
                                  Grid serves as the anchor point. We translate it -0.5,-0.5 to center it on the coordinate.
                              -->
-                            <Grid Width="1" Height="1">
-                                <Grid.RenderTransform>
-                                    <TranslateTransform X="-0.5" Y="-0.5"/>
-                                </Grid.RenderTransform>
+                            <!-- Point Graphic + Number (No clipping bounds) -->
+                            <Canvas ClipToBounds="False">
+                                 <!-- Dynamic global scale for Points -->
+                                 <Canvas.RenderTransform>
+                                     <ScaleTransform ScaleX="{Binding DataContext.PointMarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                     ScaleY="{Binding DataContext.PointMarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                 </Canvas.RenderTransform>
 
-                                <Ellipse Width="1" Height="1" Fill="Cyan"
-                                         RenderTransformOrigin="0.5,0.5">
-                                     <Ellipse.RenderTransform>
-                                         <ScaleTransform ScaleX="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                         ScaleY="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                                     </Ellipse.RenderTransform>
-                                </Ellipse>
-                                
-                                <TextBlock Text="{Binding Id}" Foreground="Yellow" FontSize="1"
-                                           RenderTransformOrigin="0.5,0.5"
-                                           Margin="1.5,1.5,0,0"> <!-- Offset text slightly -->
-                                     <TextBlock.RenderTransform>
-                                         <TransformGroup>
-                                             <!-- Scale by MarkerScale to keep constant size -->
-                                             <ScaleTransform ScaleX="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                             ScaleY="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                                             <!-- Flip Y back to upright (since World is flipped) -->
-                                             <ScaleTransform ScaleY="-1"/> 
-                                         </TransformGroup>
-                                     </TextBlock.RenderTransform>
-                                </TextBlock>
-                            </Grid>
+                                 <!-- The Green X -->
+                                 <Line X1="-5" Y1="-5" X2="5" Y2="5" Stroke="#00FF00" StrokeThickness="1.5"/>
+                                 <Line X1="5" Y1="-5" X2="-5" Y2="5" Stroke="#00FF00" StrokeThickness="1.5"/>
+
+                                 <!-- The Point Number Label -->
+                                 <!-- Placed up and to the right, flipped upright so it doesn't render upside down in mathematical space -->
+                                 <TextBlock Text="{Binding Id}" Foreground="#00FF00" 
+                                            FontSize="{Binding DataContext.PointNumberSize, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                            FontWeight="Bold"
+                                            Canvas.Left="8" Canvas.Top="22">
+                                      <TextBlock.RenderTransform>
+                                          <ScaleTransform ScaleY="-1"/>
+                                      </TextBlock.RenderTransform>
+                                 </TextBlock>
+                            </Canvas>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 </Canvas>
+                
+                <!-- Zoom State Text Overlay -->
+                <TextBlock Text="{Binding CurrentViewScale, StringFormat='Zoom Scale: {0:F4}x'}" 
+                           Foreground="#88FFFFFF" FontSize="12" Margin="10"
+                           HorizontalAlignment="Left" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
                 
                 <!-- Zoom Toolbar -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
@@ -831,6 +857,91 @@
                     <Button Command="{Binding ZoomExtentsCommand}" Content="[ ]" Width="30" Height="30"
                             Background="#333333" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Zoom Extents"/>
                 </StackPanel>
+
+                <!-- Symbol Legend -->
+                <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,10,10" Background="#DD222222" BorderBrush="#555555" BorderThickness="1" CornerRadius="4" Padding="10" Visibility="{Binding ShowViewportLegend, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <StackPanel>
+                        <TextBlock Text="Symbol Legend" Foreground="White" FontWeight="Bold" Margin="0,0,0,10" TextAlignment="Center"/>
+                        
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentControl ContentTemplate="{StaticResource Symbol_Manhole}" Width="28" Height="28">
+                                <ContentControl.RenderTransform>
+                                    <ScaleTransform ScaleX="0.8" ScaleY="0.8" CenterX="14" CenterY="14"/>
+                                </ContentControl.RenderTransform>
+                            </ContentControl>
+                            <TextBlock Grid.Column="1" Text="Manhole" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
+                        
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentControl ContentTemplate="{StaticResource Symbol_WaterValve}" Width="28" Height="28">
+                                <ContentControl.RenderTransform>
+                                    <ScaleTransform ScaleX="0.8" ScaleY="0.8" CenterX="14" CenterY="14"/>
+                                </ContentControl.RenderTransform>
+                            </ContentControl>
+                            <TextBlock Grid.Column="1" Text="Water Valve" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
+                        
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentControl ContentTemplate="{StaticResource Symbol_Hydrant}" Width="28" Height="28">
+                                <ContentControl.RenderTransform>
+                                    <ScaleTransform ScaleX="0.8" ScaleY="0.8" CenterX="14" CenterY="14"/>
+                                </ContentControl.RenderTransform>
+                            </ContentControl>
+                            <TextBlock Grid.Column="1" Text="Fire Hydrant" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
+                        
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentControl ContentTemplate="{StaticResource Symbol_Inlet}" Width="28" Height="28">
+                                <ContentControl.RenderTransform>
+                                    <ScaleTransform ScaleX="0.8" ScaleY="0.8" CenterX="14" CenterY="14"/>
+                                </ContentControl.RenderTransform>
+                            </ContentControl>
+                            <TextBlock Grid.Column="1" Text="Catch Basin / Inlet" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
+
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentControl ContentTemplate="{StaticResource Symbol_Meter}" Width="28" Height="28">
+                                <ContentControl.RenderTransform>
+                                    <ScaleTransform ScaleX="0.8" ScaleY="0.8" CenterX="14" CenterY="14"/>
+                                </ContentControl.RenderTransform>
+                            </ContentControl>
+                            <TextBlock Grid.Column="1" Text="Vault / Meter" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
+
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentControl ContentTemplate="{StaticResource Symbol_Fitting}" Width="28" Height="28">
+                                <ContentControl.RenderTransform>
+                                    <ScaleTransform ScaleX="0.8" ScaleY="0.8" CenterX="14" CenterY="14"/>
+                                </ContentControl.RenderTransform>
+                            </ContentControl>
+                            <TextBlock Grid.Column="1" Text="Fitting" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
             </Grid>
         </Border>
 
@@ -867,7 +978,7 @@
                      VerticalScrollBarVisibility="Auto"
                      FontFamily="Consolas" 
                      Background="#252526" 
-                     Foreground="#00FF00"
+                     Foreground="White"
                      BorderThickness="0"/>
         </Grid>
     </Grid>

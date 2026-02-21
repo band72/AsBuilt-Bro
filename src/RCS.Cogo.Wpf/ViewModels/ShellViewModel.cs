@@ -12,6 +12,7 @@ using RCS.Cogo.Wpf.Commands;
 using RCS.Cogo.App.Models;
 using RCS.Cogo.App.Persistence;
 using System.IO;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace RCS.Cogo.Wpf.ViewModels;
@@ -160,6 +161,8 @@ public class ShellViewModel : ViewModelBase
             if (SetField(ref _currentViewScale, value))
             {
                 OnPropertyChanged(nameof(MarkerScale));
+                OnPropertyChanged(nameof(LineMarkerScale));
+                OnPropertyChanged(nameof(PointMarkerScale));
             }
         }
     }
@@ -173,19 +176,78 @@ public class ShellViewModel : ViewModelBase
             if (SetField(ref _symbolScaleMultiplier, value))
             {
                 OnPropertyChanged(nameof(MarkerScale));
+                OnPropertyChanged(nameof(LineMarkerScale));
+                OnPropertyChanged(nameof(PointMarkerScale));
             }
         }
     }
 
+    private bool _showViewportLegend = true;
+    public bool ShowViewportLegend
+    {
+        get => _showViewportLegend;
+        set => SetField(ref _showViewportLegend, value);
+    }
+
+    private bool _isOutputLogDescending = true;
+    public bool IsOutputLogDescending
+    {
+        get => _isOutputLogDescending;
+        set => SetField(ref _isOutputLogDescending, value);
+    }
+
     public ObservableCollection<double> AvailableSymbolScales { get; } = new(new[] { 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 10.0 });
+    public ObservableCollection<double> AvailablePointNumberSizes { get; } = new(new[] { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 48.0, 64.0 });
+    public ObservableCollection<double> AvailablePointMarkerSizes { get; } = new(new[] { 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0, 5.0 });
+    public ObservableCollection<double> AvailableFigureLineWidths { get; } = new(new[] { 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0 });
+    
+    private double _pointNumberSize = 24.0;
+    public double PointNumberSize
+    {
+        get => _pointNumberSize;
+        set => SetField(ref _pointNumberSize, value);
+    }
+    
+    private double _pointMarkerSize = 1.0;
+    public double PointMarkerSize
+    {
+        get => _pointMarkerSize;
+        set
+        {
+            if (SetField(ref _pointMarkerSize, value))
+            {
+                OnPropertyChanged(nameof(PointMarkerScale));
+            }
+        }
+    }
+    
+    private double _figureLineWidth = 3.0;
+    public double FigureLineWidth
+    {
+        get => _figureLineWidth;
+        set
+        {
+            if (SetField(ref _figureLineWidth, value))
+            {
+                OnPropertyChanged(nameof(LineMarkerScale));
+            }
+        }
+    }
 
     // Marker scale prevents points from becoming microscopic when zoomed out.
-    // Adjusted constant (e.g. 5.0) to make them visible "dots".
-    public double MarkerScale => (1.0 / Math.Abs(_currentViewScale)) * 2.5 * SymbolScaleMultiplier;
+    // Reverted to 1.5 since symbols are now built on a 28x28 pixel base.
+    public double MarkerScale => (1.0 / Math.Abs(_currentViewScale)) * 1.5 * SymbolScaleMultiplier;
+    
+    // Separated scale specifically for Pipeline thickness.
+    public double LineMarkerScale => (1.0 / Math.Abs(_currentViewScale)) * FigureLineWidth * SymbolScaleMultiplier;
+
+    // Scale precisely targeted to point (X and number) rendering 
+    public double PointMarkerScale => (1.0 / Math.Abs(_currentViewScale)) * PointMarkerSize * SymbolScaleMultiplier;
 
     public System.Windows.Input.ICommand SubmitCommand { get; }
     public System.Windows.Input.ICommand ImportBatchCommand { get; }
     public System.Windows.Input.ICommand RunBatchCommand { get; }
+    public System.Windows.Input.ICommand WalkBatchCommand { get; }
 
     public System.Windows.Input.ICommand ZoomInCommand { get; }
     public System.Windows.Input.ICommand ZoomOutCommand { get; }
@@ -210,8 +272,10 @@ public class ShellViewModel : ViewModelBase
                 }
                 else
                 {
-                    // Append line
-                    ResultLogText += log + Environment.NewLine;
+                    if (IsOutputLogDescending)
+                        ResultLogText = log + Environment.NewLine + ResultLogText;
+                    else
+                        ResultLogText += log + Environment.NewLine;
                 }
             });
         });
@@ -259,6 +323,7 @@ public class ShellViewModel : ViewModelBase
         SubmitCommand = new RelayCommand(async _ => await ExecuteCommandAsync());
         ImportBatchCommand = new RelayCommand(_ => ImportBatchScript());
         RunBatchCommand = new RelayCommand(async _ => await RunBatchScriptAsync());
+        WalkBatchCommand = new RelayCommand(async _ => await WalkBatchScriptAsync());
 
         ZoomInCommand = new RelayCommand(_ => ZoomInRequested?.Invoke(this, EventArgs.Empty));
         ZoomOutCommand = new RelayCommand(_ => ZoomOutRequested?.Invoke(this, EventArgs.Empty));
@@ -267,6 +332,7 @@ public class ShellViewModel : ViewModelBase
         ExportBomCommand = new RelayCommand(_ => ExportBom());
         
         ExportScriptCommand = new RelayCommand(_ => ExportScript());
+        ExportOutputLogCommand = new RelayCommand(_ => ExportOutputLog());
         ExportPointsTxtCommand = new RelayCommand(_ => ExportPointsTxt());
         ExportPointsXmlCommand = new RelayCommand(_ => ExportPointsXml());
         // ExportDxfCommand = new RelayCommand(_ => ExportDxf()); // This line was moved up
@@ -321,6 +387,8 @@ public class ShellViewModel : ViewModelBase
         AboutCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("RCS COGO Enterprise\nVersion 2.0\n\nAdvanced Agentic Coding Demo", "About"));
         
         InstalledAssets = new InstalledAssetsViewModel();
+        OpenValidationSettingsCommand = new RelayCommand(_ => OpenValidationSettings());
+        OpenGeneralSettingsCommand = new RelayCommand(_ => OpenGeneralSettings());
         // Load default/empty project
         _ = LoadInstalledAssetsAsync();
     }
@@ -356,6 +424,7 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand AboutCommand { get; }
 
     public System.Windows.Input.ICommand ExportScriptCommand { get; }
+    public System.Windows.Input.ICommand ExportOutputLogCommand { get; }
     public System.Windows.Input.ICommand ExportPointsTxtCommand { get; }
     public System.Windows.Input.ICommand ExportPointsXmlCommand { get; }
 
@@ -997,12 +1066,40 @@ public class ShellViewModel : ViewModelBase
 
         _context.Log("--- Processing Unified Cogo Context ---");
         var lines = PipingScriptText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        
+        bool cogoEngineOn = true;
+
         foreach (var line in lines)
         {
             string trimmed = line.Trim();
             if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("/"))
                 continue;
-            await _engine.ExecuteAsync(trimmed, _context);
+
+            string cmdLower = trimmed.ToLowerInvariant();
+            
+            // Engine Toggles for Pre-processor
+            if (cmdLower == "cogo-engine-off")
+            {
+                cogoEngineOn = false;
+                _context.Log("Cogo Engine Scripting PAUSED.");
+                continue;
+            }
+            if (cmdLower == "cogo-engine-on")
+            {
+                cogoEngineOn = true;
+                _context.Log("Cogo Engine Scripting RESUMED.");
+                continue;
+            }
+            if (cmdLower == "pipe-engine-off" || cmdLower == "pipe-engine-on")
+            {
+                // We ignore pipe commands in the Cogo context preprocessing
+                continue;
+            }
+
+            if (cogoEngineOn)
+            {
+                await _engine.ExecuteAsync(trimmed, _context);
+            }
         }
 
         _context.Log("--- Compiling Piping Script ---");
@@ -1664,6 +1761,28 @@ public class ShellViewModel : ViewModelBase
             }
         }
     }
+    private void ExportOutputLog()
+    {
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Filter = "Text File (*.txt)|*.txt|All Files (*.*)|*.*",
+            DefaultExt = ".txt",
+            FileName = "OutputLog.txt"
+        };
+        
+        if (dialog.ShowDialog() == true)
+        {
+            try 
+            {
+                System.IO.File.WriteAllText(dialog.FileName, ResultLogText);
+                CommandLog.Add($"Output log exported to: {dialog.FileName}");
+            }
+            catch (Exception ex)
+            {
+                CommandLog.Add($"Error exporting output log: {ex.Message}");
+            }
+        }
+    }
 
     private void ExportPointsTxt()
     {
@@ -1850,6 +1969,33 @@ public class ShellViewModel : ViewModelBase
         RefreshData();
     }
 
+    private async Task WalkBatchScriptAsync()
+    {
+        if (string.IsNullOrWhiteSpace(BatchScriptContent)) return;
+
+        CommandLog.Add("--- Walking Batch Script ---");
+        
+        var lines = BatchScriptContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        foreach (var line in lines)
+        {
+            string trimmed = line.Trim();
+            if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("/"))
+                continue;
+                
+            CommandLog.Add($"> {trimmed}");
+            await _engine.ExecuteAsync(trimmed, _context);
+            
+            // Force data refresh and zoom
+            RefreshData();
+            System.Windows.Application.Current?.Dispatcher.Invoke(() => ZoomExtentsRequested?.Invoke(this, EventArgs.Empty));
+            
+            await Task.Delay(1000); // 1-second delay for visually tracking the build
+        }
+        
+        CommandLog.Add("--- Walk Complete ---");
+        RefreshData();
+    }
+
     private async Task ExecuteCommandAsync()
     {
         if (string.IsNullOrWhiteSpace(CommandInput)) return;
@@ -1977,6 +2123,24 @@ public class ShellViewModel : ViewModelBase
     }
 
     public System.Windows.Input.ICommand OpenReportSettingsCommand { get; }
+    public System.Windows.Input.ICommand OpenValidationSettingsCommand { get; }
+    public System.Windows.Input.ICommand OpenGeneralSettingsCommand { get; }
+
+    private void OpenGeneralSettings()
+    {
+        var window = new RCS.Cogo.Wpf.Views.GeneralSettingsWindow
+        {
+            DataContext = this
+        };
+        window.ShowDialog();
+    }
+
+    private void OpenValidationSettings()
+    {
+        var window = new RCS.Cogo.Wpf.Views.ValidationSettingsWindow();
+        window.ShowDialog();
+        _context.Log("[AUDIT] Validation Settings Window Closed.");
+    }
 
     private void OpenReportSettings()
     {
@@ -2101,20 +2265,14 @@ public class ShellViewModel : ViewModelBase
 
     private void CompactDatabase()
     {
-        if (string.IsNullOrEmpty(_currentDbPath) || !File.Exists(_currentDbPath))
-        {
-            System.Windows.MessageBox.Show("Please save or open a project first to define the DB path.");
-            return;
-        }
-        
         try 
         {
-            var service = new LiteDbProjectService();
-            // Assuming we must close connection? LiteDB handles rebuild on open connection usually or exclusive.
-            // Just attempting call.
-            bool result = service.CompactDatabase(_currentDbPath);
-            _context.Log(result ? "[AUDIT] Database Compacted Successfully." : "[AUDIT] Database Compaction Failed.");
-            if(result) System.Windows.MessageBox.Show("Database Compacted Successfully.");
+            using (var db = new RCS.Data.AppDbContext())
+            {
+                db.Database.ExecuteSqlRaw("VACUUM;");
+            }
+            _context.Log("[AUDIT] System Database Compacted Successfully (VACUUM).");
+            System.Windows.MessageBox.Show("System Database Compacted Successfully.");
         }
         catch(Exception ex)
         {
@@ -2124,33 +2282,43 @@ public class ShellViewModel : ViewModelBase
 
     private void VerifyDatabase()
     {
-        if (string.IsNullOrEmpty(_currentDbPath) || !File.Exists(_currentDbPath))
+        try 
         {
-            System.Windows.MessageBox.Show("Please save or open a project first.");
-            return;
+            string status = "Unknown";
+            using (var db = new RCS.Data.AppDbContext())
+            {
+                var conn = db.Database.GetDbConnection();
+                conn.Open();
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "PRAGMA integrity_check;";
+                    status = (string)command.ExecuteScalar();
+                }
+                conn.Close();
+            }
+            
+            bool ok = status?.Contains("ok", StringComparison.OrdinalIgnoreCase) == true;
+            string msg = ok ? "System Database Verification Passed (Integrity OK)." : $"System Database Verification FAILED: {status}";
+            _context.Log($"[AUDIT] {msg}");
+            System.Windows.MessageBox.Show(ok ? "Verification Passed: Integrity OK" : $"Verification Failed: {status}");
         }
-
-        var service = new LiteDbProjectService();
-        bool result = service.VerifyDatabase(_currentDbPath);
-        string msg = result ? "Database Verification Passed (Integrity OK)." : "Database Verification FAILED.";
-        _context.Log($"[AUDIT] {msg}");
-        System.Windows.MessageBox.Show(msg);
+        catch(Exception ex)
+        {
+            _context.Log($"[AUDIT] Error Verifying DB: {ex.Message}");
+        }
     }
-    
+
     private void RepairDatabase()
     {
-        if (string.IsNullOrEmpty(_currentDbPath) || !File.Exists(_currentDbPath))
-        {
-            System.Windows.MessageBox.Show("Please save or open a project first.");
-            return;
-        }
-        
         try
         {
-            var service = new LiteDbProjectService();
-            bool result = service.RepairDatabase(_currentDbPath);
-             _context.Log(result ? "[AUDIT] Database Repair/Rebuild Successful." : "[AUDIT] Database Repair Failed.");
-             if(result) System.Windows.MessageBox.Show("Database Repaired Successfully.");
+            // SQLite doesn't easily 'repair' in-place via simple commands aside from VACUUM/REINDEX. 
+            using (var db = new RCS.Data.AppDbContext())
+            {
+                db.Database.ExecuteSqlRaw("REINDEX; VACUUM;");
+            }
+            _context.Log("[AUDIT] System Database Repair Sequence completed (REINDEX/VACUUM).");
+            System.Windows.MessageBox.Show("System Database Repair Sequence Completed.");
         }
         catch (Exception ex)
         {

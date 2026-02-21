@@ -1,0 +1,58 @@
+<Window x:Class="RCS.Cogo.Wpf.Views.ValidationSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Validation Settings" Height="700" Width="900" 
+        Background="#1E1E1E" Foreground="White" WindowStartupLocation="CenterOwner">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Validation Rules Configuration" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5,0,10">
+            <CheckBox IsChecked="{Binding NoExplicitValidation}" Content="No Explicit Validation (Bypass All)" Foreground="White" Background="#1E1E1E" VerticalAlignment="Center" Margin="0,0,20,0" ToolTip="If checked, none of the rules below are enforced."/>
+            
+            <Button Content="Check All" Command="{Binding CheckAllCommand}" Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="#3E3E42" Margin="0,0,10,0"/>
+            <Button Content="Clear All" Command="{Binding ClearAllCommand}" Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="#3E3E42" Margin="0,0,10,0"/>
+        </StackPanel>
+
+        <Border Grid.Row="2" BorderBrush="#3E3E42" BorderThickness="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding CategoryGroups}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Expander Header="{Binding CategoryName}" IsExpanded="True" Foreground="White" BorderBrush="#3E3E42" Background="#252526" Margin="0,0,0,5">
+                                <StackPanel Margin="10,5">
+                                    <ItemsControl ItemsSource="{Binding Rules}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,2">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="200"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Grid.Column="0" IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding FieldName}" Foreground="LightBlue" VerticalAlignment="Center"/>
+                                                    <TextBox Grid.Column="2" Text="{Binding RuleDescription}" Background="#3E3E42" Foreground="White" BorderThickness="0" Padding="2"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Expander>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Save &amp; Close" Click="Save_Click" Padding="15,5" Background="#007ACC" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
+        </StackPanel>
+    </Grid>
+</Window>

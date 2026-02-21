@@ -36,7 +36,7 @@ public partial class ShellWindow : Window
     {
         var matrix = WorldTransform.Matrix;
         var center = new Point(ViewportCanvas.ActualWidth / 2, ViewportCanvas.ActualHeight / 2);
-        matrix.ScaleAt(1.2, 1.2, center.X, center.Y);
+        matrix.ScaleAt(1.05, 1.05, center.X, center.Y);
         WorldTransform.Matrix = matrix;
         if (DataContext is ShellViewModel vm) vm.CurrentViewScale = matrix.M11;
     }
@@ -45,7 +45,7 @@ public partial class ShellWindow : Window
     {
         var matrix = WorldTransform.Matrix;
         var center = new Point(ViewportCanvas.ActualWidth / 2, ViewportCanvas.ActualHeight / 2);
-        matrix.ScaleAt(1 / 1.2, 1 / 1.2, center.X, center.Y);
+        matrix.ScaleAt(1.0 / 1.05, 1.0 / 1.05, center.X, center.Y);
         WorldTransform.Matrix = matrix;
         if (DataContext is ShellViewModel vm) vm.CurrentViewScale = matrix.M11;
     }
@@ -128,7 +128,8 @@ public partial class ShellWindow : Window
         var pos = e.GetPosition(ViewportCanvas);
         var matrix = WorldTransform.Matrix;
         
-        double scale = e.Delta > 0 ? 1.1 : 0.9;
+        // Very smooth steps for mouse wheel per user request
+        double scale = e.Delta > 0 ? 1.03 : (1.0 / 1.03);
         
         matrix.ScaleAt(scale, scale, pos.X, pos.Y);
         WorldTransform.Matrix = matrix;

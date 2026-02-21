@@ -55,6 +55,10 @@ public class AppDbContext : DbContext
     // Master Materials
     public DbSet<MaterialEntity> Materials { get; set; }
 
+    // Validation Rules
+    public DbSet<ValidationRuleEntity> ValidationRules { get; set; }
+    public DbSet<AppGlobalSetting> GlobalSettings { get; set; }
+
     public string DbPath { get; private set; } = string.Empty;
 
     public AppDbContext()

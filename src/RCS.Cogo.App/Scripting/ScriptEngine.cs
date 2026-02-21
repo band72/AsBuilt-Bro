@@ -62,6 +62,19 @@ public class ScriptEngine
         }
         else
         {
+            // If the command evaluates to an integer/number, assume it intends to add a point to the figure (implicit CONT)
+            if (double.TryParse(commandName, out _))
+            {
+                var contCmd = _registry.GetCommand("CONT");
+                if (contCmd != null)
+                {
+                    var newArgs = new List<string> { "CONT" };
+                    newArgs.AddRange(args);
+                    await contCmd.ExecuteAsync(newArgs.ToArray(), context);
+                    return;
+                }
+            }
+
             context.Log($"Unknown command: {commandName}");
         }
     }
