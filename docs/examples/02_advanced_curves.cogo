@@ -1,0 +1,40 @@
+// Advanced Visual Serpentine Alignment
+// Utilizes synthetic points generation via XC macros to draw 
+// intersecting sweeps of tangent inflection curves dynamically.
+
+RESET
+ECHO "--- Generating Centerline Spine ---"
+
+// Create tangent baseline
+NE 1 5000.0000 5000.0000 "Start"
+NE 2 6000.0000 5000.0000 "Stop"
+
+// Begin the figure loop
+BEG HWY_CL
+FIG 1
+FIG 2
+
+ECHO "--- Tracing Alternating Curves (S-Swings) ---"
+
+// Sub-Cmd `(BULB)` triggers iterative circle segment calculations
+// Format: Radius, Turn Angle / Sweep Degrees, Linear Extension distance base
+
+// Right Sweep (Radius = 250)
+XC ZD (BULB) 250.0 45.0000 100.0
+XC ZD (BULB) 250.0 90.0000 100.0
+
+// Immediate Reverse Left Sweep (Radius = -250)
+XC ZD (BULB) -250.0 135.0000 100.0
+XC ZD (BULB) -250.0 180.0000 100.0
+
+// Compound the sweep 
+XC ZD (BULB) -300.0 220.0000 100.0
+XC ZD (BULB) -300.0 270.0000 100.0
+
+ECHO "--- Final Return Loop ---"
+FIG 1
+END
+
+LIST PTS  // View all generated synthetic XC points alongside nodes 1/2
+CLOSURE
+REPORT MAPCHECK

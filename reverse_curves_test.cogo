@@ -1,0 +1,73 @@
+// Robust COGO Test Script - Reverse Curves Feature
+// This script specifically evaluates compounding and reverse
+// tangential curves branching off the same alignment string.
+
+CLEAR
+LOG ON
+
+// ==========================================
+// 1. Establish Control Backbone
+// ==========================================
+// We'll map out a straight "street" to use as our tangent spine.
+NE 1 5000.0000 5000.0000 "Start of Street"
+NE 2 6000.0000 5000.0000 "PI 1"
+NE 3 7000.0000 5000.0000 "PI 2"
+NE 4 8000.0000 5000.0000 "End of Street"
+
+// ==========================================
+// 2. Build S-Curve (Reverse Curve)
+// ==========================================
+BEG S_CURVE_TEST
+FIG 1
+FIG 2
+
+// Curve Right (Eastward turn if moving North)
+// Bulging Right:
+XC BD (BULB)  250.0 1 45.0000 100.0
+XC BD (BULB)  250.0 1 70.0000 100.0
+XC BD (BULB)  250.0 1 90.0000 100.0
+
+// Reverse Curve! Inflection Point.
+// Curve Left (Bulging back towards center-line / Westward)
+XC BD (BULB) -250.0 1 110.0000 100.0
+XC BD (BULB) -250.0 1 135.0000 100.0
+XC BD (BULB) -250.0 1 160.0000 100.0
+
+FIG 3
+FIG 4
+
+// Standard looping back to Origin to allow MAPCHECK closure.
+NE 5 8000.0000 4000.0000 "Return Frame"
+NE 6 5000.0000 4000.0000 "Return Frame"
+FIG 5
+FIG 6
+FIG 1
+END
+
+// Validate the Figure Closure traversing through the Reverse Curve
+MAPCHECK S_CURVE_TEST
+
+// ==========================================
+// 3. Nested Serpentine Curves
+// ==========================================
+// Creates a tight serpentine pattern bounded explicitly 
+BEG SERPENTINE_WALK
+NE 100 4000.0000 4000.0000 "Walk Start"
+FIG 100
+// Serpentine 1
+XC ZD (BULB) 50.0 0.0000 25.0
+XC ZD (BULB) 50.0 30.0000 25.0
+// Reverse 1
+XC ZD (BULB) -50.0 60.0000 25.0
+XC ZD (BULB) -50.0 90.0000 25.0
+// Reverse 2
+XC ZD (BULB) 50.0 120.0000 25.0
+XC ZD (BULB) 50.0 150.0000 25.0
+// Reverse 3
+XC ZD (BULB) -50.0 180.0000 25.0
+XC ZD (BULB) -50.0 210.0000 25.0
+END
+
+LIST PTS
+SAVE reverse_curves_test.cogo
+LOG OFF

@@ -1,0 +1,97 @@
+PartKey,Discipline,FeatureType,Size,Material,Quantity,Manufacturer,ManufacturerPartNo,YearManufactured,Confidence,Source,Warning,Notes
+JEAW004P,W,Pipe,4,DIP,1,JEA_Std,W-DIP-04,2024,Manual,Manual,,4in Ductile Iron Water Main
+JEAW006P,W,Pipe,6,DIP,1,JEA_Std,W-DIP-06,2024,Manual,Manual,,6in Ductile Iron Water Main
+JEAW008P,W,Pipe,8,DIP,1,JEA_Std,W-DIP-08,2024,Manual,Manual,,8in Ductile Iron Water Main
+JEAW010P,W,Pipe,10,DIP,1,JEA_Std,W-DIP-10,2024,Manual,Manual,,10in Ductile Iron Water Main
+JEAW012P,W,Pipe,12,DIP,1,JEA_Std,W-DIP-12,2024,Manual,Manual,,12in Ductile Iron Water Main
+JEAW016P,W,Pipe,16,DIP,1,JEA_Std,W-DIP-16,2024,Manual,Manual,,16in Ductile Iron Water Main
+JEAW020P,W,Pipe,20,DIP,1,JEA_Std,W-DIP-20,2024,Manual,Manual,,20in Ductile Iron Water Main
+JEAW024P,W,Pipe,24,DIP,1,JEA_Std,W-DIP-24,2024,Manual,Manual,,24in Ductile Iron Water Main
+JEAW002P,W,Pipe,2,PVC,1,JEA_Std,W-PVC-02,2024,Manual,Manual,,2in PVC Water Service
+JEAW004PP,W,Pipe,4,PVC,1,JEA_Std,W-PVC-04,2024,Manual,Manual,,4in PVC Water Main C900
+JEAW006PP,W,Pipe,6,PVC,1,JEA_Std,W-PVC-06,2024,Manual,Manual,,6in PVC Water Main C900
+JEAW008PP,W,Pipe,8,PVC,1,JEA_Std,W-PVC-08,2024,Manual,Manual,,8in PVC Water Main C900
+JEAW010PP,W,Pipe,10,PVC,1,JEA_Std,W-PVC-10,2024,Manual,Manual,,10in PVC Water Main C900
+JEAW012PP,W,Pipe,12,PVC,1,JEA_Std,W-PVC-12,2024,Manual,Manual,,12in PVC Water Main C900
+JEAW004V,W,Valve,4,Iron,1,Mueller,A-2361-4,2024,Manual,Manual,,4in Gate Valve Resilient Seat
+JEAW006V,W,Valve,6,Iron,1,Mueller,A-2361-6,2024,Manual,Manual,,6in Gate Valve Resilient Seat
+JEAW008V,W,Valve,8,Iron,1,Mueller,A-2361-8,2024,Manual,Manual,,8in Gate Valve Resilient Seat
+JEAW010V,W,Valve,10,Iron,1,Mueller,A-2361-10,2024,Manual,Manual,,10in Gate Valve Resilient Seat
+JEAW012V,W,Valve,12,Iron,1,Mueller,A-2361-12,2024,Manual,Manual,,12in Gate Valve Resilient Seat
+JEAW016V,W,Valve,16,Iron,1,Mueller,A-2361-16,2024,Manual,Manual,,16in Butterfly Valve
+JEAW020V,W,Valve,20,Iron,1,Mueller,A-2361-20,2024,Manual,Manual,,20in Butterfly Valve
+JEAW024V,W,Valve,24,Iron,1,Mueller,A-2361-24,2024,Manual,Manual,,24in Butterfly Valve
+JEAW006H,W,Hydrant,6,Iron,1,Mueller,SuperCenturion,2024,Manual,Manual,,Standard 3-Way Fire Hydrant 5.25
+JEAW005M,W,Meter,0.625,Brass,1,Neptune,T-10_5/8,2024,Manual,Manual,,5/8in Residential Water Meter
+JEAW010M,W,Meter,1,Brass,1,Neptune,T-10_1,2024,Manual,Manual,,1in Residential Water Meter
+JEAW015M,W,Meter,1.5,Brass,1,Neptune,T-10_1.5,2024,Manual,Manual,,1.5in Commercial Water Meter
+JEAW020M,W,Meter,2,Brass,1,Neptune,T-10_2,2024,Manual,Manual,,2in Commercial Water Meter
+JEAW030M,W,Meter,3,Iron,1,Sensus,Omni_3,2024,Manual,Manual,,3in Compound Meter
+JEAW040M,W,Meter,4,Iron,1,Sensus,Omni_4,2024,Manual,Manual,,4in Compound Meter
+JEAW060M,W,Meter,6,Iron,1,Sensus,Omni_6,2024,Manual,Manual,,6in Turbine Meter
+JEAW001CS,W,Service,1,Brass,1,Ford,FB1000-4,2024,Manual,Manual,,1in Corp Stop
+JEAW002CS,W,Service,2,Brass,1,Ford,FB1000-7,2024,Manual,Manual,,2in Corp Stop
+JEAW001CB,W,Service,1,Brass,1,Ford,B44-444,2024,Manual,Manual,,1in Curb Stop
+JEAW002CB,W,Service,2,Brass,1,Ford,B44-777,2024,Manual,Manual,,2in Curb Stop
+JEAW004B11,W,Fitting,4,Iron,1,Tyler,MJ-B11-04,2024,Manual,Manual,,4in MJ Bend 11.25 Deg
+JEAW006B11,W,Fitting,6,Iron,1,Tyler,MJ-B11-06,2024,Manual,Manual,,6in MJ Bend 11.25 Deg
+JEAW008B11,W,Fitting,8,Iron,1,Tyler,MJ-B11-08,2024,Manual,Manual,,8in MJ Bend 11.25 Deg
+JEAW012B11,W,Fitting,12,Iron,1,Tyler,MJ-B11-12,2024,Manual,Manual,,12in MJ Bend 11.25 Deg
+JEAW004B22,W,Fitting,4,Iron,1,Tyler,MJ-B22-04,2024,Manual,Manual,,4in MJ Bend 22.5 Deg
+JEAW006B22,W,Fitting,6,Iron,1,Tyler,MJ-B22-06,2024,Manual,Manual,,6in MJ Bend 22.5 Deg
+JEAW008B22,W,Fitting,8,Iron,1,Tyler,MJ-B22-08,2024,Manual,Manual,,8in MJ Bend 22.5 Deg
+JEAW012B22,W,Fitting,12,Iron,1,Tyler,MJ-B22-12,2024,Manual,Manual,,12in MJ Bend 22.5 Deg
+JEAW004B45,W,Fitting,4,Iron,1,Tyler,MJ-B45-04,2024,Manual,Manual,,4in MJ Bend 45 Deg
+JEAW006B45,W,Fitting,6,Iron,1,Tyler,MJ-B45-06,2024,Manual,Manual,,6in MJ Bend 45 Deg
+JEAW008B45,W,Fitting,8,Iron,1,Tyler,MJ-B45-08,2024,Manual,Manual,,8in MJ Bend 45 Deg
+JEAW012B45,W,Fitting,12,Iron,1,Tyler,MJ-B45-12,2024,Manual,Manual,,12in MJ Bend 45 Deg
+JEAW004B90,W,Fitting,4,Iron,1,Tyler,MJ-B90-04,2024,Manual,Manual,,4in MJ Bend 90 Deg
+JEAW006B90,W,Fitting,6,Iron,1,Tyler,MJ-B90-06,2024,Manual,Manual,,6in MJ Bend 90 Deg
+JEAW008B90,W,Fitting,8,Iron,1,Tyler,MJ-B90-08,2024,Manual,Manual,,8in MJ Bend 90 Deg
+JEAW012B90,W,Fitting,12,Iron,1,Tyler,MJ-B90-12,2024,Manual,Manual,,12in MJ Bend 90 Deg
+JEAW006T06,W,Fitting,6x6,Iron,1,Tyler,MJ-T-0606,2024,Manual,Manual,,6x6 MJ Tee
+JEAW008T06,W,Fitting,8x6,Iron,1,Tyler,MJ-T-0806,2024,Manual,Manual,,8x6 MJ Tee
+JEAW008T08,W,Fitting,8x8,Iron,1,Tyler,MJ-T-0808,2024,Manual,Manual,,8x8 MJ Tee
+JEAW012T06,W,Fitting,12x6,Iron,1,Tyler,MJ-T-1206,2024,Manual,Manual,,12x6 MJ Tee
+JEAW012T12,W,Fitting,12x12,Iron,1,Tyler,MJ-T-1212,2024,Manual,Manual,,12x12 MJ Tee
+JEAW002ARV,W,ARV,2,SS,1,ValMatic,VM-15A,2024,Manual,Manual,,2in Air Release Valve
+JEAW004BF,W,Backflow,4,Iron,1,Watts,909-04,2024,Manual,Manual,,4in RPZ Backflow Preventer
+JEAW006BF,W,Backflow,6,Iron,1,Watts,909-06,2024,Manual,Manual,,6in RPZ Backflow Preventer
+JEAW008BF,W,Backflow,8,Iron,1,Watts,909-08,2024,Manual,Manual,,8in RPZ Backflow Preventer
+JEAWW004P,WW,Pipe,4,PVC,1,JEA_Std,WW-PVC-04,2024,Manual,Manual,,4in PVC Force Main SDR26
+JEAWW006P,WW,Pipe,6,PVC,1,JEA_Std,WW-PVC-06,2024,Manual,Manual,,6in PVC Force Main SDR26
+JEAWW008P,WW,Pipe,8,PVC,1,JEA_Std,WW-PVC-08,2024,Manual,Manual,,8in PVC Gravity Sewer SDR35
+JEAWW010P,WW,Pipe,10,PVC,1,JEA_Std,WW-PVC-10,2024,Manual,Manual,,10in PVC Gravity Sewer SDR35
+JEAWW012P,WW,Pipe,12,PVC,1,JEA_Std,WW-PVC-12,2024,Manual,Manual,,12in PVC Gravity Sewer SDR35
+JEAWW008D,WW,Pipe,8,DIP,1,JEA_Std,WW-DIP-08,2024,Manual,Manual,,8in DIP Gravity Sewer
+JEAWW048MH,WW,Manhole,48,Conc,1,US_Concrete,MH-48-STD,2024,Manual,Manual,,48in Precast Concrete Manhole
+JEAWW060MH,WW,Manhole,60,Conc,1,US_Concrete,MH-60-STD,2024,Manual,Manual,,60in Precast Concrete Manhole
+JEAWW072MH,WW,Manhole,72,Conc,1,US_Concrete,MH-72-STD,2024,Manual,Manual,,72in Precast Concrete Manhole
+JEAWW004V,WW,Valve,4,Iron,1,DeZurik,PEC-4,2024,Manual,Manual,,4in Plug Valve
+JEAWW006V,WW,Valve,6,Iron,1,DeZurik,PEC-6,2024,Manual,Manual,,6in Plug Valve
+JEAWW008V,WW,Valve,8,Iron,1,DeZurik,PEC-8,2024,Manual,Manual,,8in Plug Valve
+JEAWW004CO,WW,Cleanout,4,PVC,1,JEA_Std,CO-04,2024,Manual,Manual,,4in PVC Cleanout
+JEAWW006CO,WW,Cleanout,6,PVC,1,JEA_Std,CO-06,2024,Manual,Manual,,6in PVC Cleanout
+JEAWW002ARV,WW,ARV,2,SS,1,ValMatic,VM-48A,2024,Manual,Manual,,2in Sewer Air Release Valve
+JEAWW004ARV,WW,ARV,4,SS,1,ValMatic,VM-49A,2024,Manual,Manual,,4in Sewer Air Release Valve
+JEAS015P,S,Pipe,15,RCP,1,JEA_Std,S-RCP-15,2024,Manual,Manual,,15in RCP Class III
+JEAS018P,S,Pipe,18,RCP,1,JEA_Std,S-RCP-18,2024,Manual,Manual,,18in RCP Class III
+JEAS024P,S,Pipe,24,RCP,1,JEA_Std,S-RCP-24,2024,Manual,Manual,,24in RCP Class III
+JEAS030P,S,Pipe,30,RCP,1,JEA_Std,S-RCP-30,2024,Manual,Manual,,30in RCP Class III
+JEAS036P,S,Pipe,36,RCP,1,JEA_Std,S-RCP-36,2024,Manual,Manual,,36in RCP Class III
+JEAS048P,S,Pipe,48,RCP,1,JEA_Std,S-RCP-48,2024,Manual,Manual,,48in RCP Class III
+JEAS024E,S,Pipe,24,ERCP,1,JEA_Std,S-ERCP-24,2024,Manual,Manual,,19x30 Elliptical RCP
+JEAS018I,S,Inlet,18,Conc,1,JEA_Std,IN-Type1,2024,Manual,Manual,,Type 1 Curb Inlet
+JEAS024I,S,Inlet,24,Conc,1,JEA_Std,IN-Type2,2024,Manual,Manual,,Type 2 Curb Inlet
+JEAS036I,S,Inlet,36,Conc,1,JEA_Std,IN-Type3,2024,Manual,Manual,,Type 3 Ditch Bottom Inlet
+JEAR004P,R,Pipe,4,PVC,1,JEA_Std,R-PVC-04,2024,Manual,Manual,,4in Reclaimed Water (Purple)
+JEAR006P,R,Pipe,6,PVC,1,JEA_Std,R-PVC-06,2024,Manual,Manual,,6in Reclaimed Water (Purple)
+JEAR008P,R,Pipe,8,PVC,1,JEA_Std,R-PVC-08,2024,Manual,Manual,,8in Reclaimed Water (Purple)
+JEAR012P,R,Pipe,12,PVC,1,JEA_Std,R-PVC-12,2024,Manual,Manual,,12in Reclaimed Water (Purple)
+JEAR006V,R,Valve,6,Iron,1,Mueller,RV-6,2024,Manual,Manual,,6in Reclaimed Gate Valve
+JEAR008V,R,Valve,8,Iron,1,Mueller,RV-8,2024,Manual,Manual,,8in Reclaimed Gate Valve
+JEAR005M,R,Meter,0.625,Brass,1,Neptune,R-T-10_5/8,2024,Manual,Manual,,5/8in Reclaimed Meter
+JEAR010M,R,Meter,1,Brass,1,Neptune,R-T-10_1,2024,Manual,Manual,,1in Reclaimed Meter
+JEAR020M,R,Meter,2,Brass,1,Neptune,R-T-10_2,2024,Manual,Manual,,2in Reclaimed Meter
+JEAR001CS,R,Service,1,Brass,1,Ford,FB1000-4-R,2024,Manual,Manual,,1in Reclaimed Corp Stop
+JEAR001CB,R,Service,1,Brass,1,Ford,B44-444-R,2024,Manual,Manual,,1in Reclaimed Curb Stop

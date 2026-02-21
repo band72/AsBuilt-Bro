@@ -1,0 +1,41 @@
+// Basic Polygon Traversal Example
+// Initializes a baseline orientation, turns angle constraints, 
+// bounds a geometric square, and verifies closure automatically.
+
+RESET
+ECHO "--- Initializing Square Topology ---"
+
+// Fixed Baseline
+NE 1 5000.0000 5000.0000 "Origin"
+STN 1
+BS 0.0000 
+TRAV ON // Active chaining mode
+
+// Move East (90 degrees right)
+AD 2 90.0000 100.000 "East_Corner"
+
+// Move North (Instrument is facing East, turn 90 left = 270)
+AD 3 270.0000 100.000 "NorthEast_Corner"
+
+// Move West (Instrument facing North, turn 90 left = 270)
+AD 4 270.0000 100.000 "NorthWest_Corner"
+
+// Move South bounds
+AD 1 270.0000 100.000 "Origin Closing"
+
+TRAV OFF
+
+// Outline and Draw Geometry
+ECHO "--- Drawing Layout Boundaries ---"
+FIGURE SQUARE_MAP
+BEG SQUARE_MAP
+FIG 1
+FIG 2
+FIG 3
+FIG 4
+FIG 1
+END
+
+// Validate Area and Closure Error Tolerance
+CLOSURE
+REPORT MAPCHECK

@@ -1,0 +1,122 @@
+// Robust COGO Test Script - Figure-based Horizontal Curves
+// This script thoroughly tests the creation of complex curvilinear 
+// geometries, relying heavily on the FIG command (CONT alias)
+// to assemble figures, and the XC command to simulate curves.
+
+CLEAR
+LOG ON
+
+// ==========================================
+// 1. Establish Alignment Control Points
+// ==========================================
+// Let's create a main alignment path with several PI (Point of Intersection) points
+NE 1 5000.000 5000.000 "Start of Alignment"
+NE 2 6000.000 5500.000 "PI 1"
+NE 3 6000.000 7000.000 "PI 2"
+NE 4 5000.000 7500.000 "PI 3"
+NE 5 4500.000 7000.000 "PI 4"
+NE 6 4500.000 6000.000 "End of Alignment"
+
+// Compute Azimuths and Distances for reference
+INV 1 2
+INV 2 3
+INV 3 4
+INV 4 5
+INV 5 6
+
+// ==========================================
+// 2. Centerline Figure Construction (using FIG command)
+// ==========================================
+// We will build a continuous centerline route using the FIG alias.
+BEG CENTERLINE
+
+// Add the Start Point
+FIG 1
+
+// First Curve Segment (Simulating a long curve with XC commands)
+// Synthesized curve points are auto-appended to the figure
+XC ZD (BULB) 200.0 30.0000 50.0
+XC ZD (BULB) 200.0 40.0000 50.0
+XC ZD (BULB) 200.0 50.0000 50.0
+
+// Tie back into next PI
+FIG 2
+
+// Second Curve Segment (Reverse curve simulation)
+XC ZD (BULB) 300.0 120.0000 75.0
+XC ZD (BULB) 300.0 110.0000 75.0
+XC ZD (BULB) 300.0 100.0000 75.0
+
+// Next PI
+FIG 3
+
+// Third Curve Segment
+XC ZD (BULB) 150.0 200.0000 40.0
+XC ZD (BULB) 150.0 220.0000 40.0
+XC ZD (BULB) 150.0 240.0000 40.0
+
+// Next PI
+FIG 4
+
+// Standard straight segment to PI 5
+FIG 5
+
+// Final Curve to the exit
+XC BD (BULB) 500.0 3 45.0000 100.0
+XC BD (BULB) 500.0 3 55.0000 100.0
+XC BD (BULB) 500.0 3 65.0000 100.0
+
+// Tie into the end
+FIG 6
+
+// End Centerline Assembly
+END
+
+// Validate the geometry closure and area of the complex curve route
+MAPCHECK CENTERLINE
+
+// ==========================================
+// 3. Right of Way Figure Construction (Offsets)
+// ==========================================
+// Let's create an offset bounding box using standard point definitions
+// and test closing a complete loop strictly with FIG commands.
+
+NE 101 4900.000 5000.000 "ROW Start SW"
+NE 102 6100.000 5500.000 "ROW PI 1 NW"
+NE 103 6100.000 7000.000 "ROW PI 2 NE"
+NE 104 5000.000 7600.000 "ROW PI 3 SE"
+
+BEG ROW_BOUNDARY
+FIG 101
+FIG 102
+FIG 103
+FIG 104
+FIG 101
+END
+
+MAPCHECK ROW_BOUNDARY
+
+// ==========================================
+// 4. Cul-de-Sac Loop Construction
+// ==========================================
+// Build a standalone looped contour with extensive curve points
+BEG CUL_DE_SAC
+FIG 5
+// 360 degree simulated curve sweep
+XC ZD (BULB) 60.0 0.0000 20.0
+XC ZD (BULB) 60.0 45.0000 20.0
+XC ZD (BULB) 60.0 90.0000 20.0
+XC ZD (BULB) 60.0 135.0000 20.0
+XC ZD (BULB) 60.0 180.0000 20.0
+XC ZD (BULB) 60.0 225.0000 20.0
+XC ZD (BULB) 60.0 270.0000 20.0
+XC ZD (BULB) 60.0 315.0000 20.0
+FIG 5
+END
+
+MAPCHECK CUL_DE_SAC
+
+// Output Final Verifications
+LIST PTS
+SAVE fig_curve_comprehensive.cogo
+LOG OFF

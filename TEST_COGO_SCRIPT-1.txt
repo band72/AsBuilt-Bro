@@ -1,0 +1,266 @@
+; ============================================================
+; RCS COGO SCRIPT - FULL REGRESSION TEST (LONG + THOROUGH)
+; Purpose:
+;   - Exercise EVERY command path: parse, compute, state, output.
+;   - Include valid + invalid inputs.
+;   - Verify deterministic results (no UI dependence).
+;
+; Conventions used here:
+;   - Lines starting with ';' are comments.
+;   - Sections are numbered.
+;   - "EXPECT:" comment lines describe expected outcomes.
+;
+; IMPORTANT:
+;   - Replace any command names that differ in your cmdhelp.txt.
+;   - Keep this file as the master regression test.
+; ============================================================
+
+; =========================
+; 0) ENV / RESET / VERSION
+; =========================
+RESET
+; EXPECT: clears points, figures, traverse state, current settings
+
+ABOUT
+HELP
+HELP ALL
+; EXPECT: help text rendered without exceptions
+
+SET UNITS USFT
+SET ANGLE_FORMAT DMS
+SET BEARING_FORMAT QUADRANT
+SET DIST_PREC 0.01
+SET ANG_PREC 1
+SET CURVE_PREC 0.01
+SET COORD_ORDER NE
+SET ELEV_UNIT FT
+; EXPECT: settings applied
+
+ECHO ON
+LOG ON
+; EXPECT: runner prints each parsed command + logging enabled
+
+; =========================
+; 1) BASIC POINT CREATION
+; =========================
+; --- 1.1: explicit coordinate points
+PT 1001 N 10000.00 E 5000.00 Z 25.00 DESC "CONTROL-1"
+PT 1002 N 10000.00 E 6000.00 Z 25.00 DESC "CONTROL-2"
+PT 1003 N 11000.00 E 6000.00 Z 25.00 DESC "CONTROL-3"
+PT 1004 N 11000.00 E 5000.00 Z 25.00 DESC "CONTROL-4"
+; EXPECT: 4 points added, descriptions set, elevations set
+
+LIST PTS
+SHOW PT 1001
+SHOW PT 1002
+; EXPECT: viewer list includes all points with NEZ + desc
+
+; --- 1.2: auto point numbering
+AP ON
+PT N 12000.00 E 5000.00 Z 25.00 DESC "AUTO-PT-A"
+PT N 12000.00 E 6000.00 Z 25.00 DESC "AUTO-PT-B"
+AP OFF
+; EXPECT: points assigned new numbers, no collisions
+
+; --- 1.3: duplicate handling
+PT 1001 N 9999.99 E 4999.99 Z 25.00 DESC "DUPLICATE-ID-TEST"
+; EXPECT: either error (preferred) OR overwrite with warning (consistent behavior)
+
+; =========================
+; 2) BEARING/DISTANCE (BD) + TRAVERSE
+; =========================
+; Common format from your earlier examples:
+;   BD <fromPt> <bearing_dddddd?> <toCreateQuadrant?> <distance> <desc?>
+; Your actual implementation may vary. Adjust to match your parser rules.
+
+; --- 2.1: create traverse from CONTROL-1 (1001)
+; Use near-cardinal and typical angles. Include quadrant bearings.
+; Format below assumes: BD <FromPt> <AngleDecimalDegrees> <QuadrantCode> <Distance> <Desc>
+; QuadrantCode: 1=NE, 2=SE, 3=SW, 4=NW (adjust if yours differs)
+
+BD 1001 45.0000 1 100.00 DESC "BD-NE-45-100"
+BD 1001 89.9999 1 50.00  DESC "BD-NE-NEAR-EAST"
+BD 1001 0.0001  1 75.00  DESC "BD-NE-NEAR-NORTH"
+
+; EXPECT: 3 new points created at computed locations (or lines if your engine does that)
+
+; --- 2.2: chain BD from last point (if supported)
+; If you support "CP" current point / last point:
+CP LAST
+BD CP 90.0000 2 100.00 DESC "BD-SE-90-100"
+BD CP 45.0000 3 141.42 DESC "BD-SW-45-141.42"
+; EXPECT: uses current point as start
+
+; --- 2.3: traverse commands (if present)
+TRN START 2000 DESC "TRAVERSE-TEST-1"
+TRN ADD 1001
+TRN ADD 1002
+TRN ADD 1003
+TRN ADD 1004
+TRN CLOSE
+TRN REPORT
+; EXPECT: closure near zero for rectangle; report lists misclosure + area if supported
+
+; =========================
+; 3) ANGLE/TURN COMMANDS
+; =========================
+; These validate wrap-around 0/360, left/right turns, deflection, etc.
+
+; Example commands (rename to your actual):
+; TURN <fromPt> <backsightPt> <angle> <LR> <distance> [desc]
+TURN 1002 1001 90.0000 R 100.00 DESC "TURN-R-90"
+TURN 1002 1001 90.0000 L 100.00 DESC "TURN-L-90"
+TURN 1002 1001 359.9999 R 10.00 DESC "TURN-WRAP"
+; EXPECT: correct azimuth wrapping and point creation
+
+; =========================
+; 4) INTERSECTIONS
+; =========================
+; Validate line-line, line-arc, arc-arc, bearing-bearing, etc.
+
+; --- 4.1: line-line intersection (LNLN)
+; LNLN <ptA1> <ptA2> <ptB1> <ptB2> [storePt]
+LNLN 1001 1003 1002 1004 STORE 3001 DESC "LNLN-RECT-CROSS"
+SHOW PT 3001
+; EXPECT: intersection near center (N=10500, E=5500) if rectangle axes aligned
+
+; --- 4.2: bearing-bearing intersection (AZAZ) if supported
+; AZAZ <pt1> <az1> <pt2> <az2> STORE <pt>
+AZAZ 1001 45.0000 1002 315.0000 STORE 3002 DESC "AZAZ-TEST"
+; EXPECT: intersection computed; verify not parallel
+
+; --- 4.3: range-range / circle-circle (RKRK) if supported
+; RKRK <pt1> <r1> <pt2> <r2> SOLN <1|2> STORE <pt>
+RKRK 1001 500.00 1002 500.00 SOLN 1 STORE 3003 DESC "RKRK-SOL1"
+RKRK 1001 500.00 1002 500.00 SOLN 2 STORE 3004 DESC "RKRK-SOL2"
+; EXPECT: two symmetric solutions
+
+; =========================
+; 5) OFFSETS / PARALLELS / STATION-OFFSET
+; =========================
+; Offset a line/figure left/right; offset a point along a bearing; etc.
+
+; OFFSETLINE <pt1> <pt2> <offset> <L|R> STORE <ptA> <ptB>
+OFFSETLINE 1001 1002 10.00 R STORE 4001 4002 DESC "OFFLINE-R-10"
+OFFSETLINE 1001 1002 10.00 L STORE 4003 4004 DESC "OFFLINE-L-10"
+; EXPECT: parallel line endpoints created
+
+; PTOFFSET <basePt> <bearing> <dist> <offsetLR> <offsetDist> STORE <pt>
+PTOFFSET 1001 90.0000 100.00 L 25.00 STORE 4010 DESC "PT-OFFSET"
+; EXPECT: computed point
+
+; =========================
+; 6) CURVES
+; =========================
+; Exercise each curve solver path you support:
+; (R, Delta, Arc, Chord, Tangent, etc.)
+
+; --- 6.1: simple curve by Radius + Delta
+; CURVE RD <pcPt> R <radius> DELTA <delta> DIR <L|R> STORE <ptPC> <ptPT> <ptCC?>
+CURVE RD PC 1002 R 200.00 DELTA 45.0000 DIR R STORE 5001 5002 5003 DESC "CURVE-RD"
+; EXPECT: PC/PT/Center (if stored) computed correctly
+
+; --- 6.2: curve by Radius + Arc length
+CURVE RA PC 1002 R 250.00 ARC 196.3495 DIR L STORE 5011 5012 5013 DESC "CURVE-RA"
+; EXPECT: delta derived from arc
+
+; --- 6.3: curve by Chord + Delta
+CURVE CD PC 1002 CHORD 150.00 DELTA 60.0000 DIR R STORE 5021 5022 5023 DESC "CURVE-CD"
+; EXPECT: radius derived from chord + delta
+
+; --- 6.4: reverse curve / tiny delta
+CURVE RD PC 1002 R 1000.00 DELTA 0.0100 DIR R STORE 5031 5032 5033 DESC "CURVE-TINY"
+; EXPECT: stable numeric behavior (no divide-by-zero)
+
+; =========================
+; 7) AREA / CLOSURE / POLYGON
+; =========================
+; If you have polygon building:
+FIGURE START 6000 DESC "AREA-POLY-1"
+FIGURE ADD 1001
+FIGURE ADD 1002
+FIGURE ADD 1003
+FIGURE ADD 1004
+FIGURE CLOSE
+FIGURE REPORT 6000
+AREA FIGURE 6000
+CLOSURE FIGURE 6000
+; EXPECT: area around 1,000,000 sf for 1000x1000 rectangle (if that’s what your coords create)
+; (Adjust expected based on your actual point layout.)
+
+; =========================
+; 8) EXPORTS (DXF / CSV / JSON / LANDXML)
+; =========================
+; These should not require AutoCAD—just generate files from engine state.
+
+EXPORT PTS CSV "out_points.csv"
+EXPORT PTS JSON "out_points.json"
+EXPORT FIGURES DXF "out_figures.dxf"
+EXPORT LANDXML "out_survey.xml"
+; EXPECT: files written, non-empty, schema-valid where applicable
+
+; =========================
+; 9) QA/QC REPORTING
+; =========================
+REPORT SUMMARY
+REPORT SETTINGS
+REPORT ERRORS
+; EXPECT: well-formatted reports, no crashes with empty sections
+
+; =========================
+; 10) NEGATIVE / ERROR-HANDLING TESTS
+; =========================
+; Each of these should FAIL GRACEFULLY with a clear message + line number
+
+PT
+PT N ABC E 100.00
+BD 1001
+BD 999999 45.0000 1 100.00
+LNLN 1001 1001 1002 1004
+AZAZ 1001 90.0 1002 90.0
+RKRK 1001 -10.00 1002 20.00 SOLN 1 STORE 9999
+CURVE RD PC 1002 R 0.00 DELTA 45.00 DIR R STORE 7001 7002 7003
+CURVE RD PC 1002 R 200.00 DELTA 180.0000 DIR R STORE 7004 7005 7006
+OFFSETLINE 1001 1001 10.00 R STORE 7010 7011
+EXPORT PTS CSV ""
+SET ANGLE_FORMAT BANANAS
+; EXPECT: each produces deterministic error codes/messages, engine continues to next line
+
+; =========================
+; 11) STRESS / SCALE TESTS
+; =========================
+; Generate many points and ensure performance + no drift.
+
+AP ON
+SET DIST_PREC 0.01
+SET ANG_PREC 1
+
+; long chain with varying bearings
+BD CP 10.0000 1 10.00 DESC "CHAIN-001"
+BD CP 20.0000 1 10.00 DESC "CHAIN-002"
+BD CP 30.0000 1 10.00 DESC "CHAIN-003"
+BD CP 40.0000 1 10.00 DESC "CHAIN-004"
+BD CP 50.0000 1 10.00 DESC "CHAIN-005"
+BD CP 60.0000 1 10.00 DESC "CHAIN-006"
+BD CP 70.0000 1 10.00 DESC "CHAIN-007"
+BD CP 80.0000 1 10.00 DESC "CHAIN-008"
+BD CP 89.0000 1 10.00 DESC "CHAIN-009"
+BD CP 89.9000 1 10.00 DESC "CHAIN-010"
+BD CP 0.1000  2 10.00 DESC "CHAIN-011"
+BD CP 179.9000 3 10.00 DESC "CHAIN-012"
+BD CP 179.0000 4 10.00 DESC "CHAIN-013"
+
+AP OFF
+LIST PTS
+; EXPECT: dozens of points, no NaNs, no duplicate IDs
+
+; =========================
+; 12) FINAL SNAPSHOT
+; =========================
+SAVE SESSION "test_session_snapshot.json"
+; EXPECT: session saved with points/settings/figures/logs
+
+LOG OFF
+ECHO OFF
+END
+; EXPECT: clean termination

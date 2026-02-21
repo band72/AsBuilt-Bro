@@ -1,0 +1,49 @@
+// TEST_SYMBOLS_SCRIPT.txt
+// Designed to test professional symbols for Water, Sewer, and Gas
+
+// Step 0: Define Points first (Points must exist before referencing)
+// Syntax: Store PointID North East Elevation Description
+STORE 100 5000 5000 10.0 "Water Valve Start"
+STORE 101 5050 5000 10.5 "Water Mid"
+STORE 102 5100 5000 11.0 "Water Tee"
+STORE 103 5150 5000 11.5 "Hydrant End"
+STORE 104 5100 5020 11.0 "Meter End"
+
+STORE 200 5000 4950 9.0 "Sewer Start"
+STORE 201 5050 4950 8.5 "Sewer Mid"
+STORE 202 5100 4950 8.0 "Sewer End"
+
+STORE 300 5000 4900 10.0 "Storm Start"
+STORE 301 5050 4900 9.5 "Storm End"
+
+// --- WATER SYSTEM ---
+// Material: PVC, Diameter: 8
+! Define Water Loop
+PRUN START WATER DIAM 8 MAT PVC
+SS-B 100 5000 5000 WV-1 "Water Valve 8in"   
+101 5050 5000
+102 5100 5000
+SS-E 103 5150 5000 FH-1 "Fire Hydrant"      
+PRUN END
+
+// Water Service
+PRUN START WATER DIAM 1 MAT COPPER
+SS-B 102 5100 5000 
+SS-E 104 5100 5020 WM-1 "Water Meter"       
+PRUN END
+
+// --- SEWER SYSTEM ---
+// Material: PVC, Diameter: 12
+! Define Sewer Line
+PRUN START WW DIAM 12 MAT PVC
+SS-B 200 5000 4950 MH-1 "Sanitary Manhole"  
+201 5050 4950
+SS-E 202 5100 4950 MH-2 "Sanitary Manhole"
+PRUN END
+
+// --- STORM (FITTINGS) ---
+! Define Storm Drain
+PRUN START STORM DIAM 24 MAT RCP
+SS-B 300 5000 4900 CB-1 "Catch Basin"       
+SS-E 301 5050 4900 FITT-1 "Elbow fitting"  
+PRUN END

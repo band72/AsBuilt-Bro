@@ -1,0 +1,119 @@
+{
+  "Runs": [
+    {
+      "Id": "507546f2-8f6a-43b2-8d7b-cad87880e09c",
+      "PartKey": "Pipe-WW-8",
+      "Type": "WW",
+      "FromPointId": "2002",
+      "ToPointId": "2003",
+      "Diameter": 8,
+      "Material": "PVC",
+      "InvertStart": 4.5,
+      "InvertEnd": 4,
+      "FlowLocked": false,
+      "FlowReversed": false
+    },
+    {
+      "Id": "e6c08f92-daf3-4ab2-8e39-c8fca85c4784",
+      "PartKey": "Pipe-WW-8",
+      "Type": "WW",
+      "FromPointId": "2001",
+      "ToPointId": "2002",
+      "Diameter": 8,
+      "Material": "PVC",
+      "InvertStart": 5,
+      "InvertEnd": 4.5,
+      "FlowLocked": false,
+      "FlowReversed": false
+    },
+    {
+      "Id": "f1c9e69c-279e-44d3-9248-ab654585dc96",
+      "PartKey": "Pipe-W-8",
+      "Type": "W",
+      "FromPointId": "1002",
+      "ToPointId": "1003",
+      "Diameter": 8,
+      "Material": "DIP",
+      "InvertStart": 6.5,
+      "InvertEnd": 7,
+      "FlowLocked": false,
+      "FlowReversed": false
+    },
+    {
+      "Id": "dc89fd3c-bd1a-490b-9432-c74345bb7388",
+      "PartKey": "Pipe-R-6",
+      "Type": "R",
+      "FromPointId": "3001",
+      "ToPointId": "3002",
+      "Diameter": 6,
+      "Material": "PVC",
+      "InvertStart": 6,
+      "InvertEnd": 6.2,
+      "FlowLocked": false,
+      "FlowReversed": false
+    },
+    {
+      "Id": "5a3d02eb-5994-472d-98c7-d7f9a9998dec",
+      "PartKey": "Pipe-W-8",
+      "Type": "W",
+      "FromPointId": "1001",
+      "ToPointId": "1002",
+      "Diameter": 8,
+      "Material": "DIP",
+      "InvertStart": 6,
+      "InvertEnd": 6.5,
+      "FlowLocked": false,
+      "FlowReversed": false
+    }
+  ],
+  "Structures": [
+    {
+      "Id": "d96dd6a8-4a7a-4e13-8061-a838561fcccc",
+      "PointId": "2002",
+      "Type": "JEAWW048MH",
+      "RimElevation": null,
+      "InvertIn": null,
+      "InvertOut": null
+    },
+    {
+      "Id": "2182d4d0-1a86-4c7d-99a0-0a076b386b56",
+      "PointId": "2003",
+      "Type": "JEAWW048MH",
+      "RimElevation": null,
+      "InvertIn": null,
+      "InvertOut": null
+    },
+    {
+      "Id": "43a03748-c3e8-478f-945b-f7ce97085206",
+      "PointId": "3002",
+      "Type": "JEAW006H",
+      "RimElevation": null,
+      "InvertIn": null,
+      "InvertOut": null
+    },
+    {
+      "Id": "f9512272-f92d-4efb-9a9b-6d38afa12834",
+      "PointId": "2001",
+      "Type": "JEAWW048MH",
+      "RimElevation": null,
+      "InvertIn": null,
+      "InvertOut": null
+    },
+    {
+      "Id": "845847c7-e58e-4759-b4ab-f69b65a7673a",
+      "PointId": "3001",
+      "Type": "JEAR006V",
+      "RimElevation": null,
+      "InvertIn": null,
+      "InvertOut": null
+    },
+    {
+      "Id": "cf9f30c9-5f39-4565-9167-b40fc2676bde",
+      "PointId": "1002",
+      "Type": "JEAW008V",
+      "RimElevation": null,
+      "InvertIn": null,
+      "InvertOut": null
+    }
+  ]
+}

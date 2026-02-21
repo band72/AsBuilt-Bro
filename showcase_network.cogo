@@ -1,0 +1,83 @@
+// ==========================================
+// ENTERPRISE COGO & PIPING SHOWCASE SCRIPT
+// ==========================================
+
+ECHO "--- Initializing Coordinate Grid ---"
+units feet
+angles dms
+
+// --- COGO POINTS ---
+// Note: Points plotted with Northing, Easting, Elevation
+// Z-Coordinates are utilized for Wastewater Slope Validations
+
+// Area 1: Wastewater Line
+PT 1 5000 5000 100.0 "WW Node A"
+PT 2 5000 5150 100.0 "WW Node B"
+PT 3 5000 5300 100.0 "WW Node C"
+
+// Area 2: Potable Water Distribution
+PT 4 5050 5000 100.0 "W Node A"
+PT 5 5050 5100 100.0 "W Node B"
+PT 6 5050 5200 100.0 "Valve Point"
+PT 7 5050 5300 100.0 "W Node C"
+
+// Area 3: Storm Sewer System
+PT 8 4950 5000 98.0 "Storm A"
+PT 9 4950 5150 98.0 "Storm B"
+
+// Area 4: Reclaimed Water Transport
+PT 10 4900 5000 102.0 "Reclaim A"
+PT 11 4900 5200 102.0 "Reclaim B"
+
+
+ECHO "--- Generating Enterprise Pipelines ---"
+pipe-engine-on
+cogo-engine-off
+
+// 1. Wastewater (WW) - Mapped to Green
+// We explicitly provide Start & End Inverts (Z-drop)
+// The engine verifies a slope > 0.40% automatically across the 150ft lengths.
+PRUN START WW DIAM 8 MAT PVC FIG SAN_MAIN
+WW-B 1
+SS-C 1 Manhole
+// 150ft length with 1.0ft drop = ~0.66% slope (Valid!)
+WW-C 2 95.0 94.0
+SS-C 2 Manhole
+// 150ft length with 1.5ft drop = ~1.00% slope (Valid!)
+WW-C 3 94.0 92.5
+SS-C 3 Manhole
+PRUN END
+
+// 2. High Pressure Water (W) - Mapped to Blue
+// Populated with aesthetic Water Valves, Meters, and Hydrants
+PRUN START W DIAM 12 MAT DIP FIG WATER_DIST
+W-B 4
+SS-C 4 Meter
+W-C 5
+SS-C 5 Hydrant
+W-C 6
+SS-C 6 Valve
+W-C 7
+SS-C 7 Fitting
+PRUN END
+
+// 3. Storm Drainage (S) - Mapped to Cyan
+// Bound with new Inlet block geometry types
+PRUN START S DIAM 24 MAT RCP FIG STORM_DRAIN
+S-B 8
+SS-C 8 Inlet
+S-C 9
+SS-C 9 Inlet
+PRUN END
+
+// 4. Reclaimed Water (R) - Mapped to Purple
+PRUN START R DIAM 4 MAT PVC FIG RECLAIM_RUN
+R-B 10
+SS-C 10 Valve
+R-C 11
+SS-C 11 Meter
+PRUN END
+
+
+pipe-engine-off
+ECHO "--- Network Generation Complete ---"

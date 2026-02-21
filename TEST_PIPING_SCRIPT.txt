@@ -1,0 +1,49 @@
+! RCS COGO Enterprise - Automated Test Data (Part 2: PIPING)
+! INSTRUCTIONS:
+! 1. Open the "Piping Script" tab.
+! 2. Click "Import..." and select this file (or paste its content).
+! 3. Ensure you have already run the Points script!
+! 4. Click "Process Piping Script".
+! 5. Verify that pipe runs and structures are created in the "Piping" tab.
+
+! --------------------------------------------------------------------------------
+! 2. DEFINE PIPE RUNS (Water, Sewer, Reclaimed)
+! --------------------------------------------------------------------------------
+! Format: PRUN START {System} DIAM {Dia} MAT {Material} FIG {FigName}
+!         {FromPoint} {ToPoint} {StartInvert} {EndInvert}
+
+! Water Main (8" DIP)
+PRUN START W DIAM 8 MAT DIP FIG WaterMain1
+1001 1002 6.00 6.50
+1002 1003 6.50 7.00
+PRUN END
+
+! Gravity Sewer (8" PVC)
+PRUN START WW DIAM 8 MAT PVC FIG SewerLine1
+2001 2002 5.00 4.50
+2002 2003 4.50 4.00
+PRUN END
+
+! Reclaimed Water (6" PVC)
+PRUN START R DIAM 6 MAT PVC FIG ReclaimedLine1
+3001 3002 6.00 6.20
+PRUN END
+
+! --------------------------------------------------------------------------------
+! 3. DEFINE STRUCTURES / FITTINGS
+! --------------------------------------------------------------------------------
+! These simulate structures or fittings at specific points.
+! Format: SS-C {PointID} {Code/Type}
+
+! Water Valve at 1002
+SS-C 1002 JEAW008V
+
+! Sewer Manholes
+SS-C 2001 JEAWW048MH
+SS-C 2002 JEAWW048MH
+SS-C 2003 JEAWW048MH
+
+! Reclaimed Valve & Hydrant
+SS-C 3001 JEAR006V
+SS-C 3002 JEAW006H
+

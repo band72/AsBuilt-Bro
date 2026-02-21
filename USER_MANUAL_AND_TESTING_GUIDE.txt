@@ -1,0 +1,65 @@
+RCS COGO Enterprise - User Manual & Testing Guide
+===============================================
+
+This guide explains how to use the software from start to finish and provides step-by-step instructions for testing using the provided automated test data.
+
+1. GETTING STARTED
+------------------
+1. **Launch the Application**: Run `RCS.Cogo.Wpf.exe`.
+2. **Create/Open Project**:
+   - Go to `File > Project > New Project...` to start fresh.
+   - Or `File > Project > Open Project...` to load an existing `.sqlite` database.
+
+2. MAIN WORKFLOW
+----------------
+The application is organized into tabs:
+- **Points**: View and edit survey points.
+- **Cogo**: Manual command line for single COGO commands.
+- **Cogo Script**: Batch automation for creating points and geometry.
+- **Piping**: Dedicated UI for designing pipe networks.
+- **Piping Script**: Automation for pipe runs and structures.
+- **Installed Assets**: Detailed asset database.
+
+3. TESTING INSTRUCTIONS (STEP-BY-STEP)
+--------------------------------------
+
+**Step 1: Project Setup**
+1. Launch the app.
+2. Select `File > Project > New Project...`.
+3. Name it "TestProject_02".
+
+**Step 2: Generate Points (Part 1)**
+1. **Open the "Cogo Script" tab.**
+2. Click `Import Script` and select `TEST_POINTS_SCRIPT.txt`.
+   - Alternatively, copy/paste the content.
+3. Click `Run Script`.
+   - **Verify**: Check the Output Window. It should say "Stored and Occupied Point...".
+   - **Verify**: Switch to the **Points** tab. You should see points 1000-3003 listed.
+
+**Step 3: Generate Pipe Network (Part 2)**
+1. **Open the "Piping Script" tab.** (Note: This is different from Cogo Script).
+2. Click `Import...` and select `TEST_PIPING_SCRIPT.txt`.
+   - Alternatively, copy/paste the content.
+3. Click `Process Piping Script`.
+   - **Verify**: Switch to the **Piping** tab.
+   - You should see 3 Pipe Runs (from 1001->1002, 2001->2002, 3001->3002, etc.).
+   - You should see Structures listed (Valves at 1002, MHs at 2001-2003, etc.).
+
+**Step 4: Verify Materials & Installed Assets**
+1. **Verify**: In the **Piping** tab, verify the "Structures" list matches the script inputs.
+2. **Materials**: Go to the **Materials** tab. Search for the items (e.g. JEAW008V) and add them to the Project Schedule manually if desired.
+3. **Installed Assets**: Expand the **Installed Assets** pane (right side).
+   - Check "Water Valve" -> expands to show the valve at 1002.
+   - Check "Manhole" -> expands to show the manholes.
+   - (Note: Automatic population depends on whether the script engine links them. If not, manual entry is required as per the original guide).
+
+**Step 5: Exporting Data**
+1. **Points**: `File > Export > Export Points (TXT)...`.
+2. **Installed Assets**: `File > Export > Export Installed Assets Report...`.
+   - Choose a folder.
+   - Open the generated CSVs (e.g., `TestProject_02_WaterValve.csv`) to verify all columns are present.
+
+4. TROUBLESHOOTING
+------------------
+- If "Point not found": Make sure you ran the `TEST_POINTS_SCRIPT.txt` in the **Cogo Script** tab FIRST.
+- If "Unknown command PRUN": Make sure you are running the piping script in the **Piping Script** tab, NOT the Cogo Script tab.

@@ -1,0 +1,25 @@
+// Test script to verify fixes for reported errors
+
+// Setup
+NE 1 5000.0000 5000.0000 0.0000 "Start"
+STN 1
+// BD <Pt> <Brg> <Quad> <Dist>
+// Previous Error: Invalid Quadrant (1-4).
+// Input was: BD (point) [bearing] [quadrant] [distance]
+// Example: BD 2 45.0000 1 100.00
+BD 2 45.0000 1 100.00 "Test BD"
+
+// TRAV
+TRAV ON
+TRAV OFF
+
+// Figure commands
+// Previous: Figure BND started -> Unknown PNT -> Unknown XC -> Unknown MAPCHK
+BEG BND
+PNT 1
+PNT 2
+// XC tests (basic scaffold)
+XC ZD (BULB) 100.0 45.00 50.0
+PNT 2_XC_0
+END
+MAPCHK BND

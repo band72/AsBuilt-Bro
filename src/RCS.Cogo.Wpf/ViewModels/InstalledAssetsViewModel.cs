@@ -1,0 +1,365 @@
+using RCS.Data;
+using RCS.Data.Entities;
+using RCS.Services;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
+using System.Threading.Tasks;
+using System.Linq;
+
+namespace RCS.Cogo.Wpf.ViewModels;
+
+public class InstalledAssetsViewModel : ViewModelBase
+{
+    private readonly AppDbContext _dbContext;
+    
+    // Pipe Crossing Service
+    private readonly InstalledAssetService<PipeCrossing> _pipeCrossingService;
+
+    // Services for Water
+    private readonly InstalledAssetService<WaterPipe> _waterPipeService;
+    private readonly InstalledAssetService<WaterPoint> _waterPointService;
+    private readonly InstalledAssetService<WaterFitting> _waterFittingService;
+    private readonly InstalledAssetService<WaterValve> _waterValveService;
+    private readonly InstalledAssetService<WaterHydrant> _waterHydrantService;
+    private readonly InstalledAssetService<WaterMeter> _waterMeterService;
+    private readonly InstalledAssetService<WaterLocateBox> _waterLocateBoxService;
+
+    // Services for WW
+    private readonly InstalledAssetService<WWGravityPipe> _wwGravityPipeService;
+    private readonly InstalledAssetService<WWPressurePipe> _wwPressurePipeService;
+    private readonly InstalledAssetService<WWPoint> _wwPointService;
+    private readonly InstalledAssetService<WWFitting> _wwFittingService;
+    private readonly InstalledAssetService<Manhole> _manholeService;
+    private readonly InstalledAssetService<WWServicePoint> _wwServicePointService;
+    private readonly InstalledAssetService<WWValve> _wwValveService;
+    private readonly InstalledAssetService<WWLocateBox> _wwLocateBoxService;
+
+    // Services for Reclaimed
+    private readonly InstalledAssetService<ReclaimedPipe> _reclaimedPipeService;
+    private readonly InstalledAssetService<ReclaimedPoint> _reclaimedPointService;
+    private readonly InstalledAssetService<ReclaimedFitting> _reclaimedFittingService;
+    private readonly InstalledAssetService<ReclaimedValve> _reclaimedValveService;
+    private readonly InstalledAssetService<ReclaimedHydrant> _reclaimedHydrantService;
+    private readonly InstalledAssetService<ReclaimedMeter> _reclaimedMeterService;
+    private readonly InstalledAssetService<ReclaimedLocateBox> _reclaimedLocateBoxService;
+
+    // Services for Chilled
+    private readonly InstalledAssetService<ChilledPipe> _chilledPipeService;
+    private readonly InstalledAssetService<ChilledPoint> _chilledPointService;
+    private readonly InstalledAssetService<ChilledFitting> _chilledFittingService;
+    private readonly InstalledAssetService<ChilledValve> _chilledValveService;
+    private readonly InstalledAssetService<ChilledMeter> _chilledMeterService;
+    private readonly InstalledAssetService<ChilledLocateBox> _chilledLocateBoxService;
+
+    private readonly ProjectAssetService _projectService;
+
+    // Collections
+    public ObservableCollection<PipeCrossing> PipeCrossings { get; } = new();
+
+    // Water Collections
+    public ObservableCollection<WaterPipe> WaterPipes { get; } = new();
+    public ObservableCollection<WaterPoint> WaterPoints { get; } = new(); // "Water Points along Pipe"
+    public ObservableCollection<WaterFitting> WaterFittings { get; } = new();
+    public ObservableCollection<WaterValve> WaterValves { get; } = new();
+    public ObservableCollection<WaterHydrant> WaterHydrants { get; } = new();
+    public ObservableCollection<WaterMeter> WaterMeters { get; } = new();
+    public ObservableCollection<WaterLocateBox> WaterLocateBoxes { get; } = new();
+
+    // WW Collections
+    public ObservableCollection<WWGravityPipe> WWGravityPipes { get; } = new();
+    public ObservableCollection<WWPressurePipe> WWPressurePipes { get; } = new();
+    public ObservableCollection<WWPoint> WWPoints { get; } = new(); // "WW Points along Pipe"
+    public ObservableCollection<WWFitting> WWFittings { get; } = new();
+    public ObservableCollection<Manhole> Manholes { get; } = new();
+    public ObservableCollection<WWServicePoint> WWServicePoints { get; } = new(); // "WW Service Point & Meter"
+    public ObservableCollection<WWValve> WWValves { get; } = new();
+    public ObservableCollection<WWLocateBox> WWLocateBoxes { get; } = new();
+
+    // Reclaimed Collections
+    public ObservableCollection<ReclaimedPipe> ReclaimedPipes { get; } = new();
+    public ObservableCollection<ReclaimedPoint> ReclaimedPoints { get; } = new(); // "Reclaimed Points along Pipe"
+    public ObservableCollection<ReclaimedFitting> ReclaimedFittings { get; } = new();
+    public ObservableCollection<ReclaimedValve> ReclaimedValves { get; } = new();
+    public ObservableCollection<ReclaimedHydrant> ReclaimedHydrants { get; } = new();
+    public ObservableCollection<ReclaimedMeter> ReclaimedMeters { get; } = new();
+    public ObservableCollection<ReclaimedLocateBox> ReclaimedLocateBoxes { get; } = new();
+
+    // Chilled Collections
+    public ObservableCollection<ChilledPipe> ChilledPipes { get; } = new();
+    public ObservableCollection<ChilledPoint> ChilledPoints { get; } = new(); // "Chilled Points along Pipe"
+    public ObservableCollection<ChilledFitting> ChilledFittings { get; } = new();
+    public ObservableCollection<ChilledValve> ChilledValves { get; } = new();
+    public ObservableCollection<ChilledMeter> ChilledMeters { get; } = new();
+    public ObservableCollection<ChilledLocateBox> ChilledLocateBoxes { get; } = new();
+
+    private string _currentProjectId = "";
+
+    public InstalledAssetsViewModel()
+    {
+        _dbContext = new AppDbContext();
+        DbInitializer.Initialize(_dbContext);
+
+        _pipeCrossingService = new InstalledAssetService<PipeCrossing>(_dbContext);
+        _projectService = new ProjectAssetService(_dbContext);
+
+        // Water Init
+        _waterPipeService = new InstalledAssetService<WaterPipe>(_dbContext);
+        _waterPointService = new InstalledAssetService<WaterPoint>(_dbContext);
+        _waterFittingService = new InstalledAssetService<WaterFitting>(_dbContext);
+        _waterValveService = new InstalledAssetService<WaterValve>(_dbContext);
+        _waterHydrantService = new InstalledAssetService<WaterHydrant>(_dbContext);
+        _waterMeterService = new InstalledAssetService<WaterMeter>(_dbContext);
+        _waterLocateBoxService = new InstalledAssetService<WaterLocateBox>(_dbContext);
+
+        // WW Init
+        _wwGravityPipeService = new InstalledAssetService<WWGravityPipe>(_dbContext);
+        _wwPressurePipeService = new InstalledAssetService<WWPressurePipe>(_dbContext);
+        _wwPointService = new InstalledAssetService<WWPoint>(_dbContext);
+        _wwFittingService = new InstalledAssetService<WWFitting>(_dbContext);
+        _manholeService = new InstalledAssetService<Manhole>(_dbContext);
+        _wwServicePointService = new InstalledAssetService<WWServicePoint>(_dbContext);
+        _wwValveService = new InstalledAssetService<WWValve>(_dbContext);
+        _wwLocateBoxService = new InstalledAssetService<WWLocateBox>(_dbContext);
+
+        // Reclaimed Init
+        _reclaimedPipeService = new InstalledAssetService<ReclaimedPipe>(_dbContext);
+        _reclaimedPointService = new InstalledAssetService<ReclaimedPoint>(_dbContext);
+        _reclaimedFittingService = new InstalledAssetService<ReclaimedFitting>(_dbContext);
+        _reclaimedValveService = new InstalledAssetService<ReclaimedValve>(_dbContext);
+        _reclaimedHydrantService = new InstalledAssetService<ReclaimedHydrant>(_dbContext);
+        _reclaimedMeterService = new InstalledAssetService<ReclaimedMeter>(_dbContext);
+        _reclaimedLocateBoxService = new InstalledAssetService<ReclaimedLocateBox>(_dbContext);
+        
+        // Chilled Init
+        _chilledPipeService = new InstalledAssetService<ChilledPipe>(_dbContext);
+        _chilledPointService = new InstalledAssetService<ChilledPoint>(_dbContext);
+        _chilledFittingService = new InstalledAssetService<ChilledFitting>(_dbContext);
+        _chilledValveService = new InstalledAssetService<ChilledValve>(_dbContext);
+        _chilledMeterService = new InstalledAssetService<ChilledMeter>(_dbContext);
+        _chilledLocateBoxService = new InstalledAssetService<ChilledLocateBox>(_dbContext);
+    }
+
+    public async Task LoadProjectAsync(string projectId, string projectNumber)
+    {
+        _currentProjectId = projectId;
+        
+        await _projectService.EnsureProjectExistsAsync(projectId, projectNumber, "Project " + projectNumber);
+
+        async Task Load<T>(InstalledAssetService<T> service, ObservableCollection<T> collection) where T : InstalledAsset
+        {
+            var items = await service.LoadAsync(projectId);
+            collection.Clear();
+            foreach (var i in items) collection.Add(i);
+        }
+
+        await Load(_pipeCrossingService, PipeCrossings);
+
+        // Water
+        await Load(_waterPipeService, WaterPipes);
+        await Load(_waterPointService, WaterPoints);
+        await Load(_waterFittingService, WaterFittings);
+        await Load(_waterValveService, WaterValves);
+        await Load(_waterHydrantService, WaterHydrants);
+        await Load(_waterMeterService, WaterMeters);
+        await Load(_waterLocateBoxService, WaterLocateBoxes);
+
+        // WW
+        await Load(_wwGravityPipeService, WWGravityPipes);
+        await Load(_wwPressurePipeService, WWPressurePipes);
+        await Load(_wwPointService, WWPoints);
+        await Load(_wwFittingService, WWFittings);
+        await Load(_manholeService, Manholes);
+        await Load(_wwServicePointService, WWServicePoints);
+        await Load(_wwValveService, WWValves);
+        await Load(_wwLocateBoxService, WWLocateBoxes);
+
+        // Reclaimed
+        await Load(_reclaimedPipeService, ReclaimedPipes);
+        await Load(_reclaimedPointService, ReclaimedPoints);
+        await Load(_reclaimedFittingService, ReclaimedFittings);
+        await Load(_reclaimedValveService, ReclaimedValves);
+        await Load(_reclaimedHydrantService, ReclaimedHydrants);
+        await Load(_reclaimedMeterService, ReclaimedMeters);
+        await Load(_reclaimedLocateBoxService, ReclaimedLocateBoxes);
+
+        // Chilled
+        await Load(_chilledPipeService, ChilledPipes);
+        await Load(_chilledPointService, ChilledPoints);
+        await Load(_chilledFittingService, ChilledFittings);
+        await Load(_chilledValveService, ChilledValves);
+        await Load(_chilledMeterService, ChilledMeters);
+        await Load(_chilledLocateBoxService, ChilledLocateBoxes);
+    }
+
+    public async Task SaveItemAsync(object item)
+    {
+        if (string.IsNullOrEmpty(_currentProjectId)) return;
+        
+        if (item is PipeCrossing pc) await _pipeCrossingService.UpsertAsync(_currentProjectId, pc);
+        
+        // Water
+        else if (item is WaterPipe wp) await _waterPipeService.UpsertAsync(_currentProjectId, wp);
+        else if (item is WaterPoint wpo) await _waterPointService.UpsertAsync(_currentProjectId, wpo);
+        else if (item is WaterFitting wf) await _waterFittingService.UpsertAsync(_currentProjectId, wf);
+        else if (item is WaterValve wv) await _waterValveService.UpsertAsync(_currentProjectId, wv);
+        else if (item is WaterHydrant wh) await _waterHydrantService.UpsertAsync(_currentProjectId, wh);
+        else if (item is WaterMeter wm) await _waterMeterService.UpsertAsync(_currentProjectId, wm);
+        else if (item is WaterLocateBox wlb) await _waterLocateBoxService.UpsertAsync(_currentProjectId, wlb);
+
+        // WW
+        else if (item is WWGravityPipe wwgp) await _wwGravityPipeService.UpsertAsync(_currentProjectId, wwgp);
+        else if (item is WWPressurePipe wwpp) await _wwPressurePipeService.UpsertAsync(_currentProjectId, wwpp);
+        else if (item is WWPoint wwp) await _wwPointService.UpsertAsync(_currentProjectId, wwp);
+        else if (item is WWFitting wwf) await _wwFittingService.UpsertAsync(_currentProjectId, wwf);
+        else if (item is Manhole man) await _manholeService.UpsertAsync(_currentProjectId, man);
+        else if (item is WWServicePoint wwsp) await _wwServicePointService.UpsertAsync(_currentProjectId, wwsp);
+        else if (item is WWValve wwv) await _wwValveService.UpsertAsync(_currentProjectId, wwv);
+        else if (item is WWLocateBox wwlb) await _wwLocateBoxService.UpsertAsync(_currentProjectId, wwlb);
+
+        // Reclaimed
+        else if (item is ReclaimedPipe rp) await _reclaimedPipeService.UpsertAsync(_currentProjectId, rp);
+        else if (item is ReclaimedPoint rpo) await _reclaimedPointService.UpsertAsync(_currentProjectId, rpo);
+        else if (item is ReclaimedFitting rf) await _reclaimedFittingService.UpsertAsync(_currentProjectId, rf);
+        else if (item is ReclaimedValve rv) await _reclaimedValveService.UpsertAsync(_currentProjectId, rv);
+        else if (item is ReclaimedHydrant rh) await _reclaimedHydrantService.UpsertAsync(_currentProjectId, rh);
+        else if (item is ReclaimedMeter rm) await _reclaimedMeterService.UpsertAsync(_currentProjectId, rm);
+        else if (item is ReclaimedLocateBox rlb) await _reclaimedLocateBoxService.UpsertAsync(_currentProjectId, rlb);
+
+        // Chilled
+        else if (item is ChilledPipe cp) await _chilledPipeService.UpsertAsync(_currentProjectId, cp);
+        else if (item is ChilledPoint cpo) await _chilledPointService.UpsertAsync(_currentProjectId, cpo);
+        else if (item is ChilledFitting cf) await _chilledFittingService.UpsertAsync(_currentProjectId, cf);
+        else if (item is ChilledValve cv) await _chilledValveService.UpsertAsync(_currentProjectId, cv);
+        else if (item is ChilledMeter cm) await _chilledMeterService.UpsertAsync(_currentProjectId, cm);
+        else if (item is ChilledLocateBox clb) await _chilledLocateBoxService.UpsertAsync(_currentProjectId, clb);
+    }
+
+    public async Task AddItemAsync(InstalledAsset item)
+    {
+        // Add to appropriate collection and save
+        if (item is PipeCrossing pc) { PipeCrossings.Add(pc); await _pipeCrossingService.UpsertAsync(_currentProjectId, pc); }
+        
+        // Water
+        else if (item is WaterPipe wp) { WaterPipes.Add(wp); await _waterPipeService.UpsertAsync(_currentProjectId, wp); }
+        else if (item is WaterPoint wpo) { WaterPoints.Add(wpo); await _waterPointService.UpsertAsync(_currentProjectId, wpo); }
+        else if (item is WaterFitting wf) { WaterFittings.Add(wf); await _waterFittingService.UpsertAsync(_currentProjectId, wf); }
+        else if (item is WaterValve wv) { WaterValves.Add(wv); await _waterValveService.UpsertAsync(_currentProjectId, wv); }
+        else if (item is WaterHydrant wh) { WaterHydrants.Add(wh); await _waterHydrantService.UpsertAsync(_currentProjectId, wh); }
+        else if (item is WaterMeter wm) { WaterMeters.Add(wm); await _waterMeterService.UpsertAsync(_currentProjectId, wm); }
+        else if (item is WaterLocateBox wlb) { WaterLocateBoxes.Add(wlb); await _waterLocateBoxService.UpsertAsync(_currentProjectId, wlb); }
+
+        // WW
+        else if (item is WWGravityPipe wwgp) { WWGravityPipes.Add(wwgp); await _wwGravityPipeService.UpsertAsync(_currentProjectId, wwgp); }
+        else if (item is WWPressurePipe wwpp) { WWPressurePipes.Add(wwpp); await _wwPressurePipeService.UpsertAsync(_currentProjectId, wwpp); }
+        else if (item is WWPoint wwp) { WWPoints.Add(wwp); await _wwPointService.UpsertAsync(_currentProjectId, wwp); }
+        else if (item is WWFitting wwf) { WWFittings.Add(wwf); await _wwFittingService.UpsertAsync(_currentProjectId, wwf); }
+        else if (item is Manhole man) { Manholes.Add(man); await _manholeService.UpsertAsync(_currentProjectId, man); }
+        else if (item is WWServicePoint wwsp) { WWServicePoints.Add(wwsp); await _wwServicePointService.UpsertAsync(_currentProjectId, wwsp); }
+        else if (item is WWValve wwv) { WWValves.Add(wwv); await _wwValveService.UpsertAsync(_currentProjectId, wwv); }
+        else if (item is WWLocateBox wwlb) { WWLocateBoxes.Add(wwlb); await _wwLocateBoxService.UpsertAsync(_currentProjectId, wwlb); }
+
+        // Reclaimed
+        else if (item is ReclaimedPipe rp) { ReclaimedPipes.Add(rp); await _reclaimedPipeService.UpsertAsync(_currentProjectId, rp); }
+        else if (item is ReclaimedPoint rpo) { ReclaimedPoints.Add(rpo); await _reclaimedPointService.UpsertAsync(_currentProjectId, rpo); }
+        else if (item is ReclaimedFitting rf) { ReclaimedFittings.Add(rf); await _reclaimedFittingService.UpsertAsync(_currentProjectId, rf); }
+        else if (item is ReclaimedValve rv) { ReclaimedValves.Add(rv); await _reclaimedValveService.UpsertAsync(_currentProjectId, rv); }
+        else if (item is ReclaimedHydrant rh) { ReclaimedHydrants.Add(rh); await _reclaimedHydrantService.UpsertAsync(_currentProjectId, rh); }
+        else if (item is ReclaimedMeter rm) { ReclaimedMeters.Add(rm); await _reclaimedMeterService.UpsertAsync(_currentProjectId, rm); }
+        else if (item is ReclaimedLocateBox rlb) { ReclaimedLocateBoxes.Add(rlb); await _reclaimedLocateBoxService.UpsertAsync(_currentProjectId, rlb); }
+
+        // Chilled
+        else if (item is ChilledPipe cp) { ChilledPipes.Add(cp); await _chilledPipeService.UpsertAsync(_currentProjectId, cp); }
+        else if (item is ChilledPoint cpo) { ChilledPoints.Add(cpo); await _chilledPointService.UpsertAsync(_currentProjectId, cpo); }
+        else if (item is ChilledFitting cf) { ChilledFittings.Add(cf); await _chilledFittingService.UpsertAsync(_currentProjectId, cf); }
+        else if (item is ChilledValve cv) { ChilledValves.Add(cv); await _chilledValveService.UpsertAsync(_currentProjectId, cv); }
+        else if (item is ChilledMeter cm) { ChilledMeters.Add(cm); await _chilledMeterService.UpsertAsync(_currentProjectId, cm); }
+        else if (item is ChilledLocateBox clb) { ChilledLocateBoxes.Add(clb); await _chilledLocateBoxService.UpsertAsync(_currentProjectId, clb); }
+    }
+
+    public void ExportToFolder(string baseName)
+    {
+        string dir = System.IO.Path.GetDirectoryName(baseName) ?? "";
+        string name = System.IO.Path.GetFileNameWithoutExtension(baseName);
+        
+        string C(string? s) => "\"" + (s ?? "").Replace("\"", "\"\"") + "\"";
+
+        // Helper to write CSV
+        void Write<T>(string suffix, ObservableCollection<T> items, Func<T, string> formatter)
+        {
+            string path = System.IO.Path.Combine(dir, $"{name}_{suffix}.csv");
+            using var sw = new System.IO.StreamWriter(path);
+            foreach(var item in items) sw.WriteLine(formatter(item));
+        }
+
+        // Pipe Crossings
+        Write("PipeCrossings", PipeCrossings, i => 
+            $"PartKey,Description,Northing,Easting,Notes,Manufacturer,Size,Material,Year,Confidence,Source,Warning\n" +
+            $"{C(i.PartKey)},{C(i.Description)},{i.Northing},{i.Easting},{C(i.Notes)},{C(i.Manufacturer)},{C(i.Size)},{C(i.Material)},{C(i.YearManufactured)},{C(i.Confidence)},{C(i.Source)},{C(i.Warning)}");
+
+        // Formatters
+        string FormatPipe<T>(T i) where T : Pipe => 
+            $"PartKey,Description,Diameter,Size,Material,N_Start,E_Start,N_End,E_End,Inv_Start,Inv_End,Notes,Manufacturer,Year,Confidence,Source,Warning\n" +
+            $"{C(i.PartKey)},{C(i.Description)},{i.Diameter},{C(i.Size)},{C(i.Material)},{i.NorthingStart},{i.EastingStart},{i.NorthingEnd},{i.EastingEnd},{i.InvertStart},{i.InvertEnd},{C(i.Notes)},{C(i.Manufacturer)},{C(i.YearManufactured)},{C(i.Confidence)},{C(i.Source)},{C(i.Warning)}";
+
+        string FormatPoint<T>(T i) where T : Structure => 
+            $"PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning\n" +
+            $"{C(i.PartKey)},{C(i.Description)},{i.Northing},{i.Easting},{i.Elevation},{C(i.Notes)},{C(i.Manufacturer)},{C(i.YearManufactured)},{C(i.Confidence)},{C(i.Source)},{C(i.Warning)}";
+
+        string FormatFitting<T>(T i) where T : Fitting => 
+            $"PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning\n" +
+            $"{C(i.PartKey)},{C(i.Description)},{C(i.Type)},{i.Northing},{i.Easting},{i.Elevation},{C(i.Notes)},{C(i.Manufacturer)},{C(i.YearManufactured)},{C(i.Confidence)},{C(i.Source)},{C(i.Warning)}";
+            
+        string FormatValve<T>(T i) where T : Valve => 
+            $"PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning\n" +
+            $"{C(i.PartKey)},{C(i.Description)},{C(i.Type)},{i.Northing},{i.Easting},{i.Elevation},{C(i.Notes)},{C(i.Manufacturer)},{C(i.YearManufactured)},{C(i.Confidence)},{C(i.Source)},{C(i.Warning)}";
+        
+        string FormatMeter<T>(T i) where T : Meter => 
+            $"PartKey,Description,Size,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning\n" +
+            $"{C(i.PartKey)},{C(i.Description)},{C(i.Size)},{i.Northing},{i.Easting},{i.Elevation},{C(i.Notes)},{C(i.Manufacturer)},{C(i.YearManufactured)},{C(i.Confidence)},{C(i.Source)},{C(i.Warning)}";
+            
+        string FormatHydrant<T>(T i) where T : Hydrant => 
+            $"PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning\n" +
+            $"{C(i.PartKey)},{C(i.Description)},{i.Northing},{i.Easting},{i.Elevation},{C(i.Notes)},{C(i.Manufacturer)},{C(i.YearManufactured)},{C(i.Confidence)},{C(i.Source)},{C(i.Warning)}";
+            
+        string FormatLocateBox<T>(T i) where T : LocateBox => 
+            $"PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning\n" +
+            $"{C(i.PartKey)},{C(i.Description)},{i.Northing},{i.Easting},{i.Elevation},{C(i.Notes)},{C(i.Manufacturer)},{C(i.YearManufactured)},{C(i.Confidence)},{C(i.Source)},{C(i.Warning)}";
+
+        // Export Calls
+        // Water
+        Write("WaterPipeRun", WaterPipes, FormatPipe);
+        Write("WaterPointsAlongPipe", WaterPoints, FormatPoint);
+        Write("WaterFitting", WaterFittings, FormatFitting);
+        Write("WaterValve", WaterValves, FormatValve);
+        Write("WaterHydrant", WaterHydrants, FormatHydrant);
+        Write("WaterMeter", WaterMeters, FormatMeter);
+        Write("WaterLocateBox", WaterLocateBoxes, FormatLocateBox);
+
+        // WW
+        Write("WWGravityPipeRun", WWGravityPipes, FormatPipe);
+        Write("WWPressurePipeRun", WWPressurePipes, FormatPipe);
+        Write("WWPointsAlongPipe", WWPoints, FormatPoint);
+        Write("WWFitting", WWFittings, FormatFitting);
+        Write("Manhole", Manholes, FormatPoint);
+        Write("WWServicePointMeter", WWServicePoints, FormatPoint);
+        Write("WWValve", WWValves, FormatValve);
+        Write("WWLocateBox", WWLocateBoxes, FormatLocateBox);
+
+        // Reclaimed
+        Write("ReclaimedPipeRun", ReclaimedPipes, FormatPipe);
+        Write("ReclaimedPointsAlongPipe", ReclaimedPoints, FormatPoint);
+        Write("ReclaimedFitting", ReclaimedFittings, FormatFitting);
+        Write("ReclaimedValve", ReclaimedValves, FormatValve);
+        Write("ReclaimedHydrant", ReclaimedHydrants, FormatHydrant);
+        Write("ReclaimedMeter", ReclaimedMeters, FormatMeter);
+        Write("ReclaimedLocateBox", ReclaimedLocateBoxes, FormatLocateBox);
+
+        // Chilled
+        Write("ChilledPipeRun", ChilledPipes, FormatPipe);
+        Write("ChilledPointsAlongPipe", ChilledPoints, FormatPoint);
+        Write("ChilledFitting", ChilledFittings, FormatFitting);
+        Write("ChilledValve", ChilledValves, FormatValve);
+        Write("ChilledMeter", ChilledMeters, FormatMeter);
+        Write("ChilledLocateBox", ChilledLocateBoxes, FormatLocateBox);
+    }
+}

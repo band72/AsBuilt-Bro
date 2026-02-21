@@ -1,0 +1,875 @@
+<Window x:Class="RCS.Cogo.Wpf.Views.ShellWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:RCS.Cogo.Wpf.ViewModels"
+        xmlns:views="clr-namespace:RCS.Cogo.Wpf.Views"
+        mc:Ignorable="d"
+        Title="RCS COGO Enterprise" Height="800" Width="1200"
+        Background="#1E1E1E" Foreground="#D4D4D4">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/Symbols.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontSize" Value="14"/>
+            </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#252526"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3E3E42"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="CaretBrush" Value="White"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="#252526"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3E3E42"/>
+        </Style>
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="#252526"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+        </Style>
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="#252526"/>
+            <Setter Property="RowBackground" Value="#252526"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3E3E42"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+        </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#3E3E42"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <Style TargetType="Menu">
+            <Setter Property="Background" Value="#2D2D30"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style TargetType="MenuItem">
+            <Setter Property="Background" Value="#2D2D30"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="#3E3E42"/>
+            <Style.Triggers>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" Value="#3E3E42"/>
+                    <Setter Property="Foreground" Value="#007ACC"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Background="#2D2D30" Foreground="#D4D4D4" Padding="5,2">
+            <MenuItem Header="_File">
+                <MenuItem Header="E_xit" Command="{Binding CloseCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Project">
+                <MenuItem Header="New Project..." Command="{Binding NewProjectCommand}"/>
+                <MenuItem Header="Edit Project Details..." Command="{Binding EditProjectCommand}"/> <!-- Need this command -->
+                <Separator/>
+                <MenuItem Header="Save Project" Command="{Binding SaveProjectCommand}"/>
+                <MenuItem Header="Open Project..." Command="{Binding OpenProjectCommand}"/>
+                <MenuItem Header="Close Project" Command="{Binding CloseProjectCommand}"/>
+                <Separator/>
+                <MenuItem Header="Save Piping Network..." Command="{Binding SavePipingCommand}"/>
+                <MenuItem Header="Load Piping Network..." Command="{Binding LoadPipingCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Import">
+                <MenuItem Header="Process Batch Script..." Command="{Binding ImportBatchCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Export">
+                <MenuItem Header="Export Script..." Command="{Binding ExportScriptCommand}"/>
+                <Separator/>
+                <MenuItem Header="Export Points (TXT)..." Command="{Binding ExportPointsTxtCommand}"/>
+                <MenuItem Header="Export Points (XML)..." Command="{Binding ExportPointsXmlCommand}"/>
+                <Separator/>
+                <MenuItem Header="Save Piping Network..." Command="{Binding SavePipingCommand}"/>
+                <Separator/>
+                <MenuItem Header="Export Installed Assets Report..." Command="{Binding ExportInstalledAssetsCommand}"/>
+                <Separator/>
+                <MenuItem Header="Export to DXF..." Command="{Binding ExportDxfCommand}"/>
+                <MenuItem Header="Export BOM to CSV..." Command="{Binding ExportBomCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Settings">
+                <MenuItem Header="Report Configuration..." Command="{Binding OpenReportSettingsCommand}"/>
+                <Separator/>
+                <MenuItem Header="Database Maintenance">
+                    <MenuItem Header="Compact Database" Command="{Binding CompactDbCommand}"/>
+                    <MenuItem Header="Verify Integrity" Command="{Binding VerifyDbCommand}"/>
+                    <MenuItem Header="Repair Database" Command="{Binding RepairDbCommand}"/>
+                    <Separator/>
+                <MenuItem Header="Export Database to CSV..." Command="{Binding ExportDbCsvCommand}"/>
+                <Separator/>
+                </MenuItem>
+                <Separator/>
+                <MenuItem StaysOpenOnClick="True">
+                    <MenuItem.Header>
+                        <StackPanel Orientation="Horizontal" Margin="0">
+                            <TextBlock Text="Viewport Symbol Scale:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <ComboBox ItemsSource="{Binding AvailableSymbolScales}" SelectedItem="{Binding SymbolScaleMultiplier}" Width="60" />
+                            <TextBlock Text="x" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </MenuItem.Header>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About" Command="{Binding AboutCommand}"/>
+            </MenuItem>
+        </Menu>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="350"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="200"/> 
+            </Grid.RowDefinitions>
+
+        <!-- Left Pane: Console / History -->
+        <Grid Grid.Column="0" Grid.Row="0" Margin="10">
+            <TabControl Background="#252526" BorderThickness="0" SelectedIndex="{Binding SelectedTabIndex}">
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <Border Name="Border" BorderThickness="0,0,0,2" BorderBrush="Transparent" Margin="2">
+                                        <ContentPresenter x:Name="ContentSite"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center"
+                                            ContentSource="Header"
+                                            Margin="10,2"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="#007ACC" />
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="False">
+                                            <Setter Property="Foreground" Value="#CCCCCC"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <Style TargetType="TabControl">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabControl">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                                            <TabPanel Grid.Row="0" IsItemsHost="True" Background="Transparent"/>
+                                        </ScrollViewer>
+                                        <Border Grid.Row="1" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,0">
+                                                <ContentPresenter ContentSource="SelectedContent"/>
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+                </TabControl.Resources>
+                
+                <!-- Tab 1: Points -->
+                <TabItem Header="Points">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!-- Toolbar -->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                            <!-- New specific command for Points Import -->
+                            <Button Content="Import Text..." Command="{Binding ImportPointsListCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                            <!-- Assuming ImportBatch handles points or we need a specific ImportPoints command. 
+                                 The menu has ExportPointsTxtCommand. The Cogo Script tab imports scripts. 
+                                 I'll use existing commands if applicable or placeholders if not explicitly asked to create new import logic.
+                                 The user said "where the field points are imported, exported". 
+                                 I will use the menu commands binding for now as shortcuts. -->
+                            <!-- Actually, re-using ImportBatchCommand might be confusing if it expects scripts.
+                                 Let's look at the Menu. Menu has "Import -> Process Batch Script".
+                                 Wait, "Export Points (TXT)..." is bound to ExportPointsTxtCommand.
+                                 I should add buttons for Import/Export Points here if possible. 
+                                 For now, I'll add the visual buttons. -->
+                             <Button Content="Export TXT" Command="{Binding ExportPointsTxtCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                             <Button Content="Export XML" Command="{Binding ExportPointsXmlCommand}" Padding="10,5" Background="#2D2D30" Foreground="White"/>
+                        </StackPanel>
+
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding Points}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                                  BorderThickness="1" BorderBrush="#3E3E42">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Point Number" Binding="{Binding Id}" Width="80" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Northing" Binding="{Binding Northing, StringFormat=F3}" Width="*"/>
+                                <DataGridTextColumn Header="Easting" Binding="{Binding Easting, StringFormat=F3}" Width="*"/>
+                                <DataGridTextColumn Header="Elevation" Binding="{Binding Elevation, StringFormat=F3}" Width="80"/>
+                                
+                                <DataGridTemplateColumn Header="Description" Width="2*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Description}" VerticalAlignment="Center" Margin="2,0"/>
+                                                
+                                                <!-- Feedback Icon -->
+                                                <TextBlock Grid.Column="1" Text="✔" Foreground="LimeGreen" FontWeight="Bold" Margin="5,0"
+                                                           Visibility="{Binding IsValidCode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                                
+                                                <!-- 
+                                                Actually, I need to Highlight RED if INCORRECT.
+                                                If IsValidCode is false, show Red X or background?
+                                                "Highlight in green and with a check mark those codes that match... Highlight in red missing or incorrect matches." 
+                                                -->
+                                                <TextBlock Grid.Column="1" Text="❌" Foreground="Red" FontWeight="Bold" Margin="5,0">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsValidCode}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                    <DataGridTemplateColumn.CellEditingTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                            
+                            <!-- Row Style for Red Highlight on mismatch? 
+                                 "Highlight in green... codes that match... Highlight in red missing or incorrect matches."
+                                 Maybe highlight the cell background or text? 
+                                 Let's do Description Cell Style. -->
+                            <!-- 
+                            Actually, DataGridTemplateColumn handles the content. 
+                            Let's add a style to the DataGridRow or Cell to change background slightly.
+                            -->
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <!-- Tab 2: Cogo (Renamed from Cogo Manual) -->
+                <TabItem Header="Cogo">
+                    <Grid Margin="0,10,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <ListBox Grid.Row="0" ItemsSource="{Binding CommandLog}" Margin="0,0,0,10"
+                                 Background="#1E1E1E" BorderThickness="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap" FontFamily="Consolas" Foreground="#D4D4D4"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        
+                        <TextBox Grid.Row="1" Text="{Binding CommandInput, UpdateSourceTrigger=PropertyChanged}" 
+                                 FontFamily="Consolas" FontSize="16" Height="30">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding SubmitCommand}"/>
+                            </TextBox.InputBindings>
+                        </TextBox>
+                    </Grid>
+                </TabItem>
+                
+                <!-- Tab 2: Batch Script -->
+                <TabItem Header="Cogo Script">
+                    <Grid Margin="0,10,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!-- Toolbar -->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                            <Button Content="Import Script" Command="{Binding ImportBatchCommand}" 
+                                    Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                            <Button Content="Run Script" Command="{Binding RunBatchCommand}" 
+                                    Padding="10,5" Margin="0,0,10,0" Background="#007ACC" Foreground="White" FontWeight="Bold"/>
+
+                            <Button Content="Export (.txt)" Command="{Binding ExportScriptCommand}" 
+                                    Padding="10,5" Background="#2D2D30" Foreground="White"/>
+                        </StackPanel>
+                        
+                        <!-- Editor -->
+                        <TextBox Grid.Row="1" Text="{Binding BatchScriptContent}" 
+                                 FontFamily="Consolas" FontSize="14" AcceptsReturn="True" 
+                                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                                 Background="#1E1E1E" Foreground="#DCDCDC" BorderThickness="1"/>
+                                 
+                        <TextBlock Grid.Row="2" Text="Use // for comments" Foreground="Gray" Margin="0,5,0,0" FontStyle="Italic"/>
+                    </Grid>
+                </TabItem>
+                
+                <!-- Tab 3: Curve Solver -->
+                <TabItem Header="Curve Solver">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Enter exactly two values:" Margin="0,0,0,10" Foreground="Gray" FontStyle="Italic"/>
+                        
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Radius (R):" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CurveRadius, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
+                        
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Tangent (T):" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding CurveTangent, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
+                        
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Chord (C):" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding CurveChord, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
+                        
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Arc Length (L):" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding CurveArc, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
+                        
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Delta (DD):" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding CurveDelta, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"/>
+                        
+                        <!-- DMS Output -->
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Delta (DMS):" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="Gray"/>
+                        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding CurveDeltaDms, Mode=OneWay}" IsReadOnly="True" Margin="0,5" Background="#1E1E1E" BorderThickness="0"/>
+                        
+                        <Button Grid.Row="8" Grid.ColumnSpan="2" Content="SOLVE" Command="{Binding SolveCurveCommand}" 
+                                Margin="0,20,0,0" Padding="10,5" 
+                                Background="#007ACC" Foreground="White" FontWeight="Bold"/>
+
+                        <TextBlock Grid.Row="9" Grid.ColumnSpan="2" Text="Results will update above and in Output Log." Margin="0,10,0,0" FontStyle="Italic" Foreground="Gray" TextWrapping="Wrap"/>
+                        
+                        <!-- Utilities Section -->
+                        <StackPanel Grid.Row="10" Grid.ColumnSpan="2" Margin="0,20,0,0">
+                            <Rectangle Height="1" Fill="#3E3E42" Margin="0,0,0,10"/>
+                            <TextBlock Text="Utilities" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
+                            
+                            <!-- DMS Converter -->
+                            <TextBlock Text="Decimal to DMS Converter:" Foreground="#CCCCCC" Margin="0,0,0,5"/>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="{Binding UtilDecInput, UpdateSourceTrigger=PropertyChanged}" ToolTip="Enter Decimal Degrees" Margin="0,0,5,0"/>
+                                <Button Grid.Column="1" Command="{Binding UtilConvertCommand}" Content="Convert" Padding="10,2" Background="#333333" Foreground="White"/>
+                            </Grid>
+                            <TextBlock Text="{Binding UtilDmsOutput}" Foreground="Cyan" Margin="0,0,0,15" FontWeight="Bold" HorizontalAlignment="Right"/>
+
+                            <!-- Supplement Finder -->
+                            <TextBlock Text="Supplement Finder (180 - Angle):" Foreground="#CCCCCC" Margin="0,0,0,5"/>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="{Binding UtilSuppInput, UpdateSourceTrigger=PropertyChanged}" ToolTip="Enter Angle (Decimal Degrees)" Margin="0,0,5,0"/>
+                                <Button Grid.Column="1" Command="{Binding UtilSupplementCommand}" Content="Find Supp" Padding="10,2" Background="#333333" Foreground="White"/>
+                            </Grid>
+                            <TextBlock Text="{Binding UtilSuppOutput}" Foreground="Cyan" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,0,0,15"/>
+
+                            <!-- Clear Button -->
+                            <Button Command="{Binding ClearCurveSolverCommand}" Content="CLEAR / RESET" 
+                                    HorizontalAlignment="Center" Padding="20,5" Margin="0,10,0,0"
+                                    Background="#CC3333" Foreground="White" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+                
+                <!-- Tab 4: Piping Network -->
+                <TabItem Header="Piping">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/> <!-- 0 Header Pipe -->
+                            <RowDefinition Height="Auto"/> <!-- 1 From -->
+                            <RowDefinition Height="Auto"/> <!-- 2 To -->
+                            <RowDefinition Height="Auto"/> <!-- 3 Dia -->
+                            <RowDefinition Height="Auto"/> <!-- 4 Inverts -->
+                            <RowDefinition Height="Auto"/> <!-- 5 Slope/Calc -->
+                            <RowDefinition Height="Auto"/> <!-- 6 Add Button -->
+                            <RowDefinition Height="150"/>  <!-- 7 Pipe List -->
+                            <RowDefinition Height="Auto"/> <!-- 8 Divider -->
+                            <RowDefinition Height="Auto"/> <!-- 9 Header Struct -->
+                            <RowDefinition Height="Auto"/> <!-- 10 Pt ID -->
+                            <RowDefinition Height="Auto"/> <!-- 11 Type -->
+                            <RowDefinition Height="Auto"/> <!-- 12 Add Struct Button -->
+                            <RowDefinition Height="*"/>    <!-- 13 Struct List -->
+                            <RowDefinition Height="Auto"/> <!-- 14 Validate -->
+                            <RowDefinition Height="Auto"/> <!-- 16 Sync -->
+                            <RowDefinition Height="Auto"/> <!-- 15 Save/Load -->
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- PIPES -->
+                        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Pipe Runs" FontWeight="Bold" Margin="0,0,0,5" Foreground="Cyan"/>
+                        
+                        <TextBlock Grid.Row="1" Text="From:" VerticalAlignment="Center" Margin="0,2"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PipeFromId, UpdateSourceTrigger=PropertyChanged}" Margin="5,2"/>
+
+                        <TextBlock Grid.Row="2" Text="To:" VerticalAlignment="Center" Margin="0,2"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PipeToId, UpdateSourceTrigger=PropertyChanged}" Margin="5,2"/>
+
+                        <TextBlock Grid.Row="3" Text="Dia:" VerticalAlignment="Center" Margin="0,2"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding PipeDiameter, UpdateSourceTrigger=PropertyChanged}" Margin="5,2"/>
+
+                        <!-- Inverts -->
+                        <TextBlock Grid.Row="4" Text="Inverts:" VerticalAlignment="Center" Margin="0,2"/>
+                        <Grid Grid.Row="4" Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Text="{Binding PipeInvStart, UpdateSourceTrigger=PropertyChanged}" Margin="5,2" ToolTip="Start Invert"/>
+                            <TextBox Grid.Column="1" Text="{Binding PipeInvEnd, UpdateSourceTrigger=PropertyChanged}" Margin="5,2" ToolTip="End Invert"/>
+                        </Grid>
+
+                        <!-- Slope -->
+                        <TextBlock Grid.Row="5" Text="Slope:" VerticalAlignment="Center" Margin="0,2"/>
+                        <Grid Grid.Row="5" Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Text="{Binding PipeSlope}" IsReadOnly="True" Margin="5,2" Background="#333" Foreground="LightGreen"/>
+                            <Button Grid.Column="1" Content="CALC" Command="{Binding CalculateSlopeCommand}" Padding="5,0" Margin="5,2"/>
+                        </Grid>
+
+                        <Button Grid.Row="6" Grid.ColumnSpan="2" Content="ADD PIPE" Command="{Binding AddPipeCommand}" 
+                                Margin="0,5" Padding="10,2" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+
+                        <DataGrid Grid.Row="7" Grid.ColumnSpan="2" ItemsSource="{Binding PipeRuns}" AutoGenerateColumns="False" Margin="0,5">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="From" Binding="{Binding FromPointId}" Width="40"/>
+                                <DataGridTextColumn Header="To" Binding="{Binding ToPointId}" Width="40"/>
+                                <DataGridTextColumn Header="D" Binding="{Binding Diameter}" Width="30"/>
+                                <DataGridTextColumn Header="Slope" Binding="{Binding InvertStart}" Width="*"/> <!-- Placeholder binding, implies showing calculated slope later -->
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- DIVIDER -->
+                        <Rectangle Grid.Row="8" Grid.ColumnSpan="2" Height="1" Fill="#3E3E42" Margin="0,10"/>
+
+                        <!-- PARTS -->
+                        <TextBlock Grid.Row="9" Grid.ColumnSpan="2" Text="Part" FontWeight="Bold" Margin="0,0,0,5" Foreground="Magenta"/>
+                        
+                        <TextBlock Grid.Row="10" Text="Pt ID:" VerticalAlignment="Center" Margin="0,2"/>
+                        <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding StructPointId, UpdateSourceTrigger=PropertyChanged}" Margin="5,2"/>
+
+                        <TextBlock Grid.Row="11" Text="Type:" VerticalAlignment="Center" Margin="0,2"/>
+                        <ComboBox Grid.Row="11" Grid.Column="1" 
+                                  ItemsSource="{Binding AvailableFeatureTypes}" 
+                                  SelectedValue="{Binding StructType}"
+                                  IsEditable="True"
+                                  Text="{Binding StructType}"
+                                  Margin="5,2" ToolTip="Select or Type Code"/>
+
+                        <Button Grid.Row="12" Grid.ColumnSpan="2" Content="ADD PART" Command="{Binding AddStructureCommand}" 
+                                Margin="0,5" Padding="10,2" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+
+                        <DataGrid Grid.Row="13" Grid.ColumnSpan="2" ItemsSource="{Binding Structures}" AutoGenerateColumns="False" Margin="0,5">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID" Binding="{Binding PointId}" Width="50"/>
+                                <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        
+                        <!-- VALIDATE -->
+                        <Button Grid.Row="14" Grid.ColumnSpan="2" Content="VALIDATE NETWORK" Command="{Binding ValidateNetworkCommand}"
+                                Padding="10,5" Margin="0,10,0,0" Background="#007ACC" Foreground="White" FontWeight="Bold"/>
+
+                        <!-- SYNC -->
+                        <Button Grid.Row="15" Grid.ColumnSpan="2" Content="SYNC TO ASSETS" Command="{Binding SyncToAssetsCommand}"
+                                Padding="10,5" Margin="0,5,0,0" Background="#28a745" Foreground="White" FontWeight="Bold"
+                                ToolTip="Manually sync processed piping/structure data to Installed Assets DB."/>
+
+                        <!-- SAVE / LOAD -->
+                        <Grid Grid.Row="16" Grid.ColumnSpan="2" Margin="0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="SAVE NETWORK" Command="{Binding SavePipingCommand}" Margin="0,0,5,0" Padding="5,5" Background="#2D2D30" Foreground="White"/>
+                            <Button Grid.Column="1" Content="LOAD NETWORK" Command="{Binding LoadPipingCommand}" Margin="5,0,0,0" Padding="5,5" Background="#2D2D30" Foreground="White"/>
+                        </Grid>
+
+                    </Grid>
+                </TabItem>
+                
+                <!-- Tab: Piping Script -->
+                <TabItem Header="Piping Script">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <DockPanel Grid.Row="0" Margin="0,0,0,5" LastChildFill="False">
+                            <TextBlock Text="Enter Piping Script:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                            <Button Content="Import..." Command="{Binding ImportPipingScriptCommand}" Padding="5,2" Margin="0,0,5,0" Background="#2D2D30" Foreground="White" DockPanel.Dock="Left"/>
+                            <Button Content="Export..." Command="{Binding ExportPipingScriptCommand}" Padding="5,2" Background="#2D2D30" Foreground="White" DockPanel.Dock="Left"/>
+                            <TextBlock Text="PRUN START {SYS} DIAM {D} MAT {M} FIG {F}" DockPanel.Dock="Right" VerticalAlignment="Center" Foreground="Gray" FontSize="10"/>
+                        </DockPanel>
+                        
+                        <TextBox Grid.Row="1" Text="{Binding PipingScriptText, UpdateSourceTrigger=PropertyChanged}" 
+                                 AcceptsReturn="True" FontFamily="Consolas" VerticalScrollBarVisibility="Auto"
+                                 Background="#1E1E1E" Foreground="#D4D4D4" BorderThickness="1" BorderBrush="#3E3E42" Padding="5"/>
+                        
+                        <Button Grid.Row="2" Content="Process Piping Script" Command="{Binding ProcessPipingScriptCommand}" 
+                                Margin="0,10,0,0" Padding="10,5" Background="#007ACC" Foreground="White" FontWeight="Bold"/>
+                    </Grid>
+                </TabItem>
+
+                <!-- Tab 5: Codes -->
+                <TabItem Header="Codes">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/> <!-- Toolbar -->
+                            <RowDefinition Height="*"/>    <!-- DataGrid -->
+                        </Grid.RowDefinitions>
+                        
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Button Content="Import CSV" Command="{Binding ImportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+                            <Button Content="Export CSV" Command="{Binding ExportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+                            <Button Content="Clear DB" Command="{Binding ClearCodesCommand}" Padding="10,5" Background="#C63333" Foreground="White" FontWeight="Bold" ToolTip="Deletes ALL codes from the Master Database" BorderThickness="1" BorderBrush="#3E3E42"/>
+                        </StackPanel>
+                        
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding CogoCodes}" AutoGenerateColumns="False" Margin="0,5">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Local Code" Binding="{Binding LocalCode}" Width="*"/>
+                                <DataGridTextColumn Header="System Code" Binding="{Binding SystemCode}" Width="*"/>
+                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="2*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+                
+                <!-- Tab 6: Materials -->
+                <TabItem Header="Materials">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/> <!-- Master Catalog Header -->
+                            <RowDefinition Height="Auto"/> <!-- Filters -->
+                            <RowDefinition Height="200"/>  <!-- Master Catalog Grid -->
+                            <RowDefinition Height="Auto"/> <!-- Action Buttons -->
+                            <RowDefinition Height="Auto"/> <!-- Project List Header -->
+                            <RowDefinition Height="*"/>    <!-- Project List Grid -->
+                            <RowDefinition Height="Auto"/> <!-- Footer -->
+                        </Grid.RowDefinitions>
+                        
+                        <DockPanel Grid.Row="0" Margin="0,0,0,5">
+                            <TextBlock Text="Master Catalog (Validation List)" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <Button Content="Import CSV..." Command="{Binding ImportCatalogCommand}" HorizontalAlignment="Right" Padding="10,2" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42" DockPanel.Dock="Right"/>
+                        </DockPanel>
+                        
+                        <!-- Filters -->
+                        <WrapPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,5">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,5">
+                                <TextBlock Text="Disc:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <ComboBox ItemsSource="{Binding AvailableDisciplines}" SelectedItem="{Binding FilterDiscipline}" Width="60"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,5">
+                                <TextBlock Text="Type:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <ComboBox ItemsSource="{Binding AvailableFeatureTypes}" SelectedItem="{Binding FilterFeatureType}" Width="80"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,5">
+                                <TextBlock Text="Size:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <ComboBox ItemsSource="{Binding AvailableSizes}" SelectedItem="{Binding FilterSize}" Width="60"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,10,5">
+                                <TextBlock Text="Mat:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <ComboBox ItemsSource="{Binding AvailableMaterials}" SelectedItem="{Binding FilterMaterial}" Width="60"/>
+                            </StackPanel>
+                            <Button Content="Reset Filters" Command="{Binding ClearCurveSolverCommand}" Visibility="Collapsed"/> <!-- Placeholder -->
+                        </WrapPanel>
+                        
+                        <DataGrid Grid.Row="2" ItemsSource="{Binding FilteredCatalog}" SelectedItem="{Binding SelectedCatalogItem}" AutoGenerateColumns="False" Margin="0,0,0,10">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}" Width="80"/>
+                                <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}" Width="40"/>
+                                <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}" Width="60"/>
+                                <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="50"/>
+                                <DataGridTextColumn Header="Material" Binding="{Binding Material}" Width="60"/>
+                                <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}" Width="*"/>
+                                <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="80"/>
+                                <DataGridTextColumn Header="Year" Binding="{Binding Year}" Width="50"/>
+                                <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="100"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        
+                        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                            <Button Content="Add Selected to Project" Command="{Binding AddMaterialToProjectCommand}" Padding="20,5" Background="#007ACC" Foreground="White" FontWeight="Bold"/>
+                        </StackPanel>
+                        
+                        <TextBlock Grid.Row="4" Text="Project Schedule of Materials" FontWeight="Bold" Margin="0,10,0,5"/>
+                        
+                        <DataGrid Grid.Row="5" ItemsSource="{Binding ProjectMaterials}" AutoGenerateColumns="False" Margin="0,0,0,5">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}" Width="80"/>
+                                <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="50"/>
+                                <DataGridTextColumn Header="Material" Binding="{Binding Material}" Width="60"/>
+                                <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}" Width="*"/>
+                                <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="80"/>
+                                <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="40"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        
+                        <Button Grid.Row="6" Content="Export Project Schedule (CSV)" Command="{Binding ExportMaterialsCommand}" HorizontalAlignment="Right" Padding="10,5" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+
+        <!-- Grid Splitter -->
+        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Width="5" HorizontalAlignment="Stretch" Background="#3E3E42"/>
+
+        <!-- Center Pane: Graphics -->
+        <Border Grid.Column="2" Grid.Row="0" Background="#000000" Margin="5,10" CornerRadius="5" ClipToBounds="True">
+            <Grid Background="Transparent"
+                  MouseWheel="OnMouseWheel" 
+                  MouseRightButtonDown="OnMouseRightButtonDown" 
+                  MouseRightButtonUp="OnMouseRightButtonUp" 
+                  MouseMove="OnMouseMove">
+                <!-- Canvas -->
+                <Canvas x:Name="ViewportCanvas">
+                    <Canvas.RenderTransform>
+                        <MatrixTransform x:Name="WorldTransform"/>
+                    </Canvas.RenderTransform>
+                
+                <!-- Grid/Axis? -->
+                
+                <!-- Figures -->
+                <ItemsControl ItemsSource="{Binding Figures}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <!-- Bound StrokeThickness so it scales correctly with the zoom factor instead of being too thin -->
+                            <Polyline Points="{Binding Points}" Stroke="{Binding Stroke}" 
+                                      StrokeThickness="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Structures -->
+                <ItemsControl ItemsSource="{Binding StructureGraphics}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding Easting}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Northing}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Width="2" Height="2">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform X="-1" Y="-1"/>
+                                </Grid.RenderTransform>
+                                
+                                <ContentControl Content="{Binding}">
+                                    <ContentControl.Style>
+                                        <Style TargetType="ContentControl">
+                                            <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Default}"/>
+                                            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                            <Setter Property="RenderTransform">
+                                                <Setter.Value>
+                                                     <ScaleTransform ScaleX="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                     ScaleY="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                            
+                                            <Style.Triggers>
+                                                <!-- Add Fallback text to verify loading -->
+                                                <DataTrigger Binding="{Binding SymbolType}" Value="Manhole">
+                                                    <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Manhole}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SymbolType}" Value="Valve">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_WaterValve}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SymbolType}" Value="Hydrant">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Hydrant}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SymbolType}" Value="Meter">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Meter}"/>
+                                                </DataTrigger>
+                                                 <DataTrigger Binding="{Binding SymbolType}" Value="Fitting">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Fitting}"/>
+                                                </DataTrigger>
+                                                 <DataTrigger Binding="{Binding SymbolType}" Value="Inlet">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Manhole}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Points -->
+                <ItemsControl ItemsSource="{Binding Points}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding Easting}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Northing}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <!-- Survey Coordinates: N=Y, E=X. 
+                                 We bind Canvas.Left/Top in ItemContainerStyle.
+                                 Grid serves as the anchor point. We translate it -0.5,-0.5 to center it on the coordinate.
+                             -->
+                            <Grid Width="1" Height="1">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform X="-0.5" Y="-0.5"/>
+                                </Grid.RenderTransform>
+
+                                <Ellipse Width="1" Height="1" Fill="Cyan"
+                                         RenderTransformOrigin="0.5,0.5">
+                                     <Ellipse.RenderTransform>
+                                         <ScaleTransform ScaleX="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                         ScaleY="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                     </Ellipse.RenderTransform>
+                                </Ellipse>
+                                
+                                <TextBlock Text="{Binding Id}" Foreground="Yellow" FontSize="1"
+                                           RenderTransformOrigin="0.5,0.5"
+                                           Margin="1.5,1.5,0,0"> <!-- Offset text slightly -->
+                                     <TextBlock.RenderTransform>
+                                         <TransformGroup>
+                                             <!-- Scale by MarkerScale to keep constant size -->
+                                             <ScaleTransform ScaleX="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                             ScaleY="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                             <!-- Flip Y back to upright (since World is flipped) -->
+                                             <ScaleTransform ScaleY="-1"/> 
+                                         </TransformGroup>
+                                     </TextBlock.RenderTransform>
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                </Canvas>
+                
+                <!-- Zoom Toolbar -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+                    <Button Command="{Binding ZoomInCommand}" Content="+" Width="30" Height="30" Margin="0,0,5,0"
+                            Background="#333333" Foreground="White" FontSize="18" FontWeight="Bold" ToolTip="Zoom In"/>
+                    <Button Command="{Binding ZoomOutCommand}" Content="-" Width="30" Height="30" Margin="0,0,5,0"
+                            Background="#333333" Foreground="White" FontSize="18" FontWeight="Bold" ToolTip="Zoom Out"/>
+                    <Button Command="{Binding ZoomExtentsCommand}" Content="[ ]" Width="30" Height="30"
+                            Background="#333333" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Zoom Extents"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Right Pane: Point Grid -->
+        <!-- Right Pane: Point Grid (Collapsable) -->
+        <!-- Right Pane: Installed Assets (Collapsible) -->
+        <!-- Right Side Splitter -->
+        <GridSplitter Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" Width="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#3E3E42"/>
+
+        <!-- Right Pane: Installed Assets (Collapsible) -->
+        <Expander Grid.Column="4" Grid.Row="0" Grid.RowSpan="2" ExpandDirection="Left" IsExpanded="True" 
+                  Background="#1E1E1E" BorderThickness="0">
+            <Expander.Header>
+                <TextBlock Text="Installed Assets" FontWeight="Bold" Foreground="#D4D4D4" RenderTransformOrigin="0.5,0.5" Margin="0,10">
+                    <TextBlock.LayoutTransform>
+                        <RotateTransform Angle="-90"/>
+                    </TextBlock.LayoutTransform>
+                </TextBlock>
+            </Expander.Header>
+
+            <views:InstalledAssetsView DataContext="{Binding InstalledAssets}"/>
+        </Expander>
+        
+        <!-- Bottom Pane: Output Window -->
+        <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="10,0,10,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Computation Output" FontWeight="Bold" Margin="0,0,0,5"/>
+            <TextBox Grid.Row="1" Text="{Binding ResultLogText}" 
+                     IsReadOnly="True" 
+                     TextWrapping="Wrap" 
+                     VerticalScrollBarVisibility="Auto"
+                     FontFamily="Consolas" 
+                     Background="#252526" 
+                     Foreground="#00FF00"
+                     BorderThickness="0"/>
+        </Grid>
+    </Grid>
+    </Grid>
+</Window>

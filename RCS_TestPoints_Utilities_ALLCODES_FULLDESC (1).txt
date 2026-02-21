@@ -1,0 +1,180 @@
+1,10000.00,10000.00,25.21,WM-4-DIP,Water Main, 4 inch, DIP
+2,10020.00,10020.00,25.42,WM-6-DIP,Water Main, 6 inch, DIP
+3,10040.00,10040.00,25.62,WM-8-PVC,Water Main, 8 inch, PVC
+4,10060.00,10060.00,25.81,WM-10-PVC,Water Main, 10 inch, PVC
+5,10080.00,10080.00,25.98,WM-12-DIP,Water Main, 12 inch, DIP
+6,10100.00,10100.00,26.13,WM-16-DIP,Water Main, 16 inch, DIP
+7,10120.00,10120.00,26.26,WM-24-DIP,Water Main, 24 inch, DIP
+8,10140.00,10140.00,26.36,WM-6x4-DIP-RED,Water Main, Reducer 6 inch to 4 inch, DIP, RED
+9,10160.00,10160.00,26.44,WM-8x6-DIP-RED,Water Main, Reducer 8 inch to 6 inch, DIP, RED
+10,10180.00,10180.00,26.48,WM-12x8-DIP-RED,Water Main, Reducer 12 inch to 8 inch, DIP, RED
+11,10200.00,10200.00,26.50,WM-6-DIP-B225,Water Main, 6 inch, DIP, Bend 225 degrees
+12,10220.00,10220.00,26.48,WM-6-DIP-B45,Water Main, 6 inch, DIP, Bend 45 degrees
+13,10240.00,10240.00,26.44,WM-6-DIP-B90,Water Main, 6 inch, DIP, Bend 90 degrees
+14,10260.00,10260.00,26.36,WM-8-PVC-B225,Water Main, 8 inch, PVC, Bend 225 degrees
+15,10280.00,10280.00,26.26,WM-8-PVC-B45,Water Main, 8 inch, PVC, Bend 45 degrees
+16,10300.00,10300.00,26.13,WM-8-PVC-B90,Water Main, 8 inch, PVC, Bend 90 degrees
+17,10320.00,10320.00,25.98,WM-12-DIP-B225,Water Main, 12 inch, DIP, Bend 225 degrees
+18,10340.00,10340.00,25.81,WM-12-DIP-B45,Water Main, 12 inch, DIP, Bend 45 degrees
+19,10360.00,10360.00,25.62,WM-12-DIP-B90,Water Main, 12 inch, DIP, Bend 90 degrees
+20,10380.00,10380.00,25.42,WVL-6-DIP,Gate Valve, 6 inch, DIP
+21,10400.00,10400.00,25.21,WVL-8-DIP,Gate Valve, 8 inch, DIP
+22,10420.00,10420.00,25.00,WVL-12-DIP,Gate Valve, 12 inch, DIP
+23,10440.00,10440.00,24.78,WVL-16-DIP,Gate Valve, 16 inch, DIP
+24,10460.00,10460.00,24.58,BFV-24-DIP,Butterfly Valve, 24 inch, DIP
+25,10480.00,10480.00,24.37,BFV-30-DIP,Butterfly Valve, 30 inch, DIP
+26,10500.00,10500.00,24.19,WFH-6-DIP,Fire Hydrant, 6 inch, DIP
+27,10520.00,10520.00,24.02,WMT-1-CU,Water Meter, 1 inch, CU
+28,10540.00,10540.00,23.86,WMT-2-CU,Water Meter, 2 inch, CU
+29,10560.00,10560.00,23.74,ARV-12-DIP,Air Release Valve, 12 inch, DIP
+30,10580.00,10580.00,23.63,ARV-16-DIP,Air Release Valve, 16 inch, DIP
+31,10600.00,10600.00,23.56,PRV-12-DIP,Pressure Reducing Valve, 12 inch, DIP
+32,10620.00,10620.00,23.51,PRV-16-DIP,Pressure Reducing Valve, 16 inch, DIP
+33,10640.00,10640.00,23.50,BOW-6-DIP,Blowoff, 6 inch, DIP
+34,10660.00,10660.00,23.52,BOW-8-DIP,Blowoff, 8 inch, DIP
+35,10680.00,10680.00,23.56,RPZ-2-CU,Backflow Preventer, 2 inch, CU
+36,10700.00,10700.00,23.64,SSM-6-PVC,Sanitary Sewer Main, 6 inch, PVC
+37,10720.00,10720.00,23.74,SSM-8-PVC,Sanitary Sewer Main, 8 inch, PVC
+38,10740.00,10740.00,23.87,SSM-10-PVC,Sanitary Sewer Main, 10 inch, PVC
+39,10760.00,10760.00,24.02,SSM-12-PVC,Sanitary Sewer Main, 12 inch, PVC
+40,10780.00,10780.00,24.19,SSM-8-PVC-B225,Sanitary Sewer Main, 8 inch, PVC, Bend 225 degrees
+41,10800.00,10800.00,24.38,SSM-8-PVC-B45,Sanitary Sewer Main, 8 inch, PVC, Bend 45 degrees
+42,10820.00,10820.00,24.58,SSM-8-PVC-B90,Sanitary Sewer Main, 8 inch, PVC, Bend 90 degrees
+43,10840.00,10840.00,24.79,SSM-10-PVC-B45,Sanitary Sewer Main, 10 inch, PVC, Bend 45 degrees
+44,10860.00,10860.00,25.00,SSM-12-PVC-B90,Sanitary Sewer Main, 12 inch, PVC, Bend 90 degrees
+45,10880.00,10880.00,25.22,SSM-8x6-PVC-RED,Sanitary Sewer Main, Reducer 8 inch to 6 inch, PVC, RED
+46,10900.00,10900.00,25.43,SSM-10x8-PVC-RED,Sanitary Sewer Main, Reducer 10 inch to 8 inch, PVC, RED
+47,10920.00,10920.00,25.63,SSC-4-PVC,Sanitary Cleanout, 4 inch, PVC
+48,10940.00,10940.00,25.81,SSC-6-PVC,Sanitary Cleanout, 6 inch, PVC
+49,10960.00,10960.00,25.99,SSL-4-PVC,Sanitary Lateral, 4 inch, PVC
+50,10980.00,10980.00,26.14,SSL-6-PVC,Sanitary Lateral, 6 inch, PVC
+51,11000.00,11000.00,26.26,SSMH-48-CONC,Sanitary Manhole, 48 inch, CONC
+52,11020.00,11020.00,26.37,SSMH-60-CONC,Sanitary Manhole, 60 inch, CONC
+53,11040.00,11040.00,26.44,SFM-4-HDPE,Force Main, 4 inch, HDPE
+54,11060.00,11060.00,26.49,SFM-6-HDPE,Force Main, 6 inch, HDPE
+55,11080.00,11080.00,26.50,SFM-8-HDPE,Force Main, 8 inch, HDPE
+56,11100.00,11100.00,26.48,SFM-12-HDPE,Force Main, 12 inch, HDPE
+57,11120.00,11120.00,26.44,SFM-6-HDPE-B225,Force Main, 6 inch, HDPE, Bend 225 degrees
+58,11140.00,11140.00,26.36,SFM-6-HDPE-B45,Force Main, 6 inch, HDPE, Bend 45 degrees
+59,11160.00,11160.00,26.26,SFM-6-HDPE-B90,Force Main, 6 inch, HDPE, Bend 90 degrees
+60,11180.00,11180.00,26.13,SFM-8x6-HDPE-RED,Force Main, Reducer 8 inch to 6 inch, HDPE, RED
+61,11200.00,11200.00,25.98,AIR-6-HDPE,Air Release (Force Main), 6 inch, HDPE
+62,11220.00,11220.00,25.81,AIR-8-HDPE,Air Release (Force Main), 8 inch, HDPE
+63,11240.00,11240.00,25.62,STM-12-RCP,Storm Pipe, 12 inch, RCP
+64,11260.00,11260.00,25.42,STM-15-RCP,Storm Pipe, 15 inch, RCP
+65,11280.00,11280.00,25.21,STM-18-RCP,Storm Pipe, 18 inch, RCP
+66,11300.00,11300.00,24.99,STM-24-RCP,Storm Pipe, 24 inch, RCP
+67,11320.00,11320.00,24.78,STM-30-RCP,Storm Pipe, 30 inch, RCP
+68,11340.00,11340.00,24.57,STM-36-RCP,Storm Pipe, 36 inch, RCP
+69,11360.00,11360.00,24.37,STM-18-RCP-B45,Storm Pipe, 18 inch, RCP, Bend 45 degrees
+70,11380.00,11380.00,24.18,STM-24-RCP-B90,Storm Pipe, 24 inch, RCP, Bend 90 degrees
+71,11400.00,11400.00,24.01,STM-30-RCP-B225,Storm Pipe, 30 inch, RCP, Bend 225 degrees
+72,11420.00,11420.00,23.86,STM-24-HDPE,Storm Pipe, 24 inch, HDPE
+73,11440.00,11440.00,23.73,STM-30-HDPE,Storm Pipe, 30 inch, HDPE
+74,11460.00,11460.00,23.63,STM-36-HDPE,Storm Pipe, 36 inch, HDPE
+75,11480.00,11480.00,23.56,STM-36x30-RCP-RED,Storm Pipe, Reducer 36 inch to 30 inch, RCP, RED
+76,11500.00,11500.00,23.51,STM-30x24-RCP-RED,Storm Pipe, Reducer 30 inch to 24 inch, RCP, RED
+77,11520.00,11520.00,23.50,CB-4-CONC,Catch Basin, 4 inch, CONC
+78,11540.00,11540.00,23.52,CB-5-CONC,Catch Basin, 5 inch, CONC
+79,11560.00,11560.00,23.56,DI-4-CONC,Drop Inlet, 4 inch, CONC
+80,11580.00,11580.00,23.64,DI-5-CONC,Drop Inlet, 5 inch, CONC
+81,11600.00,11600.00,23.74,YI-4-CONC,Yard Inlet, 4 inch, CONC
+82,11620.00,11620.00,23.87,SMH-48-CONC,Storm Junction Box, 48 inch, CONC
+83,11640.00,11640.00,24.02,SMH-60-CONC,Storm Junction Box, 60 inch, CONC
+84,11660.00,11660.00,24.20,HW-0-CONC,Headwall, 0 inch, CONC
+85,11680.00,11680.00,24.38,STM-18-RCP-MES,Storm Pipe, 18 inch, RCP, Mitered End Section
+86,11700.00,11700.00,24.58,STM-24-RCP-FES,Storm Pipe, 24 inch, RCP, Flared End Section
+87,11720.00,11720.00,24.79,STM-30-HDPE-MES,Storm Pipe, 30 inch, HDPE, Mitered End Section
+88,11740.00,11740.00,25.01,STM-36-RCP-FES,Storm Pipe, 36 inch, RCP, Flared End Section
+89,11760.00,11760.00,25.22,STM-30-RCP-MES-TWL-FG,Storm Pipe, 30 inch, RCP, Mitered End Section, Tidal, Flap Gate
+90,11780.00,11780.00,25.43,STM-36-RCP-FES-TWL-FG,Storm Pipe, 36 inch, RCP, Flared End Section, Tidal, Flap Gate
+91,11800.00,11800.00,25.63,STM-24-HDPE-MES-TWL-FG,Storm Pipe, 24 inch, HDPE, Mitered End Section, Tidal, Flap Gate
+92,11820.00,11820.00,25.82,STM-30-HDPE-FES-TWL-FG,Storm Pipe, 30 inch, HDPE, Flared End Section, Tidal, Flap Gate
+93,11840.00,11840.00,25.99,WM-6-DIP-B225,Water Main, 6 inch, DIP, Bend 225 degrees
+94,11860.00,11860.00,26.14,WM-6-DIP-B45,Water Main, 6 inch, DIP, Bend 45 degrees
+95,11880.00,11880.00,26.27,WM-6-DIP-B90,Water Main, 6 inch, DIP, Bend 90 degrees
+96,11900.00,11900.00,26.37,WM-8-PVC-B225,Water Main, 8 inch, PVC, Bend 225 degrees
+97,11920.00,11920.00,26.44,WM-8-PVC-B45,Water Main, 8 inch, PVC, Bend 45 degrees
+98,11940.00,11940.00,26.49,WM-8-PVC-B90,Water Main, 8 inch, PVC, Bend 90 degrees
+99,11960.00,11960.00,26.50,WM-12-DIP-B225,Water Main, 12 inch, DIP, Bend 225 degrees
+100,11980.00,11980.00,26.48,WM-12-DIP-B45,Water Main, 12 inch, DIP, Bend 45 degrees
+101,12000.00,12000.00,26.44,WM-12-DIP-B90,Water Main, 12 inch, DIP, Bend 90 degrees
+102,12020.00,12020.00,26.36,SSM-8-PVC-B225,Sanitary Sewer Main, 8 inch, PVC, Bend 225 degrees
+103,12040.00,12040.00,26.26,SSM-8-PVC-B45,Sanitary Sewer Main, 8 inch, PVC, Bend 45 degrees
+104,12060.00,12060.00,26.13,SSM-8-PVC-B90,Sanitary Sewer Main, 8 inch, PVC, Bend 90 degrees
+105,12080.00,12080.00,25.98,SSM-10-PVC-B45,Sanitary Sewer Main, 10 inch, PVC, Bend 45 degrees
+106,12100.00,12100.00,25.80,SSM-12-PVC-B90,Sanitary Sewer Main, 12 inch, PVC, Bend 90 degrees
+107,12120.00,12120.00,25.61,SFM-6-HDPE-B225,Force Main, 6 inch, HDPE, Bend 225 degrees
+108,12140.00,12140.00,25.41,SFM-6-HDPE-B45,Force Main, 6 inch, HDPE, Bend 45 degrees
+109,12160.00,12160.00,25.20,SFM-6-HDPE-B90,Force Main, 6 inch, HDPE, Bend 90 degrees
+110,12180.00,12180.00,24.99,STM-18-RCP-B45,Storm Pipe, 18 inch, RCP, Bend 45 degrees
+111,12200.00,12200.00,24.78,STM-24-RCP-B90,Storm Pipe, 24 inch, RCP, Bend 90 degrees
+112,12220.00,12220.00,24.57,STM-30-RCP-B225,Storm Pipe, 30 inch, RCP, Bend 225 degrees
+113,12240.00,12240.00,24.37,WM-6-DIP-B225,Water Main, 6 inch, DIP, Bend 225 degrees
+114,12260.00,12260.00,24.18,WM-6-DIP-B45,Water Main, 6 inch, DIP, Bend 45 degrees
+115,12280.00,12280.00,24.01,WM-6-DIP-B90,Water Main, 6 inch, DIP, Bend 90 degrees
+116,12300.00,12300.00,23.86,WM-8-PVC-B225,Water Main, 8 inch, PVC, Bend 225 degrees
+117,12320.00,12320.00,23.73,WM-8-PVC-B45,Water Main, 8 inch, PVC, Bend 45 degrees
+118,12340.00,12340.00,23.63,WM-8-PVC-B90,Water Main, 8 inch, PVC, Bend 90 degrees
+119,12360.00,12360.00,23.56,WM-12-DIP-B225,Water Main, 12 inch, DIP, Bend 225 degrees
+120,12380.00,12380.00,23.51,WM-12-DIP-B45,Water Main, 12 inch, DIP, Bend 45 degrees
+121,12400.00,12400.00,23.50,WM-12-DIP-B90,Water Main, 12 inch, DIP, Bend 90 degrees
+122,12420.00,12420.00,23.52,SSM-8-PVC-B225,Sanitary Sewer Main, 8 inch, PVC, Bend 225 degrees
+123,12440.00,12440.00,23.56,SSM-8-PVC-B45,Sanitary Sewer Main, 8 inch, PVC, Bend 45 degrees
+124,12460.00,12460.00,23.64,SSM-8-PVC-B90,Sanitary Sewer Main, 8 inch, PVC, Bend 90 degrees
+125,12480.00,12480.00,23.74,SSM-10-PVC-B45,Sanitary Sewer Main, 10 inch, PVC, Bend 45 degrees
+126,12500.00,12500.00,23.87,SSM-12-PVC-B90,Sanitary Sewer Main, 12 inch, PVC, Bend 90 degrees
+127,12520.00,12520.00,24.03,SFM-6-HDPE-B225,Force Main, 6 inch, HDPE, Bend 225 degrees
+128,12540.00,12540.00,24.20,SFM-6-HDPE-B45,Force Main, 6 inch, HDPE, Bend 45 degrees
+129,12560.00,12560.00,24.39,SFM-6-HDPE-B90,Force Main, 6 inch, HDPE, Bend 90 degrees
+130,12580.00,12580.00,24.59,STM-18-RCP-B45,Storm Pipe, 18 inch, RCP, Bend 45 degrees
+131,12600.00,12600.00,24.80,STM-24-RCP-B90,Storm Pipe, 24 inch, RCP, Bend 90 degrees
+132,12620.00,12620.00,25.01,STM-30-RCP-B225,Storm Pipe, 30 inch, RCP, Bend 225 degrees
+133,12640.00,12640.00,25.22,WVL-6-DIP,Gate Valve, 6 inch, DIP
+134,12660.00,12660.00,25.43,WVL-8-DIP,Gate Valve, 8 inch, DIP
+135,12680.00,12680.00,25.63,WVL-12-DIP,Gate Valve, 12 inch, DIP
+136,12700.00,12700.00,25.82,WVL-16-DIP,Gate Valve, 16 inch, DIP
+137,12720.00,12720.00,25.99,BFV-24-DIP,Butterfly Valve, 24 inch, DIP
+138,12740.00,12740.00,26.14,BFV-30-DIP,Butterfly Valve, 30 inch, DIP
+139,12760.00,12760.00,26.27,WFH-6-DIP,Fire Hydrant, 6 inch, DIP
+140,12780.00,12780.00,26.37,WMT-1-CU,Water Meter, 1 inch, CU
+141,12800.00,12800.00,26.44,WMT-2-CU,Water Meter, 2 inch, CU
+142,12820.00,12820.00,26.49,ARV-12-DIP,Air Release Valve, 12 inch, DIP
+143,12840.00,12840.00,26.50,ARV-16-DIP,Air Release Valve, 16 inch, DIP
+144,12860.00,12860.00,26.48,PRV-12-DIP,Pressure Reducing Valve, 12 inch, DIP
+145,12880.00,12880.00,26.44,PRV-16-DIP,Pressure Reducing Valve, 16 inch, DIP
+146,12900.00,12900.00,26.36,BOW-6-DIP,Blowoff, 6 inch, DIP
+147,12920.00,12920.00,26.25,BOW-8-DIP,Blowoff, 8 inch, DIP
+148,12940.00,12940.00,26.13,RPZ-2-CU,Backflow Preventer, 2 inch, CU
+149,12960.00,12960.00,25.97,SSC-4-PVC,Sanitary Cleanout, 4 inch, PVC
+150,12980.00,12980.00,25.80,SSC-6-PVC,Sanitary Cleanout, 6 inch, PVC
+151,13000.00,13000.00,25.61,SSL-4-PVC,Sanitary Lateral, 4 inch, PVC
+152,13020.00,13020.00,25.41,SSL-6-PVC,Sanitary Lateral, 6 inch, PVC
+153,13040.00,13040.00,25.20,SSMH-48-CONC,Sanitary Manhole, 48 inch, CONC
+154,13060.00,13060.00,24.99,SSMH-60-CONC,Sanitary Manhole, 60 inch, CONC
+155,13080.00,13080.00,24.77,AIR-6-HDPE,Air Release (Force Main), 6 inch, HDPE
+156,13100.00,13100.00,24.56,AIR-8-HDPE,Air Release (Force Main), 8 inch, HDPE
+157,13120.00,13120.00,24.36,CB-4-CONC,Catch Basin, 4 inch, CONC
+158,13140.00,13140.00,24.18,CB-5-CONC,Catch Basin, 5 inch, CONC
+159,13160.00,13160.00,24.01,DI-4-CONC,Drop Inlet, 4 inch, CONC
+160,13180.00,13180.00,23.86,DI-5-CONC,Drop Inlet, 5 inch, CONC
+161,13200.00,13200.00,23.73,YI-4-CONC,Yard Inlet, 4 inch, CONC
+162,13220.00,13220.00,23.63,SMH-48-CONC,Storm Junction Box, 48 inch, CONC
+163,13240.00,13240.00,23.56,SMH-60-CONC,Storm Junction Box, 60 inch, CONC
+164,13260.00,13260.00,23.51,HW-0-CONC,Headwall, 0 inch, CONC
+165,13280.00,13280.00,23.50,STM-18-RCP-MES,Storm Pipe, 18 inch, RCP, Mitered End Section
+166,13300.00,13300.00,23.52,STM-24-RCP-FES,Storm Pipe, 24 inch, RCP, Flared End Section
+167,13320.00,13320.00,23.56,STM-30-HDPE-MES,Storm Pipe, 30 inch, HDPE, Mitered End Section
+168,13340.00,13340.00,23.64,STM-36-RCP-FES,Storm Pipe, 36 inch, RCP, Flared End Section
+169,13360.00,13360.00,23.75,STM-30-RCP-MES-TWL-FG,Storm Pipe, 30 inch, RCP, Mitered End Section, Tidal, Flap Gate
+170,13380.00,13380.00,23.88,STM-36-RCP-FES-TWL-FG,Storm Pipe, 36 inch, RCP, Flared End Section, Tidal, Flap Gate
+171,13400.00,13400.00,24.03,STM-24-HDPE-MES-TWL-FG,Storm Pipe, 24 inch, HDPE, Mitered End Section, Tidal, Flap Gate
+172,13420.00,13420.00,24.20,STM-30-HDPE-FES-TWL-FG,Storm Pipe, 30 inch, HDPE, Flared End Section, Tidal, Flap Gate
+173,13440.00,13440.00,24.39,STM-18-RCP-MES,Storm Pipe, 18 inch, RCP, Mitered End Section
+174,13460.00,13460.00,24.59,STM-24-RCP-FES,Storm Pipe, 24 inch, RCP, Flared End Section
+175,13480.00,13480.00,24.80,STM-30-HDPE-MES,Storm Pipe, 30 inch, HDPE, Mitered End Section
+176,13500.00,13500.00,25.02,STM-36-RCP-FES,Storm Pipe, 36 inch, RCP, Flared End Section
+177,13520.00,13520.00,25.23,STM-30-RCP-MES-TWL-FG,Storm Pipe, 30 inch, RCP, Mitered End Section, Tidal, Flap Gate
+178,13540.00,13540.00,25.44,STM-36-RCP-FES-TWL-FG,Storm Pipe, 36 inch, RCP, Flared End Section, Tidal, Flap Gate
+179,13560.00,13560.00,25.64,STM-24-HDPE-MES-TWL-FG,Storm Pipe, 24 inch, HDPE, Mitered End Section, Tidal, Flap Gate
+180,13580.00,13580.00,25.82,STM-30-HDPE-FES-TWL-FG,Storm Pipe, 30 inch, HDPE, Flared End Section, Tidal, Flap Gate

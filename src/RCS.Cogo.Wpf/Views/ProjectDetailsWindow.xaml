@@ -1,0 +1,59 @@
+<Window x:Class="RCS.Cogo.Wpf.Views.ProjectDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Project Details" Height="400" Width="500"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Background="#1E1E1E" Foreground="#D4D4D4">
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#252526"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3E3E42"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,5,0,2"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,0,10,0">
+            <StackPanel>
+                <TextBlock Text="Project Name (Required)" FontWeight="Bold"/>
+                <TextBox Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Availability Number (AvailNo)"/>
+                <TextBox Text="{Binding AvailNo, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Utility Type"/>
+                 <ComboBox SelectedItem="{Binding Utility}" 
+                           ItemsSource="{Binding UtilityTypes}"/>
+
+                <TextBlock Text="Units"/>
+                <ComboBox SelectedItem="{Binding Units}" 
+                          ItemsSource="{Binding UnitTypes}"/>
+
+                <TextBlock Text="Revision"/>
+                <TextBox Text="{Binding Revision, UpdateSourceTrigger=PropertyChanged}"/>
+                
+                <GroupBox Header="Deliverables Checklist" Margin="0,15,0,0" Foreground="#D4D4D4" BorderBrush="#3E3E42">
+                    <StackPanel Margin="5">
+                        <CheckBox Content="Certification Report (PDF)" IsChecked="{Binding Settings.RequirePdfReport}" Margin="0,2" Foreground="#D4D4D4"/>
+                        <CheckBox Content="LandXML Export" IsChecked="{Binding Settings.RequireLandXml}" Margin="0,2" Foreground="#D4D4D4"/>
+                        <CheckBox Content="CSV Point Export" IsChecked="{Binding Settings.RequireCsv}" Margin="0,2" Foreground="#D4D4D4"/>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button Content="Save Details" IsDefault="True" Click="Save_Click" Width="100" Margin="0,0,10,0" Background="#007ACC" Foreground="White" BorderThickness="0" Padding="5"/>
+            <Button Content="Cancel" IsCancel="True" Width="80" Background="#3E3E42" Foreground="White" BorderThickness="0" Padding="5"/>
+        </StackPanel>
+    </Grid>
+</Window>

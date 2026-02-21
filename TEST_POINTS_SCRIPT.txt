@@ -1,0 +1,18 @@
+// RCS COGO Enterprise - Automated Test Data (Part 1: POINTS)
+// INSTRUCTIONS:
+// 1. Open the "Cogo Script" tab in the application.
+// 2. Click "Import Script" and select this file (or paste its content).
+// 3. Click "Run Script".
+// 4. Verify that points are created in the "Points" tab.
+
+// Format: STN {PointID} {Northing} {Easting} {Elevation} {Description}
+STN 1000 5000.00 5000.00 10.00 "BM Start"
+STN 1001 5050.00 5000.00 10.50 "Water Main Start"
+STN 1002 5150.00 5000.00 11.00 "Water Valve"
+STN 1003 5250.00 5000.00 11.50 "Water Main End"
+STN 2001 5050.00 5020.00 9.50 "Sewer MH 1"
+STN 2002 5150.00 5020.00 9.00 "Sewer MH 2"
+STN 2003 5250.00 5020.00 8.50 "Sewer MH 3"
+STN 3001 5050.00 5040.00 10.00 "Reclaimed Valve"
+STN 3002 5150.00 5040.00 10.50 "Reclaimed Hydrant"
+STN 3003 5250.00 5040.00 11.00 "Reclaimed End"

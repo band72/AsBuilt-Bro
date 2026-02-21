@@ -1,0 +1,58 @@
+// Robust COGO Test Script
+// This script is designed to run cleanly without producing state or argument errors.
+
+// 1. Clear the environment and any previous logs
+CLEAR
+LOG ON
+
+// 2. Establish Control Points Let's create a few base points to work from.
+NE 1 5000.0000 5000.0000 "Start Point"
+NE 2 6000.0000 5000.0000 "North Reference"
+NEZ 3 5000.0000 6000.0000 100.00 "East Reference"
+
+// 3. Setup Station and Backsight
+// Required before using BD, AD, or other station-relative commands
+STN 1
+BS 2
+
+// 4. Create Points from Station
+// BD <Pt> <Quad> <Brg> <Dist> [Desc] (Northeast quadrant 1, 45 degrees, 100 units)
+BD 10 1 45.0000 100.00 "BD Point NE"
+// AD <Point> <Angle> <Dist> [Desc] (Turn right 90 degrees from backsight, 150 units)
+AD 11 90.0000 150.00 "AD Point East"
+
+// 5. Intersections
+// RKRK <PtNew> <P1> <Dist1> <P2> <Dist2>
+RKRK 20 1 500.0 2 500.0
+
+// AZAZ <PtNew> <Pt1> <Az1> <Pt2> <Az2> [Desc]
+AZAZ 21 1 45.0000 2 135.0000 "Azimuth Intersection"
+
+// LNLN <PtNew> <P1> <P2> <Off1> <P3> <P4> <Off2> [Desc]
+LNLN 22 1 3 0.0 2 10 0.0 "Line Intersection"
+
+// 6. Information & Calculations
+INV 1 10
+DIST 1 2
+AZ 1 3
+ANG 2 1 3
+
+// 7. Figure Management
+// Build a simple triangle and check its closure
+BEG TRIANGLE
+CONT 1
+CONT 2
+CONT 3
+CONT 1
+END
+MAPCHECK TRIANGLE
+
+// 8. Transformations
+// Translate point 10 using the vector from 1 to 3
+TRN 1 3 10
+
+// 9. Cleanup & Save
+// DEL 22
+// Info "Point 22 deleted."
+SAVE robust_session.cogo
+LOG OFF

@@ -1,0 +1,3 @@
+PartKey,Discipline,FeatureType,Size,Material,Quantity,Manufacturer,ManufacturerPartNo,YearManufactured,Confidence,Source,Warning,Notes
+"","","","","",0,"","","","Manual","Manual","",""
+"JEAW002P","W","Pipe","2","PVC",1,"JEA_Std","W-PVC-02","2024","Manual","Manual","","2in PVC Water Service"

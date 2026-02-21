@@ -1,0 +1,102 @@
+// -----------------------------------------------------------------
+// Robust Strict Validation Piping Test Script
+// -----------------------------------------------------------------
+// This script utilizes the Master Database lists for Materials
+// and Structure FeatureTypes to ensure strict engine compliance.
+
+RESET
+CLEAR
+ECHO "--- Generating Target Points via COGO ---"
+
+cogo-engine-on
+pipe-engine-off
+
+// Water Main Points
+NE 1 5000.00 5000.00 "WM_Start"
+NE 2 5100.00 5000.00 "WM_End"
+NE 3 5100.00 5050.00 "Hydrant_Branch"
+
+// Sanitary Sewer Points
+NE 4 4900.00 4900.00 "MH_Upstream"
+NE 5 4900.00 5000.00 "MH_Downstream"
+NE 6 4800.00 4950.00 "Cleanout_Lat"
+
+// Storm Drainage Points
+NE 7 5200.00 5200.00 "Inlet_1"
+NE 8 5200.00 5300.00 "Inlet_2"
+
+// Reclaimed Water Points
+NE 9 5300.00 5000.00 "RW_Start"
+NE 10 5300.00 5100.00 "RW_Meter"
+
+ECHO "Target coordinates mapped. Switching to Pipe Engine."
+pipe-engine-on
+cogo-engine-off
+
+// -----------------------------------------------------------------
+// 1. Water Main (Utility: W, Material: DIP)
+// -----------------------------------------------------------------
+PRUN START W DIAM 12 MAT DIP FIG WATER_MAIN
+W-B 1
+W-C 2
+W-C 3
+W-E
+PRUN END
+
+// Strict Structure Attachments 
+// (Codes correspond directly to JEA FeatureTypes: Valve, Hydrant, Fitting, etc.)
+SS-C 1 Valve
+SS-C 2 Fitting
+SS-C 3 Hydrant
+
+// -----------------------------------------------------------------
+// 2. Sanitary Sewer (Utility: WW, Material: PVC)
+// -----------------------------------------------------------------
+PRUN START WW DIAM 8 MAT PVC FIG SANITARY_SEWER
+WW-B 4
+WW-C 5
+WW-E
+PRUN END
+
+// Branch lateral linking a cleanout mapping to JEA definitions
+PRUN START WW DIAM 4 MAT PVC FIG SEWER_LATERAL
+WW-B 5
+WW-C 6
+WW-E
+PRUN END
+
+SS-C 4 Manhole
+SS-C 5 Manhole
+SS-C 6 Cleanout
+
+// -----------------------------------------------------------------
+// 3. Storm Drainage (Utility: S, Material: RCP)
+// -----------------------------------------------------------------
+PRUN START S DIAM 24 MAT RCP FIG STORM_SYSTEM
+S-B 7
+S-C 8
+S-E
+PRUN END
+
+SS-C 7 Inlet
+SS-C 8 Inlet
+
+// -----------------------------------------------------------------
+// 4. Reclaimed Water (Utility: R, Material: PVC)
+// -----------------------------------------------------------------
+PRUN START R DIAM 6 MAT PVC FIG RECLAIMED_MAIN
+R-B 9
+R-C 10
+R-E
+PRUN END
+
+SS-C 9 Valve
+SS-C 10 Meter
+SS-C 10 Service
+
+pipe-engine-off
+cogo-engine-on
+
+ECHO "Strict Pipe Network Validation Test Complete!"
+LIST FIGS
+REPORT PIPES

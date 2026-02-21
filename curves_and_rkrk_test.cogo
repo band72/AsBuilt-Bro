@@ -1,0 +1,87 @@
+// Robust COGO Test Script - Horizontal Curves and RKRK Functionality
+// This script will deeply test Range-Known Range-Known intersections
+// across multiple points, and subsequently test the curve generation 
+// feature using XC commands within active figures.
+
+CLEAR
+LOG ON
+
+// ==========================================
+// 1. Establish Control Network
+// ==========================================
+NE 1 5000.0000 5000.0000 "Base SW"
+NE 2 6000.0000 5000.0000 "Base NW"
+NE 3 5000.0000 6000.0000 "Base SE"
+NE 4 6000.0000 6000.0000 "Base NE"
+
+// ==========================================
+// 2. RKRK Intersections (Distance-Distance)
+// ==========================================
+// Form an expanding intersection pattern using P1 and P2
+RKRK 100 1 500.0 2 500.0
+RKRK 101 1 600.0 2 600.0
+RKRK 102 1 700.0 2 700.0
+RKRK 103 1 800.0 2 800.0
+RKRK 104 1 900.0 2 900.0
+
+// Form another expanding pattern using P3 and P4
+RKRK 200 3 500.0 4 500.0
+RKRK 201 3 600.0 4 600.0
+RKRK 202 3 700.0 4 700.0
+RKRK 203 3 800.0 4 800.0
+RKRK 204 3 900.0 4 900.0
+
+// Intersect the newly calculated intersection points 
+// (RKRK engine generates both Right <Pt> and Left <Pt>_L solutions automatically)
+// Here we use the primary Right solutions to branch out further into the grid.
+RKRK 300 100 500.0 200 500.0
+RKRK 301 101 600.0 201 600.0
+RKRK 302 102 700.0 202 700.0
+
+// ==========================================
+// 3. Horizontal Curves (XC Command)
+// ==========================================
+// The XC Command creates a curve sub-segment. 
+// It MUST be enclosed within a Figure that has a starting Point (CONT).
+
+// --- Curvilinear Boundary 1 ---
+BEG TRACT_1
+CONT 1
+// Usage parsed structurally: XC ZD (BULB) [radius] [chord-az] [chord-dis]
+// Engine will append synthesized curve points smoothly onto the active figure
+XC ZD (BULB) 100.0 45.0000 50.0
+XC ZD (BULB) 150.0 90.0000 75.0
+XC ZD (BULB) 200.0 135.0000 100.0
+XC ZD (BULB) 250.0 180.0000 125.0
+CONT 3
+CONT 1
+END
+
+// Validate the tract closure including the synthetic curve segments
+MAPCHECK TRACT_1
+
+// --- Curvilinear Boundary 2 ---
+BEG TRACT_2
+CONT 2
+// Extending different chord variations via BD parsing structure
+XC BD (BULB) 300.0 1 45.00 150.0
+XC BD (BULB) 350.0 2 45.00 175.0
+XC BD (BULB) 400.0 3 45.00 200.0
+XC BD (BULB) 450.0 4 45.00 225.0
+CONT 4
+CONT 2
+END
+
+// Validate the second tract closure
+MAPCHECK TRACT_2
+
+// ==========================================
+// 4. Verification and Validation
+// ==========================================
+// Verify generated points spanning across the intersections
+INV 100 300
+INV 102 302
+INV 200 300
+
+SAVE curves_and_rkrk_test.cogo
+LOG OFF
