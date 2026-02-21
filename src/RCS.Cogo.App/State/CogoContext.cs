@@ -16,6 +16,7 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
     public Point3D? CurrentBacksight { get; set; }
     public bool TraverseMode { get; set; }
     public Figure? CurrentFigure { get; set; }
+    public (Point3D? Left, Point3D? Right) LastIntersections { get; set; }
 
     // Defaults
     public string Units { get; set; } = "FOOT";
@@ -24,10 +25,12 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
     public double ScaleFactor { get; set; } = 1.000000;
     public bool AtmosCorrection { get; set; } = false;
     public bool CurvatureRefraction { get; set; } = false;
+    public bool AutoPoint { get; set; } = false;
     public string AngleFormat { get; set; } = "RIGHT";
     public string VerticalFormat { get; set; } = "ZENITH";
     public string EdmMode { get; set; } = "STD";
     public string PrismMode { get; set; } = "0";
+    public double MapCheckClosureTolerance { get; set; } = 0.01;
 
     public CogoContext(Action<string> logger)
     {
@@ -73,6 +76,15 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
     public bool DeletePoint(string pointId)
     {
         return _points.Remove(pointId);
+    }
+    
+    public bool DeleteFigure(string name)
+    {
+        if (CurrentFigure?.Name.Equals(name, StringComparison.OrdinalIgnoreCase) == true)
+        {
+            CurrentFigure = null;
+        }
+        return _figures.Remove(name);
     }
     
     public void ClearLog()

@@ -121,6 +121,13 @@ public class DdCommand : ICommand
         context.AddPoint(ptId, newPt, desc);
         context.Log($"Point {ptId} by Deflection created: {newPt}");
         
+        if (context.TraverseMode)
+        {
+            context.CurrentBacksight = context.CurrentStation;
+            context.CurrentStation = newPt;
+            context.Log($"Traversed to new station: {ptId}");
+        }
+
         return Task.CompletedTask;
     }
 }

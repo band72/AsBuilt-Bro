@@ -19,6 +19,7 @@ public partial class ShellWindow : Window
         vm.ZoomExtentsRequested += (s, e) => ZoomExtents();
         vm.ZoomInRequested += (s, e) => ZoomIn();
         vm.ZoomOutRequested += (s, e) => ZoomOut();
+        vm.ZoomToPointRequested += (s, target) => ZoomToPoint(target);
         
         // Initialize Default View (Center 5000,5000, Scale 1, Y flipped)
         // Matrix: M11=Scale, M22=-Scale, OffsetX, OffsetY
@@ -48,6 +49,25 @@ public partial class ShellWindow : Window
         matrix.ScaleAt(1.0 / 1.05, 1.0 / 1.05, center.X, center.Y);
         WorldTransform.Matrix = matrix;
         if (DataContext is ShellViewModel vm) vm.CurrentViewScale = matrix.M11;
+    }
+
+    private void ZoomToPoint(Point target)
+    {
+        double targetScale = 1.5;
+        
+        var matrix = new Matrix();
+        matrix.M11 = targetScale;
+        matrix.M22 = -targetScale; // Flip Y
+        
+        double screenCenterX = ViewportCanvas.ActualWidth / 2;
+        double screenCenterY = ViewportCanvas.ActualHeight / 2;
+        
+        // Offset = Center - (World * Scale)
+        matrix.OffsetX = screenCenterX - (target.X * targetScale);
+        matrix.OffsetY = screenCenterY - (target.Y * -targetScale); // Using flipped Y
+        
+        WorldTransform.Matrix = matrix;
+        if (DataContext is ShellViewModel vm) vm.CurrentViewScale = targetScale;
     }
 
     private void ZoomExtents()

@@ -200,6 +200,17 @@ public class ShellViewModel : ViewModelBase
     public ObservableCollection<double> AvailablePointNumberSizes { get; } = new(new[] { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 48.0, 64.0 });
     public ObservableCollection<double> AvailablePointMarkerSizes { get; } = new(new[] { 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0, 5.0 });
     public ObservableCollection<double> AvailableFigureLineWidths { get; } = new(new[] { 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0 });
+    public ObservableCollection<double> AvailableClosureTolerances { get; } = new(new[] { 0.2, 0.1, 0.01, 0.001 });
+
+    public double MapCheckClosureTolerance
+    {
+        get => _context.MapCheckClosureTolerance;
+        set
+        {
+            _context.MapCheckClosureTolerance = value;
+            OnPropertyChanged();
+        }
+    }
     
     private double _pointNumberSize = 24.0;
     public double PointNumberSize
@@ -244,6 +255,34 @@ public class ShellViewModel : ViewModelBase
     // Scale precisely targeted to point (X and number) rendering 
     public double PointMarkerScale => (1.0 / Math.Abs(_currentViewScale)) * PointMarkerSize * SymbolScaleMultiplier;
 
+    private bool _showPointNumbers = true;
+    public bool ShowPointNumbers
+    {
+        get => _showPointNumbers;
+        set => SetField(ref _showPointNumbers, value);
+    }
+
+    private bool _showPointMarkers = true;
+    public bool ShowPointMarkers
+    {
+        get => _showPointMarkers;
+        set => SetField(ref _showPointMarkers, value);
+    }
+    
+    private bool _showFigureLabels = true;
+    public bool ShowFigureLabels
+    {
+        get => _showFigureLabels;
+        set => SetField(ref _showFigureLabels, value);
+    }
+
+    private bool _isRunningScript;
+    public bool IsRunningScript
+    {
+        get => _isRunningScript;
+        set => SetField(ref _isRunningScript, value);
+    }
+
     public System.Windows.Input.ICommand SubmitCommand { get; }
     public System.Windows.Input.ICommand ImportBatchCommand { get; }
     public System.Windows.Input.ICommand RunBatchCommand { get; }
@@ -256,6 +295,7 @@ public class ShellViewModel : ViewModelBase
     public event EventHandler? ZoomExtentsRequested;
     public event EventHandler? ZoomInRequested;
     public event EventHandler? ZoomOutRequested;
+    public event EventHandler<System.Windows.Point>? ZoomToPointRequested;
 
     public ShellViewModel()
     {
@@ -332,6 +372,7 @@ public class ShellViewModel : ViewModelBase
         ExportBomCommand = new RelayCommand(_ => ExportBom());
         
         ExportScriptCommand = new RelayCommand(_ => ExportScript());
+        AnalyzeScriptCommand = new RelayCommand(_ => AnalyzeScript());
         ExportOutputLogCommand = new RelayCommand(_ => ExportOutputLog());
         ExportPointsTxtCommand = new RelayCommand(_ => ExportPointsTxt());
         ExportPointsXmlCommand = new RelayCommand(_ => ExportPointsXml());
@@ -424,6 +465,17 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand AboutCommand { get; }
 
     public System.Windows.Input.ICommand ExportScriptCommand { get; }
+    public System.Windows.Input.ICommand AnalyzeScriptCommand { get; }
+
+    private void AnalyzeScript()
+    {
+        var analyzer = new RCS.Cogo.AI.AiAnalyzer();
+        var results = analyzer.AnalyzeScript(BatchScriptContent);
+        
+        var aiWindow = new RCS.Cogo.Wpf.Views.AiAnalysisWindow(results);
+        aiWindow.Owner = App.Current.MainWindow;
+        aiWindow.ShowDialog();
+    }
     public System.Windows.Input.ICommand ExportOutputLogCommand { get; }
     public System.Windows.Input.ICommand ExportPointsTxtCommand { get; }
     public System.Windows.Input.ICommand ExportPointsXmlCommand { get; }
@@ -1854,6 +1906,14 @@ public class ShellViewModel : ViewModelBase
                             writer.AddLine(p1.X, p1.Y, p2.X, p2.Y, "FIGURES");
                         }
                     }
+                    
+                    if (ShowFigureLabels)
+                    {
+                        foreach(var label in fig.Labels)
+                        {
+                            writer.AddText(label.Text, label.Easting, label.Northing, 1.0, "FIGURE_LABELS", "CENTER", label.RotationDegrees);
+                        }
+                    }
                 }
                 
                 // Export Structures
@@ -1952,7 +2012,17 @@ public class ShellViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(BatchScriptContent)) return;
 
+        IsRunningScript = true;
+        
+        // As requested: display progress bar for 1.5 seconds minimum
+        await Task.Delay(1500);
+
         CommandLog.Add("--- Running Batch Script ---");
+        
+        // Reset state before running
+        await _engine.ExecuteAsync("CLEAR", _context);
+        await _engine.ExecuteAsync("DEL PTS", _context);
+        await _engine.ExecuteAsync("DEL FIG", _context);
         
         var lines = BatchScriptContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
         foreach (var line in lines)
@@ -1967,6 +2037,8 @@ public class ShellViewModel : ViewModelBase
         
         CommandLog.Add("--- Batch Complete ---");
         RefreshData();
+        
+        IsRunningScript = false;
     }
 
     private async Task WalkBatchScriptAsync()
@@ -1974,6 +2046,12 @@ public class ShellViewModel : ViewModelBase
         if (string.IsNullOrWhiteSpace(BatchScriptContent)) return;
 
         CommandLog.Add("--- Walking Batch Script ---");
+        
+        // Reset state before walking
+        await _engine.ExecuteAsync("CLEAR", _context);
+        await _engine.ExecuteAsync("DEL PTS", _context);
+        await _engine.ExecuteAsync("DEL FIG", _context);
+        RefreshData(true);
         
         var lines = BatchScriptContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
         foreach (var line in lines)
@@ -1985,15 +2063,43 @@ public class ShellViewModel : ViewModelBase
             CommandLog.Add($"> {trimmed}");
             await _engine.ExecuteAsync(trimmed, _context);
             
-            // Force data refresh and zoom
-            RefreshData();
-            System.Windows.Application.Current?.Dispatcher.Invoke(() => ZoomExtentsRequested?.Invoke(this, EventArgs.Empty));
+            // Force data refresh but don't reset bounds
+            RefreshData(false);
+
+            System.Windows.Point zoomTarget = new System.Windows.Point();
+            bool foundTarget = false;
+            
+            if (_context.CurrentFigure != null && _context.CurrentFigure.PointIds.Count > 0)
+            {
+                var pt = _context.GetPoint(_context.CurrentFigure.PointIds.LastOrDefault() ?? "");
+                if (pt != null)
+                {
+                    zoomTarget = new System.Windows.Point(pt.Easting, pt.Northing);
+                    foundTarget = true;
+                }
+            }
+
+            if (!foundTarget)
+            {
+                var lastPt = Points.LastOrDefault();
+                if (lastPt != null)
+                {
+                    zoomTarget = new System.Windows.Point(lastPt.Easting, lastPt.Northing);
+                    foundTarget = true;
+                }
+            }
+
+            if (foundTarget)
+            {
+                 System.Windows.Application.Current?.Dispatcher.Invoke(() => 
+                    ZoomToPointRequested?.Invoke(this, zoomTarget));
+            }
             
             await Task.Delay(1000); // 1-second delay for visually tracking the build
         }
         
         CommandLog.Add("--- Walk Complete ---");
-        RefreshData();
+        RefreshData(true);
     }
 
     private async Task ExecuteCommandAsync()
@@ -2010,7 +2116,7 @@ public class ShellViewModel : ViewModelBase
         RefreshData();
     }
 
-    private void RefreshData()
+    private void RefreshData(bool autoZoomExtents = true)
     {
         System.Windows.Application.Current?.Dispatcher.Invoke(() => 
         {
@@ -2042,7 +2148,8 @@ public class ShellViewModel : ViewModelBase
                 
                 if (pts.Count > 1)
                 {
-                    Figures.Add(new FigureViewModel(fig.Name, pts));
+                    var stroke = fig.MapCheckFailed ? System.Windows.Media.Brushes.Red : System.Windows.Media.Brushes.Yellow;
+                    Figures.Add(new FigureViewModel(fig.Name, pts, stroke, fig.Labels));
                 }
             }
             
@@ -2084,7 +2191,7 @@ public class ShellViewModel : ViewModelBase
             }
 
             // Auto-Zoom Extents after refresh
-            ZoomExtentsRequested?.Invoke(this, EventArgs.Empty);
+            if (autoZoomExtents) ZoomExtentsRequested?.Invoke(this, EventArgs.Empty);
         });
     }
 
@@ -2437,13 +2544,30 @@ public class ShellViewModel : ViewModelBase
 
 }
 
+public class FigureLabelViewModel : ViewModelBase
+{
+    public string Text { get; }
+    public double Easting { get; }
+    public double Northing { get; }
+    public double RotationDegrees { get; }
+
+    public FigureLabelViewModel(string text, double easting, double northing, double rotationDegrees)
+    {
+        Text = text;
+        Easting = easting;
+        Northing = northing;
+        RotationDegrees = rotationDegrees;
+    }
+}
+
 public class FigureViewModel : ViewModelBase
 {
     public string Name { get; }
     public System.Windows.Media.PointCollection Points { get; }
     public System.Windows.Media.Brush Stroke { get; }
+    public System.Collections.ObjectModel.ObservableCollection<FigureLabelViewModel> Labels { get; } = new();
 
-    public FigureViewModel(string name, System.Collections.Generic.IEnumerable<Point3D> points, System.Windows.Media.Brush? stroke = null)
+    public FigureViewModel(string name, System.Collections.Generic.IEnumerable<Point3D> points, System.Windows.Media.Brush? stroke = null, System.Collections.Generic.IEnumerable<RCS.Cogo.App.State.FigureLabel>? labels = null)
     {
         Name = name;
         Points = new System.Windows.Media.PointCollection();
@@ -2452,6 +2576,11 @@ public class FigureViewModel : ViewModelBase
             Points.Add(new System.Windows.Point(p.Easting, p.Northing));
         }
         Stroke = stroke ?? System.Windows.Media.Brushes.Yellow; // Default to Yellow
+
+        if (labels != null)
+        {
+            foreach(var l in labels) Labels.Add(new FigureLabelViewModel(l.Text, l.Easting, l.Northing, l.RotationDegrees));
+        }
     }
 }
 

@@ -333,8 +333,19 @@
                             <Button Content="Walk Script" Command="{Binding WalkBatchCommand}" 
                                     Padding="10,5" Margin="0,0,10,0" Background="#28A745" Foreground="White" FontWeight="Bold"/>
 
-                            <Button Content="Export (.txt)" Command="{Binding ExportScriptCommand}" 
-                                    Padding="10,5" Background="#2D2D30" Foreground="White"/>
+                            <ToggleButton Content="P" IsChecked="{Binding ShowPointNumbers}" 
+                                    Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Numbers"/>
+                            <ToggleButton Content="X" IsChecked="{Binding ShowPointMarkers}" 
+                                    Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Markers"/>
+                            <ToggleButton Content="L" IsChecked="{Binding ShowFigureLabels}" 
+                                    Width="30" Margin="0,0,10,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Figure Labels"/>
+
+                            <Button Content="DXF" Command="{Binding ExportDxfCommand}" 
+                                    Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                            <Button Content="TXT" Command="{Binding ExportScriptCommand}" 
+                                    Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                            <Button Content="AI" Command="{Binding AnalyzeScriptCommand}" 
+                                    Padding="10,5" Background="#8A2BE2" Foreground="White" FontWeight="Bold" ToolTip="AI Script Validator"/>
                         </StackPanel>
                         
                         <!-- Editor -->
@@ -343,7 +354,13 @@
                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
                                  Background="#1E1E1E" Foreground="#DCDCDC" BorderThickness="1"/>
                                  
-                        <TextBlock Grid.Row="2" Text="Use // for comments" Foreground="Gray" Margin="0,5,0,0" FontStyle="Italic"/>
+                        <Grid Grid.Row="2" Margin="0,5,0,0">
+                            <TextBlock Text="Use // for comments" Foreground="Gray" FontStyle="Italic"/>
+                            <StackPanel Orientation="Horizontal" Visibility="{Binding IsRunningScript, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <ProgressBar IsIndeterminate="True" Width="200" Height="10" Margin="0,0,10,0"/>
+                                <TextBlock Text="Running Script..." Foreground="#007ACC" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Grid>
                     </Grid>
                 </TabItem>
                 
@@ -735,6 +752,53 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
+                <!-- Figure Labels -->
+                <ItemsControl ItemsSource="{Binding Figures}" Visibility="{Binding DataContext.ShowFigureLabels, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding Labels}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Canvas/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="Canvas.Left" Value="{Binding Easting}"/>
+                                        <Setter Property="Canvas.Top" Value="{Binding Northing}"/>
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Canvas ClipToBounds="False">
+                                            <Canvas.RenderTransform>
+                                                <ScaleTransform ScaleX="{Binding DataContext.PointMarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                ScaleY="{Binding DataContext.PointMarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                            </Canvas.RenderTransform>
+                                            
+                                            <!-- Center the text block roughly by shifting it left/up by half its approx size -->
+                                            <Border Background="#AA000000" CornerRadius="2" Padding="2" Canvas.Left="-30" Canvas.Top="5">
+                                                <Border.RenderTransform>
+                                                    <TransformGroup>
+                                                        <ScaleTransform ScaleY="-1"/>
+                                                        <RotateTransform Angle="{Binding RotationDegrees}"/>
+                                                    </TransformGroup>
+                                                </Border.RenderTransform>
+                                                <TextBlock Text="{Binding Text}" Foreground="#FFFFAA" FontSize="12" TextAlignment="Center" FontWeight="SemiBold"/>
+                                            </Border>
+                                        </Canvas>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
                 <!-- Structures -->
                 <ItemsControl ItemsSource="{Binding StructureGraphics}">
                     <ItemsControl.ItemsPanel>
@@ -824,14 +888,17 @@
                                  </Canvas.RenderTransform>
 
                                  <!-- The Green X -->
-                                 <Line X1="-5" Y1="-5" X2="5" Y2="5" Stroke="#00FF00" StrokeThickness="1.5"/>
-                                 <Line X1="5" Y1="-5" X2="-5" Y2="5" Stroke="#00FF00" StrokeThickness="1.5"/>
+                                 <Line X1="-5" Y1="-5" X2="5" Y2="5" Stroke="#00FF00" StrokeThickness="1.5"
+                                       Visibility="{Binding DataContext.ShowPointMarkers, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                 <Line X1="5" Y1="-5" X2="-5" Y2="5" Stroke="#00FF00" StrokeThickness="1.5"
+                                       Visibility="{Binding DataContext.ShowPointMarkers, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                                  <!-- The Point Number Label -->
                                  <!-- Placed up and to the right, flipped upright so it doesn't render upside down in mathematical space -->
                                  <TextBlock Text="{Binding Id}" Foreground="#00FF00" 
                                             FontSize="{Binding DataContext.PointNumberSize, RelativeSource={RelativeSource AncestorType=Window}}" 
                                             FontWeight="Bold"
+                                            Visibility="{Binding DataContext.ShowPointNumbers, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"
                                             Canvas.Left="8" Canvas.Top="22">
                                       <TextBlock.RenderTransform>
                                           <ScaleTransform ScaleY="-1"/>

@@ -11,25 +11,50 @@ public class NezCommand : ICommand
 
     public Task ExecuteAsync(string[] args, ICogoContext context)
     {
-        if (args.Length < 5)
+        if (!context.AutoPoint && args.Length < 4)
         {
-            context.Log("Error: Usage: NEZ <Pt> <N> <E> <Z> [Desc]");
+            context.Log("Error: Usage: NEZ <Pt> <N> <E> [Z] [Desc] or enable AP to omit <Pt>");
             return Task.CompletedTask;
         }
 
-        string ptId = args[1];
+        string ptId;
+        int startIdx;
 
-        if (!double.TryParse(args[2], out double n) || 
-            !double.TryParse(args[3], out double e) ||
-            !double.TryParse(args[4], out double z))
+        if (context.AutoPoint)
         {
-            context.Log("Error: Invalid coordinates.");
+            ptId = context.GetNextPointId().ToString();
+            startIdx = 1;
+        }
+        else
+        {
+            ptId = args[1];
+            startIdx = 2;
+        }
+
+        var numbers = new System.Collections.Generic.List<double>();
+        string desc = "";
+        
+        for (int i = startIdx; i < args.Length; i++)
+        {
+            if (double.TryParse(args[i], out double val))
+            {
+                numbers.Add(val);
+            }
+            else if (args[i].ToUpper() != "N" && args[i].ToUpper() != "E" && args[i].ToUpper() != "Z" && args[i].ToUpper() != "DESC" && args[i].ToUpper() != "DIR")
+            {
+                if (string.IsNullOrEmpty(desc)) desc = args[i].Trim('"');
+                else desc += " " + args[i].Trim('"');
+            }
+        }
+
+        if (numbers.Count < 2)
+        {
+            context.Log("Error: Invalid coordinates. Need N, E, [Z].");
             return Task.CompletedTask;
         }
 
-        string desc = args.Length > 5 ? args[5] : "";
-
-        var pt = new Point3D(n, e, z);
+        double z = numbers.Count >= 3 ? numbers[2] : 0.0;
+        var pt = new Point3D(numbers[0], numbers[1], z);
         context.AddPoint(ptId, pt, desc); // AddPoint will overwrite/update if exists usually, or should we check?
         // Context.AddPoint implementation likely handles dictionary key set.
         

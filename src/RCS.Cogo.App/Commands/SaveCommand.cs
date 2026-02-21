@@ -19,6 +19,41 @@ public class SaveCommand : ICommand
             return Task.CompletedTask;
         }
 
+        string param1 = args[1].ToUpper();
+        if (param1 == "NORTH" || param1 == "SOUTH" || param1 == "EAST" || param1 == "WEST")
+        {
+            if (context.LastIntersections.Left == null || context.LastIntersections.Right == null)
+            {
+                context.Log("Error: No active intersections stored. Run RKRK or other intersection command first.");
+                return Task.CompletedTask;
+            }
+
+            string ptId = context.AutoPoint ? context.GetNextPointId().ToString() : (args.Length >= 3 ? args[2] : "");
+            if (string.IsNullOrEmpty(ptId))
+            {
+                context.Log("Error: Usage: SAVE <Direction> <PtNew> or enable AP.");
+                return Task.CompletedTask;
+            }
+
+            var left = context.LastIntersections.Left;
+            var right = context.LastIntersections.Right;
+
+            RCS.Cogo.Core.Primitives.Point3D selectedPoint;
+            
+            if (param1 == "NORTH") selectedPoint = left.Northing > right.Northing ? left : right;
+            else if (param1 == "SOUTH") selectedPoint = left.Northing < right.Northing ? left : right;
+            else if (param1 == "EAST") selectedPoint = left.Easting > right.Easting ? left : right;
+            else selectedPoint = left.Easting < right.Easting ? left : right; // WEST
+
+            context.AddPoint(ptId, selectedPoint, $"RKRK Intersection ({param1})");
+            context.Log($"Point {ptId} created: N:{selectedPoint.Northing:F4}, E:{selectedPoint.Easting:F4} (Saved {param1})");
+            
+            // Clear to prevent accidental reuse
+            context.LastIntersections = (null, null);
+
+            return Task.CompletedTask;
+        }
+
         string filename = args[1];
         if (!filename.EndsWith(".cogo")) filename += ".cogo";
 

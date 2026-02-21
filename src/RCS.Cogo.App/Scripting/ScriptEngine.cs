@@ -62,16 +62,32 @@ public class ScriptEngine
         }
         else
         {
-            // If the command evaluates to an integer/number, assume it intends to add a point to the figure (implicit CONT)
+            // If the command evaluates to an integer/number:
+            // If it provides coordinates (e.g. 1 5000 5000), it's defining a point (implicit PT/NEZ).
+            // If it's a single identifier, it's appending to a figure (implicit CONT).
             if (double.TryParse(commandName, out _))
             {
-                var contCmd = _registry.GetCommand("CONT");
-                if (contCmd != null)
+                if (args.Count >= 3)
                 {
-                    var newArgs = new List<string> { "CONT" };
-                    newArgs.AddRange(args);
-                    await contCmd.ExecuteAsync(newArgs.ToArray(), context);
-                    return;
+                    var ptCmd = _registry.GetCommand("PT");
+                    if (ptCmd != null)
+                    {
+                        var newArgs = new List<string> { "PT" };
+                        newArgs.AddRange(args);
+                        await ptCmd.ExecuteAsync(newArgs.ToArray(), context);
+                        return;
+                    }
+                }
+                else
+                {
+                    var contCmd = _registry.GetCommand("CONT");
+                    if (contCmd != null)
+                    {
+                        var newArgs = new List<string> { "CONT" };
+                        newArgs.AddRange(args);
+                        await contCmd.ExecuteAsync(newArgs.ToArray(), context);
+                        return;
+                    }
                 }
             }
 

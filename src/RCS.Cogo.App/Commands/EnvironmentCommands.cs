@@ -146,3 +146,23 @@ public class CollCommand : ICommand
         return Task.CompletedTask;
     }
 }
+
+public class ApCommand : ICommand
+{
+    public string Name => "AP";
+    public string Description => "Toggle Auto Point mode (ON/OFF).";
+    public Task ExecuteAsync(string[] args, ICogoContext context)
+    {
+        if (args.Length > 1) 
+        {
+            context.AutoPoint = args[1].ToUpper() == "ON";
+        }
+        else
+        {
+            context.AutoPoint = !context.AutoPoint;
+        }
+        
+        context.Log($"AP set to {(context.AutoPoint ? "ON" : "OFF")} (Stored)");
+        return Task.CompletedTask;
+    }
+}

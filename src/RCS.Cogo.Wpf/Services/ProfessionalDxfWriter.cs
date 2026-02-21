@@ -143,7 +143,7 @@ public class ProfessionalDxfWriter
         _sb.AppendLine(r.ToString("F4"));
     }
     
-    public void AddText(string text, double x, double y, double height, string layer, string align = "LEFT")
+    public void AddText(string text, double x, double y, double height, string layer, string align = "LEFT", double rotationDegrees = 0)
     {
         _sb.AppendLine("0");
         _sb.AppendLine("TEXT");
@@ -156,7 +156,15 @@ public class ProfessionalDxfWriter
         _sb.AppendLine("40");
         _sb.AppendLine(height.ToString("F4"));
         _sb.AppendLine("1");
-        _sb.AppendLine(text);
+        // DXF TEXT shouldn't contain newlines, replace \n with space
+        _sb.AppendLine(text.Replace("\n", "  ").Replace("\r", ""));
+        
+        if (Math.Abs(rotationDegrees) > 0.001)
+        {
+            _sb.AppendLine("50");
+            _sb.AppendLine(rotationDegrees.ToString("F4"));
+        }
+        
         // Additional align logic if needed
     }
     

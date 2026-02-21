@@ -69,3 +69,12 @@ public class BCommand : ICommand
     // Likely maps to Inverse or Bearing info. Let's map to INV as safe bet for info display.
     public Task ExecuteAsync(string[] args, ICogoContext context) => new InvCommand().ExecuteAsync(args, context);
 }
+
+public class ArcArcCommand : ICommand
+{
+    public string Name => "ARCARC";
+    public string Description => "Alias for RKRK (Range-Range Intersect).";
+    public Task ExecuteAsync(string[] args, ICogoContext context) => new RkRkCommand().ExecuteAsync(args, context);
+}
+
+

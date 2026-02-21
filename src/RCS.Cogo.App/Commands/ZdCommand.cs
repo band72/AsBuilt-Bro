@@ -45,6 +45,13 @@ public class ZdCommand : ICommand
         context.AddPoint(pointId, newPoint, desc);
         context.Log($"Point {pointId} created at {newPoint} (Az: {azimuth.ToDMS():F4}, Dist: {dist:F3})");
 
+        if (context.TraverseMode)
+        {
+            context.CurrentBacksight = context.CurrentStation;
+            context.CurrentStation = newPoint;
+            context.Log($"Traversed to new station: {pointId}");
+        }
+
         return Task.CompletedTask;
     }
 }

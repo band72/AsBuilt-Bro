@@ -12,22 +12,49 @@ public class NeCommand : ICommand
     public Task ExecuteAsync(string[] args, ICogoContext context)
     {
         // NE 1 5000 5000 "Start"
-        if (args.Length < 4)
+        if (!context.AutoPoint && args.Length < 4)
         {
-            context.Log("Error: Invalid arguments. Usage: NE <Point> <N> <E> [Desc]");
+            context.Log("Error: Invalid arguments. Usage: NE <Point> <N> <E> [Desc] or enable AP to omit <Point>");
             return Task.CompletedTask;
         }
 
-        string pointId = args[1];
-        if (!double.TryParse(args[2], out double n) || !double.TryParse(args[3], out double e))
-        {
-            context.Log("Error: Invalid coordinates.");
-            return Task.CompletedTask;
-        }
+        string pointId;
+        int startIdx;
 
-        string desc = args.Length > 4 ? args[4] : "";
+        if (context.AutoPoint)
+        {
+            pointId = context.GetNextPointId().ToString();
+            startIdx = 1;
+        }
+        else
+        {
+            pointId = args[1];
+            startIdx = 2;
+        }
         
-        var pt = new Point3D(n, e, 0); // NE implies Elevation 0 or unchanged? Let's use 0.
+        var numbers = new System.Collections.Generic.List<double>();
+        string desc = "";
+        
+        for (int i = startIdx; i < args.Length; i++)
+        {
+            if (double.TryParse(args[i], out double val))
+            {
+                numbers.Add(val);
+            }
+            else if (args[i].ToUpper() != "N" && args[i].ToUpper() != "E" && args[i].ToUpper() != "DESC" && args[i].ToUpper() != "DIR")
+            {
+                if (string.IsNullOrEmpty(desc)) desc = args[i].Trim('"');
+                else desc += " " + args[i].Trim('"');
+            }
+        }
+
+        if (numbers.Count < 2)
+        {
+            context.Log("Error: Invalid coordinates. Need N, E.");
+            return Task.CompletedTask;
+        }
+
+        var pt = new Point3D(numbers[0], numbers[1], 0); // NE implies Elevation 0
         context.AddPoint(pointId, pt, desc);
         context.Log($"Point {pointId} created at {pt}");
         

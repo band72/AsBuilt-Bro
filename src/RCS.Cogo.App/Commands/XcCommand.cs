@@ -147,7 +147,63 @@ public class XcCommand : ICommand
         }
         else if (subCmd == "PTS")
         {
-            if (args.Length >= 4)
+            if (args.Length == 5)
+            {
+                if (!double.TryParse(args[2], out double radius))
+                {
+                    context.Log($"Error: Invalid radius '{args[2]}'");
+                    return Task.CompletedTask;
+                }
+                
+                string radiusPtId = args[3];
+                string endPtId = args[4];
+                
+                var centerPt = context.GetPoint(radiusPtId);
+                var endPt = context.GetPoint(endPtId);
+                
+                if (centerPt == null || endPt == null)
+                {
+                    context.Log($"Error: One or both points not found ({radiusPtId}, {endPtId}).");
+                    return Task.CompletedTask;
+                }
+
+                bool isLeft = radius < 0;
+                double absR = System.Math.Abs(radius);
+                
+                var invStart = GeometryEngine.Inverse(centerPt, startPt);
+                double azStart = invStart.Azimuth.Radians;
+                
+                var invEnd = GeometryEngine.Inverse(centerPt, endPt);
+                double azEnd = invEnd.Azimuth.Radians;
+                
+                double sweep = azEnd - azStart;
+                
+                if (isLeft) // Curve Left -> CCW -> negative sweep
+                {
+                    if (sweep > 0) sweep -= 2 * System.Math.PI;
+                }
+                else // Curve Right -> CW -> positive sweep
+                {
+                    if (sweep < 0) sweep += 2 * System.Math.PI;
+                }
+
+                int segments = 12;
+                for (int i = 1; i < segments; i++)
+                {
+                    double fraction = (double)i / segments;
+                    double currentAz = azStart + fraction * sweep;
+                    var pCurve = GeometryEngine.Forward(centerPt, Angle.FromRadians(currentAz), absR);
+                    
+                    string sId = "XC_" + System.Guid.NewGuid().ToString("N").Substring(0, 6);
+                    context.AddPoint(sId, pCurve, "XC PTS Segment");
+                    context.CurrentFigure.PointIds.Add(sId);
+                }
+                
+                // Finally add the real endpoint
+                context.CurrentFigure.PointIds.Add(endPtId);
+                context.Log($"Processed curve ({(isLeft ? "Left" : "Right")}) from {lastPtId} to {endPtId} (Radius Pt: {radiusPtId})");
+            }
+            else if (args.Length >= 4)
             {
                 context.Log($"Processed intersecting curve through points: {string.Join(" ", args.Skip(2))}");
                 string endPtId = args[args.Length - 1];
@@ -158,8 +214,9 @@ public class XcCommand : ICommand
             }
             else
             {
-                context.Log($"Processed curve instruction (XC PTS).");
+                context.Log("Usage: XC PTS <radius> <radius-point> <end-point>");
             }
+            
             return Task.CompletedTask;
         }
         

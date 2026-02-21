@@ -35,15 +35,22 @@ public interface ICogoContext
     double ScaleFactor { get; set; }
     bool AtmosCorrection { get; set; }
     bool CurvatureRefraction { get; set; }
+    bool AutoPoint { get; set; }
     string AngleFormat { get; set; } // Right/Left
     string VerticalFormat { get; set; } // Zenith/Horiz
     string EdmMode { get; set; } 
     string PrismMode { get; set; }
+    double MapCheckClosureTolerance { get; set; }
 
     /// <summary>
     /// Gets or sets the currently active figure being constructed.
     /// </summary>
     Figure? CurrentFigure { get; set; }
+
+    /// <summary>
+    /// Stores the two possible intersection points from the last intersection command (like RKRK).
+    /// </summary>
+    (Point3D? Left, Point3D? Right) LastIntersections { get; set; }
 
     /// <summary>
     /// Adds a new figure to the project.
@@ -88,6 +95,11 @@ public interface ICogoContext
     /// Deletes a point by its ID.
     /// </summary>
     bool DeletePoint(string pointId);
+
+    /// <summary>
+    /// Deletes a figure by its name.
+    /// </summary>
+    bool DeleteFigure(string name);
 
     /// <summary>
     /// Clears the output log.

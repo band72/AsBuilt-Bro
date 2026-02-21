@@ -20,26 +20,34 @@ public class StnCommand : ICommand
         string pointId = args[1];
 
         // If coordinates provided: STN PT N E Z DESC
-        if (args.Length >= 5)
+        if (args.Length >= 4)
         {
-            if (double.TryParse(args[2], out double n) &&
-                double.TryParse(args[3], out double e) &&
-                double.TryParse(args[4], out double z))
+            var numbers = new System.Collections.Generic.List<double>();
+            string desc = "";
+
+            for (int i = 2; i < args.Length; i++)
             {
-                string desc = args.Length > 5 ? args[5].Trim('"') : "";
-                
+                if (double.TryParse(args[i], out double val))
+                {
+                    numbers.Add(val);
+                }
+                else if (args[i].ToUpper() != "N" && args[i].ToUpper() != "E" && args[i].ToUpper() != "Z" && args[i].ToUpper() != "DESC" && args[i].ToUpper() != "DIR")
+                {
+                    if (string.IsNullOrEmpty(desc)) desc = args[i].Trim('"');
+                    else desc += " " + args[i].Trim('"');
+                }
+            }
+
+            if (numbers.Count >= 2)
+            {
                 // Create or Update point
+                double n = numbers[0], e = numbers[1], z = numbers.Count > 2 ? numbers[2] : 0.0;
                 var newPt = new Point3D(n, e, z);
                 context.AddPoint(pointId, newPt, desc); // Correct method signature
                 
                 context.CurrentStation = newPt;
                 context.Log($"Stored and Occupied Point {pointId}: N:{n:F3} E:{e:F3} Z:{z:F3} D:{desc}");
                 return Task.CompletedTask;
-            }
-            else
-            {
-                 context.Log("Error: Invalid coordinates. Usage: STN <PointId> <N> <E> <Z> [Desc]");
-                 return Task.CompletedTask;
             }
         }
 

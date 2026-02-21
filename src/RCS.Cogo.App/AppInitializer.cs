@@ -49,6 +49,8 @@ public static class AppInitializer
         registry.Register(new ACommand());
         registry.Register(new BCommand());
         registry.Register(new DCommand());
+        registry.Register(new ArcArcCommand());
+        registry.Register(new DispCommand());
         
         // Observations
         registry.Register(new FaceCommand("F1"));
@@ -101,7 +103,7 @@ public static class AppInitializer
         registry.Register(new StakeoutCommand("CL"));
         registry.Register(new StakeoutCommand("HI"));
         registry.Register(new StakeoutCommand("XS"));
-        registry.Register(new StakeoutCommand("AP"));
+        registry.Register(new ApCommand());
         registry.Register(new StakeoutCommand("LAT"));
 
         // System / System Macros

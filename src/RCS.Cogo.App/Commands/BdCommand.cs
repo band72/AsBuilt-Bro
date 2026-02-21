@@ -97,6 +97,13 @@ public class BdCommand : ICommand
             var newPoint = GeometryEngine.Forward(context.CurrentStation, azimuth, dist);
             context.AddPoint(ptId, newPoint, desc);
             context.Log($"Point {ptId} created at {newPoint}");
+            
+            if (context.TraverseMode)
+            {
+                context.CurrentBacksight = context.CurrentStation;
+                context.CurrentStation = newPoint;
+                context.Log($"Traversed to new station: {ptId}");
+            }
         }
         catch (System.Exception ex)
         {
