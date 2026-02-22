@@ -291,8 +291,10 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand ZoomInCommand { get; }
     public System.Windows.Input.ICommand ZoomOutCommand { get; }
     public System.Windows.Input.ICommand ZoomExtentsCommand { get; }
+    public System.Windows.Input.ICommand ZoomWindowCommand { get; }
 
     public event EventHandler? ZoomExtentsRequested;
+    public event EventHandler? ZoomWindowRequested;
     public event EventHandler? ZoomInRequested;
     public event EventHandler? ZoomOutRequested;
     public event EventHandler<System.Windows.Point>? ZoomToPointRequested;
@@ -368,6 +370,7 @@ public class ShellViewModel : ViewModelBase
         ZoomInCommand = new RelayCommand(_ => ZoomInRequested?.Invoke(this, EventArgs.Empty));
         ZoomOutCommand = new RelayCommand(_ => ZoomOutRequested?.Invoke(this, EventArgs.Empty));
         ZoomExtentsCommand = new RelayCommand(_ => ZoomExtentsRequested?.Invoke(this, EventArgs.Empty));
+        ZoomWindowCommand = new RelayCommand(_ => ZoomWindowRequested?.Invoke(this, EventArgs.Empty));
         ExportDxfCommand = new RelayCommand(_ => ExportDxf());
         ExportBomCommand = new RelayCommand(_ => ExportBom());
         
@@ -1116,68 +1119,88 @@ public class ShellViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(PipingScriptText)) { CommandLog.Add("Script is empty."); return; }
 
-        _context.Log("--- Processing Unified Cogo Context ---");
-        var lines = PipingScriptText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-        
-        bool cogoEngineOn = true;
-
-        foreach (var line in lines)
+        IsRunningScript = true;
+        try
         {
-            string trimmed = line.Trim();
-            if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("/"))
-                continue;
-
-            string cmdLower = trimmed.ToLowerInvariant();
+            await Task.Delay(1500); // UI delay to enforce progress bar visibility
+            _context.Log("--- Processing Unified Cogo Context ---");
+            var lines = PipingScriptText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             
-            // Engine Toggles for Pre-processor
-            if (cmdLower == "cogo-engine-off")
+            bool cogoEngineOn = true;
+            int counter = 0;
+
+            foreach (var line in lines)
             {
-                cogoEngineOn = false;
-                _context.Log("Cogo Engine Scripting PAUSED.");
-                continue;
+                string trimmed = line.Trim();
+                if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("/"))
+                    continue;
+
+                string cmdLower = trimmed.ToLowerInvariant();
+                
+                // Engine Toggles for Pre-processor
+                if (cmdLower == "cogo-engine-off")
+                {
+                    cogoEngineOn = false;
+                    _context.Log("Cogo Engine Scripting PAUSED.");
+                    continue;
+                }
+                if (cmdLower == "cogo-engine-on")
+                {
+                    cogoEngineOn = true;
+                    _context.Log("Cogo Engine Scripting RESUMED.");
+                    continue;
+                }
+                if (cmdLower == "pipe-engine-off" || cmdLower == "pipe-engine-on")
+                {
+                    // We ignore pipe commands in the Cogo context preprocessing
+                    continue;
+                }
+
+                // Filter out clear Pipe Engine commands to prevent Cogo Engine from logging 'Unknown command'
+                var parts = cmdLower.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                bool isPipeCommand = false;
+                if (parts.Length > 0)
+                {
+                    string p0 = parts[0];
+                    if (p0 == "prun" || p0.StartsWith("ss-") || p0.EndsWith("-b") || p0.EndsWith("-c") || p0.EndsWith("-e"))
+                    {
+                        isPipeCommand = true;
+                    }
+                }
+
+                if (cogoEngineOn && !isPipeCommand)
+                {
+                    await _engine.ExecuteAsync(trimmed, _context);
+                }
+                
+                counter++;
+                if (counter % 50 == 0) await Task.Delay(1); // Keep UI responsive for thousands of lines
             }
-            if (cmdLower == "cogo-engine-on")
+
+            _context.Log("--- Compiling Piping Script ---");
+            
+            var compiler = new RCS.Piping.Core.Scripting.PipeScriptCompiler();
+            
+            var validMaterials = new HashSet<string>(MasterCatalog.Select(m => m.Material), StringComparer.OrdinalIgnoreCase);
+            var validCodes = new HashSet<string>(CogoCodes.Select(c => c.LocalCode), StringComparer.OrdinalIgnoreCase);
+            
+            foreach (var mat in MasterCatalog)
             {
-                cogoEngineOn = true;
-                _context.Log("Cogo Engine Scripting RESUMED.");
-                continue;
-            }
-            if (cmdLower == "pipe-engine-off" || cmdLower == "pipe-engine-on")
-            {
-                // We ignore pipe commands in the Cogo context preprocessing
-                continue;
+                if (!string.IsNullOrWhiteSpace(mat.FeatureType)) validCodes.Add(mat.FeatureType);
             }
 
-            if (cogoEngineOn)
-            {
-                await _engine.ExecuteAsync(trimmed, _context);
-            }
-        }
+            // Include valid Utility Disciplines explicitly mapped from PRUN defaults
+            validCodes.Add("W");
+            validCodes.Add("WW");
+            validCodes.Add("S");
+            validCodes.Add("R");
 
-        _context.Log("--- Compiling Piping Script ---");
-        
-        var compiler = new RCS.Piping.Core.Scripting.PipeScriptCompiler();
-        
-        var validMaterials = new HashSet<string>(MasterCatalog.Select(m => m.Material), StringComparer.OrdinalIgnoreCase);
-        // Sometimes codes are in CogoCodes, or we use FeatureType from MasterCatalog. 
-        // We will pass the standard feature types and local codes to allow broad combinations. 
-        var validCodes = new HashSet<string>(CogoCodes.Select(c => c.LocalCode), StringComparer.OrdinalIgnoreCase);
-        foreach (var mat in MasterCatalog)
-        {
-            if (!string.IsNullOrWhiteSpace(mat.FeatureType)) validCodes.Add(mat.FeatureType);
-        }
+            var scriptTextCapture = PipingScriptText; // Ensure no cross-thread property access
+            var result = await Task.Run(() => compiler.Compile(scriptTextCapture, (id) => _context.GetPoint(id), validMaterials, validCodes));
 
-        // Include valid Utility Disciplines explicitly mapped from PRUN defaults
-        validCodes.Add("W");
-        validCodes.Add("WW");
-        validCodes.Add("S");
-        validCodes.Add("R");
-
-        var result = compiler.Compile(PipingScriptText, (id) => _context.GetPoint(id), validMaterials, validCodes);
-
-        // Clear existing states so double-execution actually replaces the networks instead of incrementally stacking items
-        _pipeNetwork.Clear();
-        PipeRuns.Clear();
+            // Clear existing states so double-execution actually replaces the networks instead of incrementally stacking items
+            _pipeNetwork.Clear();
+            PipeRuns.Clear();
         Structures.Clear();
 
         // Process Diagnostics
@@ -1220,6 +1243,11 @@ public class ShellViewModel : ViewModelBase
         RefreshData();
         // Auto-Sync disabled per user request. Use manual sync button.
         // _ = SyncToAssetsAsync(result);
+        }
+        finally
+        {
+            IsRunningScript = false;
+        }
     }
 
     public System.Windows.Input.ICommand SyncToAssetsCommand { get; }
@@ -2025,6 +2053,7 @@ public class ShellViewModel : ViewModelBase
         await _engine.ExecuteAsync("DEL FIG", _context);
         
         var lines = BatchScriptContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        int counter = 0;
         foreach (var line in lines)
         {
             string trimmed = line.Trim();
@@ -2033,6 +2062,9 @@ public class ShellViewModel : ViewModelBase
                 
             CommandLog.Add($"> {trimmed}");
             await _engine.ExecuteAsync(trimmed, _context);
+            
+            counter++;
+            if (counter % 50 == 0) await Task.Delay(1); // Force WPF dispatcher to render progress bar and unblock UI
         }
         
         CommandLog.Add("--- Batch Complete ---");

@@ -9,6 +9,9 @@ public partial class ShellWindow : Window
 {
     private Point _lastMousePosition;
     private bool _isDragging;
+    private bool _isZoomWindowMode;
+    private bool _isZoomDragging;
+    private Point _zoomStartPoint;
 
     public ShellWindow()
     {
@@ -19,6 +22,10 @@ public partial class ShellWindow : Window
         vm.ZoomExtentsRequested += (s, e) => ZoomExtents();
         vm.ZoomInRequested += (s, e) => ZoomIn();
         vm.ZoomOutRequested += (s, e) => ZoomOut();
+        vm.ZoomWindowRequested += (s, e) => {
+            _isZoomWindowMode = true;
+            Mouse.OverrideCursor = Cursors.Cross;
+        };
         vm.ZoomToPointRequested += (s, target) => ZoomToPoint(target);
         
         // Initialize Default View (Center 5000,5000, Scale 1, Y flipped)
@@ -184,6 +191,86 @@ public partial class ShellWindow : Window
             
             _lastMousePosition = currentPos;
             e.Handled = true; // Consuming the event while dragging
+        }
+        else if (_isZoomDragging)
+        {
+            var pos = e.GetPosition((UIElement)sender);
+            var x = System.Math.Min(pos.X, _zoomStartPoint.X);
+            var y = System.Math.Min(pos.Y, _zoomStartPoint.Y);
+            var width = System.Math.Abs(pos.X - _zoomStartPoint.X);
+            var height = System.Math.Abs(pos.Y - _zoomStartPoint.Y);
+            
+            ZoomRect.Margin = new Thickness(x, y, 0, 0);
+            ZoomRect.Width = width;
+            ZoomRect.Height = height;
+        }
+    }
+
+    private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (_isZoomWindowMode)
+        {
+            _isZoomDragging = true;
+            _zoomStartPoint = e.GetPosition((UIElement)sender);
+            
+            ZoomRect.Margin = new Thickness(_zoomStartPoint.X, _zoomStartPoint.Y, 0, 0);
+            ZoomRect.Width = 0;
+            ZoomRect.Height = 0;
+            ZoomRect.Visibility = Visibility.Visible;
+            ((UIElement)sender).CaptureMouse();
+            e.Handled = true;
+        }
+    }
+
+    private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        if (_isZoomDragging)
+        {
+            _isZoomDragging = false;
+            _isZoomWindowMode = false;
+            Mouse.OverrideCursor = null;
+            ZoomRect.Visibility = Visibility.Collapsed;
+            ((UIElement)sender).ReleaseMouseCapture();
+
+            var endPoint = e.GetPosition((UIElement)sender);
+            
+            // Convert rect to World constraints and calculate new matrix
+            if (System.Math.Abs(endPoint.X - _zoomStartPoint.X) > 5 && System.Math.Abs(endPoint.Y - _zoomStartPoint.Y) > 5)
+            {
+                var matrix = WorldTransform.Matrix;
+                matrix.Invert();
+                var worldStart = matrix.Transform(_zoomStartPoint);
+                var worldEnd = matrix.Transform(endPoint);
+                
+                double minX = System.Math.Min(worldStart.X, worldEnd.X);
+                double maxX = System.Math.Max(worldStart.X, worldEnd.X);
+                double minY = System.Math.Min(worldStart.Y, worldEnd.Y);
+                double maxY = System.Math.Max(worldStart.Y, worldEnd.Y);
+                
+                double width = maxX - minX;
+                double height = maxY - minY;
+                
+                // Viewport boundary scaling logic analogous to zoom extents 
+                double vpWidth = ViewportCanvas.ActualWidth;
+                double vpHeight = ViewportCanvas.ActualHeight;
+                if (vpWidth > 0 && vpHeight > 0)
+                {
+                    double scaleX = vpWidth / width;
+                    double scaleY = vpHeight / height;
+                    double scale = System.Math.Min(scaleX, scaleY);
+                    
+                    double midX = (minX + maxX) / 2.0;
+                    double midY = (minY + maxY) / 2.0;
+
+                    var newMatrix = new Matrix();
+                    newMatrix.Scale(scale, -scale);
+                    newMatrix.Translate(vpWidth/2.0 - midX * scale, vpHeight/2.0 - midY * -scale);
+                    WorldTransform.Matrix = newMatrix;
+                    
+                    if (DataContext is ShellViewModel vm) vm.CurrentViewScale = scale;
+                }
+            }
+            e.Handled = true;
         }
     }
 }

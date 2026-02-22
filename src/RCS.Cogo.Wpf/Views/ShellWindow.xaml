@@ -357,8 +357,8 @@
                         <Grid Grid.Row="2" Margin="0,5,0,0">
                             <TextBlock Text="Use // for comments" Foreground="Gray" FontStyle="Italic"/>
                             <StackPanel Orientation="Horizontal" Visibility="{Binding IsRunningScript, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <ProgressBar IsIndeterminate="True" Width="200" Height="10" Margin="0,0,10,0"/>
-                                <TextBlock Text="Running Script..." Foreground="#007ACC" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <ProgressBar IsIndeterminate="True" Width="200" Height="10" Margin="0,0,10,0" Foreground="#28A745"/>
+                                <TextBlock Text="Running Script..." Foreground="#28A745" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Grid>
                     </Grid>
@@ -591,13 +591,20 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         
                         <DockPanel Grid.Row="0" Margin="0,0,0,5" LastChildFill="False">
                             <TextBlock Text="Enter Piping Script:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
                             <Button Content="Import..." Command="{Binding ImportPipingScriptCommand}" Padding="5,2" Margin="0,0,5,0" Background="#2D2D30" Foreground="White" DockPanel.Dock="Left"/>
-                            <Button Content="Export..." Command="{Binding ExportPipingScriptCommand}" Padding="5,2" Background="#2D2D30" Foreground="White" DockPanel.Dock="Left"/>
-                            <TextBlock Text="PRUN START {SYS} DIAM {D} MAT {M} FIG {F}" DockPanel.Dock="Right" VerticalAlignment="Center" Foreground="Gray" FontSize="10"/>
+                            
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                                <ToggleButton Content="P" IsChecked="{Binding ShowPointNumbers}" Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Numbers"/>
+                                <ToggleButton Content="X" IsChecked="{Binding ShowPointMarkers}" Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Markers"/>
+                                <ToggleButton Content="L" IsChecked="{Binding ShowFigureLabels}" Width="30" Margin="0,0,10,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Figure Labels"/>
+                                <Button Content="DXF" Command="{Binding ExportDxfCommand}" Padding="10,5" Margin="0,0,5,0" Background="#2D2D30" Foreground="White"/>
+                                <Button Content="TXT" Command="{Binding ExportPipingScriptCommand}" Padding="10,5" Background="#2D2D30" Foreground="White"/>
+                            </StackPanel>
                         </DockPanel>
                         
                         <TextBox Grid.Row="1" Text="{Binding PipingScriptText, UpdateSourceTrigger=PropertyChanged}" 
@@ -614,6 +621,14 @@
                                     Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
                             <Button Grid.Column="2" Content="Sync To Assets" Command="{Binding SyncToAssetsCommand}" 
                                     Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
+                        </Grid>
+
+                        <Grid Grid.Row="3" Margin="0,5,0,0">
+                            <TextBlock Text="Use // for comments" Foreground="Gray" FontStyle="Italic"/>
+                            <StackPanel Orientation="Horizontal" Visibility="{Binding IsRunningScript, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <ProgressBar IsIndeterminate="True" Width="200" Height="10" Margin="0,0,10,0" Foreground="#28A745"/>
+                                <TextBlock Text="Processing Piping Script..." Foreground="#28A745" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            </StackPanel>
                         </Grid>
                     </Grid>
                 </TabItem>
@@ -727,6 +742,8 @@
                   MouseWheel="OnMouseWheel" 
                   MouseRightButtonDown="OnMouseRightButtonDown" 
                   MouseRightButtonUp="OnMouseRightButtonUp" 
+                  MouseLeftButtonDown="OnMouseLeftButtonDown"
+                  MouseLeftButtonUp="OnMouseLeftButtonUp"
                   MouseMove="OnMouseMove">
                 <!-- Canvas -->
                 <Canvas x:Name="ViewportCanvas">
@@ -909,7 +926,10 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 </Canvas>
-                
+                <!-- Zoom Window Rectangle -->
+                <Rectangle x:Name="ZoomRect" Stroke="LightBlue" StrokeThickness="1" Fill="#33ADD8E6" 
+                           HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed" IsHitTestVisible="False"/>
+
                 <!-- Zoom State Text Overlay -->
                 <TextBlock Text="{Binding CurrentViewScale, StringFormat='Zoom Scale: {0:F4}x'}" 
                            Foreground="#88FFFFFF" FontSize="12" Margin="10"
@@ -917,6 +937,8 @@
                 
                 <!-- Zoom Toolbar -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+                    <Button Command="{Binding ZoomWindowCommand}" Content="WIN" Width="40" Height="30" Margin="0,0,5,0"
+                            Background="#333333" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Zoom Window"/>
                     <Button Command="{Binding ZoomInCommand}" Content="+" Width="30" Height="30" Margin="0,0,5,0"
                             Background="#333333" Foreground="White" FontSize="18" FontWeight="Bold" ToolTip="Zoom In"/>
                     <Button Command="{Binding ZoomOutCommand}" Content="-" Width="30" Height="30" Margin="0,0,5,0"
