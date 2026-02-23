@@ -384,8 +384,11 @@ public class ShellViewModel : ViewModelBase
         
         SolveCurveCommand = new RelayCommand(_ => SolveCurve());
         UtilConvertCommand = new RelayCommand(_ => ExecuteUtilConvert());
+        UtilConvertDmsToDdCommand = new RelayCommand(_ => ExecuteUtilConvertDmsToDd());
         UtilSupplementCommand = new RelayCommand(_ => ExecuteUtilSupplement());
         ClearCurveSolverCommand = new RelayCommand(_ => ClearCurveSolver());
+        AddBearingsCommand = new RelayCommand(_ => ExecuteBearingMath(true));
+        SubtractBearingsCommand = new RelayCommand(_ => ExecuteBearingMath(false));
 
         _pipeNetwork = new RCS.Piping.Core.Models.PipeNetwork();
         _pipelineRunner = new RCS.Piping.Core.Runner.PipelineRunner(_context, _pipeNetwork);
@@ -584,6 +587,31 @@ public class ShellViewModel : ViewModelBase
     public string UtilDmsOutput { get => _utilDmsOutput; set => SetField(ref _utilDmsOutput, value); }
 
     public System.Windows.Input.ICommand UtilConvertCommand { get; }
+
+    // DMS to DD Converter
+    private string _utilDmsInput = "";
+    public string UtilDmsInput { get => _utilDmsInput; set => SetField(ref _utilDmsInput, value); }
+
+    private string _utilDdOutput = "";
+    public string UtilDdOutput { get => _utilDdOutput; set => SetField(ref _utilDdOutput, value); }
+
+    public System.Windows.Input.ICommand UtilConvertDmsToDdCommand { get; }
+
+    // Bearing Math
+    private string _bearing1Input = "";
+    public string Bearing1Input { get => _bearing1Input; set => SetField(ref _bearing1Input, value); }
+
+    private string _bearing2Input = "";
+    public string Bearing2Input { get => _bearing2Input; set => SetField(ref _bearing2Input, value); }
+
+    private string _bearingMathDdOutput = "";
+    public string BearingMathDdOutput { get => _bearingMathDdOutput; set => SetField(ref _bearingMathDdOutput, value); }
+
+    private string _bearingMathDmsOutput = "";
+    public string BearingMathDmsOutput { get => _bearingMathDmsOutput; set => SetField(ref _bearingMathDmsOutput, value); }
+
+    public System.Windows.Input.ICommand AddBearingsCommand { get; }
+    public System.Windows.Input.ICommand SubtractBearingsCommand { get; }
 
     // Supplement Finder
     private string _utilSuppInput = ""; // Input in Decimal
@@ -1759,15 +1787,79 @@ public class ShellViewModel : ViewModelBase
         CommandLog.Add("-------------------------------");
     }
 
+    private void LogToOutput(string msg)
+    {
+        CommandLog.Add(msg);
+        _context.Log(msg);
+    }
+
     private void ExecuteUtilConvert()
     {
         if (double.TryParse(UtilDecInput, out double d))
         {
             UtilDmsOutput = DegreeToDmsString(d);
+            LogToOutput($"Converted Decimal to DMS: {d} -> {UtilDmsOutput}");
         }
         else
         {
             UtilDmsOutput = "Invalid Input";
+            LogToOutput("Error: Invalid Decimal Input.");
+        }
+    }
+
+    private void ExecuteUtilConvertDmsToDd()
+    {
+        try
+        {
+            if (double.TryParse(UtilDmsInput, out double dms))
+            {
+                double d = Angle.FromDMS(dms).Degrees;
+                UtilDdOutput = $"{d:F6}°";
+                LogToOutput($"Converted DMS to Decimal: {dms} -> {UtilDdOutput}");
+            }
+            else
+            {
+                UtilDdOutput = "Invalid Input";
+                LogToOutput("Error: Invalid DMS Input.");
+            }
+        }
+        catch
+        {
+            UtilDdOutput = "Invalid Input";
+            LogToOutput("Error: Failed to process DMS Input.");
+        }
+    }
+
+    private void ExecuteBearingMath(bool isAdd)
+    {
+        try
+        {
+            if (double.TryParse(Bearing1Input, out double b1) && double.TryParse(Bearing2Input, out double b2))
+            {
+                double d1 = Angle.FromDMS(b1).Degrees;
+                double d2 = Angle.FromDMS(b2).Degrees;
+                double res = isAdd ? (d1 + d2) : (d1 - d2);
+                
+                while(res < 0) res += 360;
+                while(res >= 360) res -= 360;
+
+                BearingMathDdOutput = $"{res:F6}°";
+                BearingMathDmsOutput = DegreeToDmsString(res);
+                string op = isAdd ? "+" : "-";
+                LogToOutput($"Bearing Math ({op}): {b1} {op} {b2} -> {BearingMathDdOutput} / {BearingMathDmsOutput}");
+            }
+            else
+            {
+                BearingMathDdOutput = "Invalid Input";
+                BearingMathDmsOutput = "";
+                LogToOutput("Error: Invalid Bearing Input.");
+            }
+        }
+        catch
+        {
+            BearingMathDdOutput = "Error";
+            BearingMathDmsOutput = "";
+            LogToOutput("Error: Failed to process Bearing Math.");
         }
     }
 
@@ -1781,10 +1873,12 @@ public class ShellViewModel : ViewModelBase
             // If input is > 180, technically supplement implies geometrical construct, usually 180-x. 
             // Result can be negative if x > 180. Let's keep it raw.
             UtilSuppOutput = DegreeToDmsString(supp);
+            LogToOutput($"Supplement Finder: 180 - {d} -> {UtilSuppOutput}");
         }
         else
         {
             UtilSuppOutput = "Invalid Input";
+            LogToOutput("Error: Invalid Supplement Input.");
         }
     }
 
@@ -1801,10 +1895,16 @@ public class ShellViewModel : ViewModelBase
         // Clear Utility Inputs/Outputs
         UtilDecInput = "";
         UtilDmsOutput = "";
+        UtilDmsInput = "";
+        UtilDdOutput = "";
         UtilSuppInput = "";
         UtilSuppOutput = "";
+        Bearing1Input = "";
+        Bearing2Input = "";
+        BearingMathDdOutput = "";
+        BearingMathDmsOutput = "";
         
-        CommandLog.Add("Curve Solver Reset.");
+        LogToOutput("Curve Solver Reset.");
     }
 
     private string DegreeToDmsString(double decimalDegrees)
@@ -1836,7 +1936,7 @@ public class ShellViewModel : ViewModelBase
         
         if (count != 2)
         {
-            CommandLog.Add("Error: Please provide exactly two curve parameters.");
+            LogToOutput("Error: Please provide exactly two curve parameters.");
             return;
         }
 
@@ -1948,12 +2048,12 @@ public class ShellViewModel : ViewModelBase
                 CurveDelta = finalDeltaDeg.ToString("F6"); // High precision dec
                 CurveDeltaDms = DegreeToDmsString(finalDeltaDeg); // DMS
                 
-                CommandLog.Add($"Curve Solved: R={CurveRadius}, T={CurveTangent}, L={CurveArc}, C={CurveChord}, D={CurveDelta} ({CurveDeltaDms})");
+                LogToOutput($"Curve Solved: R={CurveRadius}, T={CurveTangent}, L={CurveArc}, C={CurveChord}, D={CurveDelta} ({CurveDeltaDms})");
             }
         }
         catch (Exception ex)
         {
-            CommandLog.Add($"Curve Solver Error: {ex.Message}");
+            LogToOutput($"Curve Solver Error: {ex.Message}");
         }
     }
 

@@ -434,9 +434,14 @@
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="Delta (DMS):" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="Gray"/>
                         <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding CurveDeltaDms, Mode=OneWay}" IsReadOnly="True" Margin="0,5" Background="#1E1E1E" BorderThickness="0"/>
                         
-                        <Button Grid.Row="8" Grid.ColumnSpan="2" Content="SOLVE" Command="{Binding SolveCurveCommand}" 
-                                Margin="0,20,0,0" Padding="10,5" 
-                                Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
+                        <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                            <Button Content="SOLVE" Command="{Binding SolveCurveCommand}" 
+                                    Width="75" Margin="0,0,10,0" Padding="10,5" 
+                                    Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
+                            <Button Command="{Binding ClearCurveSolverCommand}" Content="Clear" 
+                                    Width="75" Padding="10,5"
+                                    Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
+                        </StackPanel>
 
                         <TextBlock Grid.Row="9" Grid.ColumnSpan="2" Text="Results will update above and in Output Log." Margin="0,10,0,0" FontStyle="Italic" Foreground="Gray" TextWrapping="Wrap"/>
                         
@@ -457,6 +462,18 @@
                             </Grid>
                             <TextBlock Text="{Binding UtilDmsOutput}" Foreground="Cyan" Margin="0,0,0,15" FontWeight="Bold" HorizontalAlignment="Right"/>
 
+                            <!-- DMS to DD Converter -->
+                            <TextBlock Text="DMS to Decimal Converter:" Foreground="#CCCCCC" Margin="0,0,0,5"/>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="{Binding UtilDmsInput, UpdateSourceTrigger=PropertyChanged}" ToolTip="Enter DMS" Margin="0,0,5,0"/>
+                                <Button Grid.Column="1" Command="{Binding UtilConvertDmsToDdCommand}" Content="Convert" Padding="10,2" Background="#333333" Foreground="White"/>
+                            </Grid>
+                            <TextBlock Text="{Binding UtilDdOutput}" Foreground="Cyan" Margin="0,0,0,15" FontWeight="Bold" HorizontalAlignment="Right"/>
+
                             <!-- Supplement Finder -->
                             <TextBlock Text="Supplement Finder (180 - Angle):" Foreground="#CCCCCC" Margin="0,0,0,5"/>
                             <Grid Margin="0,0,0,10">
@@ -465,14 +482,24 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBox Grid.Column="0" Text="{Binding UtilSuppInput, UpdateSourceTrigger=PropertyChanged}" ToolTip="Enter Angle (Decimal Degrees)" Margin="0,0,5,0"/>
-                                <Button Grid.Column="1" Command="{Binding UtilSupplementCommand}" Content="Find Supp" Padding="10,2" Background="#333333" Foreground="White"/>
+                                <Button Grid.Column="1" Command="{Binding UtilSupplementCommand}" Content="Convert" Padding="10,2" Background="#333333" Foreground="White"/>
                             </Grid>
                             <TextBlock Text="{Binding UtilSuppOutput}" Foreground="Cyan" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,0,0,15"/>
 
-                            <!-- Clear Button -->
-                            <Button Command="{Binding ClearCurveSolverCommand}" Content="CLEAR / RESET" 
-                                    HorizontalAlignment="Center" Padding="20,5" Margin="0,10,0,0"
-                                    Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
+                            <!-- Bearing Math -->
+                            <TextBlock Text="Add or Subtract:" Foreground="#CCCCCC" Margin="0,0,0,5"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBox Width="120" Text="{Binding Bearing1Input, UpdateSourceTrigger=PropertyChanged}" ToolTip="First Bearing (DMS)" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <StackPanel Margin="0,0,5,0" VerticalAlignment="Center">
+                                    <Button Content="+" Command="{Binding AddBearingsCommand}" Padding="5,0" Background="#333333" Foreground="White" Margin="0,0,0,2" Width="30"/>
+                                    <Button Content="-" Command="{Binding SubtractBearingsCommand}" Padding="5,0" Background="#333333" Foreground="White" Width="30"/>
+                                </StackPanel>
+                                <TextBox Width="120" Text="{Binding Bearing2Input, UpdateSourceTrigger=PropertyChanged}" ToolTip="Second Bearing (DMS)" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,15">
+                                <TextBlock Text="{Binding BearingMathDdOutput}" Foreground="Cyan" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding BearingMathDmsOutput}" Foreground="Cyan" FontWeight="Bold"/>
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
                 </TabItem>
