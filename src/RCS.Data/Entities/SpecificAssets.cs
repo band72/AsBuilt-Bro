@@ -37,3 +37,33 @@ public class ChilledFitting : Fitting { }
 public class ChilledValve : Valve { }
 public class ChilledMeter : Meter { }
 public class ChilledLocateBox : LocateBox { }
+
+// Gas (G)
+public class GGravityPipe : Pipe { }
+public class GPressurePipe : Pipe { }
+public class GPoint : Structure { }
+public class GFitting : Fitting { }
+public class GManhole : Structure { }
+public class GServicePoint : Structure { }
+public class GValve : Valve { }
+public class GLocateBox : LocateBox { }
+
+// Electric (E)
+public class EGravityPipe : Pipe { }
+public class EPressurePipe : Pipe { }
+public class EPoint : Structure { }
+public class EFitting : Fitting { }
+public class EManhole : Structure { }
+public class EServicePoint : Structure { }
+public class EValve : Valve { }
+public class ELocateBox : LocateBox { }
+
+// Storm (ST)
+public class STGravityPipe : Pipe { }
+public class STPressurePipe : Pipe { }
+public class STPoint : Structure { }
+public class STFitting : Fitting { }
+public class STManhole : Structure { }
+public class STServicePoint : Structure { }
+public class STValve : Valve { }
+public class STLocateBox : LocateBox { }

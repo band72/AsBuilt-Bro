@@ -49,6 +49,36 @@ public class AppDbContext : DbContext
     public DbSet<ChilledMeter> ChilledMeters { get; set; }
     public DbSet<ChilledLocateBox> ChilledLocateBoxes { get; set; }
 
+    // Gas (G)
+    public DbSet<GGravityPipe> GGravityPipes { get; set; }
+    public DbSet<GPressurePipe> GPressurePipes { get; set; }
+    public DbSet<GPoint> GPoints { get; set; }
+    public DbSet<GFitting> GFittings { get; set; }
+    public DbSet<GManhole> GManholes { get; set; }
+    public DbSet<GServicePoint> GServicePoints { get; set; }
+    public DbSet<GValve> GValves { get; set; }
+    public DbSet<GLocateBox> GLocateBoxes { get; set; }
+
+    // Electric (E)
+    public DbSet<EGravityPipe> EGravityPipes { get; set; }
+    public DbSet<EPressurePipe> EPressurePipes { get; set; }
+    public DbSet<EPoint> EPoints { get; set; }
+    public DbSet<EFitting> EFittings { get; set; }
+    public DbSet<EManhole> EManholes { get; set; }
+    public DbSet<EServicePoint> EServicePoints { get; set; }
+    public DbSet<EValve> EValves { get; set; }
+    public DbSet<ELocateBox> ELocateBoxes { get; set; }
+
+    // Storm (ST)
+    public DbSet<STGravityPipe> STGravityPipes { get; set; }
+    public DbSet<STPressurePipe> STPressurePipes { get; set; }
+    public DbSet<STPoint> STPoints { get; set; }
+    public DbSet<STFitting> STFittings { get; set; }
+    public DbSet<STManhole> STManholes { get; set; }
+    public DbSet<STServicePoint> STServicePoints { get; set; }
+    public DbSet<STValve> STValves { get; set; }
+    public DbSet<STLocateBox> STLocateBoxes { get; set; }
+
     // Master Codes
     public DbSet<CogoCodeEntity> CogoCodes { get; set; }
     
@@ -58,6 +88,9 @@ public class AppDbContext : DbContext
     // Validation Rules
     public DbSet<ValidationRuleEntity> ValidationRules { get; set; }
     public DbSet<AppGlobalSetting> GlobalSettings { get; set; }
+
+    // Symbols
+    public DbSet<SymbolManagerEntity> SymbolManagers { get; set; }
 
     public string DbPath { get; private set; } = string.Empty;
 
@@ -132,5 +165,35 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ChilledValve>().HasIndex(e => e.ProjectId);
         modelBuilder.Entity<ChilledMeter>().HasIndex(e => e.ProjectId);
         modelBuilder.Entity<ChilledLocateBox>().HasIndex(e => e.ProjectId);
+
+        // Gas (G)
+        modelBuilder.Entity<GGravityPipe>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<GPressurePipe>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<GPoint>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<GFitting>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<GManhole>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<GServicePoint>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<GValve>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<GLocateBox>().HasIndex(e => e.ProjectId);
+
+        // Electric (E)
+        modelBuilder.Entity<EGravityPipe>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<EPressurePipe>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<EPoint>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<EFitting>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<EManhole>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<EServicePoint>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<EValve>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<ELocateBox>().HasIndex(e => e.ProjectId);
+
+        // Storm (ST)
+        modelBuilder.Entity<STGravityPipe>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<STPressurePipe>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<STPoint>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<STFitting>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<STManhole>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<STServicePoint>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<STValve>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<STLocateBox>().HasIndex(e => e.ProjectId);
     }
 }

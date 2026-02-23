@@ -606,6 +606,597 @@
                     </DataGrid>
                 </Expander>
 
+                <!-- Gas Section -->
+                <StackPanel Orientation="Horizontal" Margin="10,5">
+                    <TextBlock Text="G" Foreground="Orange" FontWeight="Bold" Margin="0,0,5,0"/>
+                    <TextBlock Text="Gas" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
+                
+                <Expander Header="Gas Gravity Pipe Run">
+                    <DataGrid ItemsSource="{Binding GGravityPipes}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                            <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                            <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                            <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                            <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                            <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
+                            <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
+                            <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
+                            <DataGridTextColumn Header="Inv Start" Binding="{Binding InvertStart}"/>
+                            <DataGridTextColumn Header="Inv End" Binding="{Binding InvertEnd}"/>
+                            <DataGridTextColumn Header="Dia Num" Binding="{Binding Diameter}"/>
+                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                            <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                            <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                            <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                            <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                            <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                            <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                            <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Gas Pressure Pipe Run">
+                    <DataGrid ItemsSource="{Binding GPressurePipes}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                            <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                            <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                            <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                            <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                            <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
+                            <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
+                            <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
+                            <DataGridTextColumn Header="Inv Start" Binding="{Binding InvertStart}"/>
+                            <DataGridTextColumn Header="Inv End" Binding="{Binding InvertEnd}"/>
+                            <DataGridTextColumn Header="Dia Num" Binding="{Binding Diameter}"/>
+                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                            <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                            <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                            <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                            <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                            <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                            <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                            <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Gas Points Along Pipe">
+                    <DataGrid ItemsSource="{Binding GPoints}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Gas Fitting">
+                    <DataGrid ItemsSource="{Binding GFittings}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Type (Specific)" Binding="{Binding Type}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Gas Manhole">
+                    <DataGrid ItemsSource="{Binding GManholes}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Gas Service Point &amp; Meter">
+                    <DataGrid ItemsSource="{Binding GServicePoints}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Gas Valve">
+                    <DataGrid ItemsSource="{Binding GValves}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Type (Specific)" Binding="{Binding Type}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Gas Locate Box">
+                    <DataGrid ItemsSource="{Binding GLocateBoxes}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+
+<!-- Electric Section -->
+                <StackPanel Orientation="Horizontal" Margin="10,5">
+                    <TextBlock Text="E" Foreground="Red" FontWeight="Bold" Margin="0,0,5,0"/>
+                    <TextBlock Text="Electric" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
+                
+                <Expander Header="Electric Gravity Pipe Run">
+                    <DataGrid ItemsSource="{Binding EGravityPipes}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                            <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                            <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                            <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                            <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                            <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
+                            <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
+                            <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
+                            <DataGridTextColumn Header="Inv Start" Binding="{Binding InvertStart}"/>
+                            <DataGridTextColumn Header="Inv End" Binding="{Binding InvertEnd}"/>
+                            <DataGridTextColumn Header="Dia Num" Binding="{Binding Diameter}"/>
+                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                            <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                            <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                            <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                            <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                            <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                            <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                            <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Electric Pressure Pipe Run">
+                    <DataGrid ItemsSource="{Binding EPressurePipes}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                            <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                            <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                            <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                            <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                            <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
+                            <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
+                            <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
+                            <DataGridTextColumn Header="Inv Start" Binding="{Binding InvertStart}"/>
+                            <DataGridTextColumn Header="Inv End" Binding="{Binding InvertEnd}"/>
+                            <DataGridTextColumn Header="Dia Num" Binding="{Binding Diameter}"/>
+                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                            <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                            <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                            <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                            <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                            <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                            <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                            <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Electric Points Along Pipe">
+                    <DataGrid ItemsSource="{Binding EPoints}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Electric Fitting">
+                    <DataGrid ItemsSource="{Binding EFittings}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Type (Specific)" Binding="{Binding Type}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Electric Manhole">
+                    <DataGrid ItemsSource="{Binding EManholes}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Electric Service Point &amp; Meter">
+                    <DataGrid ItemsSource="{Binding EServicePoints}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Electric Valve">
+                    <DataGrid ItemsSource="{Binding EValves}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Type (Specific)" Binding="{Binding Type}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Electric Locate Box">
+                    <DataGrid ItemsSource="{Binding ELocateBoxes}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+
+<!-- Storm Section -->
+                <StackPanel Orientation="Horizontal" Margin="10,5">
+                    <TextBlock Text="ST" Foreground="LightBlue" FontWeight="Bold" Margin="0,0,5,0"/>
+                    <TextBlock Text="Storm Water" FontWeight="Bold" Foreground="White" />
+                </StackPanel>
+                
+                <Expander Header="Storm Gravity Pipe Run">
+                    <DataGrid ItemsSource="{Binding STGravityPipes}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                            <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                            <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                            <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                            <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                            <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
+                            <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
+                            <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
+                            <DataGridTextColumn Header="Inv Start" Binding="{Binding InvertStart}"/>
+                            <DataGridTextColumn Header="Inv End" Binding="{Binding InvertEnd}"/>
+                            <DataGridTextColumn Header="Dia Num" Binding="{Binding Diameter}"/>
+                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                            <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                            <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                            <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                            <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                            <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                            <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                            <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Storm Pressure Pipe Run">
+                    <DataGrid ItemsSource="{Binding STPressurePipes}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                            <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                            <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                            <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                            <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                            <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
+                            <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
+                            <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
+                            <DataGridTextColumn Header="Inv Start" Binding="{Binding InvertStart}"/>
+                            <DataGridTextColumn Header="Inv End" Binding="{Binding InvertEnd}"/>
+                            <DataGridTextColumn Header="Dia Num" Binding="{Binding Diameter}"/>
+                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                            <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                            <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                            <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                            <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                            <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                            <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                            <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Storm Points Along Pipe">
+                    <DataGrid ItemsSource="{Binding STPoints}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Storm Fitting">
+                    <DataGrid ItemsSource="{Binding STFittings}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Type (Specific)" Binding="{Binding Type}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Storm Manhole">
+                    <DataGrid ItemsSource="{Binding STManholes}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Storm Service Point &amp; Meter">
+                    <DataGrid ItemsSource="{Binding STServicePoints}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Storm Valve">
+                    <DataGrid ItemsSource="{Binding STValves}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Type (Specific)" Binding="{Binding Type}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+                <Expander Header="Storm Locate Box">
+                    <DataGrid ItemsSource="{Binding STLocateBoxes}" RowEditEnding="DataGrid_RowEditEnding">
+                        <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Disc" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
+                             <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
+                             <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
+                             <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}"/>
+                             <DataGridTextColumn Header="Manuf" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="PartNo" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Conf" Binding="{Binding Confidence}"/>
+                             <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
+                             <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
+                             <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+
                 <!-- Chilled Section -->
                 <StackPanel Orientation="Horizontal" Margin="10,5">
                     <TextBlock Text="CW" Foreground="Aqua" FontWeight="Bold" Margin="0,0,5,0"/>
@@ -758,3 +1349,4 @@
         </ScrollViewer>
     </Grid>
 </UserControl>
+

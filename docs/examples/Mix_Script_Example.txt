@@ -1,0 +1,56 @@
+// MIX SCRIPT EXAMPLE - COGO + PIPING
+// This script thoroughly mixes the survey geometry computation features of the Cogo layer
+// with the robust physical modeling of the Piping layer.
+
+CLEAR
+
+// 1. BOUNDARY / COGO COMPUTATIONS
+// Set initial control framework for the project site.
+NEZ 100 10000.0 10000.0 105.0 "CTRL-1"
+NEZ 101 10000.0 11000.0 104.0 "CTRL-2"
+STN 100
+BS 101
+
+// Calculate geometry offsets where manholes and valves are intended to be installed.
+// We are calculating Bearing and Distances (BD) perfectly 45 and 90 degrees offset from control.
+BD 200 100 45.0000 150.0 "MH-10"
+BD 201 101 45.0000 300.0 "MH-11"
+BD 202 201 45.0000 150.0 "MH-12"
+
+BD 300 200 90.0000 100.0 "V-1"
+BD 301 201 90.0000 250.0 "V-2"
+
+// 2. PIPING NETWORK CONSTRUCTION
+// The calculation layer has established points 200, 201, 202, 300, and 301.
+// Now we apply the physical Piping structure types (SS-M = Sanitary Sewer MH, W-V = Water Valve).
+SS-M 200 "SAN MH"
+SS-M 201 "SAN MH"
+SS-M 202 "SAN MH"
+
+PRUN START SSO_MAIN 10 "PVC"
+200
+201
+202
+PRUN END
+
+W-V 300 "WATER VALVE"
+W-V 301 "WATER VALVE"
+
+PRUN START WM_MAIN 16 "DIP"
+300
+301
+PRUN END
+
+// 3. MAPCHECK
+// The project requires a verification of the legal boundary coordinates enveloping the site.
+BEG EASEMENT_A
+CONT 200
+CONT 201
+CONT 301
+CONT 300
+CONT 200
+END
+
+MAPCHECK EASEMENT_A
+
+// Check logs for detailed geometric closure output.

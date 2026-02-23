@@ -1,0 +1,54 @@
+// BEARING SCRIPT EXAMPLE - ROBUST TEST OF COGO FEATURES
+// This script thoroughly tests the creation of figures with various coordinate computations,
+// bearing-distance offsets, and radial curves using the XC PTS command structure.
+
+CLEAR
+
+// 1. ESTABLISH BASE PARCEL CONTROL (NE and NEZ)
+NE 1 5000.0000 5000.0000 "SW Corner"
+NEZ 2 5200.0000 5000.0000 105.0 "SE Corner"
+
+// Center of our curve
+NE 3 5100.0000 5100.0000 "Radius Point"
+
+// End of our curve
+NE 4 5000.0000 5200.0000 "NE Corner"
+
+// 2. BEARING AND DISTANCE (BD)
+// Calculate the NW corner by projecting North-West from the curve end
+BD 5 4 270.0000 200.0 "NW Corner"
+
+// 3. CREATE A TRACT WITH CURVES
+// We will build a boundary that contains a horizontal curve created via a radius point.
+BEG TRACT_BEARING_1
+CONT 1
+CONT 2
+
+// At point 2, we leave the linear segment and begin a curve.
+// Format: XC PTS [radius] [radius-point] [end-point]
+// Radius is roughly 141.42 (sqrt(10000+10000)).
+// Negative radius denotes a Left (Counter-Clockwise) sweep curve.
+XC PTS -141.4214 3 4
+
+CONT 5
+CONT 1
+END
+
+// Validate the closure of the newly formed boundary using MAPCHK alias
+MAPCHK TRACT_BEARING_1
+
+// 4. BEARING AND DISTANCE OFFSETS
+STN 1
+BS 5
+BD 6 1 45.0000 300.0 "Interior Point A"
+BD 7 2 315.0000 300.0 "Interior Point B"
+
+// 5. SECONDARY TRACT
+BEG TRACT_BEARING_2
+CONT 6
+CONT 7
+CONT 3
+CONT 6
+END
+
+MAPCHK TRACT_BEARING_2

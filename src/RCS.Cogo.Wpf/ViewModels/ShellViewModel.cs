@@ -400,6 +400,7 @@ public class ShellViewModel : ViewModelBase
         ImportCodesCommand = new RelayCommand(_ => ImportCodesCsv());
         ExportCodesCommand = new RelayCommand(_ => ExportCodesCsv());
         ClearCodesCommand = new RelayCommand(_ => ClearCodes());
+        OpenSymbolManagerCommand = new RelayCommand(_ => OpenSymbolManager());
         
         ImportCatalogCommand = new RelayCommand(_ => ImportCatalog());
         AddMaterialToProjectCommand = new RelayCommand(_ => AddMaterialToProject());
@@ -427,12 +428,30 @@ public class ShellViewModel : ViewModelBase
         CloseCommand = new RelayCommand(_ => System.Windows.Application.Current.Shutdown());
 
         CloseCommand = new RelayCommand(_ => System.Windows.Application.Current.Shutdown());
-        CloseCommand = new RelayCommand(_ => System.Windows.Application.Current.Shutdown());
         AboutCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("RCS COGO Enterprise\nVersion 2.0\n\nAdvanced Agentic Coding Demo", "About"));
+        OpenSurveyCommandsCommand = new RelayCommand(_ => OpenDocument("docs\\USER_GUIDE.md"));
+        OpenPipeCommandsCommand = new RelayCommand(_ => OpenDocument("docs\\PIPING_MANUAL.md"));
+        OpenManualCommand = new RelayCommand(_ => OpenDocument("USER_MANUAL_AND_TESTING_GUIDE.txt"));
+        
+        OpenExampleCogoCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Azimuth_Script_Example.txt"));
+        OpenExampleBearingCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Bearing_Script_Example.txt"));
+        OpenExamplePipeCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Pipe_Script_Example.txt"));
+        OpenExampleMixCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Mix_Script_Example.txt"));
+        OpenExampleFiguresCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Cogo_Figures_Example.txt"));
+        OpenExampleAngleCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Angle_Script_Example.txt"));
+        
+        OpenExampleGasCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Gas_Script_Example.txt"));
+        OpenExampleElectricCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Electric_Script_Example.txt"));
+        OpenExampleWaterCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Water_Script_Example.txt"));
+        OpenExampleWwCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\WW_Script_Example.txt"));
+        OpenExampleStormCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Storm_Script_Example.txt"));
+        OpenExampleRcCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Reclaimed_Script_Example.txt"));
+        OpenExampleChCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Chilled_Script_Example.txt"));
         
         InstalledAssets = new InstalledAssetsViewModel();
         OpenValidationSettingsCommand = new RelayCommand(_ => OpenValidationSettings());
         OpenGeneralSettingsCommand = new RelayCommand(_ => OpenGeneralSettings());
+        OpenAlignmentWindowCommand = new RelayCommand(_ => OpenAlignmentWindow());
         // Load default/empty project
         _ = LoadInstalledAssetsAsync();
     }
@@ -464,8 +483,59 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand CloseProjectCommand { get; }
     public System.Windows.Input.ICommand ImportPointsListCommand { get; }
 
+    public System.Windows.Input.ICommand OpenSurveyCommandsCommand { get; }
+    public System.Windows.Input.ICommand OpenPipeCommandsCommand { get; }
+    public System.Windows.Input.ICommand OpenManualCommand { get; }
+    public System.Windows.Input.ICommand OpenExampleCogoCommand { get; }
+    public System.Windows.Input.ICommand OpenExampleBearingCommand { get; }
+    public System.Windows.Input.ICommand OpenExamplePipeCommand { get; }
+    public System.Windows.Input.ICommand OpenExampleMixCommand { get; }
+    public System.Windows.Input.ICommand OpenExampleFiguresCommand { get; }
+    public System.Windows.Input.ICommand OpenExampleAngleCommand { get; }
+    
+    public System.Windows.Input.ICommand OpenExampleGasCommand { get; }
+    public System.Windows.Input.ICommand OpenExampleElectricCommand { get; }
+    public System.Windows.Input.ICommand OpenExampleWaterCommand { get; }
+    public System.Windows.Input.ICommand OpenExampleWwCommand { get; }
+    public System.Windows.Input.ICommand OpenExampleStormCommand { get; }
+    public System.Windows.Input.ICommand OpenExampleRcCommand { get; }
+    public System.Windows.Input.ICommand OpenExampleChCommand { get; }
+
+    public System.Windows.Input.ICommand OpenAlignmentWindowCommand { get; }
+
     public System.Windows.Input.ICommand CloseCommand { get; }
     public System.Windows.Input.ICommand AboutCommand { get; }
+
+    private void OpenDocument(string relativePath)
+    {
+        try
+        {
+            var baseDir = new System.IO.DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            while (baseDir != null && !System.IO.File.Exists(System.IO.Path.Combine(baseDir.FullName, "RCS.Cogo.Enterprise.Modern.sln")))
+            {
+                baseDir = baseDir.Parent;
+            }
+            
+            string fullPath = relativePath;
+            if (baseDir != null)
+            {
+                fullPath = System.IO.Path.Combine(baseDir.FullName, relativePath);
+            }
+
+            var p = new System.Diagnostics.Process();
+            p.StartInfo = new System.Diagnostics.ProcessStartInfo()
+            {
+                UseShellExecute = true,
+                FileName = fullPath
+            };
+            p.Start();
+        }
+        catch (Exception ex)
+        {
+            CommandLog.Add($"Error opening document: {ex.Message}");
+            System.Windows.MessageBox.Show($"Could not open documentation file {relativePath}. It may be missing.", "Error");
+        }
+    }
 
     public System.Windows.Input.ICommand ExportScriptCommand { get; }
     public System.Windows.Input.ICommand AnalyzeScriptCommand { get; }
@@ -745,6 +815,7 @@ public class ShellViewModel : ViewModelBase
 
     // --- Codes Section ---
     public ObservableCollection<CogoCode> CogoCodes { get; } = new();
+    public ObservableCollection<PointViewModel> DesignPoints { get; } = new();
     public System.Windows.Input.ICommand ImportCodesCommand { get; }
     public System.Windows.Input.ICommand ExportCodesCommand { get; }
 
@@ -799,6 +870,19 @@ public class ShellViewModel : ViewModelBase
     }
 
     public System.Windows.Input.ICommand ClearCodesCommand { get; }
+    public System.Windows.Input.ICommand OpenSymbolManagerCommand { get; }
+
+    private void OpenSymbolManager()
+    {
+        var win = new RCS.Cogo.Wpf.Views.SymbolManagerWindow();
+        win.ShowDialog();
+    }
+
+    private void OpenAlignmentWindow()
+    {
+        var win = new RCS.Cogo.Wpf.Views.AlignmentWindow(this);
+        win.Show();
+    }
 
     private void ClearCodes()
     {
@@ -1194,6 +1278,12 @@ public class ShellViewModel : ViewModelBase
             validCodes.Add("WW");
             validCodes.Add("S");
             validCodes.Add("R");
+            validCodes.Add("G");
+            validCodes.Add("E");
+            validCodes.Add("EL");
+            validCodes.Add("ST");
+            validCodes.Add("CH");
+            validCodes.Add("D");
 
             var scriptTextCapture = PipingScriptText; // Ensure no cross-thread property access
             var result = await Task.Run(() => compiler.Compile(scriptTextCapture, (id) => _context.GetPoint(id), validMaterials, validCodes));
@@ -1339,6 +1429,45 @@ public class ShellViewModel : ViewModelBase
                  assetToSave = item;
                  existing = specific;
             }
+            else if (type == "G")
+            {
+                 var specific = InstalledAssets.GGravityPipes.FirstOrDefault(x => HasScriptKey(x, key));
+                 var item = specific ?? new RCS.Data.Entities.GGravityPipe();
+                 
+                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
+                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
+                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
+                 item.Notes = AddScriptKey(item.Notes, key);
+
+                 assetToSave = item;
+                 existing = specific;
+            }
+            else if (type == "E")
+            {
+                 var specific = InstalledAssets.EGravityPipes.FirstOrDefault(x => HasScriptKey(x, key));
+                 var item = specific ?? new RCS.Data.Entities.EGravityPipe();
+                 
+                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
+                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
+                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
+                 item.Notes = AddScriptKey(item.Notes, key);
+
+                 assetToSave = item;
+                 existing = specific;
+            }
+            else if (type == "ST")
+            {
+                 var specific = InstalledAssets.STGravityPipes.FirstOrDefault(x => HasScriptKey(x, key));
+                 var item = specific ?? new RCS.Data.Entities.STGravityPipe();
+                 
+                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
+                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
+                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
+                 item.Notes = AddScriptKey(item.Notes, key);
+
+                 assetToSave = item;
+                 existing = specific;
+            }
 
             if (assetToSave != null)
             {
@@ -1447,6 +1576,63 @@ public class ShellViewModel : ViewModelBase
                  {
                      var specific = InstalledAssets.ReclaimedFittings.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.ReclaimedFitting();
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
+                     item.Notes = AddScriptKey(item.Notes, key);
+                     assetToSave = item; existing = specific;
+                 }
+            }
+            else if (t.StartsWith("JEAG"))
+            {
+                 if (t.EndsWith("V")) 
+                 {
+                     var specific = InstalledAssets.GValves.FirstOrDefault(x => HasScriptKey(x, key));
+                     var item = specific ?? new RCS.Data.Entities.GValve();
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
+                     item.Notes = AddScriptKey(item.Notes, key);
+                     assetToSave = item; existing = specific;
+                 }
+                 else 
+                 {
+                     var specific = InstalledAssets.GFittings.FirstOrDefault(x => HasScriptKey(x, key));
+                     var item = specific ?? new RCS.Data.Entities.GFitting();
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
+                     item.Notes = AddScriptKey(item.Notes, key);
+                     assetToSave = item; existing = specific;
+                 }
+            }
+            else if (t.StartsWith("JEAE"))
+            {
+                 if (t.EndsWith("V")) 
+                 {
+                     var specific = InstalledAssets.EValves.FirstOrDefault(x => HasScriptKey(x, key));
+                     var item = specific ?? new RCS.Data.Entities.EValve();
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
+                     item.Notes = AddScriptKey(item.Notes, key);
+                     assetToSave = item; existing = specific;
+                 }
+                 else 
+                 {
+                     var specific = InstalledAssets.EFittings.FirstOrDefault(x => HasScriptKey(x, key));
+                     var item = specific ?? new RCS.Data.Entities.EFitting();
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
+                     item.Notes = AddScriptKey(item.Notes, key);
+                     assetToSave = item; existing = specific;
+                 }
+            }
+            else if (t.StartsWith("JEAST"))
+            {
+                 if (t.EndsWith("V")) 
+                 {
+                     var specific = InstalledAssets.STValves.FirstOrDefault(x => HasScriptKey(x, key));
+                     var item = specific ?? new RCS.Data.Entities.STValve();
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
+                     item.Notes = AddScriptKey(item.Notes, key);
+                     assetToSave = item; existing = specific;
+                 }
+                 else 
+                 {
+                     var specific = InstalledAssets.STFittings.FirstOrDefault(x => HasScriptKey(x, key));
+                     var item = specific ?? new RCS.Data.Entities.STFitting();
                      item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
                      item.Notes = AddScriptKey(item.Notes, key);
                      assetToSave = item; existing = specific;
@@ -2200,10 +2386,12 @@ public class ShellViewModel : ViewModelBase
                     
                     var type = run.Type?.ToUpper() ?? "";
                 if (type == "WW" || type.Contains("SAN")) pipeBrush = System.Windows.Media.Brushes.Green;
-                else if (type == "S" || type.Contains("SW") || type.Contains("STORM")) pipeBrush = System.Windows.Media.Brushes.Cyan;
+                else if (type == "ST" || type == "S" || type == "D" || type.Contains("SW") || type.Contains("STORM")) pipeBrush = System.Windows.Media.Brushes.Cyan;
                 else if (type == "W" || type.Contains("WATER")) pipeBrush = System.Windows.Media.Brushes.Blue;
                 else if (type == "R" || type.Contains("RECLAIM")) pipeBrush = System.Windows.Media.Brushes.Purple;
-                else if (type.Contains("GAS")) pipeBrush = System.Windows.Media.Brushes.Yellow;
+                else if (type == "G" || type.Contains("GAS")) pipeBrush = System.Windows.Media.Brushes.Orange;
+                else if (type == "E" || type == "EL" || type.Contains("ELEC")) pipeBrush = System.Windows.Media.Brushes.Red;
+                else if (type == "CH" || type.Contains("CHILL")) pipeBrush = System.Windows.Media.Brushes.LightSkyBlue;
                 else if (type.Contains("PP") || type.Contains("PRESS")) pipeBrush = System.Windows.Media.Brushes.Red;
                     
                     var fig = new FigureViewModel($"Pipe-{run.Id}", pts, pipeBrush);
@@ -2645,9 +2833,12 @@ public class StructureViewModel : ViewModelBase
         else if (type.Equals("Inlet", StringComparison.OrdinalIgnoreCase)) Fill = System.Windows.Media.Brushes.Orange;
         // Utility Types
         else if (type.Contains("WW") || type.Contains("SAN")) Fill = System.Windows.Media.Brushes.Green;
-        else if (type.Contains("SW") || type.Contains("STORM")) Fill = System.Windows.Media.Brushes.Cyan;
-        else if (type.Contains("W") || type.Contains("WATER")) Fill = System.Windows.Media.Brushes.Blue;
-        else if (type.Contains("GAS")) Fill = System.Windows.Media.Brushes.Yellow;
+        else if (type == "ST" || type == "S" || type == "D" || type.Contains("SW") || type.Contains("STORM")) Fill = System.Windows.Media.Brushes.Cyan;
+        else if (type == "W" || type.Contains("WATER")) Fill = System.Windows.Media.Brushes.Blue;
+        else if (type == "R" || type.Contains("RECLAIM")) Fill = System.Windows.Media.Brushes.Purple;
+        else if (type == "G" || type.Contains("GAS")) Fill = System.Windows.Media.Brushes.Orange;
+        else if (type == "E" || type == "EL" || type.Contains("ELEC")) Fill = System.Windows.Media.Brushes.Red;
+        else if (type == "CH" || type.Contains("CHILL")) Fill = System.Windows.Media.Brushes.LightSkyBlue;
         else Fill = System.Windows.Media.Brushes.White; // Default 
     }
 }

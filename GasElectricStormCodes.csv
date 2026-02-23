@@ -1,0 +1,13 @@
+LocalCode,SystemCode,Description
+G,G,Gas Pipe Run
+GAS,JEAG,Gas Point
+GV,JEAGV,Gas Valve
+GF,JEAGF,Gas Fitting
+E,E,Electric Pipe Run
+ELEC,JEAE,Electric Point
+EV,JEAEV,Electric Valve
+EF,JEAEF,Electric Fitting
+ST,ST,Storm Pipe Run
+STORM,JEAST,Storm Point
+STV,JEASTV,Storm Valve
+STF,JEASTF,Storm Fitting

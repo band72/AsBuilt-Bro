@@ -51,6 +51,36 @@ public class InstalledAssetsViewModel : ViewModelBase
     private readonly InstalledAssetService<ChilledMeter> _chilledMeterService;
     private readonly InstalledAssetService<ChilledLocateBox> _chilledLocateBoxService;
 
+    // Gas (G)
+    private readonly InstalledAssetService<GGravityPipe> _gGravityPipeService;
+    private readonly InstalledAssetService<GPressurePipe> _gPressurePipeService;
+    private readonly InstalledAssetService<GPoint> _gPointService;
+    private readonly InstalledAssetService<GFitting> _gFittingService;
+    private readonly InstalledAssetService<GManhole> _gManholeService;
+    private readonly InstalledAssetService<GServicePoint> _gServicePointService;
+    private readonly InstalledAssetService<GValve> _gValveService;
+    private readonly InstalledAssetService<GLocateBox> _gLocateBoxService;
+
+    // Electric (E)
+    private readonly InstalledAssetService<EGravityPipe> _eGravityPipeService;
+    private readonly InstalledAssetService<EPressurePipe> _ePressurePipeService;
+    private readonly InstalledAssetService<EPoint> _ePointService;
+    private readonly InstalledAssetService<EFitting> _eFittingService;
+    private readonly InstalledAssetService<EManhole> _eManholeService;
+    private readonly InstalledAssetService<EServicePoint> _eServicePointService;
+    private readonly InstalledAssetService<EValve> _eValveService;
+    private readonly InstalledAssetService<ELocateBox> _eLocateBoxService;
+
+    // Storm (ST)
+    private readonly InstalledAssetService<STGravityPipe> _stGravityPipeService;
+    private readonly InstalledAssetService<STPressurePipe> _stPressurePipeService;
+    private readonly InstalledAssetService<STPoint> _stPointService;
+    private readonly InstalledAssetService<STFitting> _stFittingService;
+    private readonly InstalledAssetService<STManhole> _stManholeService;
+    private readonly InstalledAssetService<STServicePoint> _stServicePointService;
+    private readonly InstalledAssetService<STValve> _stValveService;
+    private readonly InstalledAssetService<STLocateBox> _stLocateBoxService;
+
     private readonly ProjectAssetService _projectService;
 
     // Collections
@@ -91,6 +121,36 @@ public class InstalledAssetsViewModel : ViewModelBase
     public ObservableCollection<ChilledValve> ChilledValves { get; } = new();
     public ObservableCollection<ChilledMeter> ChilledMeters { get; } = new();
     public ObservableCollection<ChilledLocateBox> ChilledLocateBoxes { get; } = new();
+
+    // Gas Collections
+    public ObservableCollection<GGravityPipe> GGravityPipes { get; } = new();
+    public ObservableCollection<GPressurePipe> GPressurePipes { get; } = new();
+    public ObservableCollection<GPoint> GPoints { get; } = new();
+    public ObservableCollection<GFitting> GFittings { get; } = new();
+    public ObservableCollection<GManhole> GManholes { get; } = new();
+    public ObservableCollection<GServicePoint> GServicePoints { get; } = new();
+    public ObservableCollection<GValve> GValves { get; } = new();
+    public ObservableCollection<GLocateBox> GLocateBoxes { get; } = new();
+
+    // Electric Collections
+    public ObservableCollection<EGravityPipe> EGravityPipes { get; } = new();
+    public ObservableCollection<EPressurePipe> EPressurePipes { get; } = new();
+    public ObservableCollection<EPoint> EPoints { get; } = new();
+    public ObservableCollection<EFitting> EFittings { get; } = new();
+    public ObservableCollection<EManhole> EManholes { get; } = new();
+    public ObservableCollection<EServicePoint> EServicePoints { get; } = new();
+    public ObservableCollection<EValve> EValves { get; } = new();
+    public ObservableCollection<ELocateBox> ELocateBoxes { get; } = new();
+
+    // Storm Collections
+    public ObservableCollection<STGravityPipe> STGravityPipes { get; } = new();
+    public ObservableCollection<STPressurePipe> STPressurePipes { get; } = new();
+    public ObservableCollection<STPoint> STPoints { get; } = new();
+    public ObservableCollection<STFitting> STFittings { get; } = new();
+    public ObservableCollection<STManhole> STManholes { get; } = new();
+    public ObservableCollection<STServicePoint> STServicePoints { get; } = new();
+    public ObservableCollection<STValve> STValves { get; } = new();
+    public ObservableCollection<STLocateBox> STLocateBoxes { get; } = new();
 
     private string _currentProjectId = "";
 
@@ -137,6 +197,36 @@ public class InstalledAssetsViewModel : ViewModelBase
         _chilledValveService = new InstalledAssetService<ChilledValve>(_dbContext);
         _chilledMeterService = new InstalledAssetService<ChilledMeter>(_dbContext);
         _chilledLocateBoxService = new InstalledAssetService<ChilledLocateBox>(_dbContext);
+
+        // Gas Init
+        _gGravityPipeService = new InstalledAssetService<GGravityPipe>(_dbContext);
+        _gPressurePipeService = new InstalledAssetService<GPressurePipe>(_dbContext);
+        _gPointService = new InstalledAssetService<GPoint>(_dbContext);
+        _gFittingService = new InstalledAssetService<GFitting>(_dbContext);
+        _gManholeService = new InstalledAssetService<GManhole>(_dbContext);
+        _gServicePointService = new InstalledAssetService<GServicePoint>(_dbContext);
+        _gValveService = new InstalledAssetService<GValve>(_dbContext);
+        _gLocateBoxService = new InstalledAssetService<GLocateBox>(_dbContext);
+
+        // Electric Init
+        _eGravityPipeService = new InstalledAssetService<EGravityPipe>(_dbContext);
+        _ePressurePipeService = new InstalledAssetService<EPressurePipe>(_dbContext);
+        _ePointService = new InstalledAssetService<EPoint>(_dbContext);
+        _eFittingService = new InstalledAssetService<EFitting>(_dbContext);
+        _eManholeService = new InstalledAssetService<EManhole>(_dbContext);
+        _eServicePointService = new InstalledAssetService<EServicePoint>(_dbContext);
+        _eValveService = new InstalledAssetService<EValve>(_dbContext);
+        _eLocateBoxService = new InstalledAssetService<ELocateBox>(_dbContext);
+
+        // Storm Init
+        _stGravityPipeService = new InstalledAssetService<STGravityPipe>(_dbContext);
+        _stPressurePipeService = new InstalledAssetService<STPressurePipe>(_dbContext);
+        _stPointService = new InstalledAssetService<STPoint>(_dbContext);
+        _stFittingService = new InstalledAssetService<STFitting>(_dbContext);
+        _stManholeService = new InstalledAssetService<STManhole>(_dbContext);
+        _stServicePointService = new InstalledAssetService<STServicePoint>(_dbContext);
+        _stValveService = new InstalledAssetService<STValve>(_dbContext);
+        _stLocateBoxService = new InstalledAssetService<STLocateBox>(_dbContext);
     }
 
     public async Task LoadProjectAsync(string projectId, string projectNumber)
@@ -189,6 +279,36 @@ public class InstalledAssetsViewModel : ViewModelBase
         await Load(_chilledValveService, ChilledValves);
         await Load(_chilledMeterService, ChilledMeters);
         await Load(_chilledLocateBoxService, ChilledLocateBoxes);
+
+        // Gas
+        await Load(_gGravityPipeService, GGravityPipes);
+        await Load(_gPressurePipeService, GPressurePipes);
+        await Load(_gPointService, GPoints);
+        await Load(_gFittingService, GFittings);
+        await Load(_gManholeService, GManholes);
+        await Load(_gServicePointService, GServicePoints);
+        await Load(_gValveService, GValves);
+        await Load(_gLocateBoxService, GLocateBoxes);
+
+        // Electric
+        await Load(_eGravityPipeService, EGravityPipes);
+        await Load(_ePressurePipeService, EPressurePipes);
+        await Load(_ePointService, EPoints);
+        await Load(_eFittingService, EFittings);
+        await Load(_eManholeService, EManholes);
+        await Load(_eServicePointService, EServicePoints);
+        await Load(_eValveService, EValves);
+        await Load(_eLocateBoxService, ELocateBoxes);
+
+        // Storm
+        await Load(_stGravityPipeService, STGravityPipes);
+        await Load(_stPressurePipeService, STPressurePipes);
+        await Load(_stPointService, STPoints);
+        await Load(_stFittingService, STFittings);
+        await Load(_stManholeService, STManholes);
+        await Load(_stServicePointService, STServicePoints);
+        await Load(_stValveService, STValves);
+        await Load(_stLocateBoxService, STLocateBoxes);
     }
 
     public async Task SaveItemAsync(object item)
@@ -232,6 +352,36 @@ public class InstalledAssetsViewModel : ViewModelBase
         else if (item is ChilledValve cv) await _chilledValveService.UpsertAsync(_currentProjectId, cv);
         else if (item is ChilledMeter cm) await _chilledMeterService.UpsertAsync(_currentProjectId, cm);
         else if (item is ChilledLocateBox clb) await _chilledLocateBoxService.UpsertAsync(_currentProjectId, clb);
+
+        // Gas
+        else if (item is GGravityPipe ggp) await _gGravityPipeService.UpsertAsync(_currentProjectId, ggp);
+        else if (item is GPressurePipe gpp) await _gPressurePipeService.UpsertAsync(_currentProjectId, gpp);
+        else if (item is GPoint gp) await _gPointService.UpsertAsync(_currentProjectId, gp);
+        else if (item is GFitting gf) await _gFittingService.UpsertAsync(_currentProjectId, gf);
+        else if (item is GManhole gm) await _gManholeService.UpsertAsync(_currentProjectId, gm);
+        else if (item is GServicePoint gsp) await _gServicePointService.UpsertAsync(_currentProjectId, gsp);
+        else if (item is GValve gv) await _gValveService.UpsertAsync(_currentProjectId, gv);
+        else if (item is GLocateBox glb) await _gLocateBoxService.UpsertAsync(_currentProjectId, glb);
+
+        // Electric
+        else if (item is EGravityPipe egp) await _eGravityPipeService.UpsertAsync(_currentProjectId, egp);
+        else if (item is EPressurePipe epp) await _ePressurePipeService.UpsertAsync(_currentProjectId, epp);
+        else if (item is EPoint ep) await _ePointService.UpsertAsync(_currentProjectId, ep);
+        else if (item is EFitting ef) await _eFittingService.UpsertAsync(_currentProjectId, ef);
+        else if (item is EManhole em) await _eManholeService.UpsertAsync(_currentProjectId, em);
+        else if (item is EServicePoint esp) await _eServicePointService.UpsertAsync(_currentProjectId, esp);
+        else if (item is EValve ev) await _eValveService.UpsertAsync(_currentProjectId, ev);
+        else if (item is ELocateBox elb) await _eLocateBoxService.UpsertAsync(_currentProjectId, elb);
+
+        // Storm
+        else if (item is STGravityPipe stgp) await _stGravityPipeService.UpsertAsync(_currentProjectId, stgp);
+        else if (item is STPressurePipe stpp) await _stPressurePipeService.UpsertAsync(_currentProjectId, stpp);
+        else if (item is STPoint stp) await _stPointService.UpsertAsync(_currentProjectId, stp);
+        else if (item is STFitting stf) await _stFittingService.UpsertAsync(_currentProjectId, stf);
+        else if (item is STManhole stm) await _stManholeService.UpsertAsync(_currentProjectId, stm);
+        else if (item is STServicePoint stsp) await _stServicePointService.UpsertAsync(_currentProjectId, stsp);
+        else if (item is STValve stv) await _stValveService.UpsertAsync(_currentProjectId, stv);
+        else if (item is STLocateBox stlb) await _stLocateBoxService.UpsertAsync(_currentProjectId, stlb);
     }
 
     public async Task AddItemAsync(InstalledAsset item)
@@ -274,6 +424,36 @@ public class InstalledAssetsViewModel : ViewModelBase
         else if (item is ChilledValve cv) { ChilledValves.Add(cv); await _chilledValveService.UpsertAsync(_currentProjectId, cv); }
         else if (item is ChilledMeter cm) { ChilledMeters.Add(cm); await _chilledMeterService.UpsertAsync(_currentProjectId, cm); }
         else if (item is ChilledLocateBox clb) { ChilledLocateBoxes.Add(clb); await _chilledLocateBoxService.UpsertAsync(_currentProjectId, clb); }
+
+        // Gas
+        else if (item is GGravityPipe ggp) { GGravityPipes.Add(ggp); await _gGravityPipeService.UpsertAsync(_currentProjectId, ggp); }
+        else if (item is GPressurePipe gpp) { GPressurePipes.Add(gpp); await _gPressurePipeService.UpsertAsync(_currentProjectId, gpp); }
+        else if (item is GPoint gp) { GPoints.Add(gp); await _gPointService.UpsertAsync(_currentProjectId, gp); }
+        else if (item is GFitting gf) { GFittings.Add(gf); await _gFittingService.UpsertAsync(_currentProjectId, gf); }
+        else if (item is GManhole gm) { GManholes.Add(gm); await _gManholeService.UpsertAsync(_currentProjectId, gm); }
+        else if (item is GServicePoint gsp) { GServicePoints.Add(gsp); await _gServicePointService.UpsertAsync(_currentProjectId, gsp); }
+        else if (item is GValve gv) { GValves.Add(gv); await _gValveService.UpsertAsync(_currentProjectId, gv); }
+        else if (item is GLocateBox glb) { GLocateBoxes.Add(glb); await _gLocateBoxService.UpsertAsync(_currentProjectId, glb); }
+
+        // Electric
+        else if (item is EGravityPipe egp) { EGravityPipes.Add(egp); await _eGravityPipeService.UpsertAsync(_currentProjectId, egp); }
+        else if (item is EPressurePipe epp) { EPressurePipes.Add(epp); await _ePressurePipeService.UpsertAsync(_currentProjectId, epp); }
+        else if (item is EPoint ep) { EPoints.Add(ep); await _ePointService.UpsertAsync(_currentProjectId, ep); }
+        else if (item is EFitting ef) { EFittings.Add(ef); await _eFittingService.UpsertAsync(_currentProjectId, ef); }
+        else if (item is EManhole em) { EManholes.Add(em); await _eManholeService.UpsertAsync(_currentProjectId, em); }
+        else if (item is EServicePoint esp) { EServicePoints.Add(esp); await _eServicePointService.UpsertAsync(_currentProjectId, esp); }
+        else if (item is EValve ev) { EValves.Add(ev); await _eValveService.UpsertAsync(_currentProjectId, ev); }
+        else if (item is ELocateBox elb) { ELocateBoxes.Add(elb); await _eLocateBoxService.UpsertAsync(_currentProjectId, elb); }
+
+        // Storm
+        else if (item is STGravityPipe stgp) { STGravityPipes.Add(stgp); await _stGravityPipeService.UpsertAsync(_currentProjectId, stgp); }
+        else if (item is STPressurePipe stpp) { STPressurePipes.Add(stpp); await _stPressurePipeService.UpsertAsync(_currentProjectId, stpp); }
+        else if (item is STPoint stp) { STPoints.Add(stp); await _stPointService.UpsertAsync(_currentProjectId, stp); }
+        else if (item is STFitting stf) { STFittings.Add(stf); await _stFittingService.UpsertAsync(_currentProjectId, stf); }
+        else if (item is STManhole stm) { STManholes.Add(stm); await _stManholeService.UpsertAsync(_currentProjectId, stm); }
+        else if (item is STServicePoint stsp) { STServicePoints.Add(stsp); await _stServicePointService.UpsertAsync(_currentProjectId, stsp); }
+        else if (item is STValve stv) { STValves.Add(stv); await _stValveService.UpsertAsync(_currentProjectId, stv); }
+        else if (item is STLocateBox stlb) { STLocateBoxes.Add(stlb); await _stLocateBoxService.UpsertAsync(_currentProjectId, stlb); }
     }
 
     public void ExportToFolder(string baseName)
@@ -361,5 +541,35 @@ public class InstalledAssetsViewModel : ViewModelBase
         Write("ChilledValve", ChilledValves, FormatValve);
         Write("ChilledMeter", ChilledMeters, FormatMeter);
         Write("ChilledLocateBox", ChilledLocateBoxes, FormatLocateBox);
+
+        // Gas
+        Write("GasGravityPipeRun", GGravityPipes, FormatPipe);
+        Write("GasPressurePipeRun", GPressurePipes, FormatPipe);
+        Write("GasPointsAlongPipe", GPoints, FormatPoint);
+        Write("GasFitting", GFittings, FormatFitting);
+        Write("GasManhole", GManholes, FormatPoint);
+        Write("GasServicePointMeter", GServicePoints, FormatPoint);
+        Write("GasValve", GValves, FormatValve);
+        Write("GasLocateBox", GLocateBoxes, FormatLocateBox);
+
+        // Electric
+        Write("ElectricGravityPipeRun", EGravityPipes, FormatPipe);
+        Write("ElectricPressurePipeRun", EPressurePipes, FormatPipe);
+        Write("ElectricPointsAlongPipe", EPoints, FormatPoint);
+        Write("ElectricFitting", EFittings, FormatFitting);
+        Write("ElectricManhole", EManholes, FormatPoint);
+        Write("ElectricServicePointMeter", EServicePoints, FormatPoint);
+        Write("ElectricValve", EValves, FormatValve);
+        Write("ElectricLocateBox", ELocateBoxes, FormatLocateBox);
+
+        // Storm
+        Write("STGravityPipeRun", STGravityPipes, FormatPipe);
+        Write("STPressurePipeRun", STPressurePipes, FormatPipe);
+        Write("STPointsAlongPipe", STPoints, FormatPoint);
+        Write("STFitting", STFittings, FormatFitting);
+        Write("STManhole", STManholes, FormatPoint);
+        Write("STServicePointMeter", STServicePoints, FormatPoint);
+        Write("STValve", STValves, FormatValve);
+        Write("STLocateBox", STLocateBoxes, FormatLocateBox);
     }
 }

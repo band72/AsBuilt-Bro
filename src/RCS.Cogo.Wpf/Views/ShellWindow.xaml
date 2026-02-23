@@ -97,24 +97,6 @@
                 <MenuItem Header="Save Piping Network..." Command="{Binding SavePipingCommand}"/>
                 <MenuItem Header="Load Piping Network..." Command="{Binding LoadPipingCommand}"/>
             </MenuItem>
-            <MenuItem Header="_Import">
-                <MenuItem Header="Process Batch Script..." Command="{Binding ImportBatchCommand}"/>
-            </MenuItem>
-            <MenuItem Header="_Export">
-                <MenuItem Header="Export Output Log to TXT..." Command="{Binding ExportOutputLogCommand}"/>
-                <Separator/>
-                <MenuItem Header="Export Script..." Command="{Binding ExportScriptCommand}"/>
-                <Separator/>
-                <MenuItem Header="Export Points (TXT)..." Command="{Binding ExportPointsTxtCommand}"/>
-                <MenuItem Header="Export Points (XML)..." Command="{Binding ExportPointsXmlCommand}"/>
-                <Separator/>
-                <MenuItem Header="Save Piping Network..." Command="{Binding SavePipingCommand}"/>
-                <Separator/>
-                <MenuItem Header="Export Installed Assets Report..." Command="{Binding ExportInstalledAssetsCommand}"/>
-                <Separator/>
-                <MenuItem Header="Export to DXF..." Command="{Binding ExportDxfCommand}"/>
-                <MenuItem Header="Export BOM to CSV..." Command="{Binding ExportBomCommand}"/>
-            </MenuItem>
             <MenuItem Header="_Settings">
                 <MenuItem Header="Report Configuration..." Command="{Binding OpenReportSettingsCommand}"/>
                 <Separator/>
@@ -123,21 +105,67 @@
                     <MenuItem Header="Verify Integrity" Command="{Binding VerifyDbCommand}"/>
                     <MenuItem Header="Repair Database" Command="{Binding RepairDbCommand}"/>
                     <Separator/>
-                <MenuItem Header="Export Database to CSV..." Command="{Binding ExportDbCsvCommand}"/>
-                <Separator/>
+                    <MenuItem Header="Export Database to CSV..." Command="{Binding ExportDbCsvCommand}"/>
+                    <Separator/>
                 </MenuItem>
                 <MenuItem Header="General Settings" Command="{Binding OpenGeneralSettingsCommand}"/>
                 <Separator/>
                 <MenuItem Header="Validation" Command="{Binding OpenValidationSettingsCommand}"/>
             </MenuItem>
+            <MenuItem Header="_Data">
+                <MenuItem Header="_Import">
+                    <MenuItem Header="Process Batch Script..." Command="{Binding ImportBatchCommand}"/>
+                </MenuItem>
+                <MenuItem Header="_Export">
+                    <MenuItem Header="Export Output Log to TXT..." Command="{Binding ExportOutputLogCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Export Script..." Command="{Binding ExportScriptCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Export Points (TXT)..." Command="{Binding ExportPointsTxtCommand}"/>
+                    <MenuItem Header="Export Points (XML)..." Command="{Binding ExportPointsXmlCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Save Piping Network..." Command="{Binding SavePipingCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Export Installed Assets Report..." Command="{Binding ExportInstalledAssetsCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Export to DXF..." Command="{Binding ExportDxfCommand}"/>
+                    <MenuItem Header="Export BOM to CSV..." Command="{Binding ExportBomCommand}"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Alignment">
+                <MenuItem Header="Edit Alignment..." Command="{Binding OpenAlignmentWindowCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Profile">
+            </MenuItem>
             <MenuItem Header="_Help">
+                <MenuItem Header="User Manual" Command="{Binding OpenManualCommand}"/>
+                <MenuItem Header="Survey Commands" Command="{Binding OpenSurveyCommandsCommand}"/>
+                <MenuItem Header="Pipe Commands" Command="{Binding OpenPipeCommandsCommand}"/>
+                <Separator/>
+                <MenuItem Header="Azimuth Script" Command="{Binding OpenExampleCogoCommand}"/>
+                <MenuItem Header="Bearing Script" Command="{Binding OpenExampleBearingCommand}"/>
+                <MenuItem Header="Pipe Script" Command="{Binding OpenExamplePipeCommand}"/>
+                <MenuItem Header="Mix Script" Command="{Binding OpenExampleMixCommand}"/>
+                <MenuItem Header="Cogo Figures" Command="{Binding OpenExampleFiguresCommand}"/>
+                <MenuItem Header="Angle Script" Command="{Binding OpenExampleAngleCommand}"/>
+                <Separator/>
+                <!-- Discipline Divider -->
+                <MenuItem Header="Discipline Examples" IsEnabled="False" FontWeight="Bold"/>
+                <MenuItem Header="Gas Script" Command="{Binding OpenExampleGasCommand}"/>
+                <MenuItem Header="Electric Script" Command="{Binding OpenExampleElectricCommand}"/>
+                <MenuItem Header="Water Script" Command="{Binding OpenExampleWaterCommand}"/>
+                <MenuItem Header="Waste Water Script" Command="{Binding OpenExampleWwCommand}"/>
+                <MenuItem Header="Storm Script" Command="{Binding OpenExampleStormCommand}"/>
+                <MenuItem Header="Reclaimed Script" Command="{Binding OpenExampleRcCommand}"/>
+                <MenuItem Header="Chilled Script" Command="{Binding OpenExampleChCommand}"/>
+                <Separator/>
                 <MenuItem Header="_About" Command="{Binding AboutCommand}"/>
             </MenuItem>
         </Menu>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="540"/>
+                <ColumnDefinition Width="594"/>
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="5"/>
@@ -644,7 +672,8 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Button Content="Import CSV" Command="{Binding ImportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
                             <Button Content="Export CSV" Command="{Binding ExportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
-                            <Button Content="Clear DB" Command="{Binding ClearCodesCommand}" Padding="10,5" Background="#2D2D30" Foreground="White" FontWeight="Bold" ToolTip="Deletes ALL codes from the Master Database" BorderThickness="1" BorderBrush="White"/>
+                            <Button Content="Clear DB" Command="{Binding ClearCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" FontWeight="Bold" ToolTip="Deletes ALL codes from the Master Database" BorderThickness="1" BorderBrush="White"/>
+                            <Button Content="Symbol Manager..." Command="{Binding OpenSymbolManagerCommand}" Padding="10,5" Background="#007ACC" Foreground="White" FontWeight="Bold" BorderThickness="0" ToolTip="Open the graphical Symbol Manager"/>
                         </StackPanel>
                         
                         <DataGrid Grid.Row="1" ItemsSource="{Binding CogoCodes}" AutoGenerateColumns="False" Margin="0,5">

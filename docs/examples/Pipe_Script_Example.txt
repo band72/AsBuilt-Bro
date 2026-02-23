@@ -1,0 +1,44 @@
+// PIPE SCRIPT EXAMPLE - ROBUST TEST OF PIPING FEATURES
+// This script assumes the existence of core coordinates in the database or establishes its own 
+// and sequentially tests the construction of piping networks, assigning materials, sizes, and disciplines.
+
+CLEAR
+
+// 1. ESTABLISH COORDINATES FOR PIPE NETWORK STRUCTURES
+NEZ 10 5000 5000 95.0 "SS MH-01"
+NEZ 11 5100 5000 94.0 "SS MH-02"
+NEZ 12 5200 5000 93.0 "SS MH-03"
+NEZ 13 5200 5100 92.5 "SS MH-04"
+
+NEZ 20 6000 6000 98.0 "W V-01"
+NEZ 21 6100 6000 98.0 "W V-02"
+
+// 2. DEFINE AND INJECT STRUCTURE MATERIALS AND DISCIPLINES
+// SS-M = Sanitary Sewer Manhole
+SS-M 10 "48 INCH MH"
+SS-M 11 "48 INCH MH"
+SS-M 12 "48 INCH MH"
+SS-M 13 "48 INCH MH"
+
+// 3. BUILD SANITARY SEWER PIPELINE (PRUN)
+// PRUN START <Name> <Diameter> <Material>
+PRUN START SAN_RUN_1 8 "PVC"
+10
+11
+12
+13
+PRUN END
+
+// 4. WATER MAIN RUN STRUCTURES
+// W-V = Water Valve
+W-V 20 "GATE VALVE"
+W-V 21 "GATE VALVE"
+
+// 5. BUILD WATER MAIN RUN (PRUN)
+PRUN START WATER_RUN_1 12 "DIP"
+20
+21
+PRUN END
+
+// SCRIPT COMPLETE
+// Ensure you check the 'Piping Network' tab in the UI to visually inspect the resulting construction!

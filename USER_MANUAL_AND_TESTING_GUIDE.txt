@@ -1,65 +1,159 @@
-RCS COGO Enterprise - User Manual & Testing Guide
-===============================================
+# RCS COGO Enterprise - Comprehensive User Manual & Testing Guide
 
-This guide explains how to use the software from start to finish and provides step-by-step instructions for testing using the provided automated test data.
+## Table of Contents
+1. Introduction
+2. Getting Started
+3. Application UI Overview
+4. Command Line (Cogo)
+5. Cogo Scripting (Batch)
+6. Piping Network & Architecture
+7. Materials & Asset Database
+8. File Management & Database Operations
+9. Testing Guide & Walkthrough
+10. Troubleshooting & FAQs
 
-1. GETTING STARTED
-------------------
-1. **Launch the Application**: Run `RCS.Cogo.Wpf.exe`.
-2. **Create/Open Project**:
-   - Go to `File > Project > New Project...` to start fresh.
-   - Or `File > Project > Open Project...` to load an existing `.sqlite` database.
+---
 
-2. MAIN WORKFLOW
-----------------
-The application is organized into tabs:
-- **Points**: View and edit survey points.
-- **Cogo**: Manual command line for single COGO commands.
-- **Cogo Script**: Batch automation for creating points and geometry.
-- **Piping**: Dedicated UI for designing pipe networks.
-- **Piping Script**: Automation for pipe runs and structures.
-- **Installed Assets**: Detailed asset database.
+## 1. Introduction
+Welcome to RCS COGO Enterprise! This application provides state-of-the-art Coordinate Geometry (COGO) calculations paired with comprehensive Pipe Network modeling and Asset Management capabilities. Built for modern enterprise needs, it includes fully scriptable pipelines, an active material database, and multi-format data exports.
 
-3. TESTING INSTRUCTIONS (STEP-BY-STEP)
---------------------------------------
+## 2. Getting Started
+### 2.1 First Launch
+When opening `RCS.Cogo.Wpf.exe`, you will be greeted by the default workspace. 
+- **Start Fresh:** Navigate to `File > Project > New Project...` and define your basic project metadata. This creates a new `.sqlite` database for the project.
+- **Resume Work:** Choose `File > Project > Open Project...` to load an existing `.sqlite` workspace.
 
-**Step 1: Project Setup**
-1. Launch the app.
-2. Select `File > Project > New Project...`.
-3. Name it "TestProject_02".
+### 2.2 Updating Settings
+Under the `Settings` menu, you can configure reporting defaults, formatting options, and validation rules. It is good practice to confirm your project settings before commencing large batch imports.
 
-**Step 2: Generate Points (Part 1)**
-1. **Open the "Cogo Script" tab.**
-2. Click `Import Script` and select `TEST_POINTS_SCRIPT.txt`.
-   - Alternatively, copy/paste the content.
-3. Click `Run Script`.
-   - **Verify**: Check the Output Window. It should say "Stored and Occupied Point...".
-   - **Verify**: Switch to the **Points** tab. You should see points 1000-3003 listed.
+---
 
-**Step 3: Generate Pipe Network (Part 2)**
-1. **Open the "Piping Script" tab.** (Note: This is different from Cogo Script).
-2. Click `Import...` and select `TEST_PIPING_SCRIPT.txt`.
-   - Alternatively, copy/paste the content.
-3. Click `Process Piping Script`.
-   - **Verify**: Switch to the **Piping** tab.
-   - You should see 3 Pipe Runs (from 1001->1002, 2001->2002, 3001->3002, etc.).
-   - You should see Structures listed (Valves at 1002, MHs at 2001-2003, etc.).
+## 3. Application UI Overview
+The interface is structured in tabs for logical workflow separation:
 
-**Step 4: Verify Materials & Installed Assets**
-1. **Verify**: In the **Piping** tab, verify the "Structures" list matches the script inputs.
-2. **Materials**: Go to the **Materials** tab. Search for the items (e.g. JEAW008V) and add them to the Project Schedule manually if desired.
-3. **Installed Assets**: Expand the **Installed Assets** pane (right side).
-   - Check "Water Valve" -> expands to show the valve at 1002.
-   - Check "Manhole" -> expands to show the manholes.
-   - (Note: Automatic population depends on whether the script engine links them. If not, manual entry is required as per the original guide).
+- **Points:** A grid-based view of all survey points in the database. Supports editing descriptions and visualizing validation statuses.
+- **Cogo:** An interactive command-line interface for individual geometric calculations.
+- **Cogo Script:** A batch editor and executor. Write or import scripts here to compute multiple points, lines, and figures at once.
+- **Curve Solver:** A dedicated tool for resolving horizontal curve data from partial inputs (e.g., Radius and Arc Length).
+- **Piping:** A UI-driven builder for designing pipe networks (runs and structures). 
+- **Piping Script:** A batch editor dedicated exclusively to piping network instructions (e.g., PRUN, SS-B).
+- **Codes:** A comprehensive listing of survey codes and their descriptions.
+- **Materials:** The master catalog of construction materials (valves, pipes, manholes). Attach items from the master catalog specifically to your project's schedule.
 
-**Step 5: Exporting Data**
-1. **Points**: `File > Export > Export Points (TXT)...`.
-2. **Installed Assets**: `File > Export > Export Installed Assets Report...`.
-   - Choose a folder.
-   - Open the generated CSVs (e.g., `TestProject_02_WaterValve.csv`) to verify all columns are present.
+---
 
-4. TROUBLESHOOTING
-------------------
-- If "Point not found": Make sure you ran the `TEST_POINTS_SCRIPT.txt` in the **Cogo Script** tab FIRST.
-- If "Unknown command PRUN": Make sure you are running the piping script in the **Piping Script** tab, NOT the Cogo Script tab.
+## 4. Command Line (Cogo)
+The **Cogo** tab is the heart of direct geometry processing. Enter commands into the input box to instantly calculate coordinates. 
+
+**Common Survey Commands:**
+- `ST pt# N E Z Desc` : Store a point. (e.g., `ST 1 5000 5000 100 CP`)
+- `OC pt# height` : Occupy a setup point.
+- `BS pt# az` : Backsight to establish orientation.
+- `AZ pt_start pt_end` : Calculate azimuth between two points.
+- `FS pt_new angle dist desc` : Foresight to create a new point based on the current setup.
+- `TRAV pt_new angle dist desc` : Traverse to a new point and automatically move the setup occupation there.
+- `IN inverse_pt1 inverse_pt2` : Calculate inverse bearing and distance between two points. 
+
+---
+
+## 5. Cogo Scripting (Batch)
+For larger datasets, use the **Cogo Script** tab. 
+
+**Features:**
+- **Import:** Load text files containing dozens or hundreds of commands.
+- **Comments:** Prefix lines with `//` to add notes. The parser ignores these lines.
+- **Figures:** Commands like `B pt` (Begin), `L pt` (Line-to), and `C` (Close) construct enclosed shapes which are instantly rendered in the central graphical view.
+
+**Best Practice:** Always run point-creation scripts *before* attempting pipe network scripts that rely on those points.
+
+---
+
+## 6. Piping Network & Architecture
+RCS COGO Enterprise handles piping logically by connecting Point IDs.
+
+### 6.1 Using the UI
+On the **Piping** tab, enter a designated "From" point and "To" point, along with diameter and invert elevations, then click **Add Pipe**. You can similarly define parts (structures) at specific Point IDs.
+
+### 6.2 Using Piping Scripts
+Piping scripts are written in the **Piping Script** tab and use specialized commands:
+- `PRUN START pt# pt# diameter inv_start inv_end`
+- `PRUN END`
+- `SS-B pt#` : Add a structure at the beginning of the pipe run.
+- `SS-E pt#` : Add a structure at the end of the pipe run.
+
+Example:
+```
+// Sanitary Sewer Run
+PRUN START 100 101 8 50.0 49.5
+SS-B 100
+SS-E 101
+PRUN END
+```
+
+---
+
+## 7. Materials & Asset Database
+### 7.1 Master Catalog
+The **Materials** tab shows the global, uneditable library of available construction materials (validation list). You can filter these by Discipline, Type, Size, and Material.
+
+### 7.2 Project Schedule of Materials
+To link a catalog item to a project, select it in the Master Catalog grid and click **Add Selected to Project**. It will then populate the lower grid (Project Schedule) where quantities can be tracked.
+
+### 7.3 Sync to Assets
+Once your Pipe Network is validated, clicking **Sync to Assets** maps the design geometry against the material database, officially logging the asset into the active project database for reporting.
+
+---
+
+## 8. File Management & Database Operations
+Access via the main top menu bar (`Data` and `Settings` sections).
+
+- **Data > Export:** Generate `.txt` outputs, `.xml` points, or `.csv` BOMs (Bills of Materials). You can also export line figures to DXF formats.
+- **Settings > Database Maintenance:** 
+  - `Compact Database`: Shrinks the `.sqlite` file size by removing empty space.
+  - `Verify Integrity`: Checks the database file for corruption.
+  - `Repair`: Attempts to rebuild a corrupted internal index.
+
+---
+
+## 9. Testing Guide & Walkthrough
+To verify the application is working properly, follow this standard scenario:
+
+### Step 1: Initialization
+1. Select `File > Project > New Project...`
+2. Name the project "TestingProtocol".
+
+### Step 2: Survey Data
+1. Navigate to the **Cogo Script** tab.
+2. Click **Import Script** and select your `TEST_POINTS_SCRIPT.txt` file (or paste its text).
+3. Click **Run Script**. 
+4. Verify by checking the **Points** tab; nodes 1000 through 3000 series should be present.
+
+### Step 3: Piping Geometry
+1. Navigate to the **Piping Script** tab.
+2. Click **Import...** and select `TEST_PIPING_SCRIPT.txt`.
+3. Click **Process Script**.
+4. Verify by switching to the **Piping** tab. You should see three or more defined pipe runs.
+
+### Step 4: Validate and Sync
+1. On the **Piping** tab, click **Validate Network** to ensure all pipes connect to valid 3D points.
+2. Click **Sync to Assets** to generate logical installed items.
+
+### Step 5: Master Export
+1. Go to `Data > Export > Export Installed Assets Report...`.
+2. Inspect the resulting output file to confirm that assets (e.g., Manholes, Valves) have been successfully mapped to coordinates and properties.
+
+---
+
+## 10. Troubleshooting & FAQs
+
+**Q: I get a "Point Setup Not Found" error in Cogo.**
+A: You must invoke an Occupy command (`OC`) before attempting any Setup-relative foresights (`FS` or `TRAV`).
+
+**Q: My pipe script says "Unknown Command: ST".**
+A: You are running a survey scripting instruction in the **Piping Script** tab. Survey commands (`ST`, `OC`, `AZ`) belong in the **Cogo Script** tab.
+
+**Q: The DXF export only shows points, no lines.**
+A: Lines are created via Figure commands (`B`, `L`, `C`) during the Cogo script execution. Ensure you have activated figure tracking before export.
+
+**Q: My database is getting extremely large.**
+A: Go to `Settings > Database Maintenance > Compact Database` to optimize the SQLite storage.

@@ -1,0 +1,100 @@
+<Window x:Class="RCS.Cogo.Wpf.Views.SymbolManagerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RCS.Cogo.Wpf.ViewModels"
+        xmlns:localViews="clr-namespace:RCS.Cogo.Wpf.Views"
+        mc:Ignorable="d"
+        Title="Symbol Code Editor" Height="450" Width="800"
+        WindowStartupLocation="CenterOwner" Background="#1E1E1E" Foreground="White">
+        
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/RCS.Cogo.Wpf;component/Resources/Symbols.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <localViews:StringToResourceTemplateSelector x:Key="SymbolTemplateSelector" />
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <Button Content="Import CSV" Command="{Binding ImportCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+            <Button Content="Export CSV" Command="{Binding ExportCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+            <Button Content="Add Symbol Link" Command="{Binding AddCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+            <Button Content="Delete Selected" Command="{Binding DeleteCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+            <Button Content="Save Changes" Command="{Binding SaveCommand}" Padding="10,5" Background="#007ACC" Foreground="White" FontWeight="Bold" BorderThickness="0"/>
+        </StackPanel>
+        
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Symbols}" SelectedItem="{Binding SelectedSymbol, Mode=TwoWay}" AutoGenerateColumns="False" CanUserAddRows="False"
+                  Background="#2D2D30" Foreground="White" BorderBrush="#3E3E42" HorizontalGridLinesBrush="#3E3E42" VerticalGridLinesBrush="#3E3E42" HeadersVisibility="Column">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#1E1E1E"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Padding" Value="5"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="BorderBrush" Value="#3E3E42"/>
+                </Style>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="#2D2D30"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Style>
+            </DataGrid.Resources>
+            
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Client Code" Binding="{Binding ClientCode}" Width="*"/>
+                <DataGridTextColumn Header="System Code" Binding="{Binding SystemCode}" Width="*"/>
+                
+                <DataGridTemplateColumn Header="Symbol" Width="2*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="5,0" VerticalAlignment="Center">
+                                <ContentControl Content="{Binding}" 
+                                                ContentTemplateSelector="{StaticResource SymbolTemplateSelector}" 
+                                                Width="28" Height="28" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding Symbol}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <ComboBox SelectedValue="{Binding Symbol, UpdateSourceTrigger=PropertyChanged}" 
+                                      ItemsSource="{Binding Source={x:Static local:SymbolManagerStaticSource.AvailableSymbols}}"
+                                      Background="#1E1E1E" Foreground="White" BorderBrush="#3E3E42">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="2">
+                                            <ContentControl Content="{Binding}" 
+                                                            ContentTemplateSelector="{StaticResource SymbolTemplateSelector}" 
+                                                            Width="28" Height="28" Margin="0,0,10,0"/>
+                                            <TextBlock Text="{Binding}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridComboBoxColumn Header="Type" 
+                                        SelectedItemBinding="{Binding Type}" 
+                                        ItemsSource="{Binding Source={x:Static local:SymbolManagerStaticSource.Types}}" Width="*"/>
+                
+                <DataGridComboBoxColumn Header="Discipline" 
+                                        SelectedItemBinding="{Binding Discipline}" 
+                                        ItemsSource="{Binding Source={x:Static local:SymbolManagerStaticSource.Disciplines}}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <TextBlock Grid.Row="2" Margin="0,5,0,0" Foreground="Gray" FontStyle="Italic"
+                   Text="Associate your client codes/system codes directly with visualization symbols, geometric types, and material disciplines."/>
+    </Grid>
+</Window>

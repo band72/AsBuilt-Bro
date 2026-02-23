@@ -37,6 +37,18 @@ public static class DbInitializer
                     ""Notes"" TEXT NULL
                 );
             ");
+
+            // Symbols
+            context.Database.ExecuteSqlRaw(@"
+                CREATE TABLE IF NOT EXISTS ""SymbolManager"" (
+                    ""Id"" INTEGER NOT NULL CONSTRAINT ""PK_SymbolManager"" PRIMARY KEY AUTOINCREMENT,
+                    ""ClientCode"" TEXT NULL,
+                    ""SystemCode"" TEXT NULL,
+                    ""Symbol"" TEXT NULL,
+                    ""Type"" TEXT NULL,
+                    ""Discipline"" TEXT NULL
+                );
+            ");
         }
         catch (Exception ex)
         {
