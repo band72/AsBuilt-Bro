@@ -65,9 +65,8 @@ public class DCommand : ICommand
 public class BCommand : ICommand
 {
     public string Name => "B";
-    public string Description => "Display Bearing (Inverse). Maps to INV.";
-    // Likely maps to Inverse or Bearing info. Let's map to INV as safe bet for info display.
-    public Task ExecuteAsync(string[] args, ICogoContext context) => new InvCommand().ExecuteAsync(args, context);
+    public string Description => "Alias for BEG (Begin Figure).";
+    public Task ExecuteAsync(string[] args, ICogoContext context) => new BegCommand().ExecuteAsync(args, context);
 }
 
 public class ArcArcCommand : ICommand

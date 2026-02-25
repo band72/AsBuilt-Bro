@@ -273,4 +273,21 @@ public partial class ShellWindow : Window
             e.Handled = true;
         }
     }
+
+    private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        // Only trigger if the event source is the TabControl itself
+        if (e.OriginalSource is System.Windows.Controls.TabControl)
+        {
+            if (DataContext is ShellViewModel vm)
+            {
+                // Index 1 corresponds to Tab 2: Cogo
+                // Use a minor dispatch delay to let WPF fully swap the visual tree elements before focusing
+                if (vm.SelectedTabIndex == 1)
+                {
+                    Dispatcher.BeginInvoke(new Action(() => CogoInputTextBox.Focus()), System.Windows.Threading.DispatcherPriority.Input);
+                }
+            }
+        }
+    }
 }

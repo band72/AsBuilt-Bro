@@ -159,6 +159,15 @@
                 <MenuItem Header="Reclaimed Script" Command="{Binding OpenExampleRcCommand}"/>
                 <MenuItem Header="Chilled Script" Command="{Binding OpenExampleChCommand}"/>
                 <Separator/>
+                <MenuItem Header="Robust Test Scripts V2" IsEnabled="False" FontWeight="Bold"/>
+                <MenuItem Header="Cogo Script V2" Command="{Binding OpenExampleCogoV2Command}"/>
+                <MenuItem Header="Water Script V2" Command="{Binding OpenExampleWaterV2Command}"/>
+                <MenuItem Header="Storm Script V2" Command="{Binding OpenExampleStormV2Command}"/>
+                <MenuItem Header="Sewer Script V2" Command="{Binding OpenExampleSewerV2Command}"/>
+                <MenuItem Header="Waste Water Script V2" Command="{Binding OpenExampleWwV2Command}"/>
+                <MenuItem Header="Gas Script V2" Command="{Binding OpenExampleGasV2Command}"/>
+                <MenuItem Header="Electric Script V2" Command="{Binding OpenExampleElectricV2Command}"/>
+                <Separator/>
                 <MenuItem Header="_About" Command="{Binding AboutCommand}"/>
             </MenuItem>
         </Menu>
@@ -178,7 +187,7 @@
 
         <!-- Left Pane: Console / History -->
         <Grid Grid.Column="0" Grid.Row="0" Margin="10">
-            <TabControl Background="#252526" BorderThickness="0" SelectedIndex="{Binding SelectedTabIndex}">
+            <TabControl Background="#252526" BorderThickness="0" SelectedIndex="{Binding SelectedTabIndex}" SelectionChanged="TabControl_SelectionChanged">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -318,7 +327,7 @@
                 </TabItem>
 
                 <!-- Tab 2: Cogo (Renamed from Cogo Manual) -->
-                <TabItem Header="Cogo">
+                <TabItem Header="Cogo" FocusManager.FocusedElement="{Binding ElementName=CogoInputTextBox}">
                     <Grid Margin="0,10,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -334,7 +343,26 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
                         
-                        <TextBox Grid.Row="1" Text="{Binding CommandInput, UpdateSourceTrigger=PropertyChanged}" 
+                        <!-- Floating Command Hint -->
+                        <Border Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+                                Background="#E6333333" Margin="5,0,0,5" Padding="8,5" CornerRadius="3" MinWidth="100">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CommandHint}" Value="">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding CommandHint}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding CommandHint}" Foreground="White" FontFamily="Consolas" FontSize="14"/>
+                        </Border>
+
+                        <TextBox x:Name="CogoInputTextBox" Grid.Row="1" Text="{Binding CommandInput, UpdateSourceTrigger=PropertyChanged}" 
                                  FontFamily="Consolas" FontSize="16" Height="30">
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Enter" Command="{Binding SubmitCommand}"/>
@@ -661,10 +689,28 @@
                                 <Button Content="TXT" Command="{Binding ExportPipingScriptCommand}" Padding="10,5" Background="#2D2D30" Foreground="White"/>
                             </StackPanel>
                         </DockPanel>
-                        
+                        <!-- Floating Piping Script Hint -->
+                        <Border Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+                                Background="#E6333333" Margin="5,0,0,5" Padding="8,5" CornerRadius="3" MinWidth="100" Panel.ZIndex="10">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding PipingScriptHint}" Value="">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding PipingScriptHint}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding PipingScriptHint}" Foreground="White" FontFamily="Consolas" FontSize="14"/>
+                        </Border>
+
                         <TextBox Grid.Row="1" Text="{Binding PipingScriptText, UpdateSourceTrigger=PropertyChanged}" 
                                  AcceptsReturn="True" FontFamily="Consolas" VerticalScrollBarVisibility="Auto"
-                                 Background="#1E1E1E" Foreground="#D4D4D4" BorderThickness="1" BorderBrush="#3E3E42" Padding="5"/>
+                                 Background="#1E1E1E" Foreground="#D4D4D4" BorderThickness="1" BorderBrush="#3E3E42" Padding="5" Panel.ZIndex="1"/>
                         
                         <Grid Grid.Row="2" Margin="0,10,0,0">
                             <Grid.ColumnDefinitions>

@@ -87,10 +87,79 @@ public class ShellViewModel : ViewModelBase
     private readonly CogoContext _context;
 
     private string _commandInput = "";
+    private string _commandHint = "";
+    public string CommandHint
+    {
+        get => _commandHint;
+        set => SetField(ref _commandHint, value);
+    }
+
     public string CommandInput
     {
         get => _commandInput;
-        set => SetField(ref _commandInput, value);
+        set 
+        {
+            SetField(ref _commandInput, value);
+            UpdateCommandHint();
+        }
+    }
+
+    private void UpdateCommandHint()
+    {
+        if (string.IsNullOrWhiteSpace(_commandInput))
+        {
+            CommandHint = "";
+            return;
+        }
+
+        string cmd = _commandInput.Split(' ')[0].ToUpper();
+        switch (cmd)
+        {
+            // Point & Traverse Commands
+            case "ST": CommandHint = "ST <Pt> <Northing> <Easting> <Elev> [Desc]"; break;
+            case "NE": CommandHint = "NE <Pt> <Northing> <Easting> [Desc]"; break;
+            case "NEZ": CommandHint = "NEZ <Pt> <Northing> <Easting> <Elev> [Desc]"; break;
+            case "PT": 
+            case "PNT": CommandHint = "PNT <Pt> <Northing> <Easting> <Elev> [Desc]"; break;
+            case "OC": CommandHint = "OC <Pt> [InstrumentHeight]"; break;
+            case "BS": CommandHint = "BS <Pt> <Azimuth_DMS>"; break;
+            case "FS": CommandHint = "FS <NewPt> <Angle_DMS> <Dist> [Desc]"; break;
+            case "TRAV": CommandHint = "TRAV <NewPt> <Angle_DMS> <Dist> [Desc]"; break;
+
+            // Geometry/Intersection Commands
+            case "AZAZ": CommandHint = "AZAZ <NewPt> <Pt1> <Az1> <Pt2> <Az2> [Desc]"; break;
+            case "BB": CommandHint = "BB <NewPt> <Pt1> <Brg1> <Quad1> <Pt2> <Brg2> <Quad2> [Desc]"; break;
+            case "BD": CommandHint = "BD <NewPt> <Bearing_DMS> <Quad(1-4)> <Dist> [Desc]"; break;
+            case "LNLN": CommandHint = "LNLN <NewPt> <Line1Start> <Line1End> <Line2Start> <Line2End> [Desc]"; break;
+            case "RKRK": CommandHint = "RKRK <NewPt> <Pt1> <Radius1> <Pt2> <Radius2> [Desc]"; break;
+            case "AD": CommandHint = "AD <NewPt> <AngleRight_DMS> <Dist> [Desc]"; break;
+            case "DD": CommandHint = "DD <NewPt> <Deflection_DMS> <Dist> [Desc]"; break;
+            case "ZD": CommandHint = "ZD <NewPt> <Zenith_DMS> <Dist> [Desc]"; break;
+
+            // Figure & Linework Commands
+            case "B": 
+            case "BEG": CommandHint = "BEG <Pt> (Begins a active figure)"; break;
+            case "L": CommandHint = "L <Pt> (Draws line to node)"; break;
+            case "LN": CommandHint = "LN <Pt1> <Pt2> (Inverse Bearing & Distance of line)"; break;
+            case "C": CommandHint = "C (Closes active figure back to Begin point)"; break;
+            case "CONT": CommandHint = "CONT <Pt> (Continues active figure to node)"; break;
+            case "E":
+            case "END": CommandHint = "END (Ends the active figure without closing)"; break;
+            case "XC": CommandHint = "XC PTS <Radius> <RadiusPt> <EndPt> (Synthesize Curve)"; break;
+            case "ARCARC": CommandHint = "ARCARC <NewPt> <Pt1> <Radius1> <Pt2> <Radius2> [Desc]"; break;
+
+            // Analytics
+            case "IN":
+            case "INV": CommandHint = "INV <Pt1> <Pt2> (Inverse calculation)"; break;
+            case "AZ": CommandHint = "AZ <Pt1> <Pt2> (Calculates absolute Azimuth)"; break;
+
+            // Utilities & Transformations
+            case "AP": CommandHint = "AP <ON/OFF> (Toggles Auto Point Numbering)"; break;
+            case "TRN": CommandHint = "TRN <SourcePt> <DestPt> <PtsToMove> (Translates points)"; break;
+            case "ROT": CommandHint = "ROT <Line1> <Line2> <PtsToRotate> (Rotates points)"; break;
+
+            default: CommandHint = ""; break;
+        }
     }
 
     private string _batchScriptContent = "// Enter batch commands here...";
@@ -448,8 +517,16 @@ public class ShellViewModel : ViewModelBase
         OpenExampleWaterCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Water_Script_Example.txt"));
         OpenExampleWwCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\WW_Script_Example.txt"));
         OpenExampleStormCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Storm_Script_Example.txt"));
-        OpenExampleRcCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Reclaimed_Script_Example.txt"));
+        OpenExampleRCCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Reclaimed_Script_Example.txt"));
         OpenExampleChCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Chilled_Script_Example.txt"));
+
+        OpenExampleCogoV2Command = new RelayCommand(_ => OpenDocument("TEST_COGO_V2.txt"));
+        OpenExampleWaterV2Command = new RelayCommand(_ => OpenDocument("TEST_WATER_V2.txt"));
+        OpenExampleStormV2Command = new RelayCommand(_ => OpenDocument("TEST_STORM_V2.txt"));
+        OpenExampleSewerV2Command = new RelayCommand(_ => OpenDocument("TEST_SEWER_V2.txt"));
+        OpenExampleWwV2Command = new RelayCommand(_ => OpenDocument("TEST_WASTE_WATER_V2.txt"));
+        OpenExampleGasV2Command = new RelayCommand(_ => OpenDocument("TEST_GAS_V2.txt"));
+        OpenExampleElectricV2Command = new RelayCommand(_ => OpenDocument("TEST_ELECTRIC_V2.txt"));
         
         InstalledAssets = new InstalledAssetsViewModel();
         OpenValidationSettingsCommand = new RelayCommand(_ => OpenValidationSettings());
@@ -501,8 +578,16 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand OpenExampleWaterCommand { get; }
     public System.Windows.Input.ICommand OpenExampleWwCommand { get; }
     public System.Windows.Input.ICommand OpenExampleStormCommand { get; }
-    public System.Windows.Input.ICommand OpenExampleRcCommand { get; }
+    public System.Windows.Input.ICommand OpenExampleRCCommand { get; }
     public System.Windows.Input.ICommand OpenExampleChCommand { get; }
+
+    public System.Windows.Input.ICommand OpenExampleCogoV2Command { get; }
+    public System.Windows.Input.ICommand OpenExampleWaterV2Command { get; }
+    public System.Windows.Input.ICommand OpenExampleStormV2Command { get; }
+    public System.Windows.Input.ICommand OpenExampleSewerV2Command { get; }
+    public System.Windows.Input.ICommand OpenExampleWwV2Command { get; }
+    public System.Windows.Input.ICommand OpenExampleGasV2Command { get; }
+    public System.Windows.Input.ICommand OpenExampleElectricV2Command { get; }
 
     public System.Windows.Input.ICommand OpenAlignmentWindowCommand { get; }
 
@@ -1123,8 +1208,58 @@ public class ShellViewModel : ViewModelBase
     }
 
     // --- Piping Script ---
+    private string _pipingScriptHint = "";
+    public string PipingScriptHint
+    {
+        get => _pipingScriptHint;
+        set => SetField(ref _pipingScriptHint, value);
+    }
+
     private string _pipingScriptText = "";
-    public string PipingScriptText { get => _pipingScriptText; set => SetField(ref _pipingScriptText, value); }
+    public string PipingScriptText 
+    { 
+        get => _pipingScriptText; 
+        set 
+        {
+            SetField(ref _pipingScriptText, value);
+            UpdatePipingScriptHint();
+        }
+    }
+
+    private void UpdatePipingScriptHint()
+    {
+        if (string.IsNullOrWhiteSpace(_pipingScriptText))
+        {
+            PipingScriptHint = "";
+            return;
+        }
+
+        var lines = _pipingScriptText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        string lastTypingLine = lines.LastOrDefault(l => !string.IsNullOrWhiteSpace(l))?.Trim() ?? "";
+
+        if (string.IsNullOrWhiteSpace(lastTypingLine))
+        {
+            PipingScriptHint = "";
+            return;
+        }
+
+        string cmd = lastTypingLine.Split(' ')[0].ToUpper();
+
+        if (cmd == "PRUN" && lastTypingLine.ToUpper().Contains("START"))
+            PipingScriptHint = "PRUN START <Code> DIAM <Size> MAT <Material>\nCodes: W, WW, ST, G, E, R, CH";
+        else if (cmd == "PRUN")
+            PipingScriptHint = "PRUN END (Closes the pipe run)";
+        else if (cmd == "PIPE-ENGINE-ON")
+            PipingScriptHint = "PIPE-ENGINE-ON (Enables Pipe Logic)";
+        else if (cmd == "PIPE-ENGINE-OFF")
+            PipingScriptHint = "PIPE-ENGINE-OFF (Pauses Pipe Logic)";
+        else if (cmd.Contains("-B") || cmd.Contains("-C") || cmd.Contains("-E") || cmd.Contains("-CLS"))
+            PipingScriptHint = $"{cmd.Split('-')[0]}-<B/C/E/CLS> <NodeID> [StructureType]\nB=Begin, C=Continue, E=End";
+        else if (cmd == "NEZ" || cmd == "ST")
+            PipingScriptHint = "NEZ <NodeID> <Northing> <Easting> <Elevation> [Desc]";
+        else
+            PipingScriptHint = "";
+    }
     public System.Windows.Input.ICommand ProcessPipingScriptCommand { get; }
     public System.Windows.Input.ICommand ImportPipingScriptCommand { get; }
     public System.Windows.Input.ICommand ExportPipingScriptCommand { get; }
@@ -1444,6 +1579,19 @@ public class ShellViewModel : ViewModelBase
                  assetToSave = item;
                  existing = specific;
             }
+            else if (type == "WWP" || type == "WWFM")
+            {
+                 var specific = InstalledAssets.WWPressurePipes.FirstOrDefault(x => HasScriptKey(x, key));
+                 var item = specific ?? new RCS.Data.Entities.WWPressurePipe();
+                 
+                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
+                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
+                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
+                 item.Notes = AddScriptKey(item.Notes, key);
+                 
+                 assetToSave = item;
+                 existing = specific;
+            }
             else if (type == "R")
             {
                  var specific = InstalledAssets.ReclaimedPipes.FirstOrDefault(x => HasScriptKey(x, key));
@@ -1470,6 +1618,19 @@ public class ShellViewModel : ViewModelBase
                  assetToSave = item;
                  existing = specific;
             }
+            else if (type == "GP")
+            {
+                 var specific = InstalledAssets.GPressurePipes.FirstOrDefault(x => HasScriptKey(x, key));
+                 var item = specific ?? new RCS.Data.Entities.GPressurePipe();
+                 
+                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
+                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
+                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
+                 item.Notes = AddScriptKey(item.Notes, key);
+
+                 assetToSave = item;
+                 existing = specific;
+            }
             else if (type == "E")
             {
                  var specific = InstalledAssets.EGravityPipes.FirstOrDefault(x => HasScriptKey(x, key));
@@ -1483,10 +1644,36 @@ public class ShellViewModel : ViewModelBase
                  assetToSave = item;
                  existing = specific;
             }
-            else if (type == "ST")
+            else if (type == "EP")
+            {
+                 var specific = InstalledAssets.EPressurePipes.FirstOrDefault(x => HasScriptKey(x, key));
+                 var item = specific ?? new RCS.Data.Entities.EPressurePipe();
+                 
+                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
+                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
+                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
+                 item.Notes = AddScriptKey(item.Notes, key);
+
+                 assetToSave = item;
+                 existing = specific;
+            }
+            else if (type == "ST" || type == "D")
             {
                  var specific = InstalledAssets.STGravityPipes.FirstOrDefault(x => HasScriptKey(x, key));
                  var item = specific ?? new RCS.Data.Entities.STGravityPipe();
+                 
+                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
+                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
+                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
+                 item.Notes = AddScriptKey(item.Notes, key);
+
+                 assetToSave = item;
+                 existing = specific;
+            }
+            else if (type == "STP" || type == "STFM")
+            {
+                 var specific = InstalledAssets.STPressurePipes.FirstOrDefault(x => HasScriptKey(x, key));
+                 var item = specific ?? new RCS.Data.Entities.STPressurePipe();
                  
                  item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
                  item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
@@ -1528,9 +1715,9 @@ public class ShellViewModel : ViewModelBase
             // Helper to process common logic (unfortunately types are different)
             // We have to iterate types manually or use reflection (too risky here)
             
-            if (t.StartsWith("JEAW") && !t.StartsWith("JEAWW")) 
+            if (t.StartsWith("JEAW") && !t.StartsWith("JEAWW") || t == "VALVE" || t == "HYDRANT" || t.StartsWith("W-")) 
             {
-                if (t.EndsWith("V")) 
+                if (t.EndsWith("V") || t == "VALVE") 
                 {
                      var specific = InstalledAssets.WaterValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.WaterValve();
@@ -1538,7 +1725,7 @@ public class ShellViewModel : ViewModelBase
                      item.Notes = AddScriptKey(item.Notes, key);
                      assetToSave = item; existing = specific;
                 }
-                else if (t.EndsWith("H")) 
+                else if (t.EndsWith("H") || t == "HYDRANT") 
                 {
                      var specific = InstalledAssets.WaterHydrants.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.WaterHydrant();
@@ -1653,6 +1840,14 @@ public class ShellViewModel : ViewModelBase
                  {
                      var specific = InstalledAssets.STValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.STValve();
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
+                     item.Notes = AddScriptKey(item.Notes, key);
+                     assetToSave = item; existing = specific;
+                 }
+                 else if (t.Contains("STM") || t.Contains("CBI") || t.Contains("MANHOLE") || t.Contains("INLET") || t.Contains("BASIN"))
+                 {
+                     var specific = InstalledAssets.STManholes.FirstOrDefault(x => HasScriptKey(x, key));
+                     var item = specific ?? new RCS.Data.Entities.STManhole();
                      item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
                      item.Notes = AddScriptKey(item.Notes, key);
                      assetToSave = item; existing = specific;

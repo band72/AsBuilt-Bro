@@ -43,11 +43,15 @@ public static class AppInitializer
         registry.Register(new PointCommand());
         registry.Register(new CloseCommand());
         registry.Register(new InverseCommand());
+        registry.Register(new OcCommand());
+        registry.Register(new FsCommand());
         
         registry.Register(new FigCommand());
         registry.Register(new PtCommand());
         registry.Register(new ACommand());
         registry.Register(new BCommand());
+        registry.Register(new LCommand());
+        registry.Register(new CCommand());
         registry.Register(new DCommand());
         registry.Register(new ArcArcCommand());
         registry.Register(new DispCommand());

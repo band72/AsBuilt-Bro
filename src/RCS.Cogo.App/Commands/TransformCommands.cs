@@ -11,33 +11,33 @@ namespace RCS.Cogo.App.Commands;
 public class LnCommand : ICommand
 {
     public string Name => "LN";
-    public string Description => "Create a Line (Figure) between two points. Usage: LN <Pt1> <Pt2> <Name>";
+    public string Description => "Inverse of Line. Usage: LN <Pt1> <Pt2>";
 
     public Task ExecuteAsync(string[] args, ICogoContext context)
     {
-        // LN <Pt1> <Pt2> <Name>
-        if (args.Length < 4)
+        // LN <Pt1> <Pt2>
+        if (args.Length < 3)
         {
-            context.Log("Usage: LN <Pt1> <Pt2> <Name>");
+            context.Log("Usage: LN <Pt1> <Pt2>");
             return Task.CompletedTask;
         }
 
         string p1 = args[1];
         string p2 = args[2];
-        string name = args[3];
 
-        if (context.GetPoint(p1) == null || context.GetPoint(p2) == null)
+        var pt1 = context.GetPoint(p1);
+        var pt2 = context.GetPoint(p2);
+
+        if (pt1 == null || pt2 == null)
         {
             context.Log("Error: One or both points not found.");
             return Task.CompletedTask;
         }
 
-        var fig = new Figure(name);
-        fig.AddPoint(p1);
-        fig.AddPoint(p2);
-        context.AddFigure(fig);
+        var result = GeometryEngine.Inverse(pt1, pt2);
         
-        context.Log($"Line {name} created from {p1} to {p2}.");
+        context.Log($"LN {p1}-{p2}: Az {result.Azimuth.ToDMS():F4}  Dist: {result.Distance:F4} {context.Units}");
+
         return Task.CompletedTask;
     }
 }
@@ -45,19 +45,20 @@ public class LnCommand : ICommand
 public class TrnCommand : ICommand
 {
     public string Name => "TRN";
-    public string Description => "Translate Points. Usage: TRN <SourcePt> <DestPt> <Pt1> [Pt2...]";
+    public string Description => "Translate Points. Usage: TRN <SourcePt> <DestPt> <PtsToMoveRange>";
 
     public Task ExecuteAsync(string[] args, ICogoContext context)
     {
-        // TRN <Source> <Dest> <PtToMove...>
+        // TRN <Source> <Dest> <PtsToMoveRange>
         if (args.Length < 4)
         {
-            context.Log("Error: Usage: TRN <SourcePt> <DestPt> <PtToMove...>");
+            context.Log("Error: Usage: TRN <SourcePt> <DestPt> <PtsToMoveRange>");
             return Task.CompletedTask;
         }
 
         string srcId = args[1];
         string destId = args[2];
+        string ptsRange = string.Join(",", args.Skip(3));
 
         var pSrc = context.GetPoint(srcId);
         var pDest = context.GetPoint(destId);
@@ -73,114 +74,123 @@ public class TrnCommand : ICommand
         double dz = pDest.Elevation - pSrc.Elevation;
 
         int count = 0;
-        for (int i = 3; i < args.Length; i++)
+        var idsToMove = ParsePointRange(ptsRange, context);
+
+        foreach (var ptId in idsToMove)
         {
-            string ptId = args[i];
             var pt = context.GetPoint(ptId);
             if (pt != null)
             {
                 var newPt = new Point3D(pt.Northing + dy, pt.Easting + dx, pt.Elevation + dz);
-                // Update point in context (AddPoint overwrites if ID exists)
-                context.AddPoint(ptId, newPt, "Translated");
+                var oldDesc = context.GetAllPoints().FirstOrDefault(x => x.Id.Equals(ptId, StringComparison.OrdinalIgnoreCase)).Description ?? "";
+                context.AddPoint(ptId, newPt, oldDesc);
                 count++;
-            }
-            else
-            {
-                context.Log($"Warning: Point {ptId} not found.");
             }
         }
         
         context.Log($"Translated {count} points by dN:{dy:F3}, dE:{dx:F3}.");
         return Task.CompletedTask;
     }
+
+    public static System.Collections.Generic.List<string> ParsePointRange(string rangeStr, ICogoContext context)
+    {
+        var ids = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var parts = rangeStr.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var part in parts)
+        {
+            if (part.Contains("-"))
+            {
+                var ends = part.Split('-');
+                if (ends.Length == 2 && int.TryParse(ends[0], out int start) && int.TryParse(ends[1], out int end))
+                {
+                    if (start > end)
+                    {
+                        int temp = start; start = end; end = temp;
+                    }
+                    for (int i = start; i <= end; i++) ids.Add(i.ToString());
+                }
+                else
+                {
+                    ids.Add(part.Trim());
+                }
+            }
+            else
+            {
+                ids.Add(part.Trim());
+            }
+        }
+        return ids.ToList();
+    }
 }
 
 public class RotCommand : ICommand
 {
     public string Name => "ROT";
-    public string Description => "Rotate Points. Usage: ROT <SourcePt> <DestPt> <Pt1> [Pt2...]"; 
+    public string Description => "Rotate Points. Usage: ROT <Ln1.Start-Ln1.End> <Ln2.Start-Ln2.End> <PtsRange>"; 
     
     public Task ExecuteAsync(string[] args, ICogoContext context)
     {
         if (args.Length < 4)
         {
-            context.Log("Usage: ROT <SourceLn> <DestLn> <Points...>"); 
+            context.Log("Usage: ROT <Ln1Start-Ln1End> <Ln2Start-Ln2End> <PtsRange>"); 
             return Task.CompletedTask;
         }
 
-        string srcLnName = args[1];
-        string destLnName = args[2];
+        string ln1Str = args[1];
+        string ln2Str = args[2];
+        string ptsRange = string.Join(",", args.Skip(3));
         
-        // Get Angles of lines
-        double angSrc = GetLineAzimuth(srcLnName, context);
-        double angDest = GetLineAzimuth(destLnName, context);
-        
-        if (double.IsNaN(angSrc) || double.IsNaN(angDest))
+        if (!ln1Str.Contains("-") || !ln2Str.Contains("-"))
         {
-            context.Log("Error: Could not determine azimuths for source/dest lines.");
+            context.Log("Error: Line formats must be 'PtA-PtB' (e.g. 1-2).");
             return Task.CompletedTask;
         }
-        
-        double rotation = angDest - angSrc; // Angle to rotate RIGHT
-        
-        // Origin? 
-        // Rotation requires a pivot. 
-        // If we just rotate points, they rotate around (0,0)? Unlikely.
-        // Usually around the start of the source line?
-        // Let's assume pivot is Start Point of Source Line.
-        
-        var srcFig = context.GetFigure(srcLnName);
-        Point3D pivot = new Point3D(0,0,0);
-        if (srcFig != null && srcFig.PointIds.Count > 0)
+
+        var ln1Pts = ln1Str.Split('-');
+        var ln2Pts = ln2Str.Split('-');
+
+        var ln1P1 = context.GetPoint(ln1Pts[0]);
+        var ln1P2 = context.GetPoint(ln1Pts[1]);
+        var ln2P1 = context.GetPoint(ln2Pts[0]);
+        var ln2P2 = context.GetPoint(ln2Pts[1]);
+
+        if (ln1P1 == null || ln1P2 == null || ln2P1 == null || ln2P2 == null)
         {
-            if (context.GetPoint(srcFig.PointIds[0]) != null)
-            {
-                pivot = context.GetPoint(srcFig.PointIds[0])!;
-            }
+            context.Log($"Error: One or more points defining the lines '{ln1Str}' or '{ln2Str}' were not found.");
+            return Task.CompletedTask;
         }
 
-        double rad = Angle.FromDegrees(rotation).Radians;
-        double s = Math.Sin(rad);
-        double c = Math.Cos(rad);
+        var inv1 = GeometryEngine.Inverse(ln1P1, ln1P2);
+        var inv2 = GeometryEngine.Inverse(ln2P1, ln2P2);
         
+        double diffRadians = inv2.Azimuth.Radians - inv1.Azimuth.Radians;
+        var center = ln1P1;
+
         int count = 0;
-        for (int i = 3; i < args.Length; i++)
+        var idsToRotate = TrnCommand.ParsePointRange(ptsRange, context);
+
+        foreach (var id in idsToRotate)
         {
-            string ptId = args[i];
-            var pt = context.GetPoint(ptId);
-            if (pt != null)
+            var p = context.GetPoint(id);
+            if (p != null)
             {
-                // Valid Point
-                double dx = pt.Easting - pivot.Easting;
-                double dy = pt.Northing - pivot.Northing;
+                var invToCenter = GeometryEngine.Inverse(center, p);
                 
-                double xNew = (dx * c) - (dy * s) + pivot.Easting;
-                double yNew = (dx * s) + (dy * c) + pivot.Northing;
+                double rotRadius = invToCenter.Distance;
+                double newAzimuth = invToCenter.Azimuth.Radians + diffRadians;
                 
-                context.AddPoint(ptId, new Point3D(yNew, xNew, pt.Elevation), "Rotated");
+                var newPt = GeometryEngine.Forward(center, Angle.FromRadians(newAzimuth), rotRadius);
+
+                newPt = new Point3D(newPt.Northing, newPt.Easting, p.Elevation);
+                var oldDesc = context.GetAllPoints().FirstOrDefault(x => x.Id.Equals(id, StringComparison.OrdinalIgnoreCase)).Description ?? "";
+                
+                context.AddPoint(id, newPt, oldDesc);
                 count++;
             }
         }
         
-        context.Log($"Rotated {count} points by {rotation:F4} deg around {pivot.Easting:F3},{pivot.Northing:F3}.");
+        context.Log($"Rotated {count} points around {ln1Pts[0]} by angle difference.");
         return Task.CompletedTask;
-    }
-    
-    private double GetLineAzimuth(string lineName, ICogoContext context)
-    {
-        // Try Figure
-        var fig = context.GetFigure(lineName);
-        if (fig != null && fig.PointIds.Count >= 2)
-        {
-            var p1 = context.GetPoint(fig.PointIds[0]);
-            var p2 = context.GetPoint(fig.PointIds[1]);
-            if (p1 != null && p2 != null)
-            {
-                // Use Inverse to get Azimuth
-                var inverse = GeometryEngine.Inverse(p1, p2);
-                return inverse.Azimuth.Degrees;
-            }
-        }
-        return double.NaN;
     }
 }

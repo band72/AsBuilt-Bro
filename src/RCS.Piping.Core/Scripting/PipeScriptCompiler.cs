@@ -517,9 +517,9 @@ public sealed class PipeScriptCompiler
                         double drop = invStart.Value - invEnd.Value;
                         double slopePercent = (drop / length) * 100.0;
 
-                        if (prun.UtilityType == "WW" && slopePercent < 0.40)
+                        if ((prun.UtilityType == "WW" || prun.UtilityType == "ST" || prun.UtilityType == "D") && slopePercent < 0.40)
                         {
-                            result.Diagnostics.Add(new ScriptDiagnostic { LineNumber = lineNo, Severity = "ERROR", Message = $"Slope violation: Pipe {from}-{to} is {slopePercent:F2}%. Minimum allowable slope is 0.40%." });
+                            result.Diagnostics.Add(new ScriptDiagnostic { LineNumber = lineNo, Severity = "WARN", Message = $"Slope warning: Gravity Pipe {from}-{to} is {slopePercent:F2}%. Standard minimum allowable slope is 0.40%." });
                         }
                     }
                 }
