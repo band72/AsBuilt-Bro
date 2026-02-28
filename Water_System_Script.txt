@@ -1,0 +1,176 @@
+// ==========================================
+// Water System Design Script: ROW to Building
+// ==========================================
+// Specifications:
+// - Main line length: 300 ft
+// - Laterals: 5 laterals, 100 ft each
+// - Best Practices: 
+//   - Isolation valve at the ROW tap.
+//   - TEE fittings at each lateral branch.
+//   - Isolation valves on each lateral branch.
+//   - Water meters at the end of each lateral.
+//   - Hydrant at the end of the dead-end main for flushing.
+// ==========================================
+
+// --- COGO ENGINE: Define Points Geometry ---
+COGO-ENGINE-ON
+
+// Turn OFF Pipe Engine so ZD/STN commands don't trigger "Unknown Command" validation errors
+PIPE-ENGINE-OFF
+
+// Starting Point: ROW Connection
+NEZ 10 5000 5000 100.0 "ROW CONNECTION"
+
+// ------------------------------------------
+// Main Line (Total 300 ft, spaced at 60 ft)
+// Azimuth 0.0000 (North)
+// ------------------------------------------
+STN 10
+ZD 11 0.0000 60 "MAINLINE NODE"
+
+STN 11
+ZD 12 0.0000 60 "MAINLINE NODE"
+
+STN 12
+ZD 13 0.0000 60 "MAINLINE NODE"
+
+STN 13
+ZD 14 0.0000 60 "MAINLINE NODE"
+
+STN 14
+ZD 15 0.0000 60 "MAINLINE NODE"
+
+// End of main line Hydrant connection (flush point, 5 ft past last tee)
+STN 15
+ZD 16 0.0000 5 "FLUSH POINT"
+
+// ------------------------------------------
+// Laterals (100 ft each, East direction)
+// Azimuth 90.0000 (East)
+// ------------------------------------------
+// Lateral 1
+STN 11
+ZD 31 90.0000 2 "LATERAL VALVE"
+STN 31
+ZD 21 90.0000 98 "METER"
+
+// Lateral 2
+STN 12
+ZD 32 90.0000 2 "LATERAL VALVE"
+STN 32
+ZD 22 90.0000 98 "METER"
+
+// Lateral 3
+STN 13
+ZD 33 90.0000 2 "LATERAL VALVE"
+STN 33
+ZD 23 90.0000 98 "METER"
+
+// Lateral 4
+STN 14
+ZD 34 90.0000 2 "LATERAL VALVE"
+STN 34
+ZD 24 90.0000 98 "METER"
+
+// Lateral 5
+STN 15
+ZD 35 90.0000 2 "LATERAL VALVE"
+STN 35
+ZD 25 90.0000 98 "METER"
+
+COGO-ENGINE-OFF
+
+
+// --- PIPE ENGINE: Build the Pipe Network ---
+PIPE-ENGINE-ON
+
+// ------------------------------------------
+// Main Line Runs (8 inch DIP)
+// ------------------------------------------
+PRUN START W DIAM 8 MAT DIP
+W-B 10 // ROW Start
+W-C 11 // Tee 1
+W-C 12 // Tee 2
+W-C 13 // Tee 3
+W-C 14 // Tee 4
+W-C 15 // Tee 5
+W-C 16 // Fire Hydrant End
+W-E
+PRUN END
+
+// ------------------------------------------
+// Lateral Runs (2 inch PVC) 
+// ------------------------------------------
+// Lateral 1
+PRUN START W DIAM 2 MAT PVC
+W-B 11
+W-C 31 // Valve
+W-C 21 // Meter
+W-E
+PRUN END
+
+// Lateral 2
+PRUN START W DIAM 2 MAT PVC
+W-B 12
+W-C 32
+W-C 22
+W-E
+PRUN END
+
+// Lateral 3
+PRUN START W DIAM 2 MAT PVC
+W-B 13
+W-C 33
+W-C 23
+W-E
+PRUN END
+
+// Lateral 4
+PRUN START W DIAM 2 MAT PVC
+W-B 14
+W-C 34
+W-C 24
+W-E
+PRUN END
+
+// Lateral 5
+PRUN START W DIAM 2 MAT PVC
+W-B 15
+W-C 35
+W-C 25
+W-E
+PRUN END
+
+
+// ------------------------------------------
+// Assign Structures (Valves, Fittings, etc.)
+// ------------------------------------------
+PRUN START W DIAM 8 MAT DIP
+// Main Line Tap Valve
+SS-C 10 JEAWV 
+
+// Main Line TEES
+SS-C 11 JEAWF
+SS-C 12 JEAWF
+SS-C 13 JEAWF
+SS-C 14 JEAWF
+SS-C 15 JEAWF
+
+// Terminal Hydrant
+SS-C 16 JEAWH
+
+// Lateral Isolation Valves
+SS-C 31 JEAWV
+SS-C 32 JEAWV
+SS-C 33 JEAWV
+SS-C 34 JEAWV
+SS-C 35 JEAWV
+
+// Water Meters (At Building Ends)
+// Using Water Fitting with specific description
+SS-C 21 JEAWF "WATER METER"
+SS-C 22 JEAWF "WATER METER"
+SS-C 23 JEAWF "WATER METER"
+SS-C 24 JEAWF "WATER METER"
+SS-C 25 JEAWF "WATER METER"
+PRUN END

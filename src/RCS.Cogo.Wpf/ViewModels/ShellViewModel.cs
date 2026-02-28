@@ -442,6 +442,8 @@ public class ShellViewModel : ViewModelBase
         ZoomWindowCommand = new RelayCommand(_ => ZoomWindowRequested?.Invoke(this, EventArgs.Empty));
         ExportDxfCommand = new RelayCommand(_ => ExportDxf());
         ExportBomCommand = new RelayCommand(_ => ExportBom());
+        ExportEpanetCommand = new RelayCommand(_ => ExportEpanet());
+        ExportScheduleCommand = new RelayCommand(_ => ExportSchedule());
         
         ExportScriptCommand = new RelayCommand(_ => ExportScript());
         AnalyzeScriptCommand = new RelayCommand(_ => AnalyzeScript());
@@ -1309,6 +1311,8 @@ public class ShellViewModel : ViewModelBase
     }
 
     public System.Windows.Input.ICommand ExportBomCommand { get; }
+    public System.Windows.Input.ICommand ExportEpanetCommand { get; }
+    public System.Windows.Input.ICommand ExportScheduleCommand { get; }
 
     private void ExportBom()
     {
@@ -1358,6 +1362,113 @@ public class ShellViewModel : ViewModelBase
             catch (Exception ex)
             {
                 CommandLog.Add($"Error exporting BOM: {ex.Message}");
+            }
+        }
+    }
+
+    private void ExportEpanet()
+    {
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Filter = "EPANET INP File (*.inp)|*.inp|All Files (*.*)|*.*",
+            DefaultExt = ".inp",
+            FileName = "PipingNetwork.inp"
+        };
+        
+        if (dialog.ShowDialog() == true)
+        {
+            try
+            {
+                using var writer = new System.IO.StreamWriter(dialog.FileName);
+                writer.WriteLine("[TITLE]");
+                writer.WriteLine("Generated EPANET Network");
+                writer.WriteLine();
+
+                writer.WriteLine("[JUNCTIONS]");
+                writer.WriteLine(";ID              Elev        Demand      Pattern         ");
+                foreach (var s in Structures)
+                {
+                    var pt = _context.GetPoint(s.PointId);
+                    double elev = pt?.Elevation ?? 0.0;
+                    writer.WriteLine($" Node_{s.PointId,-8} {elev,-10:F2} 0           ");
+                }
+                writer.WriteLine();
+
+                writer.WriteLine("[PIPES]");
+                writer.WriteLine(";ID              Node1           Node2           Length      Diameter    Roughness   MinorLoss   Status");
+                int pipeId = 1;
+                foreach (var r in PipeRuns)
+                {
+                    var p1 = _context.GetPoint(r.FromPointId);
+                    var p2 = _context.GetPoint(r.ToPointId);
+                    double len = 100.0; // Default if missing
+                    if (p1 != null && p2 != null)
+                    {
+                        len = Math.Sqrt(Math.Pow(p2.Easting - p1.Easting, 2) + Math.Pow(p2.Northing - p1.Northing, 2));
+                    }
+                    if (len < 0.1) len = 0.1;
+
+                    writer.WriteLine($" Pipe_{pipeId,-8} Node_{r.FromPointId,-8} Node_{r.ToPointId,-8} {len,-10:F2} {r.Diameter,-10:F2} 150         0           Open");
+                    pipeId++;
+                }
+                writer.WriteLine();
+
+                writer.WriteLine("[COORDINATES]");
+                writer.WriteLine(";Node            X-Coord         Y-Coord");
+                foreach (var s in Structures)
+                {
+                    var pt = _context.GetPoint(s.PointId);
+                    if (pt != null)
+                    {
+                        writer.WriteLine($" Node_{s.PointId,-8} {pt.Easting,-15:F2} {pt.Northing,-15:F2}");
+                    }
+                }
+                writer.WriteLine();
+                
+                writer.WriteLine("[END]");
+
+                CommandLog.Add($"EPANET Network exported to: {dialog.FileName}");
+                _context.Log($"[AUDIT] EPANET INP Exported: {dialog.FileName}");
+            }
+            catch (Exception ex)
+            {
+                CommandLog.Add($"Error exporting EPANET: {ex.Message}");
+            }
+        }
+    }
+
+    private void ExportSchedule()
+    {
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
+            DefaultExt = ".csv",
+            FileName = "Appurtenance_Schedule.csv"
+        };
+        
+        if (dialog.ShowDialog() == true)
+        {
+            try
+            {
+                using var writer = new System.IO.StreamWriter(dialog.FileName);
+                writer.WriteLine("NodeID,StructureType,Northing,Easting,Elevation,Notes");
+
+                foreach (var s in Structures)
+                {
+                    var pt = _context.GetPoint(s.PointId);
+                    double n = pt?.Northing ?? 0.0;
+                    double e = pt?.Easting ?? 0.0;
+                    double z = pt?.Elevation ?? 0.0;
+                    
+                    writer.WriteLine($"{s.PointId},{s.Type},{n:F2},{e:F2},{z:F2},");
+                }
+
+                CommandLog.Add($"Schedule exported to: {dialog.FileName}");
+                _context.Log($"[AUDIT] Schedule Exported: {dialog.FileName}");
+            }
+            catch (Exception ex)
+            {
+                CommandLog.Add($"Error exporting Schedule: {ex.Message}");
             }
         }
     }

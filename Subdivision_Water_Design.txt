@@ -1,0 +1,347 @@
+// =========================================================================
+// Subdivision Water Distribution System - Residential Design
+// Scale: 2-Block Typical Module (10 Lots Total shown)
+// =========================================================================
+// Features Included:
+// - 12" Perimeter Loops (Ductile Iron)
+// - 8" Domestic Grid Spines (PVC)
+// - 6" Hydrant Assemblies (with isolation valves)
+// - 1" Equivalent Laterals (using 2" PVC for validation) 
+// - Water Meters offset 5' from Lot Lines
+// - COGO Lot Definitions tracking Property boundaries
+// =========================================================================
+
+PIPE-ENGINE-OFF
+COGO-ENGINE-ON
+
+// -------------------------------------------------------------------------
+// 1) COGO GEOMETRY: ROAD INTERSECTIONS
+// -------------------------------------------------------------------------
+// South Road
+NEZ 201 4970 4970 100.0 "N: South / E: West"
+NEZ 202 4970 5230 100.0 "N: South / E: Central"
+NEZ 203 4970 5490 100.0 "N: South / E: East"
+// North Road
+NEZ 204 5280 4970 100.0 "N: North / E: West"
+NEZ 205 5280 5230 100.0 "N: North / E: Central"
+NEZ 206 5280 5490 100.0 "N: North / E: East"
+
+
+// -------------------------------------------------------------------------
+// 2) COGO GEOMETRY: LOT FIXTURES & TAPS (BLOCK 1)
+// -------------------------------------------------------------------------
+// West Road Taps (Mainline E=4970)
+NEZ 601 5005 4970 100.0 "CORP STOP L1"
+NEZ 602 5055 4970 100.0 "CORP STOP L2"
+NEZ 603 5105 4970 100.0 "CORP STOP L3"
+NEZ 604 5155 4970 100.0 "CORP STOP L4"
+NEZ 605 5205 4970 100.0 "CORP STOP L5"
+
+// Central Road Taps (Mainline E=5230)
+NEZ 606 5005 5230 100.0 "CORP STOP L6"
+NEZ 607 5055 5230 100.0 "CORP STOP L7"
+NEZ 608 5105 5230 100.0 "CORP STOP L8"
+NEZ 609 5155 5230 100.0 "CORP STOP L9"
+NEZ 610 5205 5230 100.0 "CORP STOP L10"
+
+// Hydrant Tap at West Road (N=5125)
+NEZ 211 5125 4970 100.0 "HYDRANT TEE"
+NEZ 421 5125 4965 100.0 "HYDRANT VALVE"
+NEZ 301 5125 4960 100.0 "HYDRANT DEF"
+
+// West Laterals (Valve + Meter at ROW E=5000)
+NEZ 431 5005 4972 100.0 "LAT VALVE L1"
+NEZ 501 5005 5000 100.0 "METER L1"
+
+NEZ 432 5055 4972 100.0 "LAT VALVE L2"
+NEZ 502 5055 5000 100.0 "METER L2"
+
+NEZ 433 5105 4972 100.0 "LAT VALVE L3"
+NEZ 503 5105 5000 100.0 "METER L3"
+
+NEZ 434 5155 4972 100.0 "LAT VALVE L4"
+NEZ 504 5155 5000 100.0 "METER L4"
+
+NEZ 435 5205 4972 100.0 "LAT VALVE L5"
+NEZ 505 5205 5000 100.0 "METER L5"
+
+// Central Laterals (Valve + Meter at ROW E=5200)
+NEZ 436 5005 5228 100.0 "LAT VALVE L6"
+NEZ 506 5005 5200 100.0 "METER L6"
+
+NEZ 437 5055 5228 100.0 "LAT VALVE L7"
+NEZ 507 5055 5200 100.0 "METER L7"
+
+NEZ 438 5105 5228 100.0 "LAT VALVE L8"
+NEZ 508 5105 5200 100.0 "METER L8"
+
+NEZ 439 5155 5228 100.0 "LAT VALVE L9"
+NEZ 509 5155 5200 100.0 "METER L9"
+
+NEZ 440 5205 5228 100.0 "LAT VALVE L10"
+NEZ 510 5205 5200 100.0 "METER L10"
+
+
+// -------------------------------------------------------------------------
+// 3) COGO GEOMETRY: LOT FIGURES (BLOCK 1 WEST, FRONTAGE=50', DEPTH=100')
+// -------------------------------------------------------------------------
+NEZ 100 5000 5000 100.0 "SW LOT 1"
+NEZ 101 5050 5000 100.0 "NW LOT 1"
+NEZ 102 5050 5100 100.0 "NE LOT 1 / SE LOT 6"
+NEZ 103 5000 5100 100.0 "SE LOT 1"
+
+NEZ 104 5100 5000 100.0 "NW LOT 2"
+NEZ 105 5100 5100 100.0 "NE LOT 2 / SE LOT 7"
+
+NEZ 106 5150 5000 100.0 "NW LOT 3"
+NEZ 107 5150 5100 100.0 "NE LOT 3 / SE LOT 8"
+
+NEZ 108 5200 5000 100.0 "NW LOT 4"
+NEZ 109 5200 5100 100.0 "NE LOT 4 / SE LOT 9"
+
+NEZ 110 5250 5000 100.0 "NW LOT 5"
+NEZ 111 5250 5100 100.0 "NE LOT 5 / SE LOT 10"
+
+BEG LOT_1
+CONT 100
+CONT 101
+CONT 102
+CONT 103
+CONT 100
+END
+
+BEG LOT_2
+CONT 101
+CONT 104
+CONT 105
+CONT 102
+CONT 101
+END
+
+BEG LOT_3
+CONT 104
+CONT 106
+CONT 107
+CONT 105
+CONT 104
+END
+
+BEG LOT_4
+CONT 106
+CONT 108
+CONT 109
+CONT 107
+CONT 106
+END
+
+BEG LOT_5
+CONT 108
+CONT 110
+CONT 111
+CONT 109
+CONT 108
+END
+
+COGO-ENGINE-OFF
+
+
+// -------------------------------------------------------------------------
+// 4) PIPE ENGINE: NETWORK DISTRIBUTION
+// -------------------------------------------------------------------------
+PIPE-ENGINE-ON
+
+// --- PERIMETER LOOP (12 INCH DIP) FOR HIGH FIRE FLOW ---
+// South Perimeter
+PRUN START W DIAM 12 MAT DIP
+W-B 201
+W-C 202
+W-C 203
+W-E
+PRUN END
+
+// North Perimeter
+PRUN START W DIAM 12 MAT DIP
+W-B 204
+W-C 205
+W-C 206
+W-E
+PRUN END
+
+// West Perimeter Grid Link
+PRUN START W DIAM 12 MAT DIP
+W-B 201
+W-C 601 // Corp Stop L1
+W-C 602 // Corp Stop L2
+W-C 603 // Corp Stop L3
+W-C 211 // Hydrant Tee
+W-C 604 // Corp Stop L4
+W-C 605 // Corp Stop L5
+W-C 204
+W-E
+PRUN END
+
+// East Perimeter Grid Link
+PRUN START W DIAM 12 MAT DIP
+W-B 203
+W-C 206
+W-E
+PRUN END
+
+
+// --- CENTRAL SPINE MODULE (8 INCH PVC) FOR DOMESTIC YIELD ---
+PRUN START W DIAM 8 MAT PVC
+W-B 202
+W-C 606 // Corp Stop L6
+W-C 607 // Corp Stop L7
+W-C 608 // Corp Stop L8
+W-C 609 // Corp Stop L9
+W-C 610 // Corp Stop L10
+W-C 205
+W-E
+PRUN END
+
+
+// --- HYDRANT ASSEMBLY (6 INCH DIP) FOR LATERAL SEPARATION ---
+PRUN START W DIAM 6 MAT DIP
+W-B 211
+W-C 421 // Gate Valve
+W-C 301 // Hydrant Barrel
+W-E
+PRUN END
+
+
+// --- DOMESTIC SETTER LATERALS (2 INCH PVC) FOR METERS ---
+PRUN START W DIAM 2 MAT PVC
+W-B 601
+W-C 431
+W-C 501
+W-E
+PRUN END
+
+PRUN START W DIAM 2 MAT PVC
+W-B 602
+W-C 432
+W-C 502
+W-E
+PRUN END
+
+PRUN START W DIAM 2 MAT PVC
+W-B 603
+W-C 433
+W-C 503
+W-E
+PRUN END
+
+PRUN START W DIAM 2 MAT PVC
+W-B 604
+W-C 434
+W-C 504
+W-E
+PRUN END
+
+PRUN START W DIAM 2 MAT PVC
+W-B 605
+W-C 435
+W-C 505
+W-E
+PRUN END
+
+PRUN START W DIAM 2 MAT PVC
+W-B 606
+W-C 436
+W-C 506
+W-E
+PRUN END
+
+PRUN START W DIAM 2 MAT PVC
+W-B 607
+W-C 437
+W-C 507
+W-E
+PRUN END
+
+PRUN START W DIAM 2 MAT PVC
+W-B 608
+W-C 438
+W-C 508
+W-E
+PRUN END
+
+PRUN START W DIAM 2 MAT PVC
+W-B 609
+W-C 439
+W-C 509
+W-E
+PRUN END
+
+PRUN START W DIAM 2 MAT PVC
+W-B 610
+W-C 440
+W-C 510
+W-E
+PRUN END
+
+
+// -------------------------------------------------------------------------
+// 5) PIPE ENGINE: ASSET TYPES & APPURTENANCES
+// -------------------------------------------------------------------------
+PRUN START W DIAM 2 MAT PVC
+
+// Master Network Tees and Crosses
+SS-C 201 JEAWF "CROSS"
+SS-C 202 JEAWF "TEE"
+SS-C 203 JEAWF "CROSS"
+SS-C 204 JEAWF "CROSS"
+SS-C 205 JEAWF "TEE"
+SS-C 206 JEAWF "CROSS"
+SS-C 211 JEAWF "HYD TEE"
+
+// Lateral Taps (Corp Stops at main)
+SS-C 601 JEAWF "CORP STOP"
+SS-C 602 JEAWF "CORP STOP"
+SS-C 603 JEAWF "CORP STOP"
+SS-C 604 JEAWF "CORP STOP"
+SS-C 605 JEAWF "CORP STOP"
+SS-C 606 JEAWF "CORP STOP"
+SS-C 607 JEAWF "CORP STOP"
+SS-C 608 JEAWF "CORP STOP"
+SS-C 609 JEAWF "CORP STOP"
+SS-C 610 JEAWF "CORP STOP"
+
+// Primary Isolation Valves (Placed generically at intersection nodes for logical representation)
+SS-C 201 JEAWV "12-IN ISO VALVE"
+SS-C 202 JEAWV "12-IN ISO VALVE"
+SS-C 203 JEAWV "12-IN ISO VALVE"
+SS-C 204 JEAWV "12-IN ISO VALVE"
+SS-C 205 JEAWV "12-IN ISO VALVE"
+SS-C 206 JEAWV "12-IN ISO VALVE"
+
+// Fire Hydrant Assembly
+SS-C 421 JEAWV "6-IN HYD GATE VALVE"
+SS-C 301 JEAWH "HYDRANT BARREL (1500 GPM)"
+
+// Lateral Isolation Valves (Curb Stops)
+SS-C 431 JEAWV "CURB STOP"
+SS-C 432 JEAWV "CURB STOP"
+SS-C 433 JEAWV "CURB STOP"
+SS-C 434 JEAWV "CURB STOP"
+SS-C 435 JEAWV "CURB STOP"
+SS-C 436 JEAWV "CURB STOP"
+SS-C 437 JEAWV "CURB STOP"
+SS-C 438 JEAWV "CURB STOP"
+SS-C 439 JEAWV "CURB STOP"
+SS-C 440 JEAWV "CURB STOP"
+
+// End-point Domestic Meters at ROW (Offset 5' strictly engineered logic)
+SS-C 501 JEAWF "5/8 INCH METER"
+SS-C 502 JEAWF "5/8 INCH METER"
+SS-C 503 JEAWF "5/8 INCH METER"
+SS-C 504 JEAWF "5/8 INCH METER"
+SS-C 505 JEAWF "5/8 INCH METER"
+SS-C 506 JEAWF "5/8 INCH METER"
+SS-C 507 JEAWF "5/8 INCH METER"
+SS-C 508 JEAWF "5/8 INCH METER"
+SS-C 509 JEAWF "5/8 INCH METER"
+SS-C 510 JEAWF "5/8 INCH METER"
+
+PRUN END

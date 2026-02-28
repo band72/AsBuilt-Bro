@@ -49,6 +49,39 @@ public static class DbInitializer
                     ""Discipline"" TEXT NULL
                 );
             ");
+             // Seed Default Water Codes
+             if (!context.CogoCodes.Any(c => c.LocalCode == "JEAWV"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "JEAWV", SystemCode = "W-VALVE", Description = "Water Valve" });
+             }
+             if (!context.CogoCodes.Any(c => c.LocalCode == "JEAWF"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "JEAWF", SystemCode = "W-FITTING", Description = "Water Fitting" });
+             }
+             if (!context.CogoCodes.Any(c => c.LocalCode == "JEAWH"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "JEAWH", SystemCode = "W-HYDRANT", Description = "Fire Hydrant" });
+             }
+
+             // Seed Default Storm & Sewer Codes
+             if (!context.CogoCodes.Any(c => c.LocalCode == "STM"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "STM", SystemCode = "ST-MANHOLE", Description = "Storm Manhole" });
+             }
+             if (!context.CogoCodes.Any(c => c.LocalCode == "JEASTF"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "JEASTF", SystemCode = "ST-FITTING", Description = "Storm Fitting / Outfall" });
+             }
+             if (!context.CogoCodes.Any(c => c.LocalCode == "MH"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "MH", SystemCode = "WW-MANHOLE", Description = "Sanitary Manhole" });
+             }
+             if (!context.CogoCodes.Any(c => c.LocalCode == "WWF"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "WWF", SystemCode = "WW-FITTING", Description = "Sanitary Fitting" });
+             }
+
+             context.SaveChanges();
         }
         catch (Exception ex)
         {

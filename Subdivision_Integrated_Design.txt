@@ -1,0 +1,353 @@
+// =========================================================================
+// Subdivision Integrated Utility System - Residential Design
+// Scale: 2-Block Typical Module (10 Lots Total shown)
+// =========================================================================
+// Features Included:
+// - WATER: 12" Perimeter Loops, 8" Spines, 1" Laterals to 5' offset meters.
+// - STORM: Centerline 18" Storm Drain with Manholes & Outfall.
+// - SEWER: 8" Gravity Main offset 10' from Storm, Laterals w/ cleanouts.
+// =========================================================================
+
+PIPE-ENGINE-OFF
+COGO-ENGINE-ON
+
+// =========================================================================
+// 1) COGO GEOMETRY: WATER SYSTEM
+// =========================================================================
+// South Road
+NEZ 201 4970 4970 100.0 "N: South / E: West"
+NEZ 202 4970 5230 100.0 "N: South / E: Central"
+NEZ 203 4970 5490 100.0 "N: South / E: East"
+// North Road
+NEZ 204 5280 4970 100.0 "N: North / E: West"
+NEZ 205 5280 5230 100.0 "N: North / E: Central"
+NEZ 206 5280 5490 100.0 "N: North / E: East"
+
+// Lateral Taps (Block 1 West)
+NEZ 601 5005 4970 100.0 "CORP STOP L1"
+NEZ 602 5055 4970 100.0 "CORP STOP L2"
+NEZ 603 5105 4970 100.0 "CORP STOP L3"
+NEZ 604 5155 4970 100.0 "CORP STOP L4"
+NEZ 605 5205 4970 100.0 "CORP STOP L5"
+// Lateral Taps (Block 1 Central)
+NEZ 606 5005 5230 100.0 "CORP STOP L6"
+NEZ 607 5055 5230 100.0 "CORP STOP L7"
+NEZ 608 5105 5230 100.0 "CORP STOP L8"
+NEZ 609 5155 5230 100.0 "CORP STOP L9"
+NEZ 610 5205 5230 100.0 "CORP STOP L10"
+
+// Hydrant Tap at West Road (N=5125)
+NEZ 211 5125 4970 100.0 "HYDRANT TEE"
+NEZ 421 5125 4965 100.0 "HYDRANT VALVE"
+NEZ 301 5125 4960 100.0 "HYDRANT DEF"
+
+// West Laterals (Valve + Meter at ROW E=5000)
+NEZ 431 5005 4972 100.0 "LAT VALVE L1"
+NEZ 501 5005 5000 100.0 "METER L1"
+NEZ 432 5055 4972 100.0 "LAT VALVE L2"
+NEZ 502 5055 5000 100.0 "METER L2"
+NEZ 433 5105 4972 100.0 "LAT VALVE L3"
+NEZ 503 5105 5000 100.0 "METER L3"
+NEZ 434 5155 4972 100.0 "LAT VALVE L4"
+NEZ 504 5155 5000 100.0 "METER L4"
+NEZ 435 5205 4972 100.0 "LAT VALVE L5"
+NEZ 505 5205 5000 100.0 "METER L5"
+
+// Central Laterals (Valve + Meter at ROW E=5200)
+NEZ 436 5005 5228 100.0 "LAT VALVE L6"
+NEZ 506 5005 5200 100.0 "METER L6"
+NEZ 437 5055 5228 100.0 "LAT VALVE L7"
+NEZ 507 5055 5200 100.0 "METER L7"
+NEZ 438 5105 5228 100.0 "LAT VALVE L8"
+NEZ 508 5105 5200 100.0 "METER L8"
+NEZ 439 5155 5228 100.0 "LAT VALVE L9"
+NEZ 509 5155 5200 100.0 "METER L9"
+NEZ 440 5205 5228 100.0 "LAT VALVE L10"
+NEZ 510 5205 5200 100.0 "METER L10"
+
+
+// =========================================================================
+// 2) COGO GEOMETRY: STORM DRAINAGE (CENTERLINE)
+// =========================================================================
+NEZ 700 4900 4970 95.0 "STORM OUTFALL"
+// West Road Centerline (E=4970)
+NEZ 701 4970 4970 98.0 "STORM MH W1"
+NEZ 702 5125 4970 98.5 "STORM MH W2"
+NEZ 703 5280 4970 99.0 "STORM MH W3"
+// Central Road Centerline (E=5230)
+NEZ 704 4970 5230 98.0 "STORM MH C1"
+NEZ 705 5125 5230 98.5 "STORM MH C2"
+NEZ 706 5280 5230 99.0 "STORM MH C3"
+
+
+// =========================================================================
+// 3) COGO GEOMETRY: SANITARY SEWER (10' OFFSET FROM STORM)
+// =========================================================================
+// Lift Station & South Collection Main
+NEZ 800 4950 4980 90.0 "LIFT STATION"
+NEZ 807 4960 4980 90.5 "SEWER MH S1"
+NEZ 804 4960 5220 91.5 "SEWER MH C1 (SOUTH)"
+
+// West Road Main (E=4980)
+NEZ 801 4970 4980 91.0 "SEWER MH W1"
+NEZ 802 5125 4980 92.0 "SEWER MH W2"
+NEZ 803 5280 4980 93.0 "SEWER MH W3"
+
+// Central Road Main (E=5220)
+NEZ 805 5125 5220 92.5 "SEWER MH C2"
+NEZ 806 5280 5220 93.5 "SEWER MH C3"
+
+// West Lots Laterals (Cleanouts capped at ROW E=5000)
+NEZ 811 5025 4980 94.0 "SEWER WYE L1"
+NEZ 812 5025 5000 95.0 "CLEANOUT L1"
+NEZ 813 5075 4980 94.2 "SEWER WYE L2"
+NEZ 814 5075 5000 95.2 "CLEANOUT L2"
+NEZ 815 5125 4980 94.4 "SEWER WYE L3"
+NEZ 816 5125 5000 95.4 "CLEANOUT L3"
+NEZ 817 5175 4980 94.6 "SEWER WYE L4"
+NEZ 818 5175 5000 95.6 "CLEANOUT L4"
+NEZ 819 5225 4980 94.8 "SEWER WYE L5"
+NEZ 820 5225 5000 95.8 "CLEANOUT L5"
+
+// Central Lots Laterals (Cleanouts capped at ROW E=5200)
+NEZ 821 5025 5220 94.0 "SEWER WYE L6"
+NEZ 822 5025 5200 95.0 "CLEANOUT L6"
+NEZ 823 5075 5220 94.2 "SEWER WYE L7"
+NEZ 824 5075 5200 95.2 "CLEANOUT L7"
+NEZ 825 5125 5220 94.4 "SEWER WYE L8"
+NEZ 826 5125 5200 95.4 "CLEANOUT L8"
+NEZ 827 5175 5220 94.6 "SEWER WYE L9"
+NEZ 828 5175 5200 95.6 "CLEANOUT L9"
+NEZ 829 5225 5220 94.8 "SEWER WYE L10"
+NEZ 830 5225 5200 95.8 "CLEANOUT L10"
+
+
+// =========================================================================
+// 4) COGO GEOMETRY: LOT FIGURES (BLOCK 1 WEST, 50'x100')
+// =========================================================================
+NEZ 100 5000 5000 100.0 "SW LOT 1"
+NEZ 101 5050 5000 100.0 "NW LOT 1"
+NEZ 102 5050 5100 100.0 "NE LOT 1 / SE LOT 6"
+NEZ 103 5000 5100 100.0 "SE LOT 1"
+NEZ 104 5100 5000 100.0 "NW LOT 2"
+NEZ 105 5100 5100 100.0 "NE LOT 2 / SE LOT 7"
+NEZ 106 5150 5000 100.0 "NW LOT 3"
+NEZ 107 5150 5100 100.0 "NE LOT 3 / SE LOT 8"
+NEZ 108 5200 5000 100.0 "NW LOT 4"
+NEZ 109 5200 5100 100.0 "NE LOT 4 / SE LOT 9"
+NEZ 110 5250 5000 100.0 "NW LOT 5"
+NEZ 111 5250 5100 100.0 "NE LOT 5 / SE LOT 10"
+
+BEG LOT_1
+CONT 100
+CONT 101
+CONT 102
+CONT 103
+CONT 100
+END
+
+BEG LOT_2
+CONT 101
+CONT 104
+CONT 105
+CONT 102
+CONT 101
+END
+
+COGO-ENGINE-OFF
+
+
+// =========================================================================
+// 5) PIPE ENGINE: WATER DISTRIBUTION
+// =========================================================================
+PIPE-ENGINE-ON
+
+// Perimeter Loop (12" DIP)
+PRUN START W DIAM 12 MAT DIP
+W-B 201
+W-C 202
+W-C 203
+W-E
+PRUN END
+
+PRUN START W DIAM 12 MAT DIP
+W-B 204
+W-C 205
+W-C 206
+W-E
+PRUN END
+
+PRUN START W DIAM 12 MAT DIP
+W-B 201
+W-C 601
+W-C 602
+W-C 603
+W-C 211
+W-C 604
+W-C 605
+W-C 204
+W-E
+PRUN END
+
+PRUN START W DIAM 12 MAT DIP
+W-B 203
+W-C 206
+W-E
+PRUN END
+
+// Central Spine (8" PVC)
+PRUN START W DIAM 8 MAT PVC
+W-B 202
+W-C 606
+W-C 607
+W-C 608
+W-C 609
+W-C 610
+W-C 205
+W-E
+PRUN END
+
+// Hydrant Assembly (6" DIP)
+PRUN START W DIAM 6 MAT DIP
+W-B 211
+W-C 421
+W-C 301
+W-E
+PRUN END
+
+// Laterals (2" PVC)
+PRUN START W DIAM 2 MAT PVC
+W-B 601
+W-C 431
+W-C 501
+W-E
+PRUN END
+PRUN START W DIAM 2 MAT PVC
+W-B 602
+W-C 432
+W-C 502
+W-E
+PRUN END
+
+// Water Appurtenances
+PRUN START W DIAM 2 MAT PVC
+SS-C 201 JEAWV "12-IN ISO VALVE"
+SS-C 202 JEAWV "12-IN ISO VALVE"
+SS-C 211 JEAWF "HYD TEE"
+SS-C 421 JEAWV "6-IN HYD GATE VALVE"
+SS-C 301 JEAWH "HYDRANT BARREL"
+SS-C 431 JEAWV "CURB STOP"
+SS-C 501 JEAWF "5/8 INCH METER"
+PRUN END
+
+
+// =========================================================================
+// 6) PIPE ENGINE: STORM DRAINAGE PIPES (ST)
+// =========================================================================
+// Main Trunk West
+PRUN START ST DIAM 18 MAT PVC
+ST-B 700 // Outfall
+ST-C 701 // N=4970
+ST-C 702 // N=5125
+ST-C 703 // N=5280
+ST-E
+PRUN END
+
+// Main Trunk Central to West Connection
+PRUN START ST DIAM 18 MAT PVC
+ST-B 704 // C1
+ST-C 701 // W1 Connection
+ST-E
+PRUN END
+
+// Main Trunk Central
+PRUN START ST DIAM 18 MAT PVC
+ST-B 704 // C1
+ST-C 705 // C2
+ST-C 706 // C3
+ST-E
+PRUN END
+
+PRUN START ST DIAM 18 MAT PVC
+SS-C 700 JEASTF "OUTFALL"
+SS-C 701 STM "STORM MANHOLE"
+SS-C 702 STM "STORM MANHOLE"
+SS-C 703 STM "STORM MANHOLE"
+SS-C 704 STM "STORM MANHOLE"
+SS-C 705 STM "STORM MANHOLE"
+SS-C 706 STM "STORM MANHOLE"
+PRUN END
+
+
+// =========================================================================
+// 7) PIPE ENGINE: SANITARY SEWER PIPES (WW)
+// =========================================================================
+// West Gravity Main to Lift Station
+// Flows North to South: 803 -> 802 -> 801 -> 807 -> 800 (Lift Station)
+PRUN START WW DIAM 8 MAT PVC
+WW-B 803
+WW-C 819 // Wye L5
+WW-C 817 // Wye L4
+WW-C 802
+WW-C 815 // Wye L3
+WW-C 813 // Wye L2
+WW-C 811 // Wye L1
+WW-C 801
+WW-C 807
+WW-C 800
+WW-E
+PRUN END
+
+// Central Gravity Main to South Main
+// Flows North to South: 806 -> 805 -> 804 -> 807
+PRUN START WW DIAM 8 MAT PVC
+WW-B 806
+WW-C 829
+WW-C 827
+WW-C 805
+WW-C 825
+WW-C 823
+WW-C 821
+WW-C 804
+WW-C 807
+WW-E
+PRUN END
+
+// Sample of Sewer Laterals to Cleanouts (4" PVC)
+PRUN START WW DIAM 4 MAT PVC
+WW-B 811
+WW-C 812
+WW-E
+PRUN END
+
+PRUN START WW DIAM 4 MAT PVC
+WW-B 813
+WW-C 814
+WW-E
+PRUN END
+
+PRUN START WW DIAM 4 MAT PVC
+WW-B 821
+WW-C 822
+WW-E
+PRUN END
+
+// Sewer Appurtenances
+PRUN START WW DIAM 8 MAT PVC
+SS-C 800 WWF "LIFT STATION"
+SS-C 801 MH "SEWER MANHOLE"
+SS-C 802 MH "SEWER MANHOLE"
+SS-C 803 MH "SEWER MANHOLE"
+SS-C 804 MH "SEWER MANHOLE"
+SS-C 805 MH "SEWER MANHOLE"
+SS-C 806 MH "SEWER MANHOLE"
+SS-C 807 MH "SEWER MANHOLE"
+
+SS-C 811 WWF "SEWER WYE"
+SS-C 812 WWF "CLEANOUT CAPPED"
+SS-C 813 WWF "SEWER WYE"
+SS-C 814 WWF "CLEANOUT CAPPED"
+
+SS-C 821 WWF "SEWER WYE"
+SS-C 822 WWF "CLEANOUT CAPPED"
+PRUN END
