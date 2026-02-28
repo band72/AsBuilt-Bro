@@ -3,8 +3,11 @@ W,W,Water Pipe Run
 WAT,JEAW,Water Point
 WV,JEAWV,Water Valve
 WF,JEAWF,Water Fitting
+WAR,JEAAIR,Air Release Valve
 WM,JEAWM,Water Manhole
 WMET,JEAWMET,Water Meter
+WBFP,JEAWBFP,Water Back Flow Preventer
+WBO,JEAWBO,Water Blow Off
 HYD,JEAHYD,Fire Hydrant
 
 WW,WW,Waste Water Pipe Run
@@ -21,6 +24,8 @@ STV,JEASTV,Storm Valve
 STF,JEASTF,Storm Fitting
 STM,JEASTM,Storm Manhole
 CBI,JEACBI,Catch Basin / Inlet
+DI,JEADI,Drop Inlet
+HW,JEAHW,Headwall
 
 E,E,Electric Pipe Run
 EL,E,Electric Pipe Run

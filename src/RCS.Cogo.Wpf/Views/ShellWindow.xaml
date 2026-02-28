@@ -767,10 +767,10 @@
                         
                         <DataGrid Grid.Row="1" ItemsSource="{Binding CogoCodes}" AutoGenerateColumns="False" Margin="0,5">
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="Symbol" Width="SizeToHeader" IsReadOnly="True">
+                                <DataGridTemplateColumn Header="Symbol" Width="60" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Image Source="{Binding SymbolImagePath}" Width="40" Height="40" Margin="2" Stretch="Uniform"/>
+                                            <Image Source="{Binding SymbolImagePath}" Width="20" Height="20" Margin="0" Stretch="Uniform"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>

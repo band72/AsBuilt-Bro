@@ -655,6 +655,15 @@ public class ShellViewModel : ViewModelBase
 
     private void AnalyzeScript()
     {
+        if (string.IsNullOrWhiteSpace(BatchScriptContent)) return;
+
+        if (BatchScriptContent.Contains("PIPE-ENGINE-ON", StringComparison.OrdinalIgnoreCase) || 
+            BatchScriptContent.Contains("PRUN", StringComparison.OrdinalIgnoreCase))
+        {
+            System.Windows.MessageBox.Show("This script contains Piping Commands. Please run it through the Piping Script tab instead.", "Piping Script Detected", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            return;
+        }
+
         var analyzer = new RCS.Cogo.AI.AiAnalyzer();
         var results = analyzer.AnalyzeScript(BatchScriptContent);
         
@@ -2751,6 +2760,13 @@ public class ShellViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(BatchScriptContent)) return;
 
+        if (BatchScriptContent.Contains("PIPE-ENGINE-ON", StringComparison.OrdinalIgnoreCase) || 
+            BatchScriptContent.Contains("PRUN", StringComparison.OrdinalIgnoreCase))
+        {
+            System.Windows.MessageBox.Show("This script contains Piping Commands. Please run it through the Piping Script tab instead.", "Piping Script Detected", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            return;
+        }
+
         IsRunningScript = true;
         
         // As requested: display progress bar for 1.5 seconds minimum
@@ -2810,6 +2826,13 @@ public class ShellViewModel : ViewModelBase
     private async Task WalkBatchScriptAsync()
     {
         if (string.IsNullOrWhiteSpace(BatchScriptContent)) return;
+
+        if (BatchScriptContent.Contains("PIPE-ENGINE-ON", StringComparison.OrdinalIgnoreCase) || 
+            BatchScriptContent.Contains("PRUN", StringComparison.OrdinalIgnoreCase))
+        {
+            System.Windows.MessageBox.Show("This script contains Piping Commands. Please run it through the Piping Script tab instead.", "Piping Script Detected", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            return;
+        }
 
         CommandLog.Add("--- Walking Batch Script ---");
         

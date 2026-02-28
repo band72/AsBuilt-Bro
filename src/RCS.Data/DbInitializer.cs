@@ -49,78 +49,36 @@ public static class DbInitializer
                     ""Discipline"" TEXT NULL
                 );
             ");
-             // Seed Default Water Codes
-             if (!context.CogoCodes.Any(c => c.LocalCode == "JEAWV"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "JEAWV", SystemCode = "W-VALVE", Description = "Water Valve" });
-             }
-             if (!context.CogoCodes.Any(c => c.LocalCode == "JEAWF"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "JEAWF", SystemCode = "W-FITTING", Description = "Water Fitting" });
-             }
-             if (!context.CogoCodes.Any(c => c.LocalCode == "JEAWH"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "JEAWH", SystemCode = "W-HYDRANT", Description = "Fire Hydrant" });
-             }
+             // Clean up old bugged default seed data (which conflicted with symbol file names)
+             var buggedCodes = new[] { "JEAWV", "JEAWF", "JEAWH", "STM", "JEASTF", "MH", "WWF", "GASV", "GASF", "GMET", "EPOLE", "EMH", "EBOX", "EMETER" };
+             var toRemove = context.CogoCodes.Where(c => buggedCodes.Contains(c.LocalCode)).ToList();
+             if (toRemove.Any()) context.CogoCodes.RemoveRange(toRemove);
 
-             // Seed Default Storm & Sewer Codes
-             if (!context.CogoCodes.Any(c => c.LocalCode == "STM"))
+             // Auto-seed from MasterUtilityCodes.csv to ensure all 43 valid codes exist
+             var baseDir = System.AppDomain.CurrentDomain.BaseDirectory;
+             var repoRoot = System.IO.Path.GetFullPath(System.IO.Path.Combine(baseDir, "..", "..", "..", "..", ".."));
+             var csvPath = System.IO.Path.Combine(repoRoot, "MasterUtilityCodes.csv");
+             
+             if (System.IO.File.Exists(csvPath))
              {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "STM", SystemCode = "ST-MANHOLE", Description = "Storm Manhole" });
-             }
-             if (!context.CogoCodes.Any(c => c.LocalCode == "JEASTF"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "JEASTF", SystemCode = "ST-FITTING", Description = "Storm Fitting / Outfall" });
-             }
-             if (!context.CogoCodes.Any(c => c.LocalCode == "MH"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "MH", SystemCode = "WW-MANHOLE", Description = "Sanitary Manhole" });
-             }
-             if (!context.CogoCodes.Any(c => c.LocalCode == "WWF"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "WWF", SystemCode = "WW-FITTING", Description = "Sanitary Fitting" });
-             }
-
-             // Seed Default Gas Codes
-             if (!context.CogoCodes.Any(c => c.LocalCode == "GASV"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "GASV", SystemCode = "G-VALVE", Description = "Gas Valve" });
-             }
-             if (!context.CogoCodes.Any(c => c.LocalCode == "GASF"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "GASF", SystemCode = "G-FITTING", Description = "Gas Fitting" });
-             }
-             if (!context.CogoCodes.Any(c => c.LocalCode == "GMET"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "GMET", SystemCode = "JEAGMET", Description = "Gas Meter" });
-             }
-
-             // Seed Gas Materials
-             if (!context.Materials.Any(m => m.Material == "PE"))
-             {
-                 context.Materials.Add(new Entities.MaterialEntity { Material = "PE", Discipline = "Gas", FeatureType = "Pipe", Notes = "Polyethylene Gas Pipe" });
-             }
-             if (!context.Materials.Any(m => m.Material == "PEX"))
-             {
-                 context.Materials.Add(new Entities.MaterialEntity { Material = "PEX", Discipline = "Gas", FeatureType = "Pipe", Notes = "Cross-linked Polyethylene Gas Pipe" });
-             }
-
-             // Seed Electric Codes
-             if (!context.CogoCodes.Any(c => c.LocalCode == "EPOLE"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "EPOLE", SystemCode = "E-POLE", Description = "Utility Pole" });
-             }
-             if (!context.CogoCodes.Any(c => c.LocalCode == "EMH"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "EMH", SystemCode = "E-MANHOLE", Description = "Electric Manhole" });
-             }
-             if (!context.CogoCodes.Any(c => c.LocalCode == "EBOX"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "EBOX", SystemCode = "E-BOX", Description = "Utility Box" });
-             }
-             if (!context.CogoCodes.Any(c => c.LocalCode == "EMETER"))
-             {
-                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "EMETER", SystemCode = "E-METER", Description = "Electric Meter" });
+                 var lines = System.IO.File.ReadAllLines(csvPath);
+                 foreach (var line in lines.Skip(1)) // Skip header
+                 {
+                     if (string.IsNullOrWhiteSpace(line)) continue;
+                     var parts = line.Split(',');
+                     if (parts.Length >= 2)
+                     {
+                         string local = parts[0].Trim();
+                         string sys = parts[1].Trim();
+                         string desc = parts.Length >= 3 ? parts[2].Trim() : sys;
+                         
+                         // Insert if the exact local/sys mapping doesn't already exist
+                         if (!context.CogoCodes.Any(c => c.LocalCode == local && c.SystemCode == sys))
+                         {
+                             context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = local, SystemCode = sys, Description = desc });
+                         }
+                     }
+                 }
              }
 
              // Seed Electric Materials

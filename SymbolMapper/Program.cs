@@ -72,7 +72,14 @@ class Program
         }
 
         string outPath = Path.Combine(projectDir, "UtilitySymbols_Mapping.xlsx");
-        workbook.SaveAs(outPath);
+        try 
+        {
+            workbook.SaveAs(outPath);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Could not save xlsx: {ex.Message}");
+        }
         Console.WriteLine("Done! Created UtilitySymbols_Mapping.xlsx and SymbolsLibrary folder.");
     }
 
@@ -95,11 +102,16 @@ class Program
         string d = desc.ToUpper();
         if (d.Contains("POLE")) return "pole";
         if (d.Contains("BOX")) return "box";
-        if (d.Contains("MANHOLE") || d.Contains("VAULT") || d.Contains("CB") || d.Contains("INLET") || d.Contains("CATCH BASIN")) return "manhole";
+        if (d.Contains("AIR RELEASE") || d.Contains("ARV")) return "air_release";
+        if (d.Contains("HEADWALL") || d.Contains("HW")) return "headwall";
+        if (d.Contains("CATCH BASIN") || d.Contains("DROP INLET") || d.Contains("INLET") || d.Contains("CB") || d.Contains("DI")) return "grate";
+        if (d.Contains("MANHOLE") || d.Contains("VAULT") || d.Contains("JUNCTION")) return "manhole";
         if (d.Contains("VALVE")) return "valve";
         if (d.Contains("FITTING")) return "fitting";
         if (d.Contains("HYDRANT")) return "hydrant";
         if (d.Contains("METER")) return "meter";
+        if (d.Contains("BACK FLOW") || d.Contains("BFP") || d.Contains("PREVENTER")) return "circle";
+        if (d.Contains("BLOW") || d.Contains("BO")) return "blowoff";
         if (d.Contains("POINT")) return "point";
         if (d.Contains("RUN") || d.Contains("PIPE")) return "line";
         return "default";
@@ -138,8 +150,52 @@ class Program
                 g.DrawLine(pen, 10, 30, 50, 30);
                 break;
             case "meter":
-                g.FillRectangle(brush, 15, 20, 30, 20);
-                g.DrawRectangle(pen, 15, 20, 30, 20);
+                g.FillRectangle(brush, 10, 10, 40, 40);
+                g.DrawRectangle(pen, 10, 10, 40, 40);
+                break;
+            case "circle":
+                g.FillEllipse(brush, 10, 10, 40, 40);
+                g.DrawEllipse(pen, 10, 10, 40, 40);
+                break;
+            case "blowoff":
+                g.FillEllipse(brush, 10, 10, 40, 40);
+                g.DrawEllipse(pen, 10, 10, 40, 40);
+                using (var font = new Font("Arial", 20, FontStyle.Bold))
+                using (var textBrush = new SolidBrush(Color.White))
+                {
+                    var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+                    g.DrawString("B", font, textBrush, new RectangleF(10, 10, 40, 40), format);
+                }
+                break;
+            case "air_release":
+                g.FillEllipse(brush, 10, 10, 40, 40);
+                g.DrawEllipse(pen, 10, 10, 40, 40);
+                using (var font = new Font("Arial", 14, FontStyle.Bold))
+                using (var textBrush = new SolidBrush(Color.White))
+                {
+                    var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+                    g.DrawString("AR", font, textBrush, new RectangleF(10, 10, 40, 40), format);
+                }
+                break;
+            case "grate":
+                g.FillRectangle(brush, 10, 10, 40, 40);
+                g.DrawRectangle(pen, 10, 10, 40, 40);
+                g.DrawLine(pen, 10, 20, 50, 20);
+                g.DrawLine(pen, 10, 30, 50, 30);
+                g.DrawLine(pen, 10, 40, 50, 40);
+                g.DrawLine(pen, 20, 10, 20, 50);
+                g.DrawLine(pen, 30, 10, 30, 50);
+                g.DrawLine(pen, 40, 10, 40, 50);
+                break;
+            case "headwall":
+                g.FillRectangle(brush, 5, 20, 50, 20);
+                g.DrawRectangle(pen, 5, 20, 50, 20);
+                using (var font = new Font("Arial", 10, FontStyle.Bold))
+                using (var textBrush = new SolidBrush(Color.White))
+                {
+                    var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+                    g.DrawString("WALL", font, textBrush, new RectangleF(5, 20, 50, 20), format);
+                }
                 break;
             case "line":
                 using (var bigPen = new Pen(color, 6)) g.DrawLine(bigPen, 5, 30, 55, 30);
