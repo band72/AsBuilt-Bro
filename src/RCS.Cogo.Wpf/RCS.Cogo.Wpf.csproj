@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RCS.Cogo.AI\RCS.Cogo.AI.csproj" />
+    <ProjectReference Include="..\RCS.Alignments.Core\RCS.Alignments.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

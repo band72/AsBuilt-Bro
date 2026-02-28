@@ -1,0 +1,55 @@
+<Window x:Class="RCS.Cogo.Wpf.Views.AlignmentSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Alignment Settings" Height="300" Width="400"
+        Background="#1E1E1E" Foreground="#D4D4D4"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="Margin" Value="0,5,0,5"/>
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="Margin" Value="0,5,0,5"/>
+        </Style>
+        <Style TargetType="Separator">
+            <Setter Property="Background" Value="#3E3E42"/>
+            <Setter Property="Margin" Value="0,15,0,15"/>
+        </Style>
+    </Window.Resources>
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Horizontal Settings -->
+        <TextBlock Grid.Row="0" Text="Horizontal" FontWeight="Bold" FontSize="16" Foreground="#007ACC"/>
+        
+        <CheckBox Grid.Row="1" Content="Show Horizontal Alignment Labels" 
+                  IsChecked="{Binding ShowHorizontalAlignmentLabels}" />
+
+        <Separator Grid.Row="2" />
+
+        <!-- Vertical Settings -->
+        <TextBlock Grid.Row="3" Text="Vertical" FontWeight="Bold" FontSize="16" Foreground="#007ACC"/>
+        
+        <TextBlock Grid.Row="4" Text="Vertical alignment settings placeholder..." FontStyle="Italic" Foreground="Gray"/>
+        
+        <!-- Bottom Buttons -->
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button Content="Close" Width="80" Height="30" Click="CloseButton_Click" Background="#3E3E42" Foreground="White"/>
+        </StackPanel>
+    </Grid>
+</Window>

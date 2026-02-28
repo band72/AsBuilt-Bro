@@ -335,7 +335,18 @@ public class ShellViewModel : ViewModelBase
     public bool ShowPointMarkers
     {
         get => _showPointMarkers;
-        set => SetField(ref _showPointMarkers, value);
+        set { SetField(ref _showPointMarkers, value); RefreshData(false); }
+    }
+
+    public bool ShowHorizontalAlignmentLabels
+    {
+        get => _context.ShowAlignmentLabels;
+        set 
+        { 
+            _context.ShowAlignmentLabels = value; 
+            OnPropertyChanged(); 
+            RefreshData(false); 
+        }
     }
     
     private bool _showFigureLabels = true;
@@ -483,6 +494,7 @@ public class ShellViewModel : ViewModelBase
         ExportCodesCommand = new RelayCommand(_ => ExportCodesCsv());
         ClearCodesCommand = new RelayCommand(_ => ClearCodes());
         OpenSymbolManagerCommand = new RelayCommand(_ => OpenSymbolManager());
+        SearchCodesCommand = new RelayCommand(_ => SearchCodes());
         
         ImportCatalogCommand = new RelayCommand(_ => ImportCatalog());
         AddMaterialToProjectCommand = new RelayCommand(_ => AddMaterialToProject());
@@ -491,6 +503,7 @@ public class ShellViewModel : ViewModelBase
         ProcessPipingScriptCommand = new RelayCommand(_ => ProcessPipingScript());
         ImportPipingScriptCommand = new RelayCommand(_ => ImportPipingScript());
         ExportPipingScriptCommand = new RelayCommand(_ => ExportPipingScript());
+        AnalyzePipingScriptCommand = new RelayCommand(_ => AnalyzePipingScript());
         
         ImportPointsListCommand = new RelayCommand(_ => ImportPointsList());
 
@@ -542,6 +555,7 @@ public class ShellViewModel : ViewModelBase
         OpenValidationSettingsCommand = new RelayCommand(_ => OpenValidationSettings());
         OpenGeneralSettingsCommand = new RelayCommand(_ => OpenGeneralSettings());
         OpenAlignmentWindowCommand = new RelayCommand(_ => OpenAlignmentWindow());
+        OpenAlignmentSettingsCommand = new RelayCommand(_ => OpenAlignmentSettings());
         // Load default/empty project
         _ = LoadInstalledAssetsAsync();
     }
@@ -600,6 +614,7 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand OpenExampleElectricV2Command { get; }
 
     public System.Windows.Input.ICommand OpenAlignmentWindowCommand { get; }
+    public System.Windows.Input.ICommand OpenAlignmentSettingsCommand { get; }
 
     public System.Windows.Input.ICommand CloseCommand { get; }
     public System.Windows.Input.ICommand AboutCommand { get; }
@@ -939,8 +954,59 @@ public class ShellViewModel : ViewModelBase
     // --- Codes Section ---
     public ObservableCollection<CogoCode> CogoCodes { get; } = new();
     public ObservableCollection<PointViewModel> DesignPoints { get; } = new();
+    
+    private string _codeSearchText = string.Empty;
+    public string CodeSearchText
+    {
+        get => _codeSearchText;
+        set => SetField(ref _codeSearchText, value);
+    }
+    
+    public System.Windows.Input.ICommand SearchCodesCommand { get; }
     public System.Windows.Input.ICommand ImportCodesCommand { get; }
     public System.Windows.Input.ICommand ExportCodesCommand { get; }
+
+    private void SearchCodes()
+    {
+        var view = System.Windows.Data.CollectionViewSource.GetDefaultView(CogoCodes);
+        if (string.IsNullOrWhiteSpace(CodeSearchText))
+        {
+            view.Filter = null;
+        }
+        else
+        {
+            try
+            {
+                string pattern = System.Text.RegularExpressions.Regex.Escape(CodeSearchText).Replace("\\*", ".*");
+                var regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                view.Filter = item =>
+                {
+                    if (item is CogoCode c)
+                    {
+                        return regex.IsMatch(c.LocalCode ?? "") || 
+                               regex.IsMatch(c.SystemCode ?? "") || 
+                               regex.IsMatch(c.Description ?? "");
+                    }
+                    return false;
+                };
+            }
+            catch
+            {
+                // Fallback on invalid regex issues
+                string lowerSearch = CodeSearchText.ToLowerInvariant().Replace("*", "");
+                view.Filter = item =>
+                {
+                    if (item is CogoCode c)
+                    {
+                        return (c.LocalCode?.ToLowerInvariant().Contains(lowerSearch) == true) || 
+                               (c.SystemCode?.ToLowerInvariant().Contains(lowerSearch) == true) || 
+                               (c.Description?.ToLowerInvariant().Contains(lowerSearch) == true);
+                    }
+                    return false;
+                };
+            }
+        }
+    }
 
     private void ImportCodesCsv()
     {
@@ -957,29 +1023,47 @@ public class ShellViewModel : ViewModelBase
                 var lines = System.IO.File.ReadAllLines(dialog.FileName);
                 
                 // Clear existing in memory and DB
-                CogoCodes.Clear();
                 using (var db = new RCS.Data.AppDbContext())
                 {
-                    db.CogoCodes.RemoveRange(db.CogoCodes);
+                    var existingEntities = db.CogoCodes.ToList();
                     
-                    var entities = new List<RCS.Data.Entities.CogoCodeEntity>();
                     foreach(var line in lines)
                     {
                         if (string.IsNullOrWhiteSpace(line)) continue;
                         var parts = line.Split(',');
                         
-                        string local = "", sys = "", desc = "";
-                        
-                        if (parts.Length >= 3) { local = parts[0].Trim(); sys = parts[1].Trim(); desc = parts[2].Trim(); }
-                        else if (parts.Length == 2) { local = parts[0].Trim(); sys = parts[1].Trim(); }
-                        else if (parts.Length == 1) { local = parts[0].Trim(); }
-                        
-                        CogoCodes.Add(new CogoCode(local, sys, desc));
-                        entities.Add(new RCS.Data.Entities.CogoCodeEntity { LocalCode = local, SystemCode = sys, Description = desc });
+                        if (parts.Length >= 2) 
+                        { 
+                            string local = parts[0].Trim(); 
+                            string sys = parts[1].Trim(); 
+                            
+                            var existing = existingEntities.FirstOrDefault(e => string.Equals(e.SystemCode, sys, StringComparison.OrdinalIgnoreCase));
+                            if (existing != null)
+                            {
+                                existing.LocalCode = local;
+                            }
+                            else
+                            {
+                                string desc = parts.Length >= 3 ? parts[2].Trim() : sys;
+                                var newEntity = new RCS.Data.Entities.CogoCodeEntity 
+                                { 
+                                    LocalCode = local, 
+                                    SystemCode = sys, 
+                                    Description = desc 
+                                };
+                                db.CogoCodes.Add(newEntity);
+                                existingEntities.Add(newEntity);
+                            }
+                        }
                     }
                     
-                    db.CogoCodes.AddRange(entities);
                     db.SaveChanges();
+                    
+                    CogoCodes.Clear();
+                    foreach (var e in db.CogoCodes.ToList())
+                    {
+                        CogoCodes.Add(new CogoCode(e.LocalCode, e.SystemCode, e.Description));
+                    }
                 }
                 
                 CommandLog.Add($"Imported {CogoCodes.Count} codes from {dialog.FileName} to Database");
@@ -1273,6 +1357,17 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand ProcessPipingScriptCommand { get; }
     public System.Windows.Input.ICommand ImportPipingScriptCommand { get; }
     public System.Windows.Input.ICommand ExportPipingScriptCommand { get; }
+    public System.Windows.Input.ICommand AnalyzePipingScriptCommand { get; }
+
+    private void AnalyzePipingScript()
+    {
+        var analyzer = new RCS.Cogo.AI.AiAnalyzer();
+        var results = analyzer.AnalyzeScript(PipingScriptText);
+        
+        var aiWindow = new RCS.Cogo.Wpf.Views.AiAnalysisWindow(results);
+        aiWindow.Owner = App.Current.MainWindow;
+        aiWindow.ShowDialog();
+    }
 
     private void ImportPipingScript()
     {
@@ -1548,6 +1643,11 @@ public class ShellViewModel : ViewModelBase
             var compiler = new RCS.Piping.Core.Scripting.PipeScriptCompiler();
             
             var validMaterials = new HashSet<string>(MasterCatalog.Select(m => m.Material), StringComparer.OrdinalIgnoreCase);
+            
+            // Allow generic materials for non-pipe utilities (like power/electric runs)
+            validMaterials.Add("NONE");
+            validMaterials.Add("UNKNOWN");
+
             var validCodes = new HashSet<string>(CogoCodes.Select(c => c.LocalCode), StringComparer.OrdinalIgnoreCase);
             
             foreach (var mat in MasterCatalog)
@@ -1566,6 +1666,17 @@ public class ShellViewModel : ViewModelBase
             validCodes.Add("ST");
             validCodes.Add("CH");
             validCodes.Add("D");
+            
+            // Map common structural aliases
+            validCodes.Add("POLE");
+            validCodes.Add("BOX");
+            validCodes.Add("EPOLE");
+            validCodes.Add("EBOX");
+            validCodes.Add("VAULT");
+            validCodes.Add("METER");
+            validCodes.Add("MANHOLE");
+            validCodes.Add("VALVE");
+            validCodes.Add("HYDRANT");
 
             var scriptTextCapture = PipingScriptText; // Ensure no cross-thread property access
             var result = await Task.Run(() => compiler.Compile(scriptTextCapture, (id) => _context.GetPoint(id), validMaterials, validCodes));
@@ -2646,13 +2757,36 @@ public class ShellViewModel : ViewModelBase
         await Task.Delay(1500);
 
         CommandLog.Add("--- Running Batch Script ---");
-        
-        // Reset state before running
-        await _engine.ExecuteAsync("CLEAR", _context);
-        await _engine.ExecuteAsync("DEL PTS", _context);
-        await _engine.ExecuteAsync("DEL FIG", _context);
-        
         var lines = BatchScriptContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        
+        // Check for RESET directives at the top of the script
+        bool shouldReset = true;
+        foreach (var line in lines)
+        {
+            string t = line.Trim().ToUpper();
+            if (string.IsNullOrEmpty(t) || t.StartsWith("!") || t.StartsWith("//")) continue;
+            
+            if (t == "RESET-OFF") 
+            {
+                shouldReset = false;
+                break;
+            }
+            if (t == "RESET-ON")
+            {
+                shouldReset = true;
+                break;
+            }
+            // If the first real command is something else, stop looking and default to true
+            break;
+        }
+
+        if (shouldReset)
+        {
+            // Reset state before running
+            await _engine.ExecuteAsync("CLEAR", _context);
+            await _engine.ExecuteAsync("DEL PTS", _context);
+            await _engine.ExecuteAsync("DEL FIG", _context);
+        }
         int counter = 0;
         foreach (var line in lines)
         {
@@ -2679,13 +2813,35 @@ public class ShellViewModel : ViewModelBase
 
         CommandLog.Add("--- Walking Batch Script ---");
         
-        // Reset state before walking
-        await _engine.ExecuteAsync("CLEAR", _context);
-        await _engine.ExecuteAsync("DEL PTS", _context);
-        await _engine.ExecuteAsync("DEL FIG", _context);
-        RefreshData(true);
-        
         var lines = BatchScriptContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        
+        bool shouldReset = true;
+        foreach (var line in lines)
+        {
+            string t = line.Trim().ToUpper();
+            if (string.IsNullOrEmpty(t) || t.StartsWith("!") || t.StartsWith("//")) continue;
+            
+            if (t == "RESET-OFF") 
+            {
+                shouldReset = false;
+                break;
+            }
+            if (t == "RESET-ON")
+            {
+                shouldReset = true;
+                break;
+            }
+            break;
+        }
+
+        if (shouldReset)
+        {
+            // Reset state before walking
+            await _engine.ExecuteAsync("CLEAR", _context);
+            await _engine.ExecuteAsync("DEL PTS", _context);
+            await _engine.ExecuteAsync("DEL FIG", _context);
+            RefreshData(true);
+        }
         foreach (var line in lines)
         {
             string trimmed = line.Trim();
@@ -2785,7 +2941,6 @@ public class ShellViewModel : ViewModelBase
                 }
             }
             
-            // Temporary: Render Pipes as Grey Figures
             // Render Pipes with Colors
             foreach(var run in PipeRuns)
             {
@@ -2810,6 +2965,64 @@ public class ShellViewModel : ViewModelBase
                     
                     var fig = new FigureViewModel($"Pipe-{run.Id}", pts, pipeBrush);
                     Figures.Add(fig);
+                }
+            }
+            
+            // Render Alignments
+            foreach (var algn in _context.GetAllAlignments())
+            {
+                var pts = new System.Collections.Generic.List<Point3D>();
+                var labels = new System.Collections.Generic.List<RCS.Cogo.App.State.FigureLabel>();
+
+                string FormatStation(double st)
+                {
+                    int hundreds = (int)(st / 100);
+                    double remainder = st - (hundreds * 100);
+                    return $"{hundreds}+{remainder:00.00}";
+                }
+
+                if (_context.ShowAlignmentLabels && algn.Elements.Count > 0)
+                {
+                    // Start Label
+                    var startPt = algn.Elements[0].GetCoordinateAt(algn.StartStation);
+                    labels.Add(new RCS.Cogo.App.State.FigureLabel { Text = $"POB {FormatStation(algn.StartStation)}", Easting = startPt.Easting, Northing = startPt.Northing, RotationDegrees = 0 });
+                }
+
+                foreach (var element in algn.Elements)
+                {
+                    if (element is RCS.Alignments.Core.ArcElement)
+                    {
+                        // Interpolate arcs for smooth drawing
+                        double step = 10.0;
+                        for (double s = element.StartStation; s < element.EndStation; s += step)
+                        {
+                            pts.Add(element.GetCoordinateAt(s));
+                        }
+                        pts.Add(element.GetCoordinateAt(element.EndStation)); // Ensure flush fit
+                    }
+                    else
+                    {
+                        // Lines just need ends
+                        pts.Add(element.GetCoordinateAt(element.StartStation));
+                        pts.Add(element.GetCoordinateAt(element.EndStation));
+                    }
+
+                    if (_context.ShowAlignmentLabels)
+                    {
+                        // Midpoint
+                        double midStation = element.StartStation + (element.Length / 2);
+                        var midPt = element.GetCoordinateAt(midStation);
+                        labels.Add(new RCS.Cogo.App.State.FigureLabel { Text = $"MID {FormatStation(midStation)}", Easting = midPt.Easting, Northing = midPt.Northing, RotationDegrees = 0 });
+
+                        // Endpoint
+                        var endPt = element.GetCoordinateAt(element.EndStation);
+                        labels.Add(new RCS.Cogo.App.State.FigureLabel { Text = $"PT {FormatStation(element.EndStation)}", Easting = endPt.Easting, Northing = endPt.Northing, RotationDegrees = 0 });
+                    }
+                }
+                
+                if (pts.Count > 1)
+                {
+                    Figures.Add(new FigureViewModel($"ALGN-{algn.Name}", pts, System.Windows.Media.Brushes.Cyan, labels));
                 }
             }
 
@@ -2873,6 +3086,12 @@ public class ShellViewModel : ViewModelBase
         {
             DataContext = this
         };
+        window.ShowDialog();
+    }
+
+    private void OpenAlignmentSettings()
+    {
+        var window = new RCS.Cogo.Wpf.Views.AlignmentSettingsWindow(this);
         window.ShowDialog();
     }
 

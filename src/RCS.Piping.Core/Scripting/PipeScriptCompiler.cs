@@ -74,7 +74,7 @@ public sealed class PipeScriptCompiler
                 
                 // Allow unified scripts without throwing errors in the Pipe Engine for COGO toggles
                 if (cmd == "COGO-ENGINE-OFF" || cmd == "COGO-ENGINE-ON" || 
-                    cmd == "RESET" || cmd == "CLEAR" || cmd == "ECHO" || cmd == "LOG" || cmd == "LIST" || cmd == "REPORT" || cmd == "ABOUT" || cmd == "SET" || cmd == "SHOW" || cmd == "UNITS" || cmd == "ANGLES")
+                    cmd == "RESET" || cmd == "RESET-OFF" || cmd == "RESET-ON" || cmd == "CLEAR" || cmd == "ECHO" || cmd == "LOG" || cmd == "LIST" || cmd == "REPORT" || cmd == "ABOUT" || cmd == "SET" || cmd == "SHOW" || cmd == "UNITS" || cmd == "ANGLES")
                     continue;
 
                 // Track local COGO point creations so unified scripts don't fail cross-validation

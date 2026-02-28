@@ -9,6 +9,15 @@ public static class AppInitializer
     {
         var registry = new CommandRegistry();
         
+        // Register Alignment Commands
+        registry.Register(new AlignmentCommand());
+        registry.Register(new ProfileCommand());
+        registry.Register(new VpiCommand());
+        registry.Register(new HaLblCommand("HALBL-ON"));
+        registry.Register(new HaLblCommand("HALBL-OFF"));
+        registry.Register(new ResetConfigCommand("RESET-ON"));
+        registry.Register(new ResetConfigCommand("RESET-OFF"));
+
         // Register Commands
         registry.Register(new NeCommand());
         registry.Register(new StnCommand());

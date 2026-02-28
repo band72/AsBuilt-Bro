@@ -135,8 +135,10 @@
                     <MenuItem Header="Export Appurtenance Schedule..." Command="{Binding ExportScheduleCommand}"/>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="_Alignment">
+            <MenuItem Header="_Alignments">
                 <MenuItem Header="Edit Alignment..." Command="{Binding OpenAlignmentWindowCommand}"/>
+                <Separator/>
+                <MenuItem Header="Settings..." Command="{Binding OpenAlignmentSettingsCommand}"/>
             </MenuItem>
             <MenuItem Header="_Profile">
             </MenuItem>
@@ -690,6 +692,7 @@
                                 <ToggleButton Content="L" IsChecked="{Binding ShowFigureLabels}" Width="30" Margin="0,0,10,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Figure Labels"/>
                                 <Button Content="DXF" Command="{Binding ExportDxfCommand}" Padding="10,5" Margin="0,0,5,0" Background="#2D2D30" Foreground="White"/>
                                 <Button Content="TXT" Command="{Binding ExportPipingScriptCommand}" Padding="10,5" Background="#2D2D30" Foreground="White"/>
+                                <Button Content="AI" Command="{Binding AnalyzePipingScriptCommand}" Padding="10,5" Margin="5,0,0,0" Background="#8A2BE2" Foreground="White" FontWeight="Bold" ToolTip="AI Script Validator"/>
                             </StackPanel>
                         </DockPanel>
                         <!-- Floating Piping Script Hint -->
@@ -745,18 +748,35 @@
                             <RowDefinition Height="*"/>    <!-- DataGrid -->
                         </Grid.RowDefinitions>
                         
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Button Content="Import CSV" Command="{Binding ImportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
-                            <Button Content="Export CSV" Command="{Binding ExportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
-                            <Button Content="Clear DB" Command="{Binding ClearCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" FontWeight="Bold" ToolTip="Deletes ALL codes from the Master Database" BorderThickness="1" BorderBrush="White"/>
-                            <Button Content="Symbol Manager..." Command="{Binding OpenSymbolManagerCommand}" Padding="10,5" Background="#007ACC" Foreground="White" FontWeight="Bold" BorderThickness="0" ToolTip="Open the graphical Symbol Manager"/>
-                        </StackPanel>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                <Button Content="Import CSV" Command="{Binding ImportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
+                                <Button Content="Export CSV" Command="{Binding ExportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
+                                <Button Content="Clear DB" Command="{Binding ClearCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" FontWeight="Bold" ToolTip="Deletes ALL codes from the Master Database" BorderThickness="1" BorderBrush="White"/>
+                                <Button Content="Symbol Manager..." Command="{Binding OpenSymbolManagerCommand}" Padding="10,5" Background="#007ACC" Foreground="White" FontWeight="Bold" BorderThickness="0" ToolTip="Open the graphical Symbol Manager"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <TextBox Text="{Binding CodeSearchText, UpdateSourceTrigger=PropertyChanged}" Width="108" Height="25" VerticalAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Left" Background="#1E1E1E" Foreground="White" BorderThickness="1" BorderBrush="Gray" Padding="2,0,0,0" ToolTip="Search Codes (wildcard * accepted)"/>
+                                <Button Content="..." Command="{Binding SearchCodesCommand}" Width="25" Height="25" VerticalAlignment="Center" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White" ToolTip="Search Codes"/>
+                            </StackPanel>
+                        </Grid>
                         
                         <DataGrid Grid.Row="1" ItemsSource="{Binding CogoCodes}" AutoGenerateColumns="False" Margin="0,5">
                             <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="Symbol" Width="SizeToHeader" IsReadOnly="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding SymbolImagePath}" Width="40" Height="40" Margin="2" Stretch="Uniform"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="Local Code" Binding="{Binding LocalCode}" Width="*"/>
-                                <DataGridTextColumn Header="System Code" Binding="{Binding SystemCode}" Width="*"/>
-                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="2*"/>
+                                <DataGridTextColumn Header="System Code" Binding="{Binding SystemCode}" Width="*" IsReadOnly="True" Foreground="#A9A9A9"/>
+                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="2*" IsReadOnly="True" Foreground="#A9A9A9"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>

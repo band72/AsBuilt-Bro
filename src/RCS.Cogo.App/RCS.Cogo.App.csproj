@@ -4,6 +4,7 @@
     <ProjectReference Include="..\RCS.Cogo.Core\RCS.Cogo.Core.csproj" />
     <ProjectReference Include="..\RCS.Piping.Core\RCS.Piping.Core.csproj" />
     <ProjectReference Include="..\RCS.Services\RCS.Services.csproj" />
+    <ProjectReference Include="..\RCS.Alignments.Core\RCS.Alignments.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

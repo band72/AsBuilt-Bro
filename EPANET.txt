@@ -1,0 +1,256 @@
+; ============================================================
+; EPANET 2.x INPUT FILE (Skeleton)
+; Mock 800-Lot Subdivision Water Distribution Model
+; Units: US Survey Foot (lengths), GPM (flows)
+; Coordinate Datum: Assumed
+; Origin Benchmark: (E=10000.00, N=10000.00, Z=0.00)
+; ============================================================
+
+[TITLE]
+800-Unit Subdivision - Looped Grid w/ Perimeter Loop + Two 12" Spines
+Coordinate system: Assumed (US Survey Foot). All node elevations set to 0.00 for skeleton.
+Base demands represent average-day demand (ADD) allocated uniformly to junctions.
+A 24-hour pattern is provided for peaking (up to 4.00x ADD).
+
+[OPTIONS]
+UNITS               GPM
+HEADLOSS            H-W
+HYDRAULICS          ACCURATE
+VISCOSITY           1.0
+SPECIFIC GRAVITY    1.0
+TRIALS              40
+ACCURACY            0.001
+CHECKFREQ           2
+MAXCHECK            10
+DAMPLIMIT           0
+PATTERN             PHD24
+DEMAND MULTIPLIER   1.0
+EMITTER EXPONENT    0.5
+
+[TIMES]
+DURATION            24:00
+HYDRAULIC TIMESTEP  1:00
+REPORT TIMESTEP     1:00
+PATTERN TIMESTEP    1:00
+PATTERN START       0:00
+
+[REPORT]
+STATUS              YES
+SUMMARY             YES
+NODES               ALL
+LINKS               ALL
+
+; ------------------------------------------------------------
+; Design assumptions for skeleton
+; - Reservoir head is assumed = 120.00 ft (replace with actual HGL)
+; - All junction elevations set to 0.00 ft (replace with actual ground/node elev.)
+; - Hazen-Williams C = 150 for PVC mains
+; - Pipe diameters: 12" perimeter loop + 12" spines on NS2 and NS4, all others 8"
+; - Grid spacing:
+;   NS streets: X = 10000, 11060, 12120, 13180, 14240, 15300  (ΔX = 1060)
+;   EW streets: Y = 10000, 10320, 10640, 10960, 11280        (ΔY = 320)
+; ------------------------------------------------------------
+
+[RESERVOIRS]
+;ID        Head
+RES1       120.00
+
+[JUNCTIONS]
+;ID         Elevation   Demand    Pattern
+; 30 junctions (6 NS x 5 EW) with uniform ADD allocation:
+; Total ADD ≈ 166.67 gpm => 166.67/30 = 5.56 gpm each
+J00_00      0.00        5.56      PHD24
+J01_00      0.00        5.56      PHD24
+J02_00      0.00        5.56      PHD24
+J03_00      0.00        5.56      PHD24
+J04_00      0.00        5.56      PHD24
+J05_00      0.00        5.56      PHD24
+
+J00_01      0.00        5.56      PHD24
+J01_01      0.00        5.56      PHD24
+J02_01      0.00        5.56      PHD24
+J03_01      0.00        5.56      PHD24
+J04_01      0.00        5.56      PHD24
+J05_01      0.00        5.56      PHD24
+
+J00_02      0.00        5.56      PHD24
+J01_02      0.00        5.56      PHD24
+J02_02      0.00        5.56      PHD24
+J03_02      0.00        5.56      PHD24
+J04_02      0.00        5.56      PHD24
+J05_02      0.00        5.56      PHD24
+
+J00_03      0.00        5.56      PHD24
+J01_03      0.00        5.56      PHD24
+J02_03      0.00        5.56      PHD24
+J03_03      0.00        5.56      PHD24
+J04_03      0.00        5.56      PHD24
+J05_03      0.00        5.56      PHD24
+
+J00_04      0.00        5.56      PHD24
+J01_04      0.00        5.56      PHD24
+J02_04      0.00        5.56      PHD24
+J03_04      0.00        5.56      PHD24
+J04_04      0.00        5.56      PHD24
+J05_04      0.00        5.56      PHD24
+
+[PATTERNS]
+;ID     Multipliers (24 values, hourly)
+; Simple residential diurnal with peak hour ~4.00x (PHD ~ 4x ADD)
+PHD24   0.60 0.55 0.50 0.50 0.55 0.70 1.20 2.20 2.80 2.10 1.70 1.50
+PHD24   1.40 1.30 1.25 1.30 1.60 2.20 3.20 4.00 3.00 2.00 1.20 0.80
+
+[PIPES]
+;ID          Node1    Node2    Length    Diameter   Roughness   MinorLoss   Status
+; --- Tie-in from reservoir to SW corner (short link) ---
+P_RES1_SW    RES1     J00_00   10.00     12         150         0.0         OPEN
+
+; --- EAST-WEST (EW) street mains (between NS columns) ---
+; EW0 (Y=10000) perimeter 12"
+P_EW0_00     J00_00   J01_00   1060.00   12         150         0.0         OPEN
+P_EW0_01     J01_00   J02_00   1060.00   12         150         0.0         OPEN
+P_EW0_02     J02_00   J03_00   1060.00   12         150         0.0         OPEN
+P_EW0_03     J03_00   J04_00   1060.00   12         150         0.0         OPEN
+P_EW0_04     J04_00   J05_00   1060.00   12         150         0.0         OPEN
+
+; EW1 (Y=10320) local 8"
+P_EW1_00     J00_01   J01_01   1060.00   8          150         0.0         OPEN
+P_EW1_01     J01_01   J02_01   1060.00   8          150         0.0         OPEN
+P_EW1_02     J02_01   J03_01   1060.00   8          150         0.0         OPEN
+P_EW1_03     J03_01   J04_01   1060.00   8          150         0.0         OPEN
+P_EW1_04     J04_01   J05_01   1060.00   8          150         0.0         OPEN
+
+; EW2 (Y=10640) local 8"
+P_EW2_00     J00_02   J01_02   1060.00   8          150         0.0         OPEN
+P_EW2_01     J01_02   J02_02   1060.00   8          150         0.0         OPEN
+P_EW2_02     J02_02   J03_02   1060.00   8          150         0.0         OPEN
+P_EW2_03     J03_02   J04_02   1060.00   8          150         0.0         OPEN
+P_EW2_04     J04_02   J05_02   1060.00   8          150         0.0         OPEN
+
+; EW3 (Y=10960) local 8"
+P_EW3_00     J00_03   J01_03   1060.00   8          150         0.0         OPEN
+P_EW3_01     J01_03   J02_03   1060.00   8          150         0.0         OPEN
+P_EW3_02     J02_03   J03_03   1060.00   8          150         0.0         OPEN
+P_EW3_03     J03_03   J04_03   1060.00   8          150         0.0         OPEN
+P_EW3_04     J04_03   J05_03   1060.00   8          150         0.0         OPEN
+
+; EW4 (Y=11280) perimeter 12"
+P_EW4_00     J00_04   J01_04   1060.00   12         150         0.0         OPEN
+P_EW4_01     J01_04   J02_04   1060.00   12         150         0.0         OPEN
+P_EW4_02     J02_04   J03_04   1060.00   12         150         0.0         OPEN
+P_EW4_03     J03_04   J04_04   1060.00   12         150         0.0         OPEN
+P_EW4_04     J04_04   J05_04   1060.00   12         150         0.0         OPEN
+
+; --- NORTH-SOUTH (NS) street mains (between EW rows) ---
+; NS0 (X=10000) perimeter 12"
+P_NS0_00     J00_00   J00_01   320.00    12         150         0.0         OPEN
+P_NS0_01     J00_01   J00_02   320.00    12         150         0.0         OPEN
+P_NS0_02     J00_02   J00_03   320.00    12         150         0.0         OPEN
+P_NS0_03     J00_03   J00_04   320.00    12         150         0.0         OPEN
+
+; NS1 (X=11060) local 8"
+P_NS1_00     J01_00   J01_01   320.00    8          150         0.0         OPEN
+P_NS1_01     J01_01   J01_02   320.00    8          150         0.0         OPEN
+P_NS1_02     J01_02   J01_03   320.00    8          150         0.0         OPEN
+P_NS1_03     J01_03   J01_04   320.00    8          150         0.0         OPEN
+
+; NS2 (X=12120) spine 12"
+P_NS2_00     J02_00   J02_01   320.00    12         150         0.0         OPEN
+P_NS2_01     J02_01   J02_02   320.00    12         150         0.0         OPEN
+P_NS2_02     J02_02   J02_03   320.00    12         150         0.0         OPEN
+P_NS2_03     J02_03   J02_04   320.00    12         150         0.0         OPEN
+
+; NS3 (X=13180) local 8"
+P_NS3_00     J03_00   J03_01   320.00    8          150         0.0         OPEN
+P_NS3_01     J03_01   J03_02   320.00    8          150         0.0         OPEN
+P_NS3_02     J03_02   J03_03   320.00    8          150         0.0         OPEN
+P_NS3_03     J03_03   J03_04   320.00    8          150         0.0         OPEN
+
+; NS4 (X=14240) spine 12"
+P_NS4_00     J04_00   J04_01   320.00    12         150         0.0         OPEN
+P_NS4_01     J04_01   J04_02   320.00    12         150         0.0         OPEN
+P_NS4_02     J04_02   J04_03   320.00    12         150         0.0         OPEN
+P_NS4_03     J04_03   J04_04   320.00    12         150         0.0         OPEN
+
+; NS5 (X=15300) perimeter 12"
+P_NS5_00     J05_00   J05_01   320.00    12         150         0.0         OPEN
+P_NS5_01     J05_01   J05_02   320.00    12         150         0.0         OPEN
+P_NS5_02     J05_02   J05_03   320.00    12         150         0.0         OPEN
+P_NS5_03     J05_03   J05_04   320.00    12         150         0.0         OPEN
+
+[COORDINATES]
+;Node      X         Y
+RES1       9990.00   9990.00
+
+J00_00     10000.00  10000.00
+J01_00     11060.00  10000.00
+J02_00     12120.00  10000.00
+J03_00     13180.00  10000.00
+J04_00     14240.00  10000.00
+J05_00     15300.00  10000.00
+
+J00_01     10000.00  10320.00
+J01_01     11060.00  10320.00
+J02_01     12120.00  10320.00
+J03_01     13180.00  10320.00
+J04_01     14240.00  10320.00
+J05_01     15300.00  10320.00
+
+J00_02     10000.00  10640.00
+J01_02     11060.00  10640.00
+J02_02     12120.00  10640.00
+J03_02     13180.00  10640.00
+J04_02     14240.00  10640.00
+J05_02     15300.00  10640.00
+
+J00_03     10000.00  10960.00
+J01_03     11060.00  10960.00
+J02_03     12120.00  10960.00
+J03_03     13180.00  10960.00
+J04_03     14240.00  10960.00
+J05_03     15300.00  10960.00
+
+J00_04     10000.00  11280.00
+J01_04     11060.00  11280.00
+J02_04     12120.00  11280.00
+J03_04     13180.00  11280.00
+J04_04     14240.00  11280.00
+J05_04     15300.00  11280.00
+
+[VERTICES]
+; (none)
+
+[STATUS]
+; (none)
+
+[CONTROLS]
+; (none)
+
+[RULES]
+; (none)
+
+[ENERGY]
+; (none)
+
+[CURVES]
+; (none)
+
+[QUALITY]
+; (none)
+
+[SOURCES]
+; (none)
+
+[REACTIONS]
+; (none)
+
+[MIXING]
+; (none)
+
+[BACKDROP]
+; (none)
+
+[TAGS]
+; (none)
+
+[END]

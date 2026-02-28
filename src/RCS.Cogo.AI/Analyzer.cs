@@ -21,8 +21,11 @@ public class AiAnalyzer
         "CURVE", "MAPCHK", "PTC", "TRAVERSE", "OFFSET", "INVERSE", "AL",
         "PRUN", "SS-B", "SS-C", "SS-E", "SM-C", "SM-E", "BD", "BEG", "BS", "CONT", "DD",
         "COGO-ENGINE-ON", "COGO-ENGINE-OFF", "PIPE-ENGINE-ON", "PIPE-ENGINE-OFF",
-        "END", "F1", "F2", "LNLN", "LOAD", "PNT", "RKRK", "SAVE", "STN", "TRAV", "XC", "ZD",
-        "AD", "AP", "ARCARC", "DISP", "LIST"
+        "END", "F1", "F2", "LNLN", "LOAD", "PNT", "PT", "POINT", "RKRK", "SAVE", "STN", "TRAV", "XC", "ZD",
+        "AD", "AP", "ARCARC", "DISP", "LIST", "START", "CLOSE", "OC", "FS", "FIG", "A", "B", "L", "C", "D",
+        "ALGN", "PROF", "VPI", "HALBL-ON", "HALBL-OFF",
+        "RESET", "RESET-ON", "RESET-OFF",
+        "UNITS", "ATMOS", "TEMP", "PRESS", "SF", "CR", "ANGLES", "VERT", "HORIZ", "EDM", "PRISM", "COLL"
     };
 
     public List<AiAnalysisResult> AnalyzeScript(string scriptText)
@@ -49,8 +52,11 @@ public class AiAnalyzer
             if (double.TryParse(cmd, out _))
                 continue;
             
+            // Allow pipe directives dynamically like W-C, E-B, WW-E, ST-C
+            bool isPipeDirective = cmd.EndsWith("-B") || cmd.EndsWith("-C") || cmd.EndsWith("-E");
+
             // 1. Unknown Command Check
-            if (!ValidCommands.Contains(cmd))
+            if (!ValidCommands.Contains(cmd) && !isPipeDirective)
             {
                 // Attempt to find closest match
                 string closest = ValidCommands.OrderBy(c => LevenshteinDistance(cmd, c)).First();
@@ -132,6 +138,24 @@ public class AiAnalyzer
             case "DEL":
                 if (args.Length < 2) AddError("DEL requires a target (PTS, FIG, RUNS, etc).", "DEL PTS or DEL FIG");
                 else if (args[1].ToUpper() != "PTS" && args[1].ToUpper() != "FIG") AddWarn("DEL target is unusual.", "Standard targets are PTS or FIG");
+                break;
+            case "PT":
+            case "PNT":
+            case "POINT":
+                if (args.Length < 4) AddError($"{cmd} requires ID, Northing, Easting.", $"{cmd} <id> <northing> <easting> [elev] [desc]");
+                else
+                {
+                    if (!IsNum(args[2]) || !IsNum(args[3])) AddError("Northing and Easting must be numeric.", "Ensure valid numeric coordinates.");
+                }
+                break;
+            case "ALGN":
+                if (args.Length < 2) AddError("ALGN requires a subcommand (BEG, TANGENT, CURVE, END).", "ALGN BEG <name> <station>");
+                break;
+            case "PROF":
+                if (args.Length < 2) AddError("PROF requires a subcommand (BEG, END).", "PROF BEG <alignmentName> <profileName>");
+                break;
+            case "VPI":
+                if (args.Length < 3) AddError("VPI requires Station and Elevation.", "VPI <station> <elevation> [curveLength]");
                 break;
         }
     }

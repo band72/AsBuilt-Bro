@@ -166,3 +166,24 @@ public class ApCommand : ICommand
         return Task.CompletedTask;
     }
 }
+
+public class ResetConfigCommand : ICommand
+{
+    public string Name { get; }
+    public string Description => "Toggles viewport scripts reset behavior (RESET-ON/RESET-OFF).";
+
+    public ResetConfigCommand(string name)
+    {
+        Name = name;
+    }
+
+    public Task ExecuteAsync(string[] args, ICogoContext context)
+    {
+        if (Name == "RESET-ON")
+            context.Log("[INFO] Next script run WILL clear viewport.");
+        else if (Name == "RESET-OFF")
+            context.Log("[INFO] Next script run will NOT clear viewport.");
+            
+        return Task.CompletedTask;
+    }
+}

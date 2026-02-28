@@ -53,45 +53,52 @@ public class ScriptEngine
 
         if (_cogoEngineOff) return;
         
-        var command = _registry.GetCommand(commandName);
-        if (command != null)
+        try
         {
-            // Pass all args including command name, or just the rest?
-            // Usually simpler to pass all so command knows its own name if aliased.
-            await command.ExecuteAsync(args.ToArray(), context);
-        }
-        else
-        {
-            // If the command evaluates to an integer/number:
-            // If it provides coordinates (e.g. 1 5000 5000), it's defining a point (implicit PT/NEZ).
-            // If it's a single identifier, it's appending to a figure (implicit CONT).
-            if (double.TryParse(commandName, out _))
+            var command = _registry.GetCommand(commandName);
+            if (command != null)
             {
-                if (args.Count >= 3)
-                {
-                    var ptCmd = _registry.GetCommand("PT");
-                    if (ptCmd != null)
-                    {
-                        var newArgs = new List<string> { "PT" };
-                        newArgs.AddRange(args);
-                        await ptCmd.ExecuteAsync(newArgs.ToArray(), context);
-                        return;
-                    }
-                }
-                else
-                {
-                    var contCmd = _registry.GetCommand("CONT");
-                    if (contCmd != null)
-                    {
-                        var newArgs = new List<string> { "CONT" };
-                        newArgs.AddRange(args);
-                        await contCmd.ExecuteAsync(newArgs.ToArray(), context);
-                        return;
-                    }
-                }
+                // Pass all args including command name, or just the rest?
+                // Usually simpler to pass all so command knows its own name if aliased.
+                await command.ExecuteAsync(args.ToArray(), context);
             }
+            else
+            {
+                // If the command evaluates to an integer/number:
+                // If it provides coordinates (e.g. 1 5000 5000), it's defining a point (implicit PT/NEZ).
+                // If it's a single identifier, it's appending to a figure (implicit CONT).
+                if (double.TryParse(commandName, out _))
+                {
+                    if (args.Count >= 3)
+                    {
+                        var ptCmd = _registry.GetCommand("PT");
+                        if (ptCmd != null)
+                        {
+                            var newArgs = new List<string> { "PT" };
+                            newArgs.AddRange(args);
+                            await ptCmd.ExecuteAsync(newArgs.ToArray(), context);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        var contCmd = _registry.GetCommand("CONT");
+                        if (contCmd != null)
+                        {
+                            var newArgs = new List<string> { "CONT" };
+                            newArgs.AddRange(args);
+                            await contCmd.ExecuteAsync(newArgs.ToArray(), context);
+                            return;
+                        }
+                    }
+                }
 
-            context.Log($"Unknown command: {commandName}");
+                context.Log($"Unknown command: {commandName}");
+            }
+        }
+        catch (Exception ex)
+        {
+            context.Log($"[ERROR] Command failed: {ex.Message}");
         }
     }
 

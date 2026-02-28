@@ -90,6 +90,10 @@ public static class DbInitializer
              {
                  context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "GASF", SystemCode = "G-FITTING", Description = "Gas Fitting" });
              }
+             if (!context.CogoCodes.Any(c => c.LocalCode == "GMET"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "GMET", SystemCode = "JEAGMET", Description = "Gas Meter" });
+             }
 
              // Seed Gas Materials
              if (!context.Materials.Any(m => m.Material == "PE"))

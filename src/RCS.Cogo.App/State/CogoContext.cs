@@ -10,12 +10,16 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
 {
     private readonly Dictionary<string, (Point3D Point, string Description)> _points = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, Figure> _figures = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, RCS.Alignments.Core.Alignment> _alignments = new(StringComparer.OrdinalIgnoreCase);
     private readonly Action<string> _logger;
 
     public Point3D? CurrentStation { get; set; }
     public Point3D? CurrentBacksight { get; set; }
     public bool TraverseMode { get; set; }
     public Figure? CurrentFigure { get; set; }
+    public RCS.Alignments.Core.Alignment? CurrentAlignment { get; set; }
+    public RCS.Alignments.Core.Profile? CurrentProfile { get; set; }
+
     public (Point3D? Left, Point3D? Right) LastIntersections { get; set; }
 
     // Defaults
@@ -31,6 +35,7 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
     public string EdmMode { get; set; } = "STD";
     public string PrismMode { get; set; } = "0";
     public double MapCheckClosureTolerance { get; set; } = 0.01;
+    public bool ShowAlignmentLabels { get; set; } = true;
 
     public CogoContext(Action<string> logger)
     {
@@ -113,13 +118,31 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
         return _figures.Values;
     }
 
+    public void AddAlignment(RCS.Alignments.Core.Alignment alignment)
+    {
+        _alignments[alignment.Name] = alignment;
+    }
+
+    public RCS.Alignments.Core.Alignment? GetAlignment(string name)
+    {
+        return _alignments.TryGetValue(name, out var algn) ? algn : null;
+    }
+
+    public IEnumerable<RCS.Alignments.Core.Alignment> GetAllAlignments()
+    {
+        return _alignments.Values;
+    }
+
     public void ClearState()
     {
         _points.Clear();
         _figures.Clear();
+        _alignments.Clear();
         CurrentStation = null;
         CurrentBacksight = null;
         CurrentFigure = null;
+        CurrentAlignment = null;
+        CurrentProfile = null;
         Log("[AUDIT] Context State Cleared.");
     }
 }

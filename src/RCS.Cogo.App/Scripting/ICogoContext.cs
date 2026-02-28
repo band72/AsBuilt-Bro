@@ -41,6 +41,7 @@ public interface ICogoContext
     string EdmMode { get; set; } 
     string PrismMode { get; set; }
     double MapCheckClosureTolerance { get; set; }
+    bool ShowAlignmentLabels { get; set; }
 
     /// <summary>
     /// Gets or sets the currently active figure being constructed.
@@ -56,6 +57,16 @@ public interface ICogoContext
     /// Adds a new figure to the project.
     /// </summary>
     void AddFigure(Figure figure);
+
+    /// <summary>
+    /// Active Alignment construction
+    /// </summary>
+    RCS.Alignments.Core.Alignment? CurrentAlignment { get; set; }
+    RCS.Alignments.Core.Profile? CurrentProfile { get; set; }
+
+    void AddAlignment(RCS.Alignments.Core.Alignment alignment);
+    RCS.Alignments.Core.Alignment? GetAlignment(string name);
+    IEnumerable<RCS.Alignments.Core.Alignment> GetAllAlignments();
 
     /// <summary>
     /// Retrieves a figure by name.
