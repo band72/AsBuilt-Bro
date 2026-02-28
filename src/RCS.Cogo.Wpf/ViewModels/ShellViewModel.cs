@@ -421,12 +421,20 @@ public class ShellViewModel : ViewModelBase
                 
                 _context.Log($"[AUDIT] Loaded {codes.Count} codes and {mats.Count} materials from Master Database.");
             }
+            
+            // Load DB settings
+            if (double.TryParse(RCS.Services.GlobalSettingsService.GetSetting("SymbolScaleMultiplier", "1.0"), out double scale)) SymbolScaleMultiplier = scale;
+            if (bool.TryParse(RCS.Services.GlobalSettingsService.GetSetting("ShowViewportLegend", "True"), out bool leg)) ShowViewportLegend = leg;
+            if (bool.TryParse(RCS.Services.GlobalSettingsService.GetSetting("IsOutputLogDescending", "True"), out bool desc)) IsOutputLogDescending = desc;
+            if (double.TryParse(RCS.Services.GlobalSettingsService.GetSetting("PointNumberSize", "24.0"), out double pns)) PointNumberSize = pns;
+            if (double.TryParse(RCS.Services.GlobalSettingsService.GetSetting("PointMarkerSize", "1.0"), out double pms)) PointMarkerSize = pms;
+            if (double.TryParse(RCS.Services.GlobalSettingsService.GetSetting("FigureLineWidth", "3.0"), out double flw)) FigureLineWidth = flw;
+            if (double.TryParse(RCS.Services.GlobalSettingsService.GetSetting("MapCheckClosureTolerance", "0.01"), out double tol)) MapCheckClosureTolerance = tol;
         }
         catch (Exception ex)
         {
              _context.Log($"[ERROR] Failed to load Master Database: {ex.Message}");
              CommandLog.Add($"[ERROR] DB Load Failed: {ex.Message}");
-             // System.Windows.MessageBox.Show($"Error loading Master Database (Codes/Materials): {ex.Message}", "Database Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
         }
 
         PopulateDropdowns();
@@ -3232,6 +3240,8 @@ public class StructureViewModel : ViewModelBase
         else if (t.Contains("HYDRANT") || t.EndsWith("H") || t.EndsWith("HYD")) SymbolType = "Hydrant";
         else if (t.Contains("METER") || t.EndsWith("M")) SymbolType = "Meter";
         else if (t.Contains("FITTING") || t.Contains("BEND") || t.Contains("TEE")) SymbolType = "Fitting";
+        else if (t.Contains("POLE")) SymbolType = "Pole";
+        else if (t.Contains("BOX")) SymbolType = "Box";
         else SymbolType = "Default";
         // Color Logic
         if (type.Equals("Manhole", StringComparison.OrdinalIgnoreCase)) Fill = System.Windows.Media.Brushes.Magenta;
@@ -3242,8 +3252,8 @@ public class StructureViewModel : ViewModelBase
         else if (type == "ST" || type == "S" || type == "D" || type.Contains("SW") || type.Contains("STORM")) Fill = System.Windows.Media.Brushes.Cyan;
         else if (type == "W" || type.Contains("WATER")) Fill = System.Windows.Media.Brushes.Blue;
         else if (type == "R" || type.Contains("RECLAIM")) Fill = System.Windows.Media.Brushes.Purple;
-        else if (type == "G" || type.Contains("GAS")) Fill = System.Windows.Media.Brushes.Orange;
-        else if (type == "E" || type == "EL" || type.Contains("ELEC")) Fill = System.Windows.Media.Brushes.Red;
+        else if (type == "G" || type.Contains("GAS") || type.StartsWith("GAS")) Fill = System.Windows.Media.Brushes.Orange;
+        else if (type == "E" || type == "EL" || type.Contains("ELEC") || type.StartsWith("E") || type.StartsWith("E-")) Fill = System.Windows.Media.Brushes.Red;
         else if (type == "CH" || type.Contains("CHILL")) Fill = System.Windows.Media.Brushes.LightSkyBlue;
         else Fill = System.Windows.Media.Brushes.White; // Default 
     }

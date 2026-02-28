@@ -84,6 +84,42 @@
         </Canvas>
     </DataTemplate>
     
+    <!-- ELECTRIC POLE -->
+    <DataTemplate x:Key="Symbol_ElectricPole">
+        <Canvas Width="28" Height="28">
+            <!-- Outer Pole Boundary Ring -->
+            <Ellipse Width="18" Height="18" Canvas.Left="5" Canvas.Top="5" 
+                     Stroke="White" StrokeThickness="1.5" Fill="{Binding Fill, FallbackValue=Red, TargetNullValue=Red}" Effect="{StaticResource SymbolShadow}"/>
+            
+            <!-- Central E - Vertical Spine -->
+            <Line X1="11.5" Y1="10" X2="11.5" Y2="18" 
+                  Stroke="White" StrokeThickness="1.5" />
+                  
+            <!-- Central E - Top Prong -->
+            <Line X1="11.5" Y1="10" X2="17.5" Y2="10" 
+                  Stroke="White" StrokeThickness="1.5" />
+                  
+            <!-- Central E - Middle Prong -->
+            <Line X1="11.5" Y1="14" X2="15.5" Y2="14" 
+                  Stroke="White" StrokeThickness="1.5" />
+                  
+            <!-- Central E - Bottom Prong -->
+            <Line X1="11.5" Y1="18" X2="17.5" Y2="18" 
+                  Stroke="White" StrokeThickness="1.5" />
+        </Canvas>
+    </DataTemplate>
+
+    <!-- ELECTRIC BOX -->
+    <DataTemplate x:Key="Symbol_ElectricBox">
+        <Canvas Width="28" Height="28">
+            <Rectangle Width="18" Height="18" Canvas.Left="5" Canvas.Top="5" 
+                       Stroke="White" StrokeThickness="1.5" Fill="{Binding Fill, FallbackValue=Red, TargetNullValue=Red}" Effect="{StaticResource SymbolShadow}"/>
+            
+            <!-- Lightning Bolt -->
+            <Polygon Points="15.5,7 9,15 15,15 11,21" Fill="White" />
+        </Canvas>
+    </DataTemplate>
+    
     <!-- Selector -->
     <DataTemplate x:Key="StructureSymbolSelector">
         <ContentPresenter Content="{Binding}" ContentTemplateSelector="{StaticResource SymbolSelectorService}"/>

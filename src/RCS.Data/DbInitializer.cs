@@ -81,6 +81,50 @@ public static class DbInitializer
                  context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "WWF", SystemCode = "WW-FITTING", Description = "Sanitary Fitting" });
              }
 
+             // Seed Default Gas Codes
+             if (!context.CogoCodes.Any(c => c.LocalCode == "GASV"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "GASV", SystemCode = "G-VALVE", Description = "Gas Valve" });
+             }
+             if (!context.CogoCodes.Any(c => c.LocalCode == "GASF"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "GASF", SystemCode = "G-FITTING", Description = "Gas Fitting" });
+             }
+
+             // Seed Gas Materials
+             if (!context.Materials.Any(m => m.Material == "PE"))
+             {
+                 context.Materials.Add(new Entities.MaterialEntity { Material = "PE", Discipline = "Gas", FeatureType = "Pipe", Notes = "Polyethylene Gas Pipe" });
+             }
+             if (!context.Materials.Any(m => m.Material == "PEX"))
+             {
+                 context.Materials.Add(new Entities.MaterialEntity { Material = "PEX", Discipline = "Gas", FeatureType = "Pipe", Notes = "Cross-linked Polyethylene Gas Pipe" });
+             }
+
+             // Seed Electric Codes
+             if (!context.CogoCodes.Any(c => c.LocalCode == "EPOLE"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "EPOLE", SystemCode = "E-POLE", Description = "Utility Pole" });
+             }
+             if (!context.CogoCodes.Any(c => c.LocalCode == "EMH"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "EMH", SystemCode = "E-MANHOLE", Description = "Electric Manhole" });
+             }
+             if (!context.CogoCodes.Any(c => c.LocalCode == "EBOX"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "EBOX", SystemCode = "E-BOX", Description = "Utility Box" });
+             }
+             if (!context.CogoCodes.Any(c => c.LocalCode == "EMETER"))
+             {
+                 context.CogoCodes.Add(new Entities.CogoCodeEntity { LocalCode = "EMETER", SystemCode = "E-METER", Description = "Electric Meter" });
+             }
+
+             // Seed Electric Materials
+             if (!context.Materials.Any(m => m.Material == "ALUM"))
+             {
+                 context.Materials.Add(new Entities.MaterialEntity { Material = "ALUM", Discipline = "Electric", FeatureType = "Wire", Notes = "Aluminum Wire" });
+             }
+
              context.SaveChanges();
         }
         catch (Exception ex)

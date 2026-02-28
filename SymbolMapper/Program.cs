@@ -93,6 +93,8 @@ class Program
     static string GetSymbolType(string desc)
     {
         string d = desc.ToUpper();
+        if (d.Contains("POLE")) return "pole";
+        if (d.Contains("BOX")) return "box";
         if (d.Contains("MANHOLE") || d.Contains("VAULT") || d.Contains("CB") || d.Contains("INLET") || d.Contains("CATCH BASIN")) return "manhole";
         if (d.Contains("VALVE")) return "valve";
         if (d.Contains("FITTING")) return "fitting";
@@ -141,6 +143,30 @@ class Program
                 break;
             case "line":
                 using (var bigPen = new Pen(color, 6)) g.DrawLine(bigPen, 5, 30, 55, 30);
+                break;
+            case "pole":
+                g.FillEllipse(brush, 10, 10, 40, 40);
+                g.DrawEllipse(pen, 10, 10, 40, 40);
+                using (var penE = new Pen(Color.White, 3))
+                {
+                    g.DrawLine(penE, 22, 18, 22, 42); // Vertical
+                    g.DrawLine(penE, 22, 18, 38, 18); // Top horizontal
+                    g.DrawLine(penE, 22, 30, 34, 30); // Mid horizontal
+                    g.DrawLine(penE, 22, 42, 38, 42); // Bottom horizontal
+                }
+                break;
+            case "box":
+                g.FillRectangle(brush, 10, 10, 40, 40);
+                g.DrawRectangle(pen, 10, 10, 40, 40);
+                using (var penLight = new Pen(Color.White, 3))
+                {
+                    g.DrawLines(penLight, new Point[] {
+                        new Point(34, 15),
+                        new Point(20, 30),
+                        new Point(32, 30),
+                        new Point(24, 45)
+                    });
+                }
                 break;
             default: // point
                 g.FillPolygon(brush, new Point[] { new Point(30, 10), new Point(50, 40), new Point(10, 40) });

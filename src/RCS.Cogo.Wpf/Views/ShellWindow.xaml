@@ -973,6 +973,12 @@
                                                  <DataTrigger Binding="{Binding SymbolType}" Value="Inlet">
                                                      <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Manhole}"/>
                                                 </DataTrigger>
+                                                <DataTrigger Binding="{Binding SymbolType}" Value="Pole">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_ElectricPole}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SymbolType}" Value="Box">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_ElectricBox}"/>
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </ContentControl.Style>

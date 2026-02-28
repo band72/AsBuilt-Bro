@@ -2,10 +2,14 @@
 // Subdivision Integrated Utility System - Residential Design
 // Scale: 2-Block Typical Module (10 Lots Total shown)
 // =========================================================================
+// =========================================================================
+// =========================================================================
 // Features Included:
 // - WATER: 12" Perimeter Loops, 8" Spines, 1" Laterals to 5' offset meters.
 // - STORM: Centerline 18" Storm Drain with Manholes & Outfall.
 // - SEWER: 8" Gravity Main offset 10' from Storm, Laterals w/ cleanouts.
+// - GAS: 4" Main offset 20' North of Centerline, depth 10', 1" Laterals.
+// - ELECTRIC: Overhead line 5' North from Gas, poles every 100', laterals & Manhole.
 // =========================================================================
 
 PIPE-ENGINE-OFF
@@ -123,7 +127,92 @@ NEZ 830 5225 5200 95.8 "CLEANOUT L10"
 
 
 // =========================================================================
-// 4) COGO GEOMETRY: LOT FIGURES (BLOCK 1 WEST, 50'x100')
+// 4) COGO GEOMETRY: NATURAL GAS (NORTH OFFSET 20' FROM CENTERLINE/STORM)
+//    DEPTH = 10 FEET -> Elevation = 90.0
+// =========================================================================
+// Most Northeast Part of Subdivision start (E=5490, N=5300)
+NEZ 900 5300 5490 90.0 "GAS START NE"
+NEZ 901 5300 5230 90.0 "GAS VALVE JUNC 1"
+NEZ 902 5300 4970 90.0 "GAS VALVE JUNC 2"
+
+// Gas progressing down center road (E=5230 is Storm, Gas needs 20ft offset if tracking south, let's track along street with houses)
+// Based on "20 ft north of the centerline and continues to the street with houses"
+// The subdivision lots are on the west blocks. Let's run a main along N=5280 offset 20' North -> N=5300.
+// Let's run a lateral distribution main along the West Road Centerline (E=4970), offset 20' -> E=4950
+NEZ 903 5125 4950 90.0 "GAS VALVE JUNC 3"
+NEZ 904 4970 4950 90.0 "GAS VALVE JUNC 4"
+
+// Laterals to West Road houses
+// Homes are located at N=5000, 5050, 5100, 5150, 5200, E >= 5000. 
+// We will tap at E=4950, push literal to E=5000 (Gas meter at home edge).
+NEZ 911 5025 4950 90.0 "GAS TEE L1"
+NEZ 912 5025 5000 90.0 "GAS METER L1"
+NEZ 913 5075 4950 90.0 "GAS TEE L2"
+NEZ 914 5075 5000 90.0 "GAS METER L2"
+NEZ 915 5125 4950 90.0 "GAS TEE L3"
+NEZ 916 5125 5000 90.0 "GAS METER L3"
+NEZ 917 5175 4950 90.0 "GAS TEE L4"
+NEZ 918 5175 5000 90.0 "GAS METER L4"
+NEZ 919 5225 4950 90.0 "GAS TEE L5"
+NEZ 920 5225 5000 90.0 "GAS METER L5"
+
+// Central Houses: Tapping from a central spine (E=5230 is street, North/South. 20' offset = E=5210)
+NEZ 905 5125 5210 90.0 "GAS VALVE JUNC 5"
+NEZ 906 4970 5210 90.0 "GAS VALVE JUNC 6"
+
+NEZ 921 5025 5210 90.0 "GAS TEE L6"
+NEZ 922 5025 5200 90.0 "GAS METER L6"
+NEZ 923 5075 5210 90.0 "GAS TEE L7"
+NEZ 924 5075 5200 90.0 "GAS METER L7"
+NEZ 925 5125 5210 90.0 "GAS TEE L8"
+NEZ 926 5125 5200 90.0 "GAS METER L8"
+NEZ 927 5175 5210 90.0 "GAS TEE L9"
+NEZ 928 5175 5200 90.0 "GAS METER L9"
+NEZ 929 5225 5210 90.0 "GAS TEE L10"
+NEZ 930 5225 5200 90.0 "GAS METER L10"
+
+
+// =========================================================================
+// 10) COGO GEOMETRY: OVERHEAD ELECTRIC (NORTH OFFSET 5' FROM GAS)
+// =========================================================================
+// Gas is at N=5300. Electric is 5' north -> N=5305.
+// Gas start NE is N=5300, E=5490.
+// Depth: Overhead lines, Z = 120.0
+NEZ 1000 5305 5490 120.0 "ELEC POB POLE"
+NEZ 1001 5305 5390 120.0 "ELEC MANHOLE"
+NEZ 1002 5355 5390 120.0 "ELEC MANHOLE LATERAL"
+
+// Main line crossing West
+NEZ 1003 5305 5290 120.0 "POLE"
+NEZ 1004 5305 5205 120.0 "POLE JUNC CENTRAL"
+NEZ 1005 5305 5105 120.0 "POLE"
+NEZ 1006 5305 5005 120.0 "POLE"
+NEZ 1007 5305 4945 120.0 "POLE JUNC WEST"
+NEZ 1008 5305 4845 120.0 "ELEC UTILITY BOX END"
+
+// West Street Poles (E=4945) (Gas is 4950, storm is 4970)
+NEZ 1011 5205 4945 120.0 "POLE WEST 1"
+NEZ 1012 5105 4945 120.0 "POLE WEST 2"
+NEZ 1013 5005 4945 120.0 "POLE WEST 3"
+NEZ 1014 4905 4945 120.0 "ELEC UTILITY BOX WEST"
+
+// Central Street Poles (E=5205) (Gas is 5210, storm is 5230)
+NEZ 1021 5205 5205 120.0 "POLE CENTRAL 1"
+NEZ 1022 5105 5205 120.0 "POLE CENTRAL 2"
+NEZ 1023 5005 5205 120.0 "POLE CENTRAL 3"
+NEZ 1024 4905 5205 120.0 "ELEC UTILITY BOX CENTRAL"
+
+// Service Meters (Laterals) -> homes are at E=5000 and E=5200 (from previous setups)
+NEZ 1031 5205 5000 120.0 "ELEC METER WEST 1"
+NEZ 1032 5105 5000 120.0 "ELEC METER WEST 2"
+NEZ 1033 5005 5000 120.0 "ELEC METER WEST 3"
+NEZ 1041 5205 5200 120.0 "ELEC METER CENTRAL 1"
+NEZ 1042 5105 5200 120.0 "ELEC METER CENTRAL 2"
+NEZ 1043 5005 5200 120.0 "ELEC METER CENTRAL 3"
+
+
+// =========================================================================
+// 5) COGO GEOMETRY: LOT FIGURES (BLOCK 1 WEST, 50'x100')
 // =========================================================================
 NEZ 100 5000 5000 100.0 "SW LOT 1"
 NEZ 101 5050 5000 100.0 "NW LOT 1"
@@ -158,7 +247,7 @@ COGO-ENGINE-OFF
 
 
 // =========================================================================
-// 5) PIPE ENGINE: WATER DISTRIBUTION
+// 6) PIPE ENGINE: WATER DISTRIBUTION
 // =========================================================================
 PIPE-ENGINE-ON
 
@@ -242,7 +331,7 @@ PRUN END
 
 
 // =========================================================================
-// 6) PIPE ENGINE: STORM DRAINAGE PIPES (ST)
+// 7) PIPE ENGINE: STORM DRAINAGE PIPES (ST)
 // =========================================================================
 // Main Trunk West
 PRUN START ST DIAM 18 MAT PVC
@@ -280,7 +369,7 @@ PRUN END
 
 
 // =========================================================================
-// 7) PIPE ENGINE: SANITARY SEWER PIPES (WW)
+// 8) PIPE ENGINE: SANITARY SEWER PIPES (WW)
 // =========================================================================
 // West Gravity Main to Lift Station
 // Flows North to South: 803 -> 802 -> 801 -> 807 -> 800 (Lift Station)
@@ -350,4 +439,185 @@ SS-C 814 WWF "CLEANOUT CAPPED"
 
 SS-C 821 WWF "SEWER WYE"
 SS-C 822 WWF "CLEANOUT CAPPED"
+PRUN END
+
+
+// =========================================================================
+// 9) PIPE ENGINE: NATURAL GAS (G)
+// =========================================================================
+// North East Perimeter Main traversing West (N=5300)
+PRUN START G DIAM 4 MAT PE
+G-B 900
+G-C 901
+G-C 902
+G-E
+PRUN END
+
+// West Spine Southbound (E=4950)
+PRUN START G DIAM 4 MAT PE
+G-B 902
+G-C 919
+G-C 917
+G-C 915 // Junc 3 location offset
+G-C 913
+G-C 911
+G-C 904
+G-E
+PRUN END
+
+// Central Spine Southbound (E=5210)
+PRUN START G DIAM 4 MAT PE
+G-B 901
+G-C 929
+G-C 927
+G-C 925 // Junc 5 location offset
+G-C 923
+G-C 921
+G-C 906
+G-E
+PRUN END
+
+// Gas Laterals (1" PEX)
+PRUN START G DIAM 1 MAT PE
+G-B 911
+G-C 912
+G-E
+PRUN END
+
+PRUN START G DIAM 1 MAT PE
+G-B 913
+G-C 914
+G-E
+PRUN END
+
+PRUN START G DIAM 1 MAT PE
+G-B 921
+G-C 922
+G-E
+PRUN END
+
+// Appurtenances
+PRUN START G DIAM 4 MAT PE
+SS-C 900 GASV "MAIN SHUTOFF"
+SS-C 901 GASF "TEE"
+SS-C 902 GASF "TEE"
+SS-C 903 GASV "ISO VALVE"
+SS-C 904 GASF "CAP"
+SS-C 905 GASV "ISO VALVE"
+SS-C 906 GASF "CAP"
+
+SS-C 911 GASF "TEE"
+SS-C 912 GASF "METER L1"
+SS-C 913 GASF "TEE"
+SS-C 914 GASF "METER L2"
+
+SS-C 921 GASF "TEE"
+SS-C 922 GASF "METER L6"
+PRUN END
+
+// =========================================================================
+// 10) PIPE ENGINE: OVERHEAD ELECTRIC (E)
+// =========================================================================
+// Main Overhead Line traversing West (N=5305)
+PRUN START E DIAM 1 MAT ALUM
+E-B 1000
+E-C 1001
+E-C 1003
+E-C 1004
+E-C 1005
+E-C 1006
+E-C 1007
+E-C 1008
+E-E
+PRUN END
+
+// Manhole Lateral (50ft from 1001)
+PRUN START E DIAM 1 MAT ALUM
+E-B 1001
+E-C 1002
+E-E
+PRUN END
+
+// West Line Southbound (E=4945)
+PRUN START E DIAM 1 MAT ALUM
+E-B 1007
+E-C 1011
+E-C 1012
+E-C 1013
+E-C 1014
+E-E
+PRUN END
+
+// Central Line Southbound (E=5205)
+PRUN START E DIAM 1 MAT ALUM
+E-B 1004
+E-C 1021
+E-C 1022
+E-C 1023
+E-C 1024
+E-E
+PRUN END
+
+// Electric Service Laterals (West)
+PRUN START E DIAM 1 MAT ALUM
+E-B 1011
+E-C 1031
+E-E
+PRUN END
+PRUN START E DIAM 1 MAT ALUM
+E-B 1012
+E-C 1032
+E-E
+PRUN END
+PRUN START E DIAM 1 MAT ALUM
+E-B 1013
+E-C 1033
+E-E
+PRUN END
+
+// Electric Service Laterals (Central)
+PRUN START E DIAM 1 MAT ALUM
+E-B 1021
+E-C 1041
+E-E
+PRUN END
+PRUN START E DIAM 1 MAT ALUM
+E-B 1022
+E-C 1042
+E-E
+PRUN END
+PRUN START E DIAM 1 MAT ALUM
+E-B 1023
+E-C 1043
+E-E
+PRUN END
+
+// Appurtenances
+PRUN START E DIAM 1 MAT ALUM
+SS-C 1000 EPOLE "ELEC POB POLE"
+SS-C 1001 EMH "ELEC MANHOLE"
+SS-C 1002 EMH "ELEC MANHOLE LAT"
+SS-C 1003 EPOLE "POLE"
+SS-C 1004 EPOLE "POLE JUNC CENTRAL"
+SS-C 1005 EPOLE "POLE"
+SS-C 1006 EPOLE "POLE"
+SS-C 1007 EPOLE "POLE JUNC WEST"
+SS-C 1008 EBOX "ELEC UTILITY BOX END"
+
+SS-C 1011 EPOLE "POLE WEST 1"
+SS-C 1012 EPOLE "POLE WEST 2"
+SS-C 1013 EPOLE "POLE WEST 3"
+SS-C 1014 EBOX "ELEC UTILITY BOX WEST"
+
+SS-C 1021 EPOLE "POLE CENTRAL 1"
+SS-C 1022 EPOLE "POLE CENTRAL 2"
+SS-C 1023 EPOLE "POLE CENTRAL 3"
+SS-C 1024 EBOX "ELEC UTILITY BOX CENTRAL"
+
+SS-C 1031 EMETER "ELEC METER WEST 1"
+SS-C 1032 EMETER "ELEC METER WEST 2"
+SS-C 1033 EMETER "ELEC METER WEST 3"
+SS-C 1041 EMETER "ELEC METER CENTRAL 1"
+SS-C 1042 EMETER "ELEC METER CENTRAL 2"
+SS-C 1043 EMETER "ELEC METER CENTRAL 3"
 PRUN END
