@@ -54,7 +54,22 @@ public static class DbInitializer
                 );
             ");
 
-            // Symbols
+            // Part Specifications
+            try { context.Database.ExecuteSqlRaw("ALTER TABLE \"PartSpecifications\" ADD COLUMN \"OuterDiameter\" REAL NULL;"); } catch { }
+            try { context.Database.ExecuteSqlRaw("ALTER TABLE \"PartSpecifications\" ADD COLUMN \"NominalDiameter\" REAL NULL;"); } catch { }
+            context.Database.ExecuteSqlRaw(@"
+                CREATE TABLE IF NOT EXISTS ""PartSpecifications"" (
+                    ""Id"" INTEGER NOT NULL CONSTRAINT ""PK_PartSpecifications"" PRIMARY KEY AUTOINCREMENT,
+                    ""PartNumber"" TEXT NOT NULL,
+                    ""OuterDiameter"" REAL NULL,
+                    ""NominalDiameter"" REAL NULL,
+                    ""PipeThickness"" REAL NULL,
+                    ""InnerDiameter"" REAL NULL,
+                    ""Deflection"" REAL NULL,
+                    ""Note"" TEXT NULL
+                );
+            ");
+
             context.Database.ExecuteSqlRaw(@"
                 CREATE TABLE IF NOT EXISTS ""SymbolManager"" (
                     ""Id"" INTEGER NOT NULL CONSTRAINT ""PK_SymbolManager"" PRIMARY KEY AUTOINCREMENT,

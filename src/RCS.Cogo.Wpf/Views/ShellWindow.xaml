@@ -272,7 +272,18 @@
                         <DataGrid Grid.Row="1" ItemsSource="{Binding Points}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                                   BorderThickness="1" BorderBrush="#3E3E42">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Point Number" Binding="{Binding Id}" Width="80" IsReadOnly="True"/>
+                                <DataGridTemplateColumn Header="Point Number" Width="80" IsReadOnly="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Padding="5">
+                                                <Hyperlink Command="{Binding DataContext.ZoomToImportedPointCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                                           CommandParameter="{Binding}" Foreground="#007ACC" TextDecorations="Underline">
+                                                    <TextBlock Text="{Binding Id}"/>
+                                                </Hyperlink>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="Northing" Binding="{Binding Northing, StringFormat=F3}" Width="*"/>
                                 <DataGridTextColumn Header="Easting" Binding="{Binding Easting, StringFormat=F3}" Width="*"/>
                                 <DataGridTextColumn Header="Elevation" Binding="{Binding Elevation, StringFormat=F3}" Width="80"/>

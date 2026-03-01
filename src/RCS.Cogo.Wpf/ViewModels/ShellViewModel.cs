@@ -372,6 +372,7 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand ZoomOutCommand { get; }
     public System.Windows.Input.ICommand ZoomExtentsCommand { get; }
     public System.Windows.Input.ICommand ZoomWindowCommand { get; }
+    public System.Windows.Input.ICommand ZoomToImportedPointCommand { get; }
 
     public event EventHandler? ZoomExtentsRequested;
     public event EventHandler? ZoomWindowRequested;
@@ -459,6 +460,12 @@ public class ShellViewModel : ViewModelBase
         ZoomOutCommand = new RelayCommand(_ => ZoomOutRequested?.Invoke(this, EventArgs.Empty));
         ZoomExtentsCommand = new RelayCommand(_ => ZoomExtentsRequested?.Invoke(this, EventArgs.Empty));
         ZoomWindowCommand = new RelayCommand(_ => ZoomWindowRequested?.Invoke(this, EventArgs.Empty));
+        ZoomToImportedPointCommand = new RelayCommand(obj => {
+            if (obj is PointViewModel pt) {
+                var zoomTarget = new System.Windows.Point(pt.Easting, pt.Northing);
+                ZoomToPointRequested?.Invoke(this, zoomTarget);
+            }
+        });
         ExportDxfCommand = new RelayCommand(_ => ExportDxf());
         ExportBomCommand = new RelayCommand(_ => ExportBom());
         ExportEpanetCommand = new RelayCommand(_ => ExportEpanet());

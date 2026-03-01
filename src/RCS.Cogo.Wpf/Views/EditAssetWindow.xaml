@@ -50,18 +50,59 @@
                         <TextBox Text="{Binding Material}" Background="#252526" Foreground="White" Padding="5"/>
                     </StackPanel>
 
+                    <!-- Point Geometry (Structures, Valves, Meters, etc) -->
                     <Grid Margin="0,5,0,0">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                            <TextBlock Text="Northing:"/>
+                            <TextBox Text="{Binding Northing, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="5,0,5,0">
+                            <TextBlock Text="Easting:"/>
+                            <TextBox Text="{Binding Easting, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Margin="5,0,0,0">
+                            <TextBlock Text="Elevation/Invert:"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Text="{Binding Elevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <Button Grid.Column="1" Content="..." Width="25" Margin="5,0,0,0" Tag="Elevation" Click="CalculateInvert_Click"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Line Geometry (Pipes) -->
+                    <Grid Margin="0,15,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,5,0">
                             <TextBlock Text="Start Northing:"/>
-                            <TextBox Text="{Binding NorthingStart}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBox Text="{Binding NorthingStart, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                        <StackPanel Grid.Column="1" Margin="5,0,5,0">
                             <TextBlock Text="Start Easting:"/>
-                            <TextBox Text="{Binding EastingStart}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBox Text="{Binding EastingStart, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Margin="5,0,0,0">
+                            <TextBlock Text="Start Invert:"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Text="{Binding InvertStart, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <Button Grid.Column="1" Content="..." Width="25" Margin="5,0,0,0" Tag="InvertStart" Click="CalculateInvert_Click"/>
+                            </Grid>
                         </StackPanel>
                     </Grid>
 
@@ -69,14 +110,26 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                            <TextBlock Text="End Northing (or N):"/>
-                            <TextBox Text="{Binding NorthingEnd}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBlock Text="End Northing:"/>
+                            <TextBox Text="{Binding NorthingEnd, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="1" Margin="5,0,0,0">
-                            <TextBlock Text="End Easting (or E):"/>
-                            <TextBox Text="{Binding EastingEnd}" Background="#252526" Foreground="White" Padding="5"/>
+                        <StackPanel Grid.Column="1" Margin="5,0,5,0">
+                            <TextBlock Text="End Easting:"/>
+                            <TextBox Text="{Binding EastingEnd, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Margin="5,0,0,0">
+                            <TextBlock Text="End Invert:"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Text="{Binding InvertEnd, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <Button Grid.Column="1" Content="..." Width="25" Margin="5,0,0,0" Tag="InvertEnd" Click="CalculateInvert_Click"/>
+                            </Grid>
                         </StackPanel>
                     </Grid>
 

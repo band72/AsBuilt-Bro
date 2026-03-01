@@ -85,6 +85,9 @@ public class AppDbContext : DbContext
     // Master Materials
     public DbSet<MaterialEntity> Materials { get; set; }
 
+    // Part / Pipe Specifications
+    public DbSet<PartSpecificationEntity> PartSpecifications { get; set; }
+
     // Validation Rules
     public DbSet<ValidationRuleEntity> ValidationRules { get; set; }
     public DbSet<AppGlobalSetting> GlobalSettings { get; set; }

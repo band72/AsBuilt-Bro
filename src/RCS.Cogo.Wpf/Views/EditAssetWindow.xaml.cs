@@ -130,5 +130,31 @@ namespace RCS.Cogo.Wpf.Views
             DialogResult = false;
             Close();
         }
+
+        private void CalculateInvert_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is System.Windows.Controls.Button btn && btn.Tag is string tag)
+            {
+                var calc = new InvertCalculatorWindow(_editingAsset);
+                calc.Owner = this;
+                if (calc.ShowDialog() == true && calc.ComputedValue.HasValue)
+                {
+                    var val = calc.ComputedValue.Value;
+                    
+                    // Assign via reflection using the Tag
+                    var prop = _editingAsset.GetType().GetProperty(tag, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                    if (prop != null)
+                    {
+                        prop.SetValue(_editingAsset, val);
+                        
+                        // Force UI refresh for the binding
+                        DataContext = null;
+                        DataContext = _editingAsset;
+                        MsgTxt.Text = $"Computed invert applied to {tag}.";
+                        MsgTxt.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightGreen);
+                    }
+                }
+            }
+        }
     }
 }
