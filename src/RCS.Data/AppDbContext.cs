@@ -120,10 +120,9 @@ public class AppDbContext : DbContext
         
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Ensure ProjectNumber is unique
+        // Ensure ProjectNumber is indexed (but not unique because of '0000' fallbacks)
         modelBuilder.Entity<ProjectEntity>()
-            .HasIndex(p => p.ProjectNumber)
-            .IsUnique();
+            .HasIndex(p => p.ProjectNumber);
 
         // Indexes for Assets (ProjectId)
         modelBuilder.Entity<PipeCrossing>().HasIndex(e => e.ProjectId);

@@ -5,6 +5,7 @@ public class CogoCode
     public string LocalCode { get; set; } = string.Empty;
     public string SystemCode { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+    public string Block { get; set; } = string.Empty;
 
     public string SymbolImagePath
     {
@@ -145,10 +146,11 @@ public class CogoCode
 
     public CogoCode() { }
 
-    public CogoCode(string local, string system, string desc)
+    public CogoCode(string local, string system, string desc, string block = "")
     {
         LocalCode = local;
         SystemCode = system;
         Description = desc;
+        Block = block;
     }
 }

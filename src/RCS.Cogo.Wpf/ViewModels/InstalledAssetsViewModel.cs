@@ -11,6 +11,7 @@ namespace RCS.Cogo.Wpf.ViewModels;
 public class InstalledAssetsViewModel : ViewModelBase
 {
     private readonly AppDbContext _dbContext;
+    public Action<string>? LogAction { get; set; }
     
     // Pipe Crossing Service
     private readonly InstalledAssetService<PipeCrossing> _pipeCrossingService;
@@ -153,6 +154,7 @@ public class InstalledAssetsViewModel : ViewModelBase
     public ObservableCollection<STLocateBox> STLocateBoxes { get; } = new();
 
     private string _currentProjectId = "";
+    private string _currentProjectNumber = "";
 
     public InstalledAssetsViewModel()
     {
@@ -229,9 +231,18 @@ public class InstalledAssetsViewModel : ViewModelBase
         _stLocateBoxService = new InstalledAssetService<STLocateBox>(_dbContext);
     }
 
+    public async Task ReloadAsync()
+    {
+        if (!string.IsNullOrEmpty(_currentProjectId))
+        {
+            await LoadProjectAsync(_currentProjectId, _currentProjectNumber);
+        }
+    }
+
     public async Task LoadProjectAsync(string projectId, string projectNumber)
     {
         _currentProjectId = projectId;
+        _currentProjectNumber = projectNumber;
         
         await _projectService.EnsureProjectExistsAsync(projectId, projectNumber, "Project " + projectNumber);
 
@@ -454,6 +465,77 @@ public class InstalledAssetsViewModel : ViewModelBase
         else if (item is STServicePoint stsp) { STServicePoints.Add(stsp); await _stServicePointService.UpsertAsync(_currentProjectId, stsp); }
         else if (item is STValve stv) { STValves.Add(stv); await _stValveService.UpsertAsync(_currentProjectId, stv); }
         else if (item is STLocateBox stlb) { STLocateBoxes.Add(stlb); await _stLocateBoxService.UpsertAsync(_currentProjectId, stlb); }
+    }
+
+    public async Task DeleteAssetAsync(InstalledAsset item)
+    {
+        if (item is PipeCrossing pc) await _pipeCrossingService.DeleteAsync(_currentProjectId, pc.Id);
+        
+        // Water
+        else if (item is WaterPipe wp) await _waterPipeService.DeleteAsync(_currentProjectId, wp.Id);
+        else if (item is WaterPoint wpo) await _waterPointService.DeleteAsync(_currentProjectId, wpo.Id);
+        else if (item is WaterFitting wf) await _waterFittingService.DeleteAsync(_currentProjectId, wf.Id);
+        else if (item is WaterValve wv) await _waterValveService.DeleteAsync(_currentProjectId, wv.Id);
+        else if (item is WaterHydrant wh) await _waterHydrantService.DeleteAsync(_currentProjectId, wh.Id);
+        else if (item is WaterMeter wm) await _waterMeterService.DeleteAsync(_currentProjectId, wm.Id);
+        else if (item is WaterLocateBox wlb) await _waterLocateBoxService.DeleteAsync(_currentProjectId, wlb.Id);
+
+        // WW
+        else if (item is WWGravityPipe wwgp) await _wwGravityPipeService.DeleteAsync(_currentProjectId, wwgp.Id);
+        else if (item is WWPressurePipe wwpp) await _wwPressurePipeService.DeleteAsync(_currentProjectId, wwpp.Id);
+        else if (item is WWPoint wwp) await _wwPointService.DeleteAsync(_currentProjectId, wwp.Id);
+        else if (item is WWFitting wwf) await _wwFittingService.DeleteAsync(_currentProjectId, wwf.Id);
+        else if (item is Manhole man) await _manholeService.DeleteAsync(_currentProjectId, man.Id);
+        else if (item is WWServicePoint wwsp) await _wwServicePointService.DeleteAsync(_currentProjectId, wwsp.Id);
+        else if (item is WWValve wwv) await _wwValveService.DeleteAsync(_currentProjectId, wwv.Id);
+        else if (item is WWLocateBox wwlb) await _wwLocateBoxService.DeleteAsync(_currentProjectId, wwlb.Id);
+
+        // Reclaimed
+        else if (item is ReclaimedPipe rp) await _reclaimedPipeService.DeleteAsync(_currentProjectId, rp.Id);
+        else if (item is ReclaimedPoint rpo) await _reclaimedPointService.DeleteAsync(_currentProjectId, rpo.Id);
+        else if (item is ReclaimedFitting rf) await _reclaimedFittingService.DeleteAsync(_currentProjectId, rf.Id);
+        else if (item is ReclaimedValve rv) await _reclaimedValveService.DeleteAsync(_currentProjectId, rv.Id);
+        else if (item is ReclaimedHydrant rh) await _reclaimedHydrantService.DeleteAsync(_currentProjectId, rh.Id);
+        else if (item is ReclaimedMeter rm) await _reclaimedMeterService.DeleteAsync(_currentProjectId, rm.Id);
+        else if (item is ReclaimedLocateBox rlb) await _reclaimedLocateBoxService.DeleteAsync(_currentProjectId, rlb.Id);
+
+        // Chilled
+        else if (item is ChilledPipe cp) await _chilledPipeService.DeleteAsync(_currentProjectId, cp.Id);
+        else if (item is ChilledPoint cpo) await _chilledPointService.DeleteAsync(_currentProjectId, cpo.Id);
+        else if (item is ChilledFitting cf) await _chilledFittingService.DeleteAsync(_currentProjectId, cf.Id);
+        else if (item is ChilledValve cv) await _chilledValveService.DeleteAsync(_currentProjectId, cv.Id);
+        else if (item is ChilledMeter cm) await _chilledMeterService.DeleteAsync(_currentProjectId, cm.Id);
+        else if (item is ChilledLocateBox clb) await _chilledLocateBoxService.DeleteAsync(_currentProjectId, clb.Id);
+
+        // Gas
+        else if (item is GGravityPipe ggp) await _gGravityPipeService.DeleteAsync(_currentProjectId, ggp.Id);
+        else if (item is GPressurePipe gpp) await _gPressurePipeService.DeleteAsync(_currentProjectId, gpp.Id);
+        else if (item is GPoint gp) await _gPointService.DeleteAsync(_currentProjectId, gp.Id);
+        else if (item is GFitting gf) await _gFittingService.DeleteAsync(_currentProjectId, gf.Id);
+        else if (item is GManhole gm) await _gManholeService.DeleteAsync(_currentProjectId, gm.Id);
+        else if (item is GServicePoint gsp) await _gServicePointService.DeleteAsync(_currentProjectId, gsp.Id);
+        else if (item is GValve gv) await _gValveService.DeleteAsync(_currentProjectId, gv.Id);
+        else if (item is GLocateBox glb) await _gLocateBoxService.DeleteAsync(_currentProjectId, glb.Id);
+
+        // Electric
+        else if (item is EGravityPipe egp) await _eGravityPipeService.DeleteAsync(_currentProjectId, egp.Id);
+        else if (item is EPressurePipe epp) await _ePressurePipeService.DeleteAsync(_currentProjectId, epp.Id);
+        else if (item is EPoint ep) await _ePointService.DeleteAsync(_currentProjectId, ep.Id);
+        else if (item is EFitting ef) await _eFittingService.DeleteAsync(_currentProjectId, ef.Id);
+        else if (item is EManhole em) await _eManholeService.DeleteAsync(_currentProjectId, em.Id);
+        else if (item is EServicePoint esp) await _eServicePointService.DeleteAsync(_currentProjectId, esp.Id);
+        else if (item is EValve ev) await _eValveService.DeleteAsync(_currentProjectId, ev.Id);
+        else if (item is ELocateBox elb) await _eLocateBoxService.DeleteAsync(_currentProjectId, elb.Id);
+
+        // Storm
+        else if (item is STGravityPipe stgp) await _stGravityPipeService.DeleteAsync(_currentProjectId, stgp.Id);
+        else if (item is STPressurePipe stpp) await _stPressurePipeService.DeleteAsync(_currentProjectId, stpp.Id);
+        else if (item is STPoint stp) await _stPointService.DeleteAsync(_currentProjectId, stp.Id);
+        else if (item is STFitting stf) await _stFittingService.DeleteAsync(_currentProjectId, stf.Id);
+        else if (item is STManhole stm) await _stManholeService.DeleteAsync(_currentProjectId, stm.Id);
+        else if (item is STServicePoint stsp) await _stServicePointService.DeleteAsync(_currentProjectId, stsp.Id);
+        else if (item is STValve stv) await _stValveService.DeleteAsync(_currentProjectId, stv.Id);
+        else if (item is STLocateBox stlb) await _stLocateBoxService.DeleteAsync(_currentProjectId, stlb.Id);
     }
 
     public void ExportToFolder(string baseName)

@@ -22,4 +22,28 @@ public abstract class InstalledAsset
     public string? Source { get; set; }
     public string? Warning { get; set; }
     public string? Notes { get; set; }
+
+    // Dimensions & Elevations (Added for Invert Estimation)
+    public double? TopOutsideWallElev { get; set; }
+    public double? OuterWallThicknessTop { get; set; }
+    public double? InnerDiameter { get; set; }
+    public double? AdjustedInvert { get; set; }
+    
+    // Computed in C# 
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public double? EstimatedInvert 
+    {
+        get 
+        {
+             if (TopOutsideWallElev.HasValue && InnerDiameter.HasValue)
+             {
+                 double thickness = OuterWallThicknessTop ?? 0.0;
+                 return Math.Round(TopOutsideWallElev.Value - thickness - InnerDiameter.Value, 2);
+             }
+             return null;
+        }
+    }
+
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public double? FinalInvert => AdjustedInvert ?? EstimatedInvert;
 }

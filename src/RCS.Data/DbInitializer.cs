@@ -12,13 +12,29 @@ public static class DbInitializer
         // Manual Schema Updates (Running scripts if needed for new tables on existing DB)
         try
         {
+            // Drop unique constraint on ProjectNumber which breaks generic 0000 fallback projects
+            try { context.Database.ExecuteSqlRaw("DROP INDEX IF EXISTS \"IX_Projects_ProjectNumber\";"); } catch { }
+
+            // Upgrade Schema: Add TopOutsideWallElev, OuterWallThicknessTop, InnerDiameter, AdjustedInvert to legacy tables
+            var tablesToUpgrade = new[] { "Pipes", "Structures", "Valves", "Fittings", "Meters", 
+                "PipeCrossings", "WaterHydrants", "WaterLocateBoxes", "ReclaimedHydrants", 
+                "ReclaimedLocateBoxes", "GLocateBoxes", "ELocateBoxes", "ChilledLocateBoxes", 
+                "STLocateBoxes", "WWLocateBoxes" };
+            foreach (var table in tablesToUpgrade)
+            {
+                var newCols = new[] { "TopOutsideWallElev", "OuterWallThicknessTop", "InnerDiameter", "AdjustedInvert" };
+                foreach (var col in newCols)
+                    try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{table}\" ADD COLUMN \"{col}\" REAL NULL;"); } catch { }
+            }
             // Cogo Codes
+            try { context.Database.ExecuteSqlRaw("ALTER TABLE \"CogoCodes\" ADD COLUMN \"Block\" TEXT NULL;"); } catch { }
             context.Database.ExecuteSqlRaw(@"
                 CREATE TABLE IF NOT EXISTS ""CogoCodes"" (
                     ""Id"" INTEGER NOT NULL CONSTRAINT ""PK_CogoCodes"" PRIMARY KEY AUTOINCREMENT,
                     ""LocalCode"" TEXT NOT NULL,
                     ""SystemCode"" TEXT NULL,
-                    ""Description"" TEXT NULL
+                    ""Description"" TEXT NULL,
+                    ""Block"" TEXT NULL
                 );
             ");
 
@@ -81,6 +97,53 @@ public static class DbInitializer
                  }
              }
 
+             // Seed Materials from JEA_Validation_List.csv
+             var matCsvPath = System.IO.Path.Combine(repoRoot, "JEA_Validation_List.csv");
+             if (System.IO.File.Exists(matCsvPath))
+             {
+                 var lines = System.IO.File.ReadAllLines(matCsvPath);
+                 foreach (var line in lines.Skip(1)) // Skip header
+                 {
+                     if (string.IsNullOrWhiteSpace(line)) continue;
+                     var parts = line.Split(',');
+                     if (parts.Length >= 5)
+                     {
+                         string pKey = parts[0].Trim();
+                         string disc = parts[1].Trim();
+                         string feat = parts[2].Trim();
+                         string siz = parts[3].Trim();
+                         string mat = parts[4].Trim();
+                         string mfg = parts.Length > 6 ? parts[6].Trim() : "";
+                         string mod = parts.Length > 7 ? parts[7].Trim() : "";
+                         string yr = parts.Length > 8 ? parts[8].Trim() : "";
+                         string nts = parts.Length > 12 ? parts[12].Trim() : "";
+
+                         if (!context.Materials.Any(m => m.PartKey == pKey))
+                         {
+                             context.Materials.Add(new Entities.MaterialEntity 
+                             { 
+                                 PartKey = pKey, 
+                                 Discipline = disc, 
+                                 FeatureType = feat, 
+                                 Size = siz, 
+                                 Material = mat, 
+                                 Manufacturer = mfg, 
+                                 Model = mod, 
+                                 Year = yr, 
+                                 Notes = nts 
+                             });
+                         }
+                     }
+                 }
+             }
+
+             // Seed additional generic testing materials
+             if (!context.Materials.Any(m => m.Material == "PE"))
+                 context.Materials.Add(new Entities.MaterialEntity { Material = "PE", Discipline = "Gas", FeatureType = "Pipe", Notes = "Polyethylene" });
+
+             if (!context.Materials.Any(m => m.Material == "PVC"))
+                 context.Materials.Add(new Entities.MaterialEntity { Material = "PVC", Discipline = "Water", FeatureType = "Pipe", Notes = "Polyvinyl Chloride" });
+
              // Seed Electric Materials
              if (!context.Materials.Any(m => m.Material == "ALUM"))
              {
@@ -88,6 +151,53 @@ public static class DbInitializer
              }
 
              context.SaveChanges();
+
+             // Force creation of newly added tables (e.g. WaterPipes, WWValves, etc.) 
+             // since EnsureCreated() skips them if DB file already exists.
+             var createScript = context.Database.GenerateCreateScript();
+             var sqlCommands = createScript.Split(';', StringSplitOptions.RemoveEmptyEntries);
+             
+             foreach (var sqlCmd in sqlCommands)
+             {
+                 if (string.IsNullOrWhiteSpace(sqlCmd)) continue;
+                 
+                 // Optionally convert "CREATE TABLE" -> "CREATE TABLE IF NOT EXISTS" for peace of mind in SQLite
+                 var safeCmd = sqlCmd;
+                 safeCmd = safeCmd.Replace("CREATE TABLE \"", "CREATE TABLE IF NOT EXISTS \"");
+                 safeCmd = safeCmd.Replace("CREATE UNIQUE INDEX \"", "CREATE UNIQUE INDEX IF NOT EXISTS \"");
+                 safeCmd = safeCmd.Replace("CREATE INDEX \"", "CREATE INDEX IF NOT EXISTS \"");
+
+                 try
+                 {
+                     context.Database.ExecuteSqlRaw(safeCmd);
+                 }
+                 catch
+                 {
+                     // Typically fails if a column constraint already exists, just ignore.
+                 }
+             }
+
+             // Schema Backfill: Add newly introduced columns to all Asset Tables
+             // This prevents "no such column: Description" (or descriptor) crashes
+             var textColumns = new[] { 
+                 "Discriminator", "Description", "PartKey", "Discipline", "FeatureType", "Size", "Material", 
+                 "Manufacturer", "ManufacturerPartNo", "YearManufactured", "Confidence", "Source", "Warning", "Notes" 
+             };
+             
+             foreach (var entityType in context.Model.GetEntityTypes())
+             {
+                 var tableName = entityType.GetTableName();
+                 if (!string.IsNullOrEmpty(tableName) && 
+                     tableName != "CogoCodes" && tableName != "Materials" && 
+                     tableName != "SymbolManager" && tableName != "GlobalSettings" && tableName != "ValidationRules")
+                 {
+                     foreach (var col in textColumns)
+                     {
+                         try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{tableName}\" ADD COLUMN \"{col}\" TEXT NULL;"); } catch { }
+                     }
+                     try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{tableName}\" ADD COLUMN \"Quantity\" INTEGER NULL;"); } catch { }
+                 }
+             }
         }
         catch (Exception ex)
         {

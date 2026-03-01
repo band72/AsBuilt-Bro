@@ -24,6 +24,7 @@
                          <Setter Property="Margin" Value="0,1"/>
                     </Style>
                     <Style TargetType="DataGrid">
+                        <EventSetter Event="MouseDoubleClick" Handler="DataGrid_MouseDoubleClick"/>
                         <Setter Property="MaxHeight" Value="300"/>
                         <Setter Property="Background" Value="#252526"/>
                         <Setter Property="RowBackground" Value="#252526"/>
@@ -63,6 +64,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                          </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -119,6 +139,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -142,6 +181,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -165,6 +223,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -188,6 +265,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -211,6 +307,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                          </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -234,6 +349,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -316,6 +450,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -339,6 +492,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -362,6 +534,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -385,6 +576,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -408,6 +618,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -431,6 +660,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -487,6 +735,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -510,6 +777,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -533,6 +819,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -556,6 +861,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -579,6 +903,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -602,6 +945,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -684,6 +1046,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -707,6 +1088,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -730,6 +1130,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -753,6 +1172,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -776,6 +1214,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -799,6 +1256,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -881,6 +1357,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -904,6 +1399,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -927,6 +1441,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -950,6 +1483,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -973,6 +1525,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -996,6 +1567,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -1078,6 +1668,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -1101,6 +1710,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -1124,6 +1752,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -1147,6 +1794,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -1170,6 +1836,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -1193,6 +1878,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -1249,6 +1953,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -1272,6 +1995,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -1295,6 +2037,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -1318,6 +2079,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
@@ -1341,6 +2121,25 @@
                              <DataGridTextColumn Header="Source" Binding="{Binding Source}"/>
                              <DataGridTextColumn Header="Warn" Binding="{Binding Warning}"/>
                              <DataGridTextColumn Header="Notes" Binding="{Binding Notes}"/>
+                             <!-- Invert Calculation Columns -->
+                             <DataGridTextColumn Header="Top Wall Elev" Binding="{Binding TopOutsideWallElev}"/>
+                             <DataGridTextColumn Header="Wall Thick (Top)" Binding="{Binding OuterWallThicknessTop}"/>
+                             <DataGridTextColumn Header="Inner Dia" Binding="{Binding InnerDiameter}"/>
+                             <DataGridTextColumn Header="Est. Invert" Binding="{Binding EstimatedInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="Gray"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
+                             <DataGridTextColumn Header="Adj. Invert" Binding="{Binding AdjustedInvert}"/>
+                             <DataGridTextColumn Header="Final Invert" Binding="{Binding FinalInvert}" IsReadOnly="True">
+                                 <DataGridTextColumn.ElementStyle>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Foreground" Value="LightGreen"/>
+                                     </Style>
+                                 </DataGridTextColumn.ElementStyle>
+                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Expander>

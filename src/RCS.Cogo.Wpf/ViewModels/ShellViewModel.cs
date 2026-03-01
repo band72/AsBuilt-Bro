@@ -415,7 +415,7 @@ public class ShellViewModel : ViewModelBase
                 var codes = db.CogoCodes.ToList();
                 foreach (var c in codes)
                 {
-                    CogoCodes.Add(new CogoCode(c.LocalCode, c.SystemCode, c.Description));
+                    CogoCodes.Add(new CogoCode(c.LocalCode, c.SystemCode, c.Description, c.Block ?? ""));
                 }
                 
                 // Load Materials
@@ -552,6 +552,7 @@ public class ShellViewModel : ViewModelBase
         OpenExampleElectricV2Command = new RelayCommand(_ => OpenDocument("TEST_ELECTRIC_V2.txt"));
         
         InstalledAssets = new InstalledAssetsViewModel();
+        InstalledAssets.LogAction = (msg) => CommandLog.Add(msg);
         OpenValidationSettingsCommand = new RelayCommand(_ => OpenValidationSettings());
         OpenGeneralSettingsCommand = new RelayCommand(_ => OpenGeneralSettings());
         OpenAlignmentWindowCommand = new RelayCommand(_ => OpenAlignmentWindow());
@@ -1050,15 +1051,18 @@ public class ShellViewModel : ViewModelBase
                             if (existing != null)
                             {
                                 existing.LocalCode = local;
+                                existing.Block = parts.Length >= 4 ? parts[3].Trim() : existing.Block;
                             }
                             else
                             {
                                 string desc = parts.Length >= 3 ? parts[2].Trim() : sys;
+                                string block = parts.Length >= 4 ? parts[3].Trim() : "";
                                 var newEntity = new RCS.Data.Entities.CogoCodeEntity 
                                 { 
                                     LocalCode = local, 
                                     SystemCode = sys, 
-                                    Description = desc 
+                                    Description = desc,
+                                    Block = block
                                 };
                                 db.CogoCodes.Add(newEntity);
                                 existingEntities.Add(newEntity);
@@ -1071,7 +1075,7 @@ public class ShellViewModel : ViewModelBase
                     CogoCodes.Clear();
                     foreach (var e in db.CogoCodes.ToList())
                     {
-                        CogoCodes.Add(new CogoCode(e.LocalCode, e.SystemCode, e.Description));
+                        CogoCodes.Add(new CogoCode(e.LocalCode, e.SystemCode, e.Description, e.Block ?? ""));
                     }
                 }
                 
@@ -1137,7 +1141,7 @@ public class ShellViewModel : ViewModelBase
                 var sb = new System.Text.StringBuilder();
                 foreach(var code in CogoCodes)
                 {
-                    sb.AppendLine($"{code.LocalCode},{code.SystemCode},{code.Description}");
+                    sb.AppendLine($"{code.LocalCode},{code.SystemCode},{code.Description},{code.Block}");
                 }
                 System.IO.File.WriteAllText(dialog.FileName, sb.ToString());
                 CommandLog.Add($"Exported {CogoCodes.Count} codes to {dialog.FileName}");
@@ -2664,20 +2668,37 @@ public class ShellViewModel : ViewModelBase
                     }
                 }
                 
+                // Export PipeRuns
+                foreach (var run in PipeRuns)
+                {
+                    var p1 = _context.GetPoint(run.FromPointId);
+                    var p2 = _context.GetPoint(run.ToPointId);
+                    if (p1 != null && p2 != null)
+                    {
+                        string layer = $"PIPE_{run.Type}_{run.Diameter}_{run.Material}";
+                        writer.AddLine(p1.Easting, p1.Northing, p2.Easting, p2.Northing, layer);
+                        
+                        // Add textual label at mid point
+                        double midX = (p1.Easting + p2.Easting) / 2;
+                        double midY = (p1.Northing + p2.Northing) / 2;
+                        writer.AddText($"{run.Diameter}\" {run.Material} {run.Type}", midX, midY, 1.5, layer + "_TEXT", "CENTER");
+                    }
+                }
+                
                 // Export Structures
                 foreach(var s in StructureGraphics)
                 {
-                    // Map Symbol Type to Block
                     string block = "MANHOLE";
                     string t = (s.Type ?? "").ToUpper();
                     
-                    if (t.Contains("VALVE") || t.EndsWith("V")) block = "VALVE";
-                    else if (t.Contains("HYDRANT") || t.EndsWith("H")) block = "HYDRANT";
-                    else if (t.Contains("METER")) block = "METER"; 
-                    else if (t.Contains("FITTING")) block = "FITTING";
+                    if (t.Contains("VALVE") || t.EndsWith("V") || t == "WV" || t == "WWV" || t == "STV" || t == "EV" || t == "GV" || t == "RV") block = "VALVE";
+                    else if (t.Contains("HYDRANT") || t.EndsWith("H") || t == "HYD") block = "HYDRANT";
+                    else if (t.Contains("METER") || t == "WMET" || t == "EMET" || t == "GMET" || t == "RMET") block = "METER"; 
+                    else if (t.Contains("POLE") || t == "EPOLE") block = "POLE";
+                    else if (t.Contains("BOX") || t.Contains("VAULT") || t == "EBOX") block = "BOX";
+                    else if (t.Contains("FITTING") || t.EndsWith("F") || t == "WF" || t == "WWF" || t == "STF" || t == "EF" || t == "GF") block = "FITTING";
                     
-                    // Use Insert Block
-                    writer.InsertBlock(block, s.Easting, s.Northing, 1.0, "STRUCTURES");
+                    writer.InsertBlock(block, s.Easting, s.Northing, 1.0, $"STRUCT_{s.Type}");
                 }
 
                 writer.End();

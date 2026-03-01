@@ -379,7 +379,7 @@ public sealed class PipeScriptCompiler
             prun.Vertices.Add(ptId);
             
             // Generate PipeRun
-            var run = BuildRun(prun, prev, ptId);
+            var run = BuildRun(prun, prev, ptId, getPoint);
             result.Runs.Add(run);
             
             // Add/Update structure at node
@@ -406,7 +406,7 @@ public sealed class PipeScriptCompiler
             var first = prun.StartVertex; // Since string? is nullable
             if (first != null && last != first)
             {
-                result.Runs.Add(BuildRun(prun, last, first));
+                result.Runs.Add(BuildRun(prun, last, first, getPoint));
                 // Usually structures exist for first/last already.
             }
                 
@@ -453,9 +453,11 @@ public sealed class PipeScriptCompiler
         }
     }
 
-    private static PipeRun BuildRun(PrunContext prun, string fromPt, string toPt)
+    private static PipeRun BuildRun(PrunContext prun, string fromPt, string toPt, Func<string, RCS.Cogo.Core.Primitives.Point3D?> getPoint)
     {
         var diam = prun.Diameter ?? 0.0;
+        var p1 = getPoint?.Invoke(fromPt);
+        var p2 = getPoint?.Invoke(toPt);
         
         // Construct PipeRun
         return new PipeRun
@@ -465,6 +467,8 @@ public sealed class PipeScriptCompiler
             ToPointId = toPt,
             Diameter = diam,
             Material = prun.Material ?? string.Empty,
+            InvertStart = p1?.Elevation ?? 0.0,
+            InvertEnd = p2?.Elevation ?? 0.0,
             PartKey = $"{prun.UtilityType}|PIPE|{diam}|{prun.Material ?? ""}" // Matches logic somewhat
         };
     }
@@ -501,11 +505,15 @@ public sealed class PipeScriptCompiler
             if (tokens.Count > 2 && double.TryParse(tokens[2], out var s)) invStart = s;
             if (tokens.Count > 3 && double.TryParse(tokens[3], out var e)) invEnd = e;
             
+            var p1 = getPoint?.Invoke(from);
+            var p2 = getPoint?.Invoke(to);
+
+            if (invStart == null && p1 != null && !p1.Is2D) invStart = p1.Elevation;
+            if (invEnd == null && p2 != null && !p2.Is2D) invEnd = p2.Elevation;
+
             // **SLOPE CHECKING LOGIC**
             if (invStart.HasValue && invEnd.HasValue)
             {
-                var p1 = getPoint?.Invoke(from);
-                var p2 = getPoint?.Invoke(to);
                 if (p1 != null && p2 != null)
                 {
                     double dx = p2.Easting - p1.Easting;

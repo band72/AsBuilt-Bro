@@ -71,6 +71,41 @@ public class ProfessionalDxfWriter
             AddLine(0, -0.8, 0, 0.8, "0");
         });
         
+        // 4. Meter Box (Square with M)
+        DefineBlock("METER", () =>
+        {
+            AddLine(-1, -1, 1, -1, "0");
+            AddLine(1, -1, 1, 1, "0");
+            AddLine(1, 1, -1, 1, "0");
+            AddLine(-1, 1, -1, -1, "0");
+            AddText("Mtr", 0, 0, 0.6, "0", "CENTER");
+        });
+
+        // 5. Box / Vault (Simple Square)
+        DefineBlock("BOX", () =>
+        {
+            AddLine(-1.5, -1.5, 1.5, -1.5, "0");
+            AddLine(1.5, -1.5, 1.5, 1.5, "0");
+            AddLine(1.5, 1.5, -1.5, 1.5, "0");
+            AddLine(-1.5, 1.5, -1.5, -1.5, "0");
+            AddLine(-1.5, -1.5, 1.5, 1.5, "0"); // Cross
+            AddLine(-1.5, 1.5, 1.5, -1.5, "0");
+        });
+
+        // 6. Pole (Small circle with text)
+        DefineBlock("POLE", () =>
+        {
+            AddCircle(0, 0, 0.5, "0");
+            AddText("P", 0, 0, 0.4, "0", "CENTER");
+        });
+
+        // 7. Fitting (Small Cross)
+        DefineBlock("FITTING", () =>
+        {
+            AddLine(-0.5, 0, 0.5, 0, "0");
+            AddLine(0, -0.5, 0, 0.5, "0");
+        });
+        
         _sb.AppendLine("0");
         _sb.AppendLine("ENDSEC");
     }

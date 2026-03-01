@@ -777,6 +777,7 @@
                                 <DataGridTextColumn Header="Local Code" Binding="{Binding LocalCode}" Width="*"/>
                                 <DataGridTextColumn Header="System Code" Binding="{Binding SystemCode}" Width="*" IsReadOnly="True" Foreground="#A9A9A9"/>
                                 <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="2*" IsReadOnly="True" Foreground="#A9A9A9"/>
+                                <DataGridTextColumn Header="Block" Binding="{Binding Block}" Width="*"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>

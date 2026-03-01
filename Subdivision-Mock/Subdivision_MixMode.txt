@@ -1,0 +1,42 @@
+! SUBDIVISION MIX-MODE TEST SCRIPT
+! This script demonstrates the use of mixed-mode processing
+! where regular COGO point creation is intertwined with Piping Engine commands.
+! Using strict codes from the JEA validation library.
+
+PIPE-ENGINE-OFF
+
+! --- DEFINE GEOMETRY POINTS ---
+! Syntax: NEZ <NodeID> <Northing> <Easting> <Elevation> <Desc>
+! Sewer Manholes
+NEZ 101 10000 10000 10.0 WWM
+NEZ 102 10000 10500 9.0 WWM
+NEZ 103 10000 11000 8.0 WWM
+
+! Water Main Points
+NEZ 201 10020 10000 5.0 WM
+NEZ 202 10020 10500 5.0 WV
+NEZ 203 10020 11000 5.0 HYD
+
+! Enable piping mode
+PIPE-ENGINE-ON
+
+! --- SEWER PIPE RUN (8" PVC) ---
+PRUN START WW DIAM 8 MAT PVC FIG SS
+SS-B 101 WWM
+SS-C 102 WWM
+SS-C 103 WWM
+SS-E
+PRUN END
+
+! --- WATER MAIN PIPE RUN (12" PVC) ---
+PRUN START W DIAM 12 MAT PVC FIG WM
+WM-B 201 WM
+WM-C 202 WV
+WM-C 203 HYD
+WM-E
+PRUN END
+
+PIPE-ENGINE-OFF
+
+! Further COGO statements can go here...
+NEZ 999 5000 5000 0.0 END_POINT
