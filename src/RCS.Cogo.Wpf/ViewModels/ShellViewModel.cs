@@ -191,9 +191,25 @@ public class ShellViewModel : ViewModelBase
         {
             if (SetField(ref _currentProject, value))
             {
+                OnPropertyChanged(nameof(HasActiveProject));
                 _ = LoadInstalledAssetsAsync();
             }
         }
+    }
+
+    public bool HasActiveProject 
+    {
+        get => CurrentProject != null && !string.IsNullOrWhiteSpace(CurrentProject.ProjectName) && CurrentProject.ProjectName != "New Project";
+    }
+
+    private bool EnsureActiveProject()
+    {
+        if (!HasActiveProject)
+        {
+            System.Windows.MessageBox.Show("You must have an open active project to import, edit, or delete information. Please use File -> New Project or Open Project.", "Active Project Required", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            return false;
+        }
+        return true;
     }
 
     private int _selectedTabIndex;
@@ -564,6 +580,7 @@ public class ShellViewModel : ViewModelBase
         OpenGeneralSettingsCommand = new RelayCommand(_ => OpenGeneralSettings());
         OpenAlignmentWindowCommand = new RelayCommand(_ => OpenAlignmentWindow());
         OpenAlignmentSettingsCommand = new RelayCommand(_ => OpenAlignmentSettings());
+        OpenPipeCharacteristicsCommand = new RelayCommand(_ => OpenPipeCharacteristics());
         // Load default/empty project
         _ = LoadInstalledAssetsAsync();
     }
@@ -623,6 +640,7 @@ public class ShellViewModel : ViewModelBase
 
     public System.Windows.Input.ICommand OpenAlignmentWindowCommand { get; }
     public System.Windows.Input.ICommand OpenAlignmentSettingsCommand { get; }
+    public System.Windows.Input.ICommand OpenPipeCharacteristicsCommand { get; }
 
     public System.Windows.Input.ICommand CloseCommand { get; }
     public System.Windows.Input.ICommand AboutCommand { get; }
@@ -1253,6 +1271,7 @@ public class ShellViewModel : ViewModelBase
 
     private void AddMaterialToProject()
     {
+        if (!EnsureActiveProject()) return;
         if (SelectedCatalogItem == null) return;
         
         var existing = ProjectMaterials.FirstOrDefault(m => m.PartKey == SelectedCatalogItem.PartKey && m.Manufacturer == SelectedCatalogItem.Manufacturer);
@@ -2764,6 +2783,8 @@ public class ShellViewModel : ViewModelBase
 
     private void ImportBatchScript()
     {
+        if (!EnsureActiveProject()) return;
+
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
             Filter = "COGO Script (*.cogo)|*.cogo|Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
@@ -3093,7 +3114,7 @@ public class ShellViewModel : ViewModelBase
         });
     }
 
-    private void NewProject()
+    private void NewProject(bool skipEdit = false)
     {
         CurrentProject = new Project();
         _context.ClearState();
@@ -3112,8 +3133,11 @@ public class ShellViewModel : ViewModelBase
         RefreshData();
         _context.Log("[AUDIT] Created New Project");
         
-        // Force User to Enter Details
-        EditProject();
+        // Force User to Enter Details unless skipping
+        if (!skipEdit)
+        {
+            EditProject();
+        }
     }
 
     private void EditProject()
@@ -3143,6 +3167,12 @@ public class ShellViewModel : ViewModelBase
     private void OpenAlignmentSettings()
     {
         var window = new RCS.Cogo.Wpf.Views.AlignmentSettingsWindow(this);
+        window.ShowDialog();
+    }
+
+    private void OpenPipeCharacteristics()
+    {
+        var window = new RCS.Cogo.Wpf.Views.PipeCharacteristicsWindow();
         window.ShowDialog();
     }
 
@@ -3212,59 +3242,72 @@ public class ShellViewModel : ViewModelBase
 
         if (dialog.ShowDialog() == true)
         {
-            try
+            var loader = new RCS.Cogo.Wpf.Views.LoadingWindow("Loading Project...", async () =>
             {
-                NewProject(); // Reset State first
-                
-                var service = new LiteDbProjectService();
-                CurrentProject = service.LoadProject(dialog.FileName);
-                _currentDbPath = dialog.FileName;
+                try
+                {
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => NewProject(true)); // Reset State first (skip edit dialog)
+                    
+                    var service = new LiteDbProjectService();
+                    var loadedProject = await Task.Run(() => service.LoadProject(dialog.FileName));
+                    
+                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        CurrentProject = loadedProject;
+                        _currentDbPath = dialog.FileName;
 
-                // Repopulate Context
-                if (CurrentProject.Points != null)
-                {
-                    foreach(var p in CurrentProject.Points)
-                    {
-                        _context.AddPoint(p.Id, new Point3D(p.Northing, p.Easting, p.Elevation), p.Description);
-                    }
-                }
-                
-                // Repopulate Piping
-                PipeRuns.Clear();
-                Structures.Clear();
+                        // Repopulate Context
+                        if (CurrentProject.Points != null)
+                        {
+                            foreach(var p in CurrentProject.Points)
+                            {
+                                _context.AddPoint(p.Id, new Point3D(p.Northing, p.Easting, p.Elevation), p.Description);
+                            }
+                        }
+                        
+                        // Repopulate Piping
+                        PipeRuns.Clear();
+                        Structures.Clear();
 
-                if (CurrentProject.PipeRuns != null)
+                        if (CurrentProject.PipeRuns != null)
+                        {
+                            foreach(var run in CurrentProject.PipeRuns) 
+                            {
+                                _pipeNetwork.AddRun(run);
+                                PipeRuns.Add(run);
+                            }
+                        }
+                        
+                        if (CurrentProject.Structures != null)
+                        {
+                            foreach(var s in CurrentProject.Structures) 
+                            {
+                                _pipeNetwork.AddStructure(s);
+                                Structures.Add(s);
+                            }
+                        }
+                        
+                        if (CurrentProject.Materials != null)
+                        {
+                            ProjectMaterials.Clear();
+                            foreach(var m in CurrentProject.Materials) ProjectMaterials.Add(m);
+                        }
+                        
+                        _context.Log($"[AUDIT] Opened Project: {dialog.FileName}");
+                        RefreshData();
+                    });
+                }
+                catch (Exception ex)
                 {
-                    foreach(var run in CurrentProject.PipeRuns) 
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => 
                     {
-                        _pipeNetwork.AddRun(run);
-                        PipeRuns.Add(run);
-                    }
+                         _context.Log($"[AUDIT] Error Opening Project: {ex.Message}");
+                         System.Windows.MessageBox.Show($"Error Opening Project: {ex.Message}");
+                    });
                 }
-                
-                if (CurrentProject.Structures != null)
-                {
-                    foreach(var s in CurrentProject.Structures) 
-                    {
-                        _pipeNetwork.AddStructure(s);
-                        Structures.Add(s);
-                    }
-                }
-                
-                if (CurrentProject.Materials != null)
-                {
-                    ProjectMaterials.Clear();
-                    foreach(var m in CurrentProject.Materials) ProjectMaterials.Add(m);
-                }
-                
-                _context.Log($"[AUDIT] Opened Project: {dialog.FileName}");
-                RefreshData();
-            }
-            catch (Exception ex)
-            {
-                 _context.Log($"[AUDIT] Error Opening Project: {ex.Message}");
-                 System.Windows.MessageBox.Show($"Error Opening Project: {ex.Message}");
-            }
+            });
+            
+            loader.ShowDialog();
         }
     }
 
@@ -3392,12 +3435,14 @@ public class ShellViewModel : ViewModelBase
 
     private void CloseProject()
     {
-        NewProject(); // Effectively closes by resetting
+        NewProject(true); // Effectively closes by resetting and skips edit dialog
         _context.Log("[AUDIT] Closed Project");
     }
 
     private void ImportPointsList()
     {
+        if (!EnsureActiveProject()) return;
+
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
             Filter = "Text Files (*.txt;*.csv)|*.txt;*.csv|All Files (*.*)|*.*"

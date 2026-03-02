@@ -111,6 +111,7 @@
                 <MenuItem Header="General Settings" Command="{Binding OpenGeneralSettingsCommand}"/>
                 <Separator/>
                 <MenuItem Header="Validation" Command="{Binding OpenValidationSettingsCommand}"/>
+                <MenuItem Header="Pipe Characteristics..." Command="{Binding OpenPipeCharacteristicsCommand}"/>
             </MenuItem>
             <MenuItem Header="_Data">
                 <MenuItem Header="_Import">

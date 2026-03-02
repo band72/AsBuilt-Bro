@@ -469,7 +469,7 @@ public sealed class PipeScriptCompiler
             Material = prun.Material ?? string.Empty,
             InvertStart = p1?.Elevation ?? 0.0,
             InvertEnd = p2?.Elevation ?? 0.0,
-            PartKey = $"{prun.UtilityType}|PIPE|{diam}|{prun.Material ?? ""}" // Matches logic somewhat
+            PartKey = $"{prun.UtilityType}-PIPE-{diam}-{prun.Material ?? ""}" // Matches logic somewhat
         };
     }
 

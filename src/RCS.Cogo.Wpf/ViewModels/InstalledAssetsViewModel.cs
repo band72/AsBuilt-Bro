@@ -156,6 +156,8 @@ public class InstalledAssetsViewModel : ViewModelBase
     private string _currentProjectId = "";
     private string _currentProjectNumber = "";
 
+    public bool HasActiveProject => !string.IsNullOrEmpty(_currentProjectId);
+
     public InstalledAssetsViewModel()
     {
         _dbContext = new AppDbContext();

@@ -13,9 +13,19 @@ public partial class InstalledAssetsView : UserControl
 
     private void DataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
     {
+        var vm = DataContext as InstalledAssetsViewModel;
+        if (vm == null || !vm.HasActiveProject)
+        {
+            if (e.EditAction == DataGridEditAction.Commit)
+            {
+                e.Cancel = true;
+                MessageBox.Show("You must have an open active project to import, edit, or delete information.", "Active Project Required", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            return;
+        }
+
         if (e.EditAction == DataGridEditAction.Commit)
         {
-            var vm = DataContext as InstalledAssetsViewModel;
             if (vm != null)
             {
                 var item = e.Row.Item;
@@ -48,6 +58,12 @@ public partial class InstalledAssetsView : UserControl
             var vm = DataContext as InstalledAssetsViewModel;
             if (vm != null)
             {
+                if (!vm.HasActiveProject)
+                {
+                    MessageBox.Show("You must have an open active project to import, edit, or delete information.", "Active Project Required", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 var window = new EditAssetWindow(asset, vm);
                 window.Owner = Window.GetWindow(this);
                 window.ShowDialog();

@@ -18,6 +18,13 @@ namespace RCS.Cogo.Wpf.Views
         {
             InitializeComponent();
             _editingAsset = asset;
+            
+            // Remove pipe delimiters to match visual formatting and prevent binding issues
+            if (!string.IsNullOrEmpty(_editingAsset.PartKey) && _editingAsset.PartKey.Contains("|"))
+            {
+                _editingAsset.PartKey = _editingAsset.PartKey.Replace("|", "-");
+            }
+
             _viewModel = vm;
             _isNewAsset = false;
             DataContext = _editingAsset;

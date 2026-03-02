@@ -149,7 +149,21 @@ namespace RCS.Cogo.Wpf.Views
 
         private void LoadSpecs_Click(object sender, RoutedEventArgs e)
         {
-            LookupSpecs();
+            var window = new PipeCharacteristicsWindow(isSelectMode: true);
+            window.Owner = Window.GetWindow(this);
+            if (window.ShowDialog() == true && window.SelectedPart != null)
+            {
+                PartNumber = window.SelectedPart.PartNumber;
+                
+                // Populate the form fields with the selected part directly
+                var spec = window.SelectedPart;
+                if (spec.OuterDiameter.HasValue) OuterDiameter = spec.OuterDiameter;
+                if (spec.NominalDiameter.HasValue) NominalDiameter = spec.NominalDiameter;
+                if (spec.PipeThickness.HasValue) OuterWallThicknessTop = spec.PipeThickness;
+                if (spec.InnerDiameter.HasValue) InnerDiameter = spec.InnerDiameter;
+                if (spec.Deflection.HasValue) Deflection = spec.Deflection;
+                if (!string.IsNullOrWhiteSpace(spec.Note)) PartNote = spec.Note;
+            }
         }
 
         private void LookupSpecs()
