@@ -21,11 +21,12 @@ public class AiAnalyzer
         "CURVE", "MAPCHK", "PTC", "TRAVERSE", "OFFSET", "INVERSE", "AL",
         "PRUN", "SS-B", "SS-C", "SS-E", "SM-C", "SM-E", "BD", "BEG", "BS", "CONT", "DD",
         "COGO-ENGINE-ON", "COGO-ENGINE-OFF", "PIPE-ENGINE-ON", "PIPE-ENGINE-OFF",
-        "END", "F1", "F2", "LNLN", "LOAD", "PNT", "PT", "POINT", "RKRK", "SAVE", "STN", "TRAV", "XC", "ZD",
+        "END", "F1", "F2", "LNLN", "LOAD", "PNT", "PT", "POINT", "RKRK", "SAVE", "SAVE-HALN", "SAVE-PFL", "STN", "TRAV", "XC", "ZD",
         "AD", "AP", "ARCARC", "DISP", "LIST", "START", "CLOSE", "OC", "FS", "FIG", "A", "B", "L", "C", "D",
         "ALGN", "PROF", "VPI", "HALBL-ON", "HALBL-OFF",
         "RESET", "RESET-ON", "RESET-OFF",
-        "UNITS", "ATMOS", "TEMP", "PRESS", "SF", "CR", "ANGLES", "VERT", "HORIZ", "EDM", "PRISM", "COLL"
+        "UNITS", "ATMOS", "TEMP", "PRESS", "SF", "CR", "ANGLES", "VERT", "HORIZ", "EDM", "PRISM", "COLL",
+        "LOG", "ECHO", "ABOUT", "SHOW", "SET", "REPORT", "CLOSURE", "TURN", "PTOFFSET", "OFFSETLINE", "CP", "TRN", "ANG", "DIST", "AZ", "MAPCHECK"
     };
 
     public List<AiAnalysisResult> AnalyzeScript(string scriptText)
@@ -156,6 +157,16 @@ public class AiAnalyzer
                 break;
             case "VPI":
                 if (args.Length < 3) AddError("VPI requires Station and Elevation.", "VPI <station> <elevation> [curveLength]");
+                break;
+            case "LOG":
+                if (args.Length < 2) AddError("LOG requires ON or OFF.", "LOG ON or LOG OFF.");
+                else if (args[1].ToUpper() != "ON" && args[1].ToUpper() != "OFF") AddWarn("LOG argument should be ON or OFF.", "LOG ON or LOG OFF");
+                break;
+            case "SAVE-HALN":
+                if (args.Length < 2) AddError("SAVE-HALN requires an Alignment Name.", "SAVE-HALN <name> [description]");
+                break;
+            case "SAVE-PFL":
+                if (args.Length < 2) AddError("SAVE-PFL requires a Profile Name.", "SAVE-PFL <name> [description]");
                 break;
         }
     }

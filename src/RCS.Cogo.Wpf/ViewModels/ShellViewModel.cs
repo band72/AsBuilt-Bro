@@ -417,7 +417,25 @@ public class ShellViewModel : ViewModelBase
                         ResultLogText += log + Environment.NewLine;
                 }
             });
-        });
+        })
+        {
+             SaveHorizontalAlignmentAction = (name, desc) => 
+             {
+                 System.Windows.Application.Current?.Dispatcher.Invoke(async () => {
+                     var ha = new RCS.Data.Entities.HorizontalAlignment { AlignmentName = name, Description = desc, ScriptContent = this.BatchScriptContent };
+                     InstalledAssets.HorizontalAlignments.Add(ha);
+                     await InstalledAssets.SaveItemAsync(ha);
+                 });
+             },
+             SaveProfileAlignmentAction = (name, desc) => 
+             {
+                 System.Windows.Application.Current?.Dispatcher.Invoke(async () => {
+                     var pa = new RCS.Data.Entities.ProfileAlignment { ProfileName = name, Description = desc, ScriptContent = this.BatchScriptContent };
+                     InstalledAssets.ProfileAlignments.Add(pa);
+                     await InstalledAssets.SaveItemAsync(pa);
+                 });
+             }
+        };
 
         _engine = new ScriptEngine(registry);
 
@@ -469,6 +487,7 @@ public class ShellViewModel : ViewModelBase
 
         SubmitCommand = new RelayCommand(async _ => await ExecuteCommandAsync());
         ImportBatchCommand = new RelayCommand(_ => ImportBatchScript());
+        OpenConvertImageCommand = new RelayCommand(_ => OpenConvertImage());
         RunBatchCommand = new RelayCommand(async _ => await RunBatchScriptAsync());
         WalkBatchCommand = new RelayCommand(async _ => await WalkBatchScriptAsync());
 
@@ -495,6 +514,21 @@ public class ShellViewModel : ViewModelBase
         // ExportDxfCommand = new RelayCommand(_ => ExportDxf()); // This line was moved up
         SyncToAssetsCommand = new RelayCommand(_ => SyncAssets());
         
+        // Report Commands
+        ReportWaterCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("Water Report Not Implemented", "Reports"));
+        ReportSewerCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("Sewer Report Not Implemented", "Reports"));
+        ReportGasCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("Gas Report Not Implemented", "Reports"));
+        ReportElectricCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("Electric Report Not Implemented", "Reports"));
+        ReportDrainageCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("Drainage Report Not Implemented", "Reports"));
+        ReportAllAssetsCsvCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("All Assets CSV Report Not Implemented", "Reports"));
+        ReportAllAssetsTxtCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("All Assets TXT Report Not Implemented", "Reports"));
+        ReportAllAssetsXlsCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("All Assets XLS Report Not Implemented", "Reports"));
+        
+        SaveHorizontalAlignmentCommand = new RelayCommand(_ => SaveHorizontalAlignmentFromMenu());
+        SaveVerticalAlignmentCommand = new RelayCommand(_ => SaveVerticalAlignmentFromMenu());
+        DeleteHorizontalAlignmentCommand = new RelayCommand(_ => DeleteHorizontalAlignmentFromMenu());
+        DeleteVerticalAlignmentCommand = new RelayCommand(_ => DeleteVerticalAlignmentFromMenu());
+
         SolveCurveCommand = new RelayCommand(_ => SolveCurve());
         UtilConvertCommand = new RelayCommand(_ => ExecuteUtilConvert());
         UtilConvertDmsToDdCommand = new RelayCommand(_ => ExecuteUtilConvertDmsToDd());
@@ -611,6 +645,7 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand OpenProjectCommand { get; }
     public System.Windows.Input.ICommand CloseProjectCommand { get; }
     public System.Windows.Input.ICommand ImportPointsListCommand { get; }
+    public System.Windows.Input.ICommand OpenConvertImageCommand { get; }
 
     public System.Windows.Input.ICommand OpenSurveyCommandsCommand { get; }
     public System.Windows.Input.ICommand OpenPipeCommandsCommand { get; }
@@ -644,6 +679,13 @@ public class ShellViewModel : ViewModelBase
 
     public System.Windows.Input.ICommand CloseCommand { get; }
     public System.Windows.Input.ICommand AboutCommand { get; }
+
+    private void OpenConvertImage()
+    {
+        var window = new RCS.Cogo.Wpf.Views.ImageToCogoWindow();
+        window.Owner = System.Windows.Application.Current.MainWindow;
+        window.ShowDialog();
+    }
 
     private void OpenDocument(string relativePath)
     {
@@ -1772,6 +1814,10 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
+    public System.Windows.Input.ICommand SaveHorizontalAlignmentCommand { get; }
+    public System.Windows.Input.ICommand SaveVerticalAlignmentCommand { get; }
+    public System.Windows.Input.ICommand DeleteHorizontalAlignmentCommand { get; }
+    public System.Windows.Input.ICommand DeleteVerticalAlignmentCommand { get; }
     public System.Windows.Input.ICommand SyncToAssetsCommand { get; }
 
     private void SyncAssets()
@@ -2591,6 +2637,48 @@ public class ShellViewModel : ViewModelBase
             }
         }
     }
+
+    private void SaveHorizontalAlignmentFromMenu()
+    {
+        // Execute SAVE-HALN with default name if no args passed, or prompt
+        // Alternatively, since they just want to save the active script...
+        // The script itself might be empty, but we'll try to save it.
+        string name = "Menu_HALN_" + DateTime.Now.ToString("HHmmss");
+        _engine.ExecuteAsync($"SAVE-HALN \"{name}\" \"Saved from Menu\"", _context).Wait();
+        // Force refresh
+        RefreshData(false);
+    }
+
+    private void SaveVerticalAlignmentFromMenu()
+    {
+        string name = "Menu_PFL_" + DateTime.Now.ToString("HHmmss");
+        _engine.ExecuteAsync($"SAVE-PFL \"{name}\" \"Saved from Menu\"", _context).Wait();
+        // Force refresh
+        RefreshData(false);
+    }
+
+    private async void DeleteHorizontalAlignmentFromMenu()
+    {
+        var win = new RCS.Cogo.Wpf.Views.DeleteAlignmentWindow("Delete Horizontal Alignment", InstalledAssets.HorizontalAlignments) { Owner = App.Current.MainWindow };
+        if (win.ShowDialog() == true && win.SelectedItem is RCS.Data.Entities.HorizontalAlignment ha)
+        {
+            await InstalledAssets.DeleteAssetAsync(ha);
+            InstalledAssets.HorizontalAlignments.Remove(ha);
+            RefreshData(false);
+        }
+    }
+
+    private async void DeleteVerticalAlignmentFromMenu()
+    {
+        var win = new RCS.Cogo.Wpf.Views.DeleteAlignmentWindow("Delete Profile Alignment", InstalledAssets.ProfileAlignments) { Owner = App.Current.MainWindow };
+        if (win.ShowDialog() == true && win.SelectedItem is RCS.Data.Entities.ProfileAlignment pa)
+        {
+            await InstalledAssets.DeleteAssetAsync(pa);
+            InstalledAssets.ProfileAlignments.Remove(pa);
+            RefreshData(false);
+        }
+    }
+
     private void ExportOutputLog()
     {
         var dialog = new Microsoft.Win32.SaveFileDialog
@@ -2647,6 +2735,16 @@ public class ShellViewModel : ViewModelBase
     }
 
     public System.Windows.Input.ICommand ExportDxfCommand { get; }
+    
+    // Report Commands
+    public System.Windows.Input.ICommand ReportWaterCommand { get; }
+    public System.Windows.Input.ICommand ReportSewerCommand { get; }
+    public System.Windows.Input.ICommand ReportGasCommand { get; }
+    public System.Windows.Input.ICommand ReportElectricCommand { get; }
+    public System.Windows.Input.ICommand ReportDrainageCommand { get; }
+    public System.Windows.Input.ICommand ReportAllAssetsCsvCommand { get; }
+    public System.Windows.Input.ICommand ReportAllAssetsTxtCommand { get; }
+    public System.Windows.Input.ICommand ReportAllAssetsXlsCommand { get; }
 
     private void ExportDxf()
     {

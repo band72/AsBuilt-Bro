@@ -116,4 +116,14 @@ public interface ICogoContext
     /// Clears the output log.
     /// </summary>
     void ClearLog();
+
+    /// <summary>
+    /// Action to save the active script as a Horizontal Alignment.
+    /// </summary>
+    System.Action<string, string>? SaveHorizontalAlignmentAction { get; set; }
+
+    /// <summary>
+    /// Action to save the active script as a Profile Alignment.
+    /// </summary>
+    System.Action<string, string>? SaveProfileAlignmentAction { get; set; }
 }

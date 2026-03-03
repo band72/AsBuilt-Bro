@@ -114,6 +114,8 @@
                 <MenuItem Header="Pipe Characteristics..." Command="{Binding OpenPipeCharacteristicsCommand}"/>
             </MenuItem>
             <MenuItem Header="_Data">
+                <MenuItem Header="Convert Image..." Command="{Binding OpenConvertImageCommand}"/>
+                <Separator/>
                 <MenuItem Header="_Import">
                     <MenuItem Header="Process Batch Script..." Command="{Binding ImportBatchCommand}"/>
                 </MenuItem>
@@ -139,9 +141,24 @@
             <MenuItem Header="_Alignments">
                 <MenuItem Header="Edit Alignment..." Command="{Binding OpenAlignmentWindowCommand}"/>
                 <Separator/>
+                <MenuItem Header="Save Horizontal Alignment" Command="{Binding SaveHorizontalAlignmentCommand}"/>
+                <MenuItem Header="Save Vertical Alignment" Command="{Binding SaveVerticalAlignmentCommand}"/>
+                <Separator/>
+                <MenuItem Header="Delete Horizontal Alignment..." Command="{Binding DeleteHorizontalAlignmentCommand}"/>
+                <MenuItem Header="Delete Vertical Alignment..." Command="{Binding DeleteVerticalAlignmentCommand}"/>
+                <Separator/>
                 <MenuItem Header="Settings..." Command="{Binding OpenAlignmentSettingsCommand}"/>
             </MenuItem>
-            <MenuItem Header="_Profile">
+            <MenuItem Header="_Reports">
+                <MenuItem Header="Water" Command="{Binding ReportWaterCommand}"/>
+                <MenuItem Header="Sewer" Command="{Binding ReportSewerCommand}"/>
+                <MenuItem Header="Gas" Command="{Binding ReportGasCommand}"/>
+                <MenuItem Header="Electric" Command="{Binding ReportElectricCommand}"/>
+                <MenuItem Header="Drainage" Command="{Binding ReportDrainageCommand}"/>
+                <Separator/>
+                <MenuItem Header="All Assets CSV" Command="{Binding ReportAllAssetsCsvCommand}"/>
+                <MenuItem Header="All Assets TXT" Command="{Binding ReportAllAssetsTxtCommand}"/>
+                <MenuItem Header="All Assets XLS" Command="{Binding ReportAllAssetsXlsCommand}"/>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="User Manual" Command="{Binding OpenManualCommand}"/>

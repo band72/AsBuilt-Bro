@@ -14,6 +14,9 @@ public static class DbInitializer
         {
             // Drop unique constraint on ProjectNumber which breaks generic 0000 fallback projects
             try { context.Database.ExecuteSqlRaw("DROP INDEX IF EXISTS \"IX_Projects_ProjectNumber\";"); } catch { }
+            
+            // Drop HorizontalAlignments to allow recreation with new ScriptContent layout
+            try { context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"HorizontalAlignments\";"); } catch { }
 
             // Upgrade Schema: Add TopOutsideWallElev, OuterWallThicknessTop, InnerDiameter, AdjustedInvert to legacy tables
             var tablesToUpgrade = new[] { "Pipes", "Structures", "Valves", "Fittings", "Meters", 

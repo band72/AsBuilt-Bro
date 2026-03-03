@@ -16,6 +16,12 @@ public class InstalledAssetsViewModel : ViewModelBase
     // Pipe Crossing Service
     private readonly InstalledAssetService<PipeCrossing> _pipeCrossingService;
 
+    // Horizontal Alignment Service
+    private readonly InstalledAssetService<HorizontalAlignment> _horizontalAlignmentService;
+
+    // Profile Alignment Service
+    private readonly InstalledAssetService<ProfileAlignment> _profileAlignmentService;
+
     // Services for Water
     private readonly InstalledAssetService<WaterPipe> _waterPipeService;
     private readonly InstalledAssetService<WaterPoint> _waterPointService;
@@ -86,6 +92,12 @@ public class InstalledAssetsViewModel : ViewModelBase
 
     // Collections
     public ObservableCollection<PipeCrossing> PipeCrossings { get; } = new();
+    
+    // Horizontal Alignments
+    public ObservableCollection<HorizontalAlignment> HorizontalAlignments { get; } = new();
+
+    // Profile Alignments
+    public ObservableCollection<ProfileAlignment> ProfileAlignments { get; } = new();
 
     // Water Collections
     public ObservableCollection<WaterPipe> WaterPipes { get; } = new();
@@ -164,6 +176,8 @@ public class InstalledAssetsViewModel : ViewModelBase
         DbInitializer.Initialize(_dbContext);
 
         _pipeCrossingService = new InstalledAssetService<PipeCrossing>(_dbContext);
+        _horizontalAlignmentService = new InstalledAssetService<HorizontalAlignment>(_dbContext);
+        _profileAlignmentService = new InstalledAssetService<ProfileAlignment>(_dbContext);
         _projectService = new ProjectAssetService(_dbContext);
 
         // Water Init
@@ -256,6 +270,8 @@ public class InstalledAssetsViewModel : ViewModelBase
         }
 
         await Load(_pipeCrossingService, PipeCrossings);
+        await Load(_horizontalAlignmentService, HorizontalAlignments);
+        await Load(_profileAlignmentService, ProfileAlignments);
 
         // Water
         await Load(_waterPipeService, WaterPipes);
@@ -329,6 +345,16 @@ public class InstalledAssetsViewModel : ViewModelBase
         if (string.IsNullOrEmpty(_currentProjectId)) return;
         
         if (item is PipeCrossing pc) await _pipeCrossingService.UpsertAsync(_currentProjectId, pc);
+        else if (item is HorizontalAlignment ha) 
+        {
+            if (string.IsNullOrEmpty(ha.PartKey)) ha.PartKey = "HA-" + (HorizontalAlignments.Count + 100).ToString();
+            await _horizontalAlignmentService.UpsertAsync(_currentProjectId, ha);
+        }
+        else if (item is ProfileAlignment pa) 
+        {
+            if (string.IsNullOrEmpty(pa.PartKey)) pa.PartKey = "VA-" + (ProfileAlignments.Count + 100).ToString();
+            await _profileAlignmentService.UpsertAsync(_currentProjectId, pa);
+        }
         
         // Water
         else if (item is WaterPipe wp) await _waterPipeService.UpsertAsync(_currentProjectId, wp);
@@ -401,6 +427,16 @@ public class InstalledAssetsViewModel : ViewModelBase
     {
         // Add to appropriate collection and save
         if (item is PipeCrossing pc) { PipeCrossings.Add(pc); await _pipeCrossingService.UpsertAsync(_currentProjectId, pc); }
+        else if (item is HorizontalAlignment ha) { 
+            if (string.IsNullOrEmpty(ha.PartKey)) ha.PartKey = "HA-" + (HorizontalAlignments.Count + 100).ToString();
+            HorizontalAlignments.Add(ha); 
+            await _horizontalAlignmentService.UpsertAsync(_currentProjectId, ha); 
+        }
+        else if (item is ProfileAlignment pa) { 
+            if (string.IsNullOrEmpty(pa.PartKey)) pa.PartKey = "VA-" + (ProfileAlignments.Count + 100).ToString();
+            ProfileAlignments.Add(pa); 
+            await _profileAlignmentService.UpsertAsync(_currentProjectId, pa); 
+        }
         
         // Water
         else if (item is WaterPipe wp) { WaterPipes.Add(wp); await _waterPipeService.UpsertAsync(_currentProjectId, wp); }
@@ -472,6 +508,8 @@ public class InstalledAssetsViewModel : ViewModelBase
     public async Task DeleteAssetAsync(InstalledAsset item)
     {
         if (item is PipeCrossing pc) await _pipeCrossingService.DeleteAsync(_currentProjectId, pc.Id);
+        else if (item is HorizontalAlignment ha) await _horizontalAlignmentService.DeleteAsync(_currentProjectId, ha.Id);
+        else if (item is ProfileAlignment pa) await _profileAlignmentService.DeleteAsync(_currentProjectId, pa.Id);
         
         // Water
         else if (item is WaterPipe wp) await _waterPipeService.DeleteAsync(_currentProjectId, wp.Id);
@@ -559,6 +597,16 @@ public class InstalledAssetsViewModel : ViewModelBase
         Write("PipeCrossings", PipeCrossings, i => 
             $"PartKey,Description,Northing,Easting,Notes,Manufacturer,Size,Material,Year,Confidence,Source,Warning\n" +
             $"{C(i.PartKey)},{C(i.Description)},{i.Northing},{i.Easting},{C(i.Notes)},{C(i.Manufacturer)},{C(i.Size)},{C(i.Material)},{C(i.YearManufactured)},{C(i.Confidence)},{C(i.Source)},{C(i.Warning)}");
+
+        // Horizontal Alignments
+        Write("HorizontalAlignments", HorizontalAlignments, i =>
+            $"AlignmentName,Description,ScriptContent\n" +
+            $"{C(i.AlignmentName)},{C(i.Description)},{C(i.ScriptContent)}");
+
+        // Profile Alignments
+        Write("ProfileAlignments", ProfileAlignments, i =>
+            $"ProfileName,Description,ScriptContent\n" +
+            $"{C(i.ProfileName)},{C(i.Description)},{C(i.ScriptContent)}");
 
         // Formatters
         string FormatPipe<T>(T i) where T : Pipe => 

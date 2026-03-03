@@ -1,0 +1,70 @@
+// ==========================================
+// LOT 2 BOUNDARY TRACE - MEASURED (M) VALUES
+// (Utilizing Upgraded XC BD & Auto-Traverse)
+// ==========================================
+CLEAR
+LOG ON
+
+// Enable Auto-Traverse mode (Updates STN automatically after every segment)
+TRAV ON
+
+NE 1 5000.000 5000.000 "POB - IRF 1/2 NO-ID"
+STN 1
+
+BEG LOT2
+CONT 1
+
+// 1. East Boundary (Straight)
+// Measured: S 31°47'07" E, 115.08' (Quad 2 = SE)
+BD 2 2 31.4707 115.08 "IPF 1/2 LB3857"
+CONT 2
+
+// 2. Curve C1 (Right of Way - Bulges Left / Negative Radius)
+// Measured: R=154.92, Ch=S 48°02'58" W, 48.99' (Quad 3 = SW)
+XC BD (BULB) -154.92 3 3 48.0258 48.99
+// *Target point 3 is explicitly tied, and Traverse automatically advances to 3!*
+
+// 3. Line L1 (Right of Way Continuation)
+// Measured: S 38°58'36" W, 60.47' (Quad 3 = SW)
+BD 4 3 38.5836 60.47 "IPF 1/2 NO-ID"
+CONT 4
+
+// 4. Line L5 (Turning Inward - NW)
+// Measured: N 52°02'55" W, 10.18' (Quad 4 = NW)
+BD 5 4 52.0255 10.18 "IPF 1/2 LB3857"
+CONT 5
+
+// 5. Line L4 (North-East Step)
+// Measured: N 39°35'42" E, 20.13' (Quad 1 = NE)
+BD 6 1 39.3542 20.13 "FCM 4x4 LB4921"
+CONT 6
+
+// 6. Curve C5 (Inside Corner Fillet - Bulges Left / Negative Radius)
+// Measured: R=30.00, Ch=N 04°42'59" W, 41.45' (Quad 4 = NW)
+XC BD (BULB) -30.00 7 4 04.4259 41.45
+
+// 7. Line L3
+// Measured: N 48°05'18" W, 46.97' (Quad 4 = NW)
+BD 8 4 48.0518 46.97 "FCM"
+CONT 8
+
+// 8. Curve C4 (Bulges Right / Positive Radius)
+// Measured: R=50.00, Ch=N 30°30'50" W, 29.98' (Quad 4 = NW)
+XC BD (BULB) 50.00 9 4 30.3050 29.98
+
+// 9. Curve C3 (Bulges Right / Positive Radius)
+// Measured: R=200.00, Ch=N 14°22'16" W, 3.49' (Quad 4 = NW)
+XC BD (BULB) 200.00 10 4 14.2216 3.49
+
+// 10. Line L2
+// Measured: N 45°28'59" E, 27.09' (Quad 1 = NE)
+BD 11 1 45.2859 27.09 "IPF 1/2 LB3857"
+CONT 11
+
+// 11. Curve C2 (Closing Curve - Bulges Right / Positive Radius)
+// Measured: R=269.92, Ch=N 51°40'17" E, 56.33' (Quad 1 = NE)
+// *Ties cleanly back into Point 1 to close the figure perfectly*
+XC BD (BULB) 269.92 1 1 51.4017 56.33
+
+MAPCHK LOT2
+LOG OFF

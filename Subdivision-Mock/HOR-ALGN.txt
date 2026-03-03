@@ -1,0 +1,37 @@
+// HORIZONTAL ALIGNMENT - REVERSE CURVES
+// This COGO script generates a horizontal alignment featuring a reverse curve sequence.
+
+CLEAR
+
+// 1. ESTABLISH POINT OF BEGINNING (POB) AND POINT OF CURVATURE (PC)
+NE 1 1000.0000 1000.0000 "POB"
+NE 2 1200.0000 1000.0000 "PC"
+
+// 2. CREATE ALIGNMENT
+BEG HORIZONTAL_ALIGNMENT_1
+
+// Start at POB and draw tangent to PC
+CONT 1
+CONT 2
+
+// Curve 1: A forward curve turning right from the PC
+// Format: XC ZD (BULB) [radius] [chord-azimuth] [chord-distance]
+XC ZD (BULB) 150.0 45.0000 100.0
+
+// Curve 2: A reverse curve turning left immediately after Curve 1
+// The azimuth shifts backwards or in the opposite direction geometry-wise
+XC ZD (BULB) 150.0 315.0000 120.0
+
+// Curve 3: Another forward curve to round out the alignment
+XC ZD (BULB) 200.0 45.0000 150.0
+
+// Note: If you have a specific point of tangency (PT) coordinate, 
+// you can conclude using CONT to that point.
+
+END
+
+// 3. VALIDATE ALIGNMENT (MAPCHECK) 
+// Use MAPCHECK to evaluate the area and linear trajectory of the enclosed/open figure
+MAPCHECK HORIZONTAL_ALIGNMENT_1
+
+SAVE-HALN HORIZTONAL_ALIGNMENT_1 HORIZONTAL ALIGNMENT 

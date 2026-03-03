@@ -129,7 +129,8 @@ public static class AppInitializer
         registry.Register(new ShowCommand());
         registry.Register(new ExportCommand());
         registry.Register(new ReportCommand());
-
+        registry.Register(new SaveHalnCommand());
+        registry.Register(new SavePflCommand());
 
         return registry;
     }

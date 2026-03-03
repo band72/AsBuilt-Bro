@@ -13,6 +13,12 @@ public class AppDbContext : DbContext
     public DbSet<Fitting> Fittings { get; set; }
     public DbSet<Valve> Valves { get; set; }
     
+    // Horizontal Alignment
+    public DbSet<HorizontalAlignment> HorizontalAlignments { get; set; }
+    
+    // Profile Alignment
+    public DbSet<ProfileAlignment> ProfileAlignments { get; set; }
+    
     // Water
     public DbSet<WaterPipe> WaterPipes { get; set; }
     public DbSet<WaterPoint> WaterPoints { get; set; }
@@ -134,6 +140,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Pipe>().HasIndex(e => e.ProjectId);
         modelBuilder.Entity<Fitting>().HasIndex(e => e.ProjectId);
         modelBuilder.Entity<Valve>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<HorizontalAlignment>().HasIndex(e => e.ProjectId);
+        modelBuilder.Entity<ProfileAlignment>().HasIndex(e => e.ProjectId);
         
         // Indexes for new types
         modelBuilder.Entity<WaterPipe>().HasIndex(e => e.ProjectId);

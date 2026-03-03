@@ -42,6 +42,9 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
         _logger = logger;
     }
 
+    public Action<string, string>? SaveHorizontalAlignmentAction { get; set; }
+    public Action<string, string>? SaveProfileAlignmentAction { get; set; }
+
     public void AddPoint(string pointId, Point3D point, string description = "")
     {
         // Enforce numeric Point IDs? User allows non-numeric via suffixes (e.g. 100_L).

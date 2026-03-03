@@ -43,6 +43,30 @@
                         <Setter Property="HorizontalContentAlignment" Value="Center"/>
                     </Style>
                 </StackPanel.Resources>
+
+                <!-- Horizontal Alignments -->
+                <Expander Header="Horizontal Alignments">
+                    <DataGrid ItemsSource="{Binding HorizontalAlignments}" RowEditEnding="DataGrid_RowEditEnding">
+                         <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Alignment Name" Binding="{Binding AlignmentName}"/>
+                             <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Script Content" Binding="{Binding ScriptContent}"/>
+                         </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+
+                <!-- Vertical Alignments -->
+                <Expander Header="Vertical Alignments">
+                    <DataGrid ItemsSource="{Binding ProfileAlignments}" RowEditEnding="DataGrid_RowEditEnding">
+                         <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Profile Name" Binding="{Binding ProfileName}"/>
+                             <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Script Content" Binding="{Binding ScriptContent}"/>
+                         </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
                 
                 <!-- Pipe Crossing -->
                 <Expander Header="Pipe Crossing">
