@@ -11,8 +11,6 @@ namespace RCS.Cogo.Wpf.Views
     {
         private InstalledAsset _editingAsset;
         private InstalledAssetsViewModel _viewModel;
-        private bool _isNewAsset;
-        
         // Constructor for Editing
         public EditAssetWindow(InstalledAsset asset, InstalledAssetsViewModel vm)
         {
@@ -26,7 +24,6 @@ namespace RCS.Cogo.Wpf.Views
             }
 
             _viewModel = vm;
-            _isNewAsset = false;
             DataContext = _editingAsset;
         }
         

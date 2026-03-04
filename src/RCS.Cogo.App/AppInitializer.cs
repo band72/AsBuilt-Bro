@@ -46,6 +46,8 @@ public static class AppInitializer
         registry.Register(new PntCommand());
         registry.Register(new XcCommand());
         registry.Register(new MapChkCommand());
+        registry.Register(new XptPtsCommand());
+        registry.Register(new SyncPtsCommand());
         
         // Aliases
         registry.Register(new StartCommand());

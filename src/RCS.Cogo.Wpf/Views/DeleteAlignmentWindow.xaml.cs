@@ -7,7 +7,7 @@ namespace RCS.Cogo.Wpf.Views
 {
     public partial class DeleteAlignmentWindow : Window
     {
-        public object SelectedItem { get; private set; }
+        public object? SelectedItem { get; private set; }
         
         public DeleteAlignmentWindow(string title, IEnumerable items)
         {

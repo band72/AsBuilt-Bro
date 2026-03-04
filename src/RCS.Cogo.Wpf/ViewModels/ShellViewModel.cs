@@ -434,6 +434,37 @@ public class ShellViewModel : ViewModelBase
                      InstalledAssets.ProfileAlignments.Add(pa);
                      await InstalledAssets.SaveItemAsync(pa);
                  });
+             },
+             SyncPointsAction = () => 
+             {
+                 System.Windows.Application.Current?.Dispatcher.Invoke(() => {
+                     var proj = CurrentProject;
+                     if (proj == null) return;
+                     
+                     #pragma warning disable CS8602
+                     proj.Points = _context.GetAllPoints().Select(p => new RCS.Cogo.App.Models.PointEntry 
+                     {
+                         Id = p.Id ?? "",
+                         Northing = p.Point?.Northing ?? 0.0,
+                         Easting = p.Point?.Easting ?? 0.0,
+                         Elevation = p.Point?.Elevation ?? 0.0,
+                         Description = p.Description ?? ""
+                     }).ToList();
+                     #pragma warning restore CS8602
+
+                     if (!string.IsNullOrEmpty(_currentDbPath))
+                     {
+                         try
+                         {
+                             var service = new RCS.Cogo.App.Persistence.LiteDbProjectService();
+                             service.SaveProject(_currentDbPath, proj);
+                         }
+                         catch (Exception ex)
+                         {
+                             System.Diagnostics.Debug.WriteLine($"Sync Failed: {ex.Message}");
+                         }
+                     }
+                 });
              }
         };
 
@@ -3484,7 +3515,7 @@ public class ShellViewModel : ViewModelBase
                 using (var command = conn.CreateCommand())
                 {
                     command.CommandText = "PRAGMA integrity_check;";
-                    status = (string)command.ExecuteScalar();
+                    status = command.ExecuteScalar()?.ToString() ?? "Unknown";
                 }
                 conn.Close();
             }

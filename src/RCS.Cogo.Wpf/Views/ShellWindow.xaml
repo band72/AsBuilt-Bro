@@ -161,7 +161,7 @@
                 <MenuItem Header="All Assets XLS" Command="{Binding ReportAllAssetsXlsCommand}"/>
             </MenuItem>
             <MenuItem Header="_Help">
-                <MenuItem Header="User Manual" Command="{Binding OpenManualCommand}"/>
+                <MenuItem Header="📖 User Manual" Command="{Binding OpenManualCommand}"/>
                 <MenuItem Header="Survey Commands" Command="{Binding OpenSurveyCommandsCommand}"/>
                 <MenuItem Header="Pipe Commands" Command="{Binding OpenPipeCommandsCommand}"/>
                 <Separator/>
@@ -437,7 +437,7 @@
                                     Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
                             <Button Content="TXT" Command="{Binding ExportScriptCommand}" 
                                     Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
-                            <Button Content="AI" Command="{Binding AnalyzeScriptCommand}" 
+                            <Button Content="✨ AI" Command="{Binding AnalyzeScriptCommand}" 
                                     Padding="10,5" Background="#8A2BE2" Foreground="White" FontWeight="Bold" ToolTip="AI Script Validator"/>
                         </StackPanel>
                         
@@ -724,7 +724,7 @@
                                 <ToggleButton Content="L" IsChecked="{Binding ShowFigureLabels}" Width="30" Margin="0,0,10,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Figure Labels"/>
                                 <Button Content="DXF" Command="{Binding ExportDxfCommand}" Padding="10,5" Margin="0,0,5,0" Background="#2D2D30" Foreground="White"/>
                                 <Button Content="TXT" Command="{Binding ExportPipingScriptCommand}" Padding="10,5" Background="#2D2D30" Foreground="White"/>
-                                <Button Content="AI" Command="{Binding AnalyzePipingScriptCommand}" Padding="10,5" Margin="5,0,0,0" Background="#8A2BE2" Foreground="White" FontWeight="Bold" ToolTip="AI Script Validator"/>
+                                <Button Content="✨ AI" Command="{Binding AnalyzePipingScriptCommand}" Padding="10,5" Margin="5,0,0,0" Background="#8A2BE2" Foreground="White" FontWeight="Bold" ToolTip="AI Script Validator"/>
                             </StackPanel>
                         </DockPanel>
                         <!-- Floating Piping Script Hint -->

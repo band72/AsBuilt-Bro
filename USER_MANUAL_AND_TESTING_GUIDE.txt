@@ -53,6 +53,8 @@ The **Cogo** tab is the heart of direct geometry processing. Enter commands into
 - `FS pt_new angle dist desc` : Foresight to create a new point based on the current setup.
 - `TRAV pt_new angle dist desc` : Traverse to a new point and automatically move the setup occupation there.
 - `IN inverse_pt1 inverse_pt2` : Calculate inverse bearing and distance between two points. 
+- `SYNC-PTS` : Synchronize and commit all recently imported or created points into the active project database.
+- `XPT-PTS` : Export a list of all current points to the output log in ascending NEZ format.
 
 ---
 

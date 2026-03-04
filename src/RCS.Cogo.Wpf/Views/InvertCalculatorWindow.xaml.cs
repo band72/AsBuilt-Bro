@@ -12,7 +12,7 @@ namespace RCS.Cogo.Wpf.Views
         private InstalledAsset _asset;
         public double? ComputedValue { get; private set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private string _partNumber = string.Empty;
         public string PartNumber
@@ -142,7 +142,7 @@ namespace RCS.Cogo.Wpf.Views
             }
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

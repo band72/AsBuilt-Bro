@@ -13,7 +13,7 @@ namespace RCS.Cogo.Wpf.Views
     {
         public ObservableCollection<PartSpecificationEntity> Specifications { get; set; } = new();
 
-        public PartSpecificationEntity SelectedPart { get; private set; }
+        public PartSpecificationEntity? SelectedPart { get; private set; }
 
         public PipeCharacteristicsWindow(bool isSelectMode = false)
         {

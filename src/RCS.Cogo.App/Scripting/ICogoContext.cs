@@ -126,4 +126,9 @@ public interface ICogoContext
     /// Action to save the active script as a Profile Alignment.
     /// </summary>
     System.Action<string, string>? SaveProfileAlignmentAction { get; set; }
+
+    /// <summary>
+    /// Action to sync in-memory points.
+    /// </summary>
+    System.Action? SyncPointsAction { get; set; }
 }
