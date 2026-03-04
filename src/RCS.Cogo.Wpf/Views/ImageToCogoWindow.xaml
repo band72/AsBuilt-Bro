@@ -28,6 +28,7 @@
             
             <TextBlock Grid.Column="2" Text="Engine:" VerticalAlignment="Center" Margin="20,0,10,0"/>
             <ComboBox x:Name="EngineComboBox" Grid.Column="3" Background="#252526" Foreground="White" SelectedIndex="0" Padding="5">
+                <ComboBoxItem Content="gemini-3.1-pro-preview"/>
                 <ComboBoxItem Content="gemini-2.5-pro"/>
                 <ComboBoxItem Content="gemini-1.5-pro"/>
                 <ComboBoxItem Content="gpt-4o"/>

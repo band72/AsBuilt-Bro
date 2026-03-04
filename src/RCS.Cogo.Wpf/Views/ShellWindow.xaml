@@ -172,6 +172,9 @@
                 <MenuItem Header="Cogo Figures" Command="{Binding OpenExampleFiguresCommand}"/>
                 <MenuItem Header="Angle Script" Command="{Binding OpenExampleAngleCommand}"/>
                 <Separator/>
+                <MenuItem Header="Test C++ Security Integration" Command="{Binding TestNativeSecurityCommand}"/>
+                <MenuItem Header="Licensing Agent Chat" Command="{Binding OpenLicensingAgentCommand}"/>
+                <Separator/>
                 <!-- Discipline Divider -->
                 <MenuItem Header="Discipline Examples" IsEnabled="False" FontWeight="Bold"/>
                 <MenuItem Header="Gas Script" Command="{Binding OpenExampleGasCommand}"/>

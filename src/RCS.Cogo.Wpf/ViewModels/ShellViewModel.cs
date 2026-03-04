@@ -607,6 +607,9 @@ public class ShellViewModel : ViewModelBase
         OpenExampleWwV2Command = new RelayCommand(_ => OpenDocument("TEST_WASTE_WATER_V2.txt"));
         OpenExampleGasV2Command = new RelayCommand(_ => OpenDocument("TEST_GAS_V2.txt"));
         OpenExampleElectricV2Command = new RelayCommand(_ => OpenDocument("TEST_ELECTRIC_V2.txt"));
+
+        TestNativeSecurityCommand = new RelayCommand(_ => ExecuteTestNativeSecurity());
+        OpenLicensingAgentCommand = new RelayCommand(_ => OpenLicensingAgentWindow());
         
         InstalledAssets = new InstalledAssetsViewModel();
         InstalledAssets.LogAction = (msg) => CommandLog.Add(msg);
@@ -672,6 +675,10 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand OpenExampleWwV2Command { get; }
     public System.Windows.Input.ICommand OpenExampleGasV2Command { get; }
     public System.Windows.Input.ICommand OpenExampleElectricV2Command { get; }
+
+    // Security
+    public System.Windows.Input.ICommand TestNativeSecurityCommand { get; }
+    public System.Windows.Input.ICommand OpenLicensingAgentCommand { get; }
 
     public System.Windows.Input.ICommand OpenAlignmentWindowCommand { get; }
     public System.Windows.Input.ICommand OpenAlignmentSettingsCommand { get; }
@@ -2745,6 +2752,39 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand ReportAllAssetsCsvCommand { get; }
     public System.Windows.Input.ICommand ReportAllAssetsTxtCommand { get; }
     public System.Windows.Input.ICommand ReportAllAssetsXlsCommand { get; }
+
+    private void ExecuteTestNativeSecurity()
+    {
+        try
+        {
+            // Pick a seed, maybe the day of the year, or just a constant. 
+            // In a real app this would be part of your hardware ID.
+            int seed = DateTime.Now.DayOfYear;
+            
+            // Call into Machine Code (Native C++)!
+            string secureData = RCS.Cogo.Wpf.Services.NativeSecurityWrapper.GetSecureData(seed);
+            string mId = RCS.Cogo.Wpf.Services.NativeSecurityWrapper.GetHardwareFingerprint();
+
+            System.Windows.MessageBox.Show(
+                $"Unmanaged C++ DLL executed successfully!\n\nExtracted Native Machine ID:\n{mId}\n\nSeed Requested: {seed}\nEncrypted C++ Response: {secureData}", 
+                "Hardware Level Security Achieved", 
+                System.Windows.MessageBoxButton.OK, 
+                System.Windows.MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show($"Failed to call C++ DLL: {ex.Message}", "Error");
+        }
+    }
+
+    private void OpenLicensingAgentWindow()
+    {
+        var win = new RCS.Cogo.Wpf.Views.LicenseAgentWindow
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
+        win.ShowDialog();
+    }
 
     private void ExportDxf()
     {
