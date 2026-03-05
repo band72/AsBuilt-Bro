@@ -422,7 +422,7 @@ public class ShellViewModel : ViewModelBase
              SaveHorizontalAlignmentAction = (name, desc) => 
              {
                  System.Windows.Application.Current?.Dispatcher.Invoke(async () => {
-                     var ha = new RCS.Data.Entities.HorizontalAlignment { AlignmentName = name, Description = desc, ScriptContent = this.BatchScriptContent };
+                     var ha = new RCS.Data.Entities.Figure { Name = name, DescriptionText = desc, ScriptContent = this.BatchScriptContent, Layer = "Horizontal_Align" };
                      InstalledAssets.HorizontalAlignments.Add(ha);
                      await InstalledAssets.SaveItemAsync(ha);
                  });
@@ -430,7 +430,7 @@ public class ShellViewModel : ViewModelBase
              SaveProfileAlignmentAction = (name, desc) => 
              {
                  System.Windows.Application.Current?.Dispatcher.Invoke(async () => {
-                     var pa = new RCS.Data.Entities.ProfileAlignment { ProfileName = name, Description = desc, ScriptContent = this.BatchScriptContent };
+                     var pa = new RCS.Data.Entities.Figure { Name = name, DescriptionText = desc, ScriptContent = this.BatchScriptContent, Layer = "Vertical_Align" };
                      InstalledAssets.ProfileAlignments.Add(pa);
                      await InstalledAssets.SaveItemAsync(pa);
                  });
@@ -648,6 +648,7 @@ public class ShellViewModel : ViewModelBase
         OpenGeneralSettingsCommand = new RelayCommand(_ => OpenGeneralSettings());
         OpenAlignmentWindowCommand = new RelayCommand(_ => OpenAlignmentWindow());
         OpenAlignmentSettingsCommand = new RelayCommand(_ => OpenAlignmentSettings());
+        OpenFiguresWindowCommand = new RelayCommand(_ => OpenFiguresWindow());
         OpenPipeCharacteristicsCommand = new RelayCommand(_ => OpenPipeCharacteristics());
         // Load default/empty project
         _ = LoadInstalledAssetsAsync();
@@ -713,6 +714,7 @@ public class ShellViewModel : ViewModelBase
 
     public System.Windows.Input.ICommand OpenAlignmentWindowCommand { get; }
     public System.Windows.Input.ICommand OpenAlignmentSettingsCommand { get; }
+    public System.Windows.Input.ICommand OpenFiguresWindowCommand { get; }
     public System.Windows.Input.ICommand OpenPipeCharacteristicsCommand { get; }
 
     public System.Windows.Input.ICommand CloseCommand { get; }
@@ -1206,6 +1208,13 @@ public class ShellViewModel : ViewModelBase
     private void OpenAlignmentWindow()
     {
         var win = new RCS.Cogo.Wpf.Views.AlignmentWindow(this);
+        win.Show();
+    }
+
+    private void OpenFiguresWindow()
+    {
+        if (CurrentProject == null) return;
+        var win = new RCS.Cogo.Wpf.Views.FiguresWindow(CurrentProject.Id.ToString()) { Owner = App.Current.MainWindow };
         win.Show();
     }
 
@@ -2698,7 +2707,7 @@ public class ShellViewModel : ViewModelBase
     private async void DeleteHorizontalAlignmentFromMenu()
     {
         var win = new RCS.Cogo.Wpf.Views.DeleteAlignmentWindow("Delete Horizontal Alignment", InstalledAssets.HorizontalAlignments) { Owner = App.Current.MainWindow };
-        if (win.ShowDialog() == true && win.SelectedItem is RCS.Data.Entities.HorizontalAlignment ha)
+        if (win.ShowDialog() == true && win.SelectedItem is RCS.Data.Entities.Figure ha)
         {
             await InstalledAssets.DeleteAssetAsync(ha);
             InstalledAssets.HorizontalAlignments.Remove(ha);
@@ -2709,7 +2718,7 @@ public class ShellViewModel : ViewModelBase
     private async void DeleteVerticalAlignmentFromMenu()
     {
         var win = new RCS.Cogo.Wpf.Views.DeleteAlignmentWindow("Delete Profile Alignment", InstalledAssets.ProfileAlignments) { Owner = App.Current.MainWindow };
-        if (win.ShowDialog() == true && win.SelectedItem is RCS.Data.Entities.ProfileAlignment pa)
+        if (win.ShowDialog() == true && win.SelectedItem is RCS.Data.Entities.Figure pa)
         {
             await InstalledAssets.DeleteAssetAsync(pa);
             InstalledAssets.ProfileAlignments.Remove(pa);

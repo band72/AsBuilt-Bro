@@ -49,8 +49,8 @@
                     <DataGrid ItemsSource="{Binding HorizontalAlignments}" RowEditEnding="DataGrid_RowEditEnding">
                          <DataGrid.Columns>
                              <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
-                             <DataGridTextColumn Header="Alignment Name" Binding="{Binding AlignmentName}"/>
-                             <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                             <DataGridTextColumn Header="Description" Binding="{Binding DescriptionText}"/>
                              <DataGridTextColumn Header="Script Content" Binding="{Binding ScriptContent}"/>
                          </DataGrid.Columns>
                     </DataGrid>
@@ -61,8 +61,20 @@
                     <DataGrid ItemsSource="{Binding ProfileAlignments}" RowEditEnding="DataGrid_RowEditEnding">
                          <DataGrid.Columns>
                              <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
-                             <DataGridTextColumn Header="Profile Name" Binding="{Binding ProfileName}"/>
-                             <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
+                             <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                             <DataGridTextColumn Header="Description" Binding="{Binding DescriptionText}"/>
+                             <DataGridTextColumn Header="Script Content" Binding="{Binding ScriptContent}"/>
+                         </DataGrid.Columns>
+                    </DataGrid>
+                </Expander>
+
+                <!-- Parcels -->
+                <Expander Header="Parcels">
+                    <DataGrid ItemsSource="{Binding Parcels}" RowEditEnding="DataGrid_RowEditEnding">
+                         <DataGrid.Columns>
+                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
+                             <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                             <DataGridTextColumn Header="Description" Binding="{Binding DescriptionText}"/>
                              <DataGridTextColumn Header="Script Content" Binding="{Binding ScriptContent}"/>
                          </DataGrid.Columns>
                     </DataGrid>

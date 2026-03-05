@@ -18,10 +18,8 @@ namespace RCS.Cogo.Wpf.Views
             var displayList = new System.Collections.Generic.List<dynamic>();
             foreach(var item in items)
             {
-                if (item is RCS.Data.Entities.HorizontalAlignment ha)
-                    displayList.Add(new { Name = ha.AlignmentName, Original = item });
-                else if (item is ProfileAlignment pa)
-                    displayList.Add(new { Name = pa.ProfileName, Original = item });
+                if (item is Figure f)
+                    displayList.Add(new { Name = f.Name, Original = item });
             }
             
             ItemsListBox.ItemsSource = displayList;

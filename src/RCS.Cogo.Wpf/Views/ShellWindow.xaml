@@ -138,6 +138,7 @@
                     <MenuItem Header="Export Appurtenance Schedule..." Command="{Binding ExportScheduleCommand}"/>
                 </MenuItem>
             </MenuItem>
+            <MenuItem Header="_Figures" Command="{Binding OpenFiguresWindowCommand}"/>
             <MenuItem Header="_Alignments">
                 <MenuItem Header="Edit Alignment..." Command="{Binding OpenAlignmentWindowCommand}"/>
                 <Separator/>

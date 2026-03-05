@@ -1,0 +1,72 @@
+<Window x:Class="RCS.Cogo.Wpf.Views.FiguresWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Edit Figures" Height="600" Width="1000"
+        Background="#1E1E1E" Foreground="#D4D4D4">
+    
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+        </Style>
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="#252526"/>
+            <Setter Property="RowBackground" Value="#252526"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3E3E42"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+        </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#3E3E42"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Filter by Layer: " VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox x:Name="LayerFilterComboBox" Width="200" SelectionChanged="LayerFilterComboBox_SelectionChanged" Background="#252526" Foreground="#D4D4D4">
+                <ComboBoxItem Content="All" IsSelected="True"/>
+                <ComboBoxItem Content="Horizontal_Align"/>
+                <ComboBoxItem Content="Vertical_Align"/>
+                <ComboBoxItem Content="Parcel"/>
+            </ComboBox>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: Grid -->
+            <DataGrid x:Name="FiguresDataGrid" Grid.Column="0" AutoGenerateColumns="False" SelectionChanged="FiguresDataGrid_SelectionChanged" IsReadOnly="False" RowEditEnding="FiguresDataGrid_RowEditEnding">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Layer" Binding="{Binding Layer}"/>
+                    <DataGridTextColumn Header="Description" Binding="{Binding DescriptionText}"/>
+                    <DataGridCheckBoxColumn Header="Closed" Binding="{Binding IsClosed}" IsReadOnly="True" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="#3E3E42"/>
+
+            <!-- Right: Viewer -->
+            <Border Grid.Column="2" BorderThickness="1" BorderBrush="#3E3E42" Background="#121212" Margin="5,0,0,0">
+                <Grid>
+                    <TextBlock Text="Figure Viewer" Margin="10" FontWeight="Bold" Foreground="#888888"/>
+                    <Canvas x:Name="FigureCanvas" Margin="10,30,10,10" SizeChanged="FigureCanvas_SizeChanged" ClipToBounds="True"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
