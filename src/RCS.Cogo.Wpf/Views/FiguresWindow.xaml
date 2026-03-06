@@ -31,13 +31,16 @@
         </Grid.RowDefinitions>
         
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Text="Filter by Layer: " VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <ComboBox x:Name="LayerFilterComboBox" Width="200" SelectionChanged="LayerFilterComboBox_SelectionChanged" Background="#252526" Foreground="#D4D4D4">
-                <ComboBoxItem Content="All" IsSelected="True"/>
-                <ComboBoxItem Content="Horizontal_Align"/>
-                <ComboBoxItem Content="Vertical_Align"/>
-                <ComboBoxItem Content="Parcel"/>
+            <TextBlock Text="Filter by Name Prefix: " VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox x:Name="NamePrefixFilterComboBox" Width="100" SelectionChanged="NamePrefixFilterComboBox_SelectionChanged" Foreground="Black" Margin="0,0,10,0">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Foreground" Value="Black"/>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
             </ComboBox>
+            <Button Content="Sync Figures" Width="120" Margin="20,0,0,0" Click="SyncButton_Click" Background="#007acc" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
+            <Button Content="Delete Selected Figure" Width="150" Margin="20,0,0,0" Click="DeleteButton_Click" Background="#c53030" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
         </StackPanel>
 
         <Grid Grid.Row="1">

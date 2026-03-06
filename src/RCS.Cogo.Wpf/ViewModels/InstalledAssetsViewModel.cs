@@ -91,9 +91,7 @@ public class InstalledAssetsViewModel : ViewModelBase
     public ObservableCollection<PipeCrossing> PipeCrossings { get; } = new();
     
     // Figures (Linework & Alignments)
-    public ObservableCollection<Figure> HorizontalAlignments { get; } = new();
-    public ObservableCollection<Figure> ProfileAlignments { get; } = new();
-    public ObservableCollection<Figure> Parcels { get; } = new();
+    public ObservableCollection<Figure> FigureAssets { get; } = new();
 
     // Water Collections
     public ObservableCollection<WaterPipe> WaterPipes { get; } = new();
@@ -255,6 +253,8 @@ public class InstalledAssetsViewModel : ViewModelBase
         _currentProjectId = projectId;
         _currentProjectNumber = projectNumber;
         
+        _dbContext.ChangeTracker.Clear();
+
         await _projectService.EnsureProjectExistsAsync(projectId, projectNumber, "Project " + projectNumber);
 
         async Task Load<T>(InstalledAssetService<T> service, ObservableCollection<T> collection) where T : InstalledAsset
@@ -266,14 +266,8 @@ public class InstalledAssetsViewModel : ViewModelBase
 
         await Load(_pipeCrossingService, PipeCrossings);
         var allFigures = await _figureService.LoadAsync(projectId);
-        HorizontalAlignments.Clear();
-        foreach (var f in allFigures.Where(x => x.Layer == "Horizontal_Align")) HorizontalAlignments.Add(f);
-
-        ProfileAlignments.Clear();
-        foreach (var f in allFigures.Where(x => x.Layer == "Vertical_Align")) ProfileAlignments.Add(f);
-
-        Parcels.Clear();
-        foreach (var f in allFigures.Where(x => x.Layer == "Parcel")) Parcels.Add(f);
+        FigureAssets.Clear();
+        foreach (var f in allFigures) FigureAssets.Add(f);
 
         // Water
         await Load(_waterPipeService, WaterPipes);
@@ -351,10 +345,7 @@ public class InstalledAssetsViewModel : ViewModelBase
         {
             if (string.IsNullOrEmpty(f.PartKey)) 
             {
-                if (f.Layer == "Horizontal_Align") f.PartKey = "HA-" + (HorizontalAlignments.Count + 100).ToString();
-                else if (f.Layer == "Vertical_Align") f.PartKey = "VA-" + (ProfileAlignments.Count + 100).ToString();
-                else if (f.Layer == "Parcel") f.PartKey = "PC-" + (Parcels.Count + 100).ToString();
-                else f.PartKey = "FIG-" + Guid.NewGuid().ToString().Substring(0, 5);
+                f.PartKey = "FIG-" + Guid.NewGuid().ToString().Substring(0, 5);
             }
             await _figureService.UpsertAsync(_currentProjectId, f);
         }
@@ -434,15 +425,10 @@ public class InstalledAssetsViewModel : ViewModelBase
         { 
             if (string.IsNullOrEmpty(f.PartKey)) 
             {
-                if (f.Layer == "Horizontal_Align") f.PartKey = "HA-" + (HorizontalAlignments.Count + 100).ToString();
-                else if (f.Layer == "Vertical_Align") f.PartKey = "VA-" + (ProfileAlignments.Count + 100).ToString();
-                else if (f.Layer == "Parcel") f.PartKey = "PC-" + (Parcels.Count + 100).ToString();
-                else f.PartKey = "FIG-" + Guid.NewGuid().ToString().Substring(0, 5);
+                f.PartKey = "FIG-" + Guid.NewGuid().ToString().Substring(0, 5);
             }
             
-            if (f.Layer == "Horizontal_Align") HorizontalAlignments.Add(f);
-            else if (f.Layer == "Vertical_Align") ProfileAlignments.Add(f);
-            else if (f.Layer == "Parcel") Parcels.Add(f);
+            FigureAssets.Add(f);
 
             await _figureService.UpsertAsync(_currentProjectId, f); 
         }
@@ -606,20 +592,10 @@ public class InstalledAssetsViewModel : ViewModelBase
             $"PartKey,Description,Northing,Easting,Notes,Manufacturer,Size,Material,Year,Confidence,Source,Warning\n" +
             $"{C(i.PartKey)},{C(i.Description)},{i.Northing},{i.Easting},{C(i.Notes)},{C(i.Manufacturer)},{C(i.Size)},{C(i.Material)},{C(i.YearManufactured)},{C(i.Confidence)},{C(i.Source)},{C(i.Warning)}");
 
-        // Horizontal Alignments
-        Write("HorizontalAlignments", HorizontalAlignments, i =>
-            $"AlignmentName,Description,ScriptContent\n" +
-            $"{C(i.Name)},{C(i.DescriptionText)},{C(i.ScriptContent)}");
-
-        // Profile Alignments
-        Write("ProfileAlignments", ProfileAlignments, i =>
-            $"ProfileName,Description,ScriptContent\n" +
-            $"{C(i.Name)},{C(i.DescriptionText)},{C(i.ScriptContent)}");
-
-        // Parcels
-        Write("Parcels", Parcels, i =>
-            $"ParcelName,Description,ScriptContent\n" +
-            $"{C(i.Name)},{C(i.DescriptionText)},{C(i.ScriptContent)}");
+        // Figure Assets
+        Write("FigureAssets", FigureAssets, i =>
+            $"AssetId,Name,Layer,Description,ScriptContent\n" +
+            $"{C(i.PartKey)},{C(i.Name)},{C(i.Layer)},{C(i.DescriptionText)},{C(i.ScriptContent)}");
 
         // Formatters
         string FormatPipe<T>(T i) where T : Pipe => 

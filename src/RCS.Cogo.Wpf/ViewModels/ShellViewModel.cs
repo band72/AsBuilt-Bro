@@ -423,16 +423,14 @@ public class ShellViewModel : ViewModelBase
              {
                  System.Windows.Application.Current?.Dispatcher.Invoke(async () => {
                      var ha = new RCS.Data.Entities.Figure { Name = name, DescriptionText = desc, ScriptContent = this.BatchScriptContent, Layer = "Horizontal_Align" };
-                     InstalledAssets.HorizontalAlignments.Add(ha);
-                     await InstalledAssets.SaveItemAsync(ha);
+                     await InstalledAssets.AddItemAsync(ha);
                  });
              },
              SaveProfileAlignmentAction = (name, desc) => 
              {
                  System.Windows.Application.Current?.Dispatcher.Invoke(async () => {
                      var pa = new RCS.Data.Entities.Figure { Name = name, DescriptionText = desc, ScriptContent = this.BatchScriptContent, Layer = "Vertical_Align" };
-                     InstalledAssets.ProfileAlignments.Add(pa);
-                     await InstalledAssets.SaveItemAsync(pa);
+                     await InstalledAssets.AddItemAsync(pa);
                  });
              },
              SyncPointsAction = () => 
@@ -542,6 +540,8 @@ public class ShellViewModel : ViewModelBase
         ExportOutputLogCommand = new RelayCommand(_ => ExportOutputLog());
         ExportPointsTxtCommand = new RelayCommand(_ => ExportPointsTxt());
         ExportPointsXmlCommand = new RelayCommand(_ => ExportPointsXml());
+        SavePointsCommand = new RelayCommand(_ => SavePoints());
+        SaveFiguresCommand = new RelayCommand(_ => SaveFigures());
         // ExportDxfCommand = new RelayCommand(_ => ExportDxf()); // This line was moved up
         SyncToAssetsCommand = new RelayCommand(_ => SyncAssets());
         
@@ -782,6 +782,85 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand ExportOutputLogCommand { get; }
     public System.Windows.Input.ICommand ExportPointsTxtCommand { get; }
     public System.Windows.Input.ICommand ExportPointsXmlCommand { get; }
+    public System.Windows.Input.ICommand SavePointsCommand { get; }
+    public System.Windows.Input.ICommand SaveFiguresCommand { get; }
+
+    private void SavePoints()
+    {
+        if (string.IsNullOrEmpty(_currentDbPath))
+        {
+            SaveProject(); // Prompt user if no project exists
+        }
+        else
+        {
+            _context.SyncPointsAction?.Invoke();
+            _context.Log("[AUDIT] Points explicitly saved to database via Quick Save.");
+            System.Windows.MessageBox.Show("Points explicitly saved to database.", "Save Points", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+        }
+    }
+
+    private void SaveFigures()
+    {
+        if (string.IsNullOrEmpty(_currentDbPath))
+        {
+            System.Windows.MessageBox.Show("Please save your project first to create a database to store the figures.", "Project Not Saved", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            return;
+        }
+
+        System.Windows.Application.Current?.Dispatcher.Invoke(async () => 
+        {
+            try
+            {
+                int count = 0;
+                foreach (var fig in _context.GetAllFigures())
+                {
+                    var f = new RCS.Data.Entities.Figure 
+                    { 
+                        Name = fig.Name, 
+                        DescriptionText = "Auto-saved figure from Script", 
+                        ScriptContent = this.BatchScriptContent, 
+                        Layer = "Geometry"
+                    };
+                    
+                    int order = 0;
+                    foreach(var ptId in fig.PointIds)
+                    {
+                        var p = _context.GetPoint(ptId);
+                        if (p != null)
+                        {
+                            var vertex = new RCS.Data.Entities.FigureVertex 
+                            {
+                                Point = new RCS.Data.Entities.SurveyPoint 
+                                {
+                                    PointNumber = ptId,
+                                    Northing = p.Northing,
+                                    Easting = p.Easting,
+                                    Elevation = p.Elevation,
+                                    Description = ""
+                                },
+                                OrderIndex = order++
+                            };
+                            f.Vertices.Add(vertex);
+                        }
+                    }
+                    
+                    if (f.Vertices.Count > 0)
+                    {
+                        await InstalledAssets.AddItemAsync(f);
+                        count++;
+                    }
+                }
+                
+                _context.Log($"[AUDIT] Saved {count} figures to project database.");
+                System.Windows.MessageBox.Show($"Successfully synced {count} active figures straight to the 'Geometry' layer in the Master Database.", "Save Figures", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                _context.Log($"[AUDIT] Error saving figures: {ex.Message}");
+                System.Windows.MessageBox.Show($"Error saving figures: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+        });
+    }
 
     // Curve Solver Properties
     private string _curveRadius = "";
@@ -1214,7 +1293,13 @@ public class ShellViewModel : ViewModelBase
     private void OpenFiguresWindow()
     {
         if (CurrentProject == null) return;
-        var win = new RCS.Cogo.Wpf.Views.FiguresWindow(CurrentProject.Id.ToString()) { Owner = App.Current.MainWindow };
+        var win = new RCS.Cogo.Wpf.Views.FiguresWindow(CurrentProject.Id.ToString(), async () => 
+        {
+            if (InstalledAssets != null)
+            {
+                await InstalledAssets.ReloadAsync();
+            }
+        }) { Owner = App.Current.MainWindow };
         win.Show();
     }
 
@@ -2706,22 +2791,22 @@ public class ShellViewModel : ViewModelBase
 
     private async void DeleteHorizontalAlignmentFromMenu()
     {
-        var win = new RCS.Cogo.Wpf.Views.DeleteAlignmentWindow("Delete Horizontal Alignment", InstalledAssets.HorizontalAlignments) { Owner = App.Current.MainWindow };
+        var win = new RCS.Cogo.Wpf.Views.DeleteAlignmentWindow("Delete Figure", InstalledAssets.FigureAssets) { Owner = App.Current.MainWindow };
         if (win.ShowDialog() == true && win.SelectedItem is RCS.Data.Entities.Figure ha)
         {
             await InstalledAssets.DeleteAssetAsync(ha);
-            InstalledAssets.HorizontalAlignments.Remove(ha);
+            InstalledAssets.FigureAssets.Remove(ha);
             RefreshData(false);
         }
     }
 
     private async void DeleteVerticalAlignmentFromMenu()
     {
-        var win = new RCS.Cogo.Wpf.Views.DeleteAlignmentWindow("Delete Profile Alignment", InstalledAssets.ProfileAlignments) { Owner = App.Current.MainWindow };
+        var win = new RCS.Cogo.Wpf.Views.DeleteAlignmentWindow("Delete Figure", InstalledAssets.FigureAssets) { Owner = App.Current.MainWindow };
         if (win.ShowDialog() == true && win.SelectedItem is RCS.Data.Entities.Figure pa)
         {
             await InstalledAssets.DeleteAssetAsync(pa);
-            InstalledAssets.ProfileAlignments.Remove(pa);
+            InstalledAssets.FigureAssets.Remove(pa);
             RefreshData(false);
         }
     }
@@ -3398,8 +3483,36 @@ public class ShellViewModel : ViewModelBase
 
                 var service = new LiteDbProjectService();
                 service.SaveProject(dialog.FileName, CurrentProject);
+                _currentDbPath = dialog.FileName; // Store path for maintenance and point syncing operations
                 
-                _context.Log($"[AUDIT] Saved project to {dialog.FileName} (LiteDB)");
+                // Method 1: Push points to Survey Linework Entity Framework DB for Figures foreign keys
+                try 
+                {
+                    using (var db = new RCS.Data.AppDbContext())
+                    {
+                        var newSurveyPoints = CurrentProject.Points.Select(p => new RCS.Data.Entities.SurveyPoint 
+                        {
+                            Id = p.Id, 
+                            PointNumber = p.Id,
+                            ProjectId = CurrentProject.Id.ToString(), 
+                            Northing = p.Northing, Easting = p.Easting, Elevation = p.Elevation, Description = p.Description 
+                        }).ToList();
+
+                        var existing = db.SurveyPoints.Where(p => p.ProjectId == CurrentProject.Id.ToString()).Select(p => p.Id).ToList();
+                        var toInsert = newSurveyPoints.Where(p => !existing.Contains(p.Id)).ToList();
+                        if (toInsert.Any())
+                        {
+                            db.SurveyPoints.AddRange(toInsert);
+                            db.SaveChanges();
+                        }
+                    }
+                }
+                catch (Exception dbEx)
+                {
+                    _context.Log($"[AUDIT] Warning: Could not sync points with Method 1 SQLite DB: {dbEx.Message}");
+                }
+
+                _context.Log($"[AUDIT] Saved project to {dialog.FileName} (LiteDB and EF Core DB)");
             }
             catch(Exception ex)
             {
@@ -3631,6 +3744,8 @@ public class ShellViewModel : ViewModelBase
             try
             {
                 var lines = File.ReadAllLines(dialog.FileName);
+                var newSurveyPoints = new List<RCS.Data.Entities.SurveyPoint>();
+
                 int count = 0;
                 foreach (var line in lines)
                 {
@@ -3654,10 +3769,39 @@ public class ShellViewModel : ViewModelBase
                             if (parts.Length > 4) desc = string.Join(" ", parts.Skip(4));
                             
                             _context.AddPoint(id, new Point3D(n, e, z), desc);
+                            
+                            newSurveyPoints.Add(new RCS.Data.Entities.SurveyPoint 
+                            { 
+                                Id = id, 
+                                PointNumber = id,
+                                ProjectId = CurrentProject.Id.ToString(), 
+                                Northing = n, Easting = e, Elevation = z, Description = desc 
+                            });
+                            
                             count++;
                         }
                     }
                 }
+                
+                // Method 1: Push points to Survey Linework Entity Framework DB for Figures foreign keys
+                try 
+                {
+                    using (var db = new RCS.Data.AppDbContext())
+                    {
+                        var existing = db.SurveyPoints.Where(p => p.ProjectId == CurrentProject.Id.ToString()).Select(p => p.Id).ToList();
+                        var toInsert = newSurveyPoints.Where(p => !existing.Contains(p.Id)).ToList();
+                        if (toInsert.Any())
+                        {
+                            db.SurveyPoints.AddRange(toInsert);
+                            db.SaveChanges();
+                        }
+                    }
+                }
+                catch (Exception dbEx)
+                {
+                    _context.Log($"[AUDIT] Warning: Could not sync points with Method 1 SQLite DB: {dbEx.Message}");
+                }
+
                 _context.Log($"[AUDIT] Imported {count} points from {dialog.FileName}");
                 RefreshData();
             }

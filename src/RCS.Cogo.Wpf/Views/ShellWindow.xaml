@@ -288,7 +288,8 @@
                                  I should add buttons for Import/Export Points here if possible. 
                                  For now, I'll add the visual buttons. -->
                              <Button Content="Export TXT" Command="{Binding ExportPointsTxtCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
-                             <Button Content="Export XML" Command="{Binding ExportPointsXmlCommand}" Padding="10,5" Background="#2D2D30" Foreground="White"/>
+                             <Button Content="Export XML" Command="{Binding ExportPointsXmlCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                             <Button Content="Save" Command="{Binding SavePointsCommand}" Padding="10,5" Background="#28A745" Foreground="White" FontWeight="Bold" ToolTip="Save Points to Database"/>
                         </StackPanel>
 
                         <DataGrid Grid.Row="1" ItemsSource="{Binding Points}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
@@ -438,6 +439,8 @@
                                     Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
                             <Button Content="TXT" Command="{Binding ExportScriptCommand}" 
                                     Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                            <Button Content="Save Figures" Command="{Binding SaveFiguresCommand}" 
+                                    Padding="10,5" Margin="0,0,10,0" Background="#007ACC" Foreground="White" FontWeight="Bold" ToolTip="Save all figures to database"/>
                             <Button Content="✨ AI" Command="{Binding AnalyzeScriptCommand}" 
                                     Padding="10,5" Background="#8A2BE2" Foreground="White" FontWeight="Bold" ToolTip="AI Script Validator"/>
                         </StackPanel>

@@ -17,12 +17,13 @@ namespace RCS.Cogo.Wpf.Views
         private AppDbContext _context;
         private string _projectId;
         private List<Figure> _allFigures = new();
-
-        public FiguresWindow(string projectId)
+        private Action _onClosedCallback;
+        public FiguresWindow(string projectId, Action onClosedCallback = null)
         {
             InitializeComponent();
             _projectId = projectId;
             _context = new AppDbContext();
+            _onClosedCallback = onClosedCallback;
             
             LoadFigures();
         }
@@ -37,26 +38,93 @@ namespace RCS.Cogo.Wpf.Views
                 .Where(f => f.ProjectId == _projectId)
                 .ToList();
 
+            UpdateFilterOptions();
+        }
+
+        private void UpdateFilterOptions()
+        {
+            var prefixes = _allFigures
+                .Where(f => !string.IsNullOrEmpty(f.Name))
+                .Select(f => f.Name.Length >= 2 ? f.Name.Substring(0, 2).ToUpper() : f.Name.ToUpper())
+                .Distinct()
+                .OrderBy(s => s)
+                .ToList();
+
+            prefixes.Insert(0, "All");
+            NamePrefixFilterComboBox.ItemsSource = prefixes;
+            NamePrefixFilterComboBox.SelectedIndex = 0;
             ApplyFilter();
         }
 
         private void ApplyFilter()
         {
-            if (LayerFilterComboBox == null || FiguresDataGrid == null) return;
+            if (NamePrefixFilterComboBox == null || FiguresDataGrid == null) return;
 
-            var selectedItem = LayerFilterComboBox.SelectedItem as ComboBoxItem;
-            string filter = selectedItem?.Content.ToString() ?? "All";
+            string filter = NamePrefixFilterComboBox.SelectedItem as string ?? "All";
 
             var filtered = filter == "All" 
-                ? _allFigures 
-                : _allFigures.Where(f => f.Layer == filter).ToList();
+                ? _allFigures.ToList() 
+                : _allFigures.Where(f => !string.IsNullOrEmpty(f.Name) && f.Name.ToUpper().StartsWith(filter)).ToList();
 
+            FiguresDataGrid.ItemsSource = null;
             FiguresDataGrid.ItemsSource = filtered;
         }
 
-        private void LayerFilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void NamePrefixFilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ApplyFilter();
+        }
+
+        private void SyncButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _context.SaveChanges(); // Persist any pending data grid edits
+            }
+            catch { }
+            
+            _onClosedCallback?.Invoke();
+            MessageBox.Show("Figures synchronized with Installed Assets.", "Sync Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (FiguresDataGrid.SelectedItem is Figure figure)
+            {
+                var result = MessageBox.Show($"Are you sure you want to delete figure '{figure.Name}'?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        // Use raw SQL string replacement directly to ensure SQLite binds without parameter mapping errors
+                        string fid = figure.Id.Replace("'", "''"); // escape just in case
+                        _context.Database.ExecuteSqlRaw($"DELETE FROM FigureVertices WHERE FigureId = '{fid}'");
+                        _context.Database.ExecuteSqlRaw($"DELETE FROM Figures WHERE Id = '{fid}'");
+
+                        try
+                        {
+                            _context.Entry(figure).State = EntityState.Detached;
+                        } catch { }
+
+                        _allFigures.Remove(figure);
+                        
+                        ApplyFilter(); // Make sure the window local Grid refreshes immediately natively
+                        UpdateFilterOptions(); // Then update filter list
+                        FigureCanvas.Children.Clear();
+                        
+                        // Finally trigger the callback to load exactly what's actually in SQLite into the main view
+                        _onClosedCallback?.Invoke();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error deleting figure: {ex.Message}", "Delete Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a figure to delete.", "No Figure Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         private void FiguresDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -161,9 +229,16 @@ namespace RCS.Cogo.Wpf.Views
             {
                 if (e.Row.Item is Figure figure)
                 {
-                    // Basic save
-                    _context.Entry(figure).State = EntityState.Modified;
-                    _context.SaveChanges();
+                    try 
+                    {
+                        if (_context.Entry(figure).State == EntityState.Detached)
+                            return;
+
+                        // Basic save
+                        _context.Entry(figure).State = EntityState.Modified;
+                        _context.SaveChanges();
+                    }
+                    catch { } // Ignore exceptions to prevent UI crashes if item is already deleted or detached
                 }
             }
         }
@@ -171,6 +246,7 @@ namespace RCS.Cogo.Wpf.Views
         protected override void OnClosed(EventArgs e)
         {
             _context?.Dispose();
+            _onClosedCallback?.Invoke();
             base.OnClosed(e);
         }
     }

@@ -44,38 +44,15 @@
                     </Style>
                 </StackPanel.Resources>
 
-                <!-- Horizontal Alignments -->
-                <Expander Header="Horizontal Alignments">
-                    <DataGrid ItemsSource="{Binding HorizontalAlignments}" RowEditEnding="DataGrid_RowEditEnding">
+                <!-- Figure Assets -->
+                <Expander Header="Figure Assets">
+                    <DataGrid ItemsSource="{Binding FigureAssets}" RowEditEnding="DataGrid_RowEditEnding">
                          <DataGrid.Columns>
                              <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
                              <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                             <DataGridTextColumn Header="Layer" Binding="{Binding Layer}"/>
                              <DataGridTextColumn Header="Description" Binding="{Binding DescriptionText}"/>
-                             <DataGridTextColumn Header="Script Content" Binding="{Binding ScriptContent}"/>
-                         </DataGrid.Columns>
-                    </DataGrid>
-                </Expander>
-
-                <!-- Vertical Alignments -->
-                <Expander Header="Vertical Alignments">
-                    <DataGrid ItemsSource="{Binding ProfileAlignments}" RowEditEnding="DataGrid_RowEditEnding">
-                         <DataGrid.Columns>
-                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
-                             <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                             <DataGridTextColumn Header="Description" Binding="{Binding DescriptionText}"/>
-                             <DataGridTextColumn Header="Script Content" Binding="{Binding ScriptContent}"/>
-                         </DataGrid.Columns>
-                    </DataGrid>
-                </Expander>
-
-                <!-- Parcels -->
-                <Expander Header="Parcels">
-                    <DataGrid ItemsSource="{Binding Parcels}" RowEditEnding="DataGrid_RowEditEnding">
-                         <DataGrid.Columns>
-                             <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
-                             <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                             <DataGridTextColumn Header="Description" Binding="{Binding DescriptionText}"/>
-                             <DataGridTextColumn Header="Script Content" Binding="{Binding ScriptContent}"/>
+                             <DataGridTextColumn Header="Script Content" Binding="{Binding ScriptContent}" Visibility="Collapsed"/>
                          </DataGrid.Columns>
                     </DataGrid>
                 </Expander>
