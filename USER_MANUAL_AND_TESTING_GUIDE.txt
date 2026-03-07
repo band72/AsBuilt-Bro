@@ -374,9 +374,9 @@ Action: Wipes the coordinate from RAM and SQLite completely.
 Syntax: EDTPT [PointID] [Optional N] [Optional E] [Optional Z]
 Action: Overwrites existing memory references natively.
 
-** COPYPT (Copy Point)
-Syntax: COPYPT [SrcID] [DestID]
-Action: Clones geometry under a different index key.
+** COPY-PT (Copy Point)
+Syntax: COPY-PT [SrcID] [DestID] [Description]
+Action: Clones geometry under a different index key. Optionally takes a new description.
 
 ================================================================================
 PART 5: FIGURES AND BOUNDARIES
