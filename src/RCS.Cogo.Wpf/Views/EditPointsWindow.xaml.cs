@@ -33,7 +33,20 @@ public partial class EditPointsWindow : Window
             dialog.Owner = this;
             if (dialog.ShowDialog() == true)
             {
-                pt.Description = dialog.SelectedDescription;
+                if (PointsGrid.SelectedItems.Contains(pt) && PointsGrid.SelectedItems.Count > 1)
+                {
+                    foreach (var item in System.Linq.Enumerable.ToList(System.Linq.Enumerable.Cast<PointViewModel>(PointsGrid.SelectedItems)))
+                    {
+                        if (item != null)
+                        {
+                            item.Description = dialog.SelectedDescription;
+                        }
+                    }
+                }
+                else
+                {
+                    pt.Description = dialog.SelectedDescription;
+                }
             }
         }
     }

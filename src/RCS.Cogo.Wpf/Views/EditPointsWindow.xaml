@@ -35,7 +35,7 @@
         
         <TextBlock Text="Edit Project Points" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Points}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+        <DataGrid x:Name="PointsGrid" Grid.Row="1" ItemsSource="{Binding Points}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                   Background="#252526" BorderThickness="1" BorderBrush="#3E3E42" RowBackground="#1E1E1E" AlternatingRowBackground="#2D2D30">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#007ACC"/>
