@@ -32,10 +32,12 @@
         
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
             <TextBlock Text="Filter by Name Prefix: " VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <ComboBox x:Name="NamePrefixFilterComboBox" Width="100" SelectionChanged="NamePrefixFilterComboBox_SelectionChanged" Foreground="Black" Margin="0,0,10,0">
+            <ComboBox x:Name="NamePrefixFilterComboBox" Width="100" SelectionChanged="NamePrefixFilterComboBox_SelectionChanged" Background="#E0E0E0" Foreground="Black" BorderBrush="Gray" Margin="0,0,10,0" IsEditable="True" IsReadOnly="True">
                 <ComboBox.ItemContainerStyle>
                     <Style TargetType="ComboBoxItem">
+                        <Setter Property="Background" Value="#E0E0E0"/>
                         <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="BorderThickness" Value="0"/>
                     </Style>
                 </ComboBox.ItemContainerStyle>
             </ComboBox>

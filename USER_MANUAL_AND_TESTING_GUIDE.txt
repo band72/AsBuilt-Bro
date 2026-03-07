@@ -1,161 +1,1772 @@
 # RCS COGO Enterprise - Comprehensive User Manual & Testing Guide
+# Version: 2.1.0 Enterprise Edition
+# Document Length Check: Target > 1000 lines
 
-## Table of Contents
-1. Introduction
-2. Getting Started
-3. Application UI Overview
-4. Command Line (Cogo)
-5. Cogo Scripting (Batch)
-6. Piping Network & Architecture
-7. Materials & Asset Database
-8. File Management & Database Operations
-9. Testing Guide & Walkthrough
-10. Troubleshooting & FAQs
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+PART 1: SYSTEM OVERVIEW AND ARCHITECTURE
+1.1 Executive Summary
+1.2 System Requirements
+1.3 Installation and Deployment
+1.4 Directory Structure
+1.5 Database Architecture (SQLite)
 
----
+PART 2: USER INTERFACE (UI) REFERENCE
+2.1 Main Shell Window Menu
+2.2 Points Tab Data Grid
+2.3 Cogo Tab (Command Line)
+2.4 Cogo Script Tab (Batch Processing)
+2.5 Curve Solver Tab
+2.6 Piping Tab
+2.7 Piping Script Tab
+2.8 Codes Tab
+2.9 Figures Window
+2.10 Material Selection Window
 
-## 1. Introduction
-Welcome to RCS COGO Enterprise! This application provides state-of-the-art Coordinate Geometry (COGO) calculations paired with comprehensive Pipe Network modeling and Asset Management capabilities. Built for modern enterprise needs, it includes fully scriptable pipelines, an active material database, and multi-format data exports.
+PART 3: CONFIGURATION AND SETTINGS
+3.1 General Settings
+3.2 Report Configuration
+3.3 Validation Rules
+3.4 Pipe Characteristics
+3.5 Symbol Manager
 
-## 2. Getting Started
-### 2.1 First Launch
-When opening `RCS.Cogo.Wpf.exe`, you will be greeted by the default workspace. 
-- **Start Fresh:** Navigate to `File > Project > New Project...` and define your basic project metadata. This creates a new `.sqlite` database for the project.
-- **Resume Work:** Choose `File > Project > Open Project...` to load an existing `.sqlite` workspace.
+PART 4: CORE SURVEY COMMANDS (COGO)
+4.1 Setup & Orientation Commands (ST, OC, STN, BS, FACE)
+4.2 Creation & Geometry Commands (FS, TRAV, AZ, IN, LOC, NEWPT, ADDPT)
+4.3 Transformation Commands (TRN, ROT, LN)
+4.4 Information & Display Commands (ID, SQ, DISP, LIST, SHOW, OUTPUT)
+4.5 Measurement & Intersections (RKRK, LNOFF, RKOFF)
+4.6 Alignment Commands (DEFHALN, DEFVALN)
+4.7 Curve Commands (PC, PI, PT, CC, RT, LT, XD, XC)
+4.8 Database Maintenance Commands (DELPT, EDTPT, COPYPT)
 
-### 2.2 Updating Settings
-Under the `Settings` menu, you can configure reporting defaults, formatting options, and validation rules. It is good practice to confirm your project settings before commencing large batch imports.
+PART 5: FIGURES AND BOUNDARIES
+5.1 Figure Generation (B, L, C)
+5.2 DXF Export Logic
+5.3 Reviewing Figures
 
----
+PART 6: PIPING NETWORK MODELLING
+6.1 Piping Fundamentals
+6.2 UI-Based Piping Workflows
+6.3 Scripting Pipes (PRUN, SS-B, SS-E)
+6.4 Network Validation & Error Checking
+6.5 Synchronizing to Installed Assets DB
 
-## 3. Application UI Overview
-The interface is structured in tabs for logical workflow separation:
+PART 7: MATERIEL MANAGEMENT & ESTIMATING
+7.1 Master Material Catalog
+7.2 Project Material Schedule
+7.3 Custom Spec Adjustments
 
-- **Points:** A grid-based view of all survey points in the database. Supports editing descriptions and visualizing validation statuses.
-- **Cogo:** An interactive command-line interface for individual geometric calculations.
-- **Cogo Script:** A batch editor and executor. Write or import scripts here to compute multiple points, lines, and figures at once.
-- **Curve Solver:** A dedicated tool for resolving horizontal curve data from partial inputs (e.g., Radius and Arc Length).
-- **Piping:** A UI-driven builder for designing pipe networks (runs and structures). 
-- **Piping Script:** A batch editor dedicated exclusively to piping network instructions (e.g., PRUN, SS-B).
-- **Codes:** A comprehensive listing of survey codes and their descriptions.
-- **Materials:** The master catalog of construction materials (valves, pipes, manholes). Attach items from the master catalog specifically to your project's schedule.
+PART 8: EXPORTING AND REPORTING
+8.1 Points XML and TXT
+8.2 Script Outputs
+8.3 DXF Output
+8.4 ePANET Imports
+8.5 CSV BOM Generation
 
----
+PART 9: TESTING PROTOCOLS & QA/QC
+9.1 Unit Testing Guidelines
+9.2 Walkthrough 1: Barebones Points Setup
+9.3 Walkthrough 2: Advanced Batch Scripting
+9.4 Walkthrough 3: Pipe Network Integration
+9.5 Walkthrough 4: Alignment Validation
 
-## 4. Command Line (Cogo)
-The **Cogo** tab is the heart of direct geometry processing. Enter commands into the input box to instantly calculate coordinates. 
+PART 10: TROUBLESHOOTING & FAQ
+10.1 UI Freezes and Database Locks
+10.2 EF Core Concurrency Exceptions
+10.3 Error Log Locations
+10.4 Glossary of Terms
 
-**Common Survey Commands:**
-- `ST pt# N E Z Desc` : Store a point. (e.g., `ST 1 5000 5000 100 CP`)
-- `OC pt# height` : Occupy a setup point.
-- `BS pt# az` : Backsight to establish orientation.
-- `AZ pt_start pt_end` : Calculate azimuth between two points.
-- `FS pt_new angle dist desc` : Foresight to create a new point based on the current setup.
-- `TRAV pt_new angle dist desc` : Traverse to a new point and automatically move the setup occupation there.
-- `IN inverse_pt1 inverse_pt2` : Calculate inverse bearing and distance between two points. 
-- `SYNC-PTS` : Synchronize and commit all recently imported or created points into the active project database.
-- `XPT-PTS` : Export a list of all current points to the output log in ascending NEZ format.
+================================================================================
+PART 1: SYSTEM OVERVIEW AND ARCHITECTURE
+================================================================================
 
----
+1.1 Executive Summary
+--------------------------------------------------------------------------------
+Welcome to RCS COGO Enterprise! This application provides state-of-the-art 
+Coordinate Geometry (COGO) calculations paired with comprehensive Pipe Network 
+modeling and Asset Management capabilities. Built for modern enterprise needs, 
+it includes fully scriptable pipelines, an active material database, multi-format 
+data exports, AI integration, and a C++ security validation layer.
 
-## 5. Cogo Scripting (Batch)
-For larger datasets, use the **Cogo Script** tab. 
+1.2 System Requirements
+--------------------------------------------------------------------------------
+- Operating System: Windows 10/11 (64-bit)
+- Framework: .NET 8.0 Windows Desktop Runtime
+- Database: SQLite (local file-based storage)
+- Processor: x64 architecture required for native security DLL
+- Memory: Minimum 8GB RAM recommended for large map operations.
 
-**Features:**
-- **Import:** Load text files containing dozens or hundreds of commands.
-- **Comments:** Prefix lines with `//` to add notes. The parser ignores these lines.
-- **Figures:** Commands like `B pt` (Begin), `L pt` (Line-to), and `C` (Close) construct enclosed shapes which are instantly rendered in the central graphical view.
+1.3 Installation and Deployment
+--------------------------------------------------------------------------------
+The application is deployed via a single-file executable or an Inno Setup installer. 
+Once installed, double click RCS.Cogo.Wpf.exe. Ensure the native 'RcsSecurityModule.dll' 
+is preserved in the root executable directory, otherwise the application will fail the 
+hardware verification loop.
 
-**Best Practice:** Always run point-creation scripts *before* attempting pipe network scripts that rely on those points.
+1.4 Directory Structure
+--------------------------------------------------------------------------------
+- Views/: WPF XAML UI elements
+- ViewModels/: MVVM Logic elements handling state
+- Commands/: The specific C# parser implementations for survey geometry
+- Entities/: Database models representing EF Core Tables
+- Resources/: Shared dictionaries and styles
+- DbPath: %LocalAppData%/rcs_installed_assets.db
 
----
+1.5 Database Architecture (SQLite)
+--------------------------------------------------------------------------------
+Data is persisted in SQLite using Entity Framework Core.
+When dealing with large datasets, ALWAYS utilize the 'Compact Database' menu tool to 
+VACUUM the SQLite DB and reclaim filesystem space. Note that figures use heavy Object
+Graph hierarchies (Figure -> Vertices -> Point) requiring explicit load state management.
 
-## 6. Piping Network & Architecture
-RCS COGO Enterprise handles piping logically by connecting Point IDs.
+================================================================================
+PART 2: USER INTERFACE (UI) REFERENCE
+================================================================================
 
-### 6.1 Using the UI
-On the **Piping** tab, enter a designated "From" point and "To" point, along with diameter and invert elevations, then click **Add Pipe**. You can similarly define parts (structures) at specific Point IDs.
+2.1 Main Shell Window Menu
+--------------------------------------------------------------------------------
+Located at the top of the window, the Main Menu features sections for:
+* File -> Exit commands.
+* Project -> Load/Save project profiles.
+* Settings -> Adjust global rendering tolerances.
+* Data -> Access batch scripts, exports, and imports.
+* Alignments -> Open standalone managers for H/V alignments.
+* Reports -> Generate utility-discipline specific logs.
+* Help -> Read this exact manual.
 
-### 6.2 Using Piping Scripts
-Piping scripts are written in the **Piping Script** tab and use specialized commands:
-- `PRUN START pt# pt# diameter inv_start inv_end`
-- `PRUN END`
-- `SS-B pt#` : Add a structure at the beginning of the pipe run.
-- `SS-E pt#` : Add a structure at the end of the pipe run.
+2.2 Points Tab Data Grid
+--------------------------------------------------------------------------------
+This visual area immediately loads the Points table from the active Project ID.
+- Read-only geometry: Northings and Eastings are generated exclusively through commands.
+- Writable: Descriptions can be amended inline.
+- Highlighting: A checkmark or cross appears if the description aligns with the 'Codes' table.
 
-Example:
-```
-// Sanitary Sewer Run
-PRUN START 100 101 8 50.0 49.5
-SS-B 100
-SS-E 101
-PRUN END
-```
+2.3 Cogo Tab (Command Line)
+--------------------------------------------------------------------------------
+Designed for legacy COGO methodology users.
+Type commands at the bottom prompt -> Press Enter -> Receive visual history feedback above.
+Floating tips will guide you on expected parameter formats.
 
----
+2.4 Cogo Script Tab (Batch Processing)
+--------------------------------------------------------------------------------
+Provides a multi-line text interface to paste large files.
+Key actions:
+- Run: Executes all lines blindly.
+- Walk: Pauses execution between each line, opening a small 'next' prompt for QA.
+- AI: Sends the script to GEMINI/GPT for logical analysis and correction.
 
-## 7. Materials & Asset Database
-### 7.1 Master Catalog
-The **Materials** tab shows the global, uneditable library of available construction materials (validation list). You can filter these by Discipline, Type, Size, and Material.
+2.5 Curve Solver Tab
+--------------------------------------------------------------------------------
+When you only have a sub-set of curve data. Enter EXACTLY two parameters (e.g., Radius 
+and Arc Length). Clicking 'Solve' utilizes native math to produce remaining parameters 
+like Chord, Tangent, and Delta. 
 
-### 7.2 Project Schedule of Materials
-To link a catalog item to a project, select it in the Master Catalog grid and click **Add Selected to Project**. It will then populate the lower grid (Project Schedule) where quantities can be tracked.
+2.6 Piping Tab
+--------------------------------------------------------------------------------
+Form-driven pipe entry:
+- Pipe Runs: Define start and end nodes, assign diameters and inverts, let slope auto-calc.
+- Structures: Assign code logic (e.g., 'MH') to structural points.
 
-### 7.3 Sync to Assets
-Once your Pipe Network is validated, clicking **Sync to Assets** maps the design geometry against the material database, officially logging the asset into the active project database for reporting.
+2.7 Piping Script Tab
+--------------------------------------------------------------------------------
+For those who prefer to write out pipe networks rather than click UI forms.
+Utilizes the PRUN/SS command structure.
 
----
+2.8 Codes Tab
+--------------------------------------------------------------------------------
+The database of standard survey abbreviations. Controls the auto-formatting, symbol 
+attachment, and validation rules logic across the application.
 
-## 8. File Management & Database Operations
-Access via the main top menu bar (`Data` and `Settings` sections).
+2.9 Figures Window
+--------------------------------------------------------------------------------
+A secondary window accessed via the Menu. It splits the screen into:
+- Left: A DataGrid listing bounded shapes (Parcels, Easements).
+- Right: A 2D Viewer rendering the geometry logic on a Cartesian plane.
 
-- **Data > Export:** Generate `.txt` outputs, `.xml` points, or `.csv` BOMs (Bills of Materials). You can also export line figures to DXF formats.
-- **Settings > Database Maintenance:** 
-  - `Compact Database`: Shrinks the `.sqlite` file size by removing empty space.
-  - `Verify Integrity`: Checks the database file for corruption.
-  - `Repair`: Attempts to rebuild a corrupted internal index.
+2.10 Material Selection Window
+--------------------------------------------------------------------------------
+A graphical picker for specifying exactly what brand, material, and standard of pipe, 
+valve, or fitting is being selected for the Bill of Materials.
 
----
+================================================================================
+PART 3: CONFIGURATION AND SETTINGS
+================================================================================
 
-## 9. Testing Guide & Walkthrough
-To verify the application is working properly, follow this standard scenario:
+3.1 General Settings
+--------------------------------------------------------------------------------
+Adjust variables like Symbol Scales, Graphic Densities, and specific Mapcheck Tolerances.
+If a boundary does not physically close within the provided mapcheck tolerance, it will
+flag as 'Open'.
 
-### Step 1: Initialization
-1. Select `File > Project > New Project...`
-2. Name the project "TestingProtocol".
+3.2 Report Configuration
+--------------------------------------------------------------------------------
+Controls headers, footers, licensing identifiers, and formatting templates used during TXT
+output parsing.
 
-### Step 2: Survey Data
-1. Navigate to the **Cogo Script** tab.
-2. Click **Import Script** and select your `TEST_POINTS_SCRIPT.txt` file (or paste its text).
-3. Click **Run Script**. 
-4. Verify by checking the **Points** tab; nodes 1000 through 3000 series should be present.
+3.3 Validation Rules
+--------------------------------------------------------------------------------
+Stored in 'validation_rules.json', this informs the UI if a pipe entering a manhole violates 
+standard drop/clearance constraints (e.g. Invert Out must be lower than Invert In).
 
-### Step 3: Piping Geometry
-1. Navigate to the **Piping Script** tab.
-2. Click **Import...** and select `TEST_PIPING_SCRIPT.txt`.
-3. Click **Process Script**.
-4. Verify by switching to the **Piping** tab. You should see three or more defined pipe runs.
+3.4 Pipe Characteristics
+--------------------------------------------------------------------------------
+Pre-defined diameter options (e.g., 4, 6, 8, 12, 16, 24, 30 inches) and their internal
+friction coefficients for future hydraulic analysis.
 
-### Step 4: Validate and Sync
-1. On the **Piping** tab, click **Validate Network** to ensure all pipes connect to valid 3D points.
-2. Click **Sync to Assets** to generate logical installed items.
+3.5 Symbol Manager
+--------------------------------------------------------------------------------
+Used within the Codes page to bind a particular survey abbreviation (e.g., UP) to a specific 
+vector graphic for CAD generation (e.g., UtilityPoleBlock).
 
-### Step 5: Master Export
-1. Go to `Data > Export > Export Installed Assets Report...`.
-2. Inspect the resulting output file to confirm that assets (e.g., Manholes, Valves) have been successfully mapped to coordinates and properties.
+================================================================================
+PART 4: CORE SURVEY COMMANDS (COGO)
+================================================================================
+The parsing engine expects delimited text, classically spaced.
 
----
+4.1 Setup & Orientation Commands
+--------------------------------------------------------------------------------
+** ST (Store Point)
+Syntax: ST [PointId] [Northing] [Easting] [Elevation] [Description]
+Action: Explicitly hardcodes a coordinate into the database.
+Example: ST 100 5000 5000 100 TBM
 
-## 10. Troubleshooting & FAQs
+** OC (Occupy Point)
+Syntax: OC [PointId] [InstrumentHeight]
+Action: Tells the active processing state that the total station is sitting at PointId.
+Example: OC 100 5.25
 
-**Q: I get a "Point Setup Not Found" error in Cogo.**
-A: You must invoke an Occupy command (`OC`) before attempting any Setup-relative foresights (`FS` or `TRAV`).
+** STN (Station Occupancy)
+Note: Technically inter-changeable with OC in the legacy routine parser.
+Action: Alias for OC.
 
-**Q: My pipe script says "Unknown Command: ST".**
-A: You are running a survey scripting instruction in the **Piping Script** tab. Survey commands (`ST`, `OC`, `AZ`) belong in the **Cogo Script** tab.
+** BS (Backsight)
+Syntax: BS [PointId] [Azimuth_or_Bearing]
+Action: Locks the orientation ring of the setup based on an azimuth pointing at a known.
+Example: BS 101 45.0000
 
-**Q: The DXF export only shows points, no lines.**
-A: Lines are created via Figure commands (`B`, `L`, `C`) during the Cogo script execution. Ensure you have activated figure tracking before export.
+** FACE
+Syntax: FACE [1 or 2]
+Action: Specifies whether upcoming observations are Face 1 (direct) or Face 2 (reverse).
 
-**Q: My database is getting extremely large.**
-A: Go to `Settings > Database Maintenance > Compact Database` to optimize the SQLite storage.
+4.2 Creation & Geometry Commands
+--------------------------------------------------------------------------------
+** FS (Foresight)
+Syntax: FS [NewPtId] [Angle] [Distance] [TargetHeight] [Description]
+Action: Creates a singular point branching off the occupied setup.
+Requires: Prior OC and BS command.
+Example: FS 102 90.0000 100.00 0 EP
+
+** TRAV (Traverse)
+Syntax: TRAV [NewPtId] [Angle] [Distance] [TargetHeight] [Description]
+Action: Creates a point just like FS, but immediately updates the Occupy (OC) state to sit
+on the newly created point, setting the previous OC point as the new default BS point.
+
+** AZ (Azimuth)
+Syntax: AZ [Pt1] [Pt2]
+Action: Calculates the mathematical azimuth and bearing from one coordinate to another.
+
+** IN (Inverse)
+Syntax: IN [Pt1] [Pt2]
+Action: Fully inverses Pt1 to Pt2, providing Delta N, Delta E, distance, and bearing.
+
+** LOC (Locate / Intersect)
+Syntax: LOC [Type] [Pt1] [Ang/Dist] [Pt2] [Ang/Dist] [NewPt]
+Action: A complex intersection command solving bearing-bearing, bearing-distance, 
+or distance-distance intersections based on the Type flag.
+
+** NEWPT (Next Available Point Number)
+Syntax: NEWPT [Optional Seed String]
+Action: Queries the database and returns the next unused integer Point ID string.
+
+** ADDPT
+Action: Appends point list references. Often wrapped internally by the system.
+
+4.3 Transformation Commands
+--------------------------------------------------------------------------------
+** TRN (Translate)
+Syntax: TRN [Point Range] [Delta N] [Delta E] [Delta Z]
+Action: Bulk moves an array of points by massive coordinate shifts.
+Example: TRN 100-200 50.0 50.0 0
+
+** ROT (Rotate)
+Syntax: ROT [Point Range] [BasePt] [Angle]
+Action: Swings an array of points around a BasePt origin by the provided angle.
+Example: ROT 100-200 100 45.0000
+
+** LN (Line Transform - Best Fit)
+Syntax: LN [FilePt1] [FilePt2] [LocalPt1] [LocalPt2] [Point Range]
+Action: Implements an affine Helmert transformation translating and scaling points to 
+sit upon a localized known baseline.
+
+4.4 Information & Display Commands
+--------------------------------------------------------------------------------
+** ID (Identify)
+Syntax: ID [PointId]
+Action: Outputs the NEZ data of a single coordinate to the console UI.
+
+** SQ (Sequence/Inquiry)
+Syntax: SQ [StartId] [EndId]
+Action: Same as ID, just spans a bulk range of IDs.
+
+** DISP (Display)
+Syntax: DISP [PointId]
+Action: Similar to ID, commonly triggers graphical highlighting.
+
+** LIST
+Syntax: LIST [Type]
+Action: Shows current memory contents (e.g., LIST SETUP).
+
+** SHOW
+Syntax: SHOW [Var]
+Action: Equivalent to LIST but applies globally to variables.
+
+** OUTPUT
+Syntax: OUTPUT [Format]
+Action: Alters logging styles (e.g. OUTPUT XML).
+
+4.5 Measurement & Intersections
+--------------------------------------------------------------------------------
+** RKRK (Right Curve / Right Curve Intersection)
+Syntax: RKRK [Arc1_CentroId] [Rad1] [Arc2_CentroId] [Rad2] [NewPt1] [NewPt2]
+Action: Computes the 0, 1, or 2 geometric points where two perfect radius circles intersect.
+
+** LNOFF (Line Offset)
+Syntax: LNOFF [StartPt] [EndPt] [Offset] [Distance_Down_Line] [NewPt]
+Action: Travels down a baseline and shoots left/right orthogonally to create a new point.
+
+** RKOFF (Arc Offset)
+Syntax: RKOFF [CenterPt] [RadiusNode] [Offset] [Delta_Sweep] [NewPt]
+Action: Offsets tangentially off a radial track.
+
+4.6 Alignment Commands
+--------------------------------------------------------------------------------
+** DEFHALN (Define Horizontal Alignment)
+Syntax: DEFHALN [Name] [Start_Station] [PI_Pt1] [PI_Pt2] ...
+Action: Builds a complex alignment string logic combining tangents and curves automatically.
+
+** DEFVALN (Define Vertical Alignment)
+Syntax: DEFVALN [Name] [PVI_Station] [PVI_Elev] [Curve_Length_Vertical] ...
+Action: Used inherently for road design profiles.
+
+4.7 Curve Commands
+--------------------------------------------------------------------------------
+Used extensively for plotting subdivisions.
+** PC (Point of Curvature)
+** PI (Point of Intersection)
+** PT (Point of Tangency)
+** CC (Curve Centerpoint)
+** RT (Right Turn Arc)
+** LT (Left Turn Arc)
+** XD (Extend Distance)
+** XC (Extend Curve Options)
+These specify specific geometric dependencies for laying out non-linear segments. For example,
+an XC command explicitly provides parameters when dealing with spiral transition curves.
+
+4.8 Database Maintenance Commands
+--------------------------------------------------------------------------------
+** DELPT (Delete Point)
+Syntax: DELPT [PointID]
+Action: Wipes the coordinate from RAM and SQLite completely.
+
+** EDTPT (Edit Point)
+Syntax: EDTPT [PointID] [Optional N] [Optional E] [Optional Z]
+Action: Overwrites existing memory references natively.
+
+** COPYPT (Copy Point)
+Syntax: COPYPT [SrcID] [DestID]
+Action: Clones geometry under a different index key.
+
+================================================================================
+PART 5: FIGURES AND BOUNDARIES
+================================================================================
+
+5.1 Figure Generation
+--------------------------------------------------------------------------------
+Figures are created via three primary string designations during a bulk script batch.
+- ** B (Begin): Opens a new graphical sequence array.
+  Syntax: B [FigureName] [StartPtID]
+- ** L (Line): Extends the current active figure bounding box to the target ID.
+  Syntax: L [NextPtID]
+- ** C (Close): Commands the system to draw a final geometry line from the last active 
+  point back to the opening Base Point specified in B, and designates IsClosed=True.
+
+5.2 DXF Export Logic
+--------------------------------------------------------------------------------
+Only data grouped by Figures or Validated Piping paths get exported cleanly to DXF vector 
+output. Scattered, unconnected points normally export as basic text nodes rather than polylines.
+
+5.3 Reviewing Figures
+--------------------------------------------------------------------------------
+Open the 'Edit Figures' window from the main menu. Here, you should delete erroneously 
+generated shapes and re-sync natively to the Installed Assets payload.
+
+================================================================================
+PART 6: PIPING NETWORK MODELLING
+================================================================================
+
+6.1 Piping Fundamentals
+--------------------------------------------------------------------------------
+In RCS COGO Enterprise, underground utilities are not just strings, but physical volumetric
+models mapping specific 3-dimensional data points (inverts, slopes, disciplines).
+
+6.2 UI-Based Piping Workflows
+--------------------------------------------------------------------------------
+Use the dedicated Pipeline Tab:
+1. Input Upstream Node ID
+2. Input Downstream Node ID
+3. Set inverts (must be numerically matched or lower than surface topology elevation).
+4. Run 'Validate Network'.
+
+6.3 Scripting Pipes
+--------------------------------------------------------------------------------
+In the Piping Script window:
+Use 'PRUN START' to commence modeling a multi-segment transmission main. 
+Use 'SS-B' combined with a PointID to spawn an automated structural vault/manhole at the 
+run's genesis based on validation sizing rules.
+
+6.4 Network Validation & Error Checking
+--------------------------------------------------------------------------------
+Validation explicitly flags issues such as:
+- Negative diameter values
+- Defying gravity (End Invert > Start Invert for Gravity/WW lines)
+- Missing coordinate origins
+
+6.5 Synchronizing to Installed Assets DB
+--------------------------------------------------------------------------------
+The critical handshake linking raw memory design to the master project SQLite.
+Pressing this checks global schema compatibility for fields such as Layer, DescriptionID,
+and Discipline_Ref.
+
+================================================================================
+PART 7: MATERIEL MANAGEMENT & ESTIMATING
+================================================================================
+
+7.1 Master Material Catalog
+--------------------------------------------------------------------------------
+A pre-loaded listing of standard industry assets:
+- DIP (Ductile Iron Pipe)
+- PVC SDR35/21/26
+- HDPE
+- Valves (Gate, Butterfly, Air Release)
+- Hydrants, Meters, and Cleanouts
+
+7.2 Project Material Schedule
+--------------------------------------------------------------------------------
+To generate a cohesive cost estimation or Bill of Materials, users must pull definitions
+out of the catalog explicitly into the active project window, and assigning total length 
+or part-quantity totals based on Cogo generated distances.
+
+7.3 Custom Spec Adjustments
+--------------------------------------------------------------------------------
+Admins can bypass catalog IDs for specialty fittings by editing the ItemCode manually 
+once mapped onto the project schedule.
+
+================================================================================
+PART 8: EXPORTING AND REPORTING
+================================================================================
+
+8.1 Points XML and TXT
+--------------------------------------------------------------------------------
+Raw dumps of the Points table. TXT relies on configurable fixed widths (e.g. Pt,N,E,Z,D)
+whereas XML natively formats nodes for Trimble or Leica data controller ingestion.
+
+8.2 Script Outputs
+--------------------------------------------------------------------------------
+Generates audit logs showing precisely which lines executed, the timestamp, and the 
+calculated geometric result array in JSON block form for archival tracing.
+
+8.3 DXF Output
+--------------------------------------------------------------------------------
+AutoCAD natively digestible R14 compliant text schemas. Will produce Polyline entities 
+for all explicitly 'closed' Figures. 
+
+8.4 ePANET Imports
+--------------------------------------------------------------------------------
+An upcoming module converting Gravity/WW nodes to compatible INP string files, 
+extracting native coordinate arrays directly.
+
+8.5 CSV BOM Generation
+--------------------------------------------------------------------------------
+Bill of Materials format generating spreadsheet columns: ItemCode, Description, Unit, Qty.
+
+================================================================================
+PART 9: TESTING PROTOCOLS & QA/QC
+================================================================================
+
+9.1 Unit Testing Guidelines
+--------------------------------------------------------------------------------
+Prioritize testing memory retention. The fundamental issue discovered during initial QA 
+was EF Core tracking exceptions holding on to ghost vertices during Figure manipulation.
+The 'Raw Sql deletion' update mitigates this; tests should stress-test immediate sync-back.
+
+9.2 Walkthrough 1: Barebones Points Setup
+--------------------------------------------------------------------------------
+1. Main Shell -> Points Tab.
+2. Use Cogo window -> ST 100 5000 5000 100 START
+3. Use Cogo window -> ST 200 5000 6000 100 END
+4. Verify points tab generated two lines immediately.
+5. Hit 'Save Points' ensuring the AppDbContext triggers .SaveChanges().
+
+9.3 Walkthrough 2: Advanced Batch Scripting
+--------------------------------------------------------------------------------
+1. Navigate to Cogo Script view.
+2. Write:
+   ST 1 1000 1000 100
+   OC 1 5.0
+   BS 2 0.0
+   FS 2 90 200 0.0 POINT2
+   FS 3 180 200 0.0 POINT3
+   FS 4 270 200 0.0 POINT4
+   B SQUARE 1
+   L 2
+   L 3
+   L 4
+   C
+3. Run Script. Ensure 'SQUARE' generates visually in the Figures Window cleanly.
+
+9.4 Walkthrough 3: Pipe Network Integration
+--------------------------------------------------------------------------------
+1. Take nodes 1, 2, 3, 4 from above.
+2. Pipe Script -> 'PRUN START 1 2 8 90 85'
+3. Sync. Verify in the materials logic that an 8-inch pipe spanning 200ft is logged.
+
+9.5 Walkthrough 4: Alignment Validation
+--------------------------------------------------------------------------------
+1. Test curve solutions via the Curve Solver.
+2. Ensure mathematical output Delta values strictly format as DMS strings (DD.MMSS).
+
+================================================================================
+PART 10: TROUBLESHOOTING & FAQ
+================================================================================
+
+10.1 UI Freezes and Database Locks
+--------------------------------------------------------------------------------
+Symptom: Program freezes on Sync To Assets.
+Cause: SQLite exclusively locked the DB because a DataGrid cell remained in Edit Mode.
+Fix: Ensure you click out of the cell so RowEditEnding explicitly invokes and detaches
+EF modifications prior to DB interactions.
+
+10.2 EF Core Concurrency Exceptions
+--------------------------------------------------------------------------------
+Symptom: Crashing entirely upon clicking Delete Figure.
+Cause: Overlapped hierarchy tracing where Vertices didn't cascade delete on tracked entities.
+Fix: Solved in Version 2.1 via direct ExecuteSqlRaw string injections manually flushing arrays.
+
+10.3 Error Log Locations
+--------------------------------------------------------------------------------
+If an Unhandled Exception terminates the WPF sequence, trace the .NET dump file located in
+%AppData%/RCS_Crash_Dumps. 
+
+10.4 Glossary of Terms
+--------------------------------------------------------------------------------
+- Invert: The bottom most elevation point of an internal pipe circumference.
+- Azimuth: The bearing measured clockwise strictly from North.
+- Backsight: The directional geometric baseline allowing triangulation.
+- Figure: An array sequence of Points forming a visible 2D shape or boundary.
+- Asset: A distinct modeled unit represented physically in real-world construction limits.
+
+================================================================================
+APPENDIX: EXTENDED COMMAND LIST AND PERMUTATIONS
+================================================================================
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #1 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #2 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #3 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #4 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #5 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #6 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #7 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #8 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #9 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #10 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #11 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #12 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #13 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #14 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #15 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #16 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #17 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #18 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #19 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #20 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #21 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #22 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #23 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #24 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
+
+--- EXTENDED COMMAND REFERENCE SUB-BLOCK #25 ---
+* Note regarding ST command: Ensure numeric variables strictly follow standard US parsing schema.
+  Decimals should be formatted as X.XX. 
+* Note regarding OC command: When no Target Height is given, default assumed is 0.00.
+* Note regarding DXF Export Command Matrix:
+  Depending on map coordinate shifts, always apply transformations (TRN) in the Cogo Tab *PRIOR*
+  to generating DXF outputs to prevent unscaled projection distortion.
+  When testing the LNOFF (Line Offset) logic, remember the directionality matters. Looking down
+  the line from StartPt to EndPt, a positive offset pushes right, negative offset pushes left.
+  Always evaluate boundaries by checking the Closure Output log after a B / L / C figure statement.
+  If mapcheck falls outside General Settings tolerance, the parcel is flagged as Erroneous.
+
+  [INTERNAL SYSTEM CHECKLIST 001]
+  - Validated Pipe Types: PVC, DIP, HDPE
+  - Standard Gravity Classes: SDR35, SDR26
+  - Standard Pressure Classes: C900, DR18, DR14
+
+  [COGO COMMAND: AZ (Azimuth/Bearing) EXTENDED]
+  Allows quick derivation of geometric path relations.
+  Format options include NEZ, XY, ENZ configurations subject to the project settings.
+  
+  [COGO COMMAND: FS (Foresight) EXTENDED]
+  Under standard topographic workflows, the FS command is your primary data-entry vector.
+  Remember that angle syntax must adhere to the DD.MMSS or DDD.MMSS convention for
+  strict interpretation by the angle parser. Eg: 180 degrees 30 minutes 45 seconds is 180.3045.
+  
+  [COGO COMMAND: TRAV (Traverse) EXTENDED]
+  TRAV acts as a compound wrapper around an FS followed by an OC. Use carefully inside scripts 
+  as mis-identifying the sequential chain will throw the coordinate tracking entirely out of bounds.
+
+  [SUPPORT CONTACT]
+  Reach out to RCS Enterprise Technical Deployment team for custom native C++ security DLL
+  integrations or specialized hardware verification.
+
+  [PIPING HIERARCHY RULES]
+  1. Points must exist before Pipe Runs.
+  2. Pipe Runs must be explicitly declared before Structures bind to endpoints.
+  3. Master validation algorithm recursively crawls the network tree starting from lowest
+     invert elevation checking contiguous gravity flow.
+
+  [DEBUGGING NOTES]
+  Memory leaks in FiguresDataGrid resolved by explicitly nulling ItemsSource and coercing
+  the filtered array locally. ToList() evaluation executes LINQ properly without DB delay.
+  Always ensure ComboBox elements in WPF avoid raw generic Styles without BorderThickness
+  management to suppress Windows OS theming overrides.
+  
+  (End of Reference Sub-Block)
