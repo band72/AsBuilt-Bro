@@ -135,6 +135,7 @@ public class ShellViewModel : ViewModelBase
             case "AD": CommandHint = "AD <NewPt> <AngleRight_DMS> <Dist> [Desc]"; break;
             case "DD": CommandHint = "DD <NewPt> <Deflection_DMS> <Dist> [Desc]"; break;
             case "ZD": CommandHint = "ZD <NewPt> <Zenith_DMS> <Dist> [Desc]"; break;
+            case "COPY-PT": CommandHint = "COPY-PT <OldPt> <NewPt> [Desc]"; break;
 
             // Figure & Linework Commands
             case "B": 
@@ -541,6 +542,8 @@ public class ShellViewModel : ViewModelBase
         ExportPointsTxtCommand = new RelayCommand(_ => ExportPointsTxt());
         ExportPointsXmlCommand = new RelayCommand(_ => ExportPointsXml());
         SavePointsCommand = new RelayCommand(_ => SavePoints());
+        EditPointsCommand = new RelayCommand(_ => EditPoints());
+        RefreshPointsCommand = new RelayCommand(_ => RefreshPointsValidation());
         SaveFiguresCommand = new RelayCommand(_ => SaveFigures());
         // ExportDxfCommand = new RelayCommand(_ => ExportDxf()); // This line was moved up
         SyncToAssetsCommand = new RelayCommand(_ => SyncAssets());
@@ -783,7 +786,33 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand ExportPointsTxtCommand { get; }
     public System.Windows.Input.ICommand ExportPointsXmlCommand { get; }
     public System.Windows.Input.ICommand SavePointsCommand { get; }
+    public System.Windows.Input.ICommand EditPointsCommand { get; }
+    public System.Windows.Input.ICommand RefreshPointsCommand { get; }
     public System.Windows.Input.ICommand SaveFiguresCommand { get; }
+
+    private void RefreshPointsValidation()
+    {
+        RefreshData(false); // Refresh Data method already rebuilds the Points view models with the current valid codes
+        _context.Log("[AUDIT] Points explicitly validated against Code Database via Refresh.");
+    }
+
+    private void EditPoints()
+    {
+        var validCodes = CogoCodes.Select(c => c.LocalCode).ToList();
+        var win = new RCS.Cogo.Wpf.Views.EditPointsWindow(Points, validCodes)
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
+        win.ShowDialog();
+        
+        // Push modifications mapping back to Context
+        foreach(var pt in Points)
+        {
+            var p3d = new RCS.Cogo.Core.Primitives.Point3D(pt.Northing, pt.Easting, pt.Elevation);
+            _context.AddPoint(pt.Id, p3d, pt.Description);
+        }
+        _context.Log("[AUDIT] Points explicitly edited via visual grid.");
+    }
 
     private void SavePoints()
     {

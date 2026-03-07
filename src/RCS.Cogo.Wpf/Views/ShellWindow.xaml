@@ -291,13 +291,15 @@
                                  For now, I'll add the visual buttons. -->
                              <Button Content="Export TXT" Command="{Binding ExportPointsTxtCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
                              <Button Content="Export XML" Command="{Binding ExportPointsXmlCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
-                             <Button Content="Save" Command="{Binding SavePointsCommand}" Padding="10,5" Background="#28A745" Foreground="White" FontWeight="Bold" ToolTip="Save Points to Database"/>
+                             <Button Content="Save" Command="{Binding SavePointsCommand}" Padding="10,5" Margin="0,0,10,0" Background="#28A745" Foreground="White" FontWeight="Bold" ToolTip="Save Points to Database"/>
+                             <Button Content="Edit" Command="{Binding EditPointsCommand}" Padding="10,5" Margin="0,0,10,0" Background="#007ACC" Foreground="White" FontWeight="Bold" ToolTip="Edit Points Grid"/>
+                             <Button Content="Refresh" Command="{Binding RefreshPointsCommand}" Padding="10,5" Background="#1E1E1E" Foreground="White" BorderBrush="#3E3E42" BorderThickness="1" ToolTip="Validate points against local codes"/>
                         </StackPanel>
 
                         <DataGrid Grid.Row="1" ItemsSource="{Binding Points}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                                   BorderThickness="1" BorderBrush="#3E3E42">
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="Point Number" Width="80" IsReadOnly="True">
+                                <DataGridTemplateColumn Header="Point Number" SortMemberPath="Id" Width="80" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Padding="5">
@@ -313,7 +315,7 @@
                                 <DataGridTextColumn Header="Easting" Binding="{Binding Easting, StringFormat=F3}" Width="*"/>
                                 <DataGridTextColumn Header="Elevation" Binding="{Binding Elevation, StringFormat=F3}" Width="80"/>
                                 
-                                <DataGridTemplateColumn Header="Description" Width="2*">
+                                <DataGridTemplateColumn Header="Description" SortMemberPath="Description" Width="2*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid>
