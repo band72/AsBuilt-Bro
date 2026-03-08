@@ -136,6 +136,7 @@ public class ShellViewModel : ViewModelBase
             case "DD": CommandHint = "DD <NewPt> <Deflection_DMS> <Dist> [Desc]"; break;
             case "ZD": CommandHint = "ZD <NewPt> <Zenith_DMS> <Dist> [Desc]"; break;
             case "COPY-PT": CommandHint = "COPY-PT <OldPt> <NewPt> [Desc]"; break;
+            case "DELPT": CommandHint = "DELPT <PointID | StartPt-EndPt>"; break;
 
             // Figure & Linework Commands
             case "B": 
@@ -595,6 +596,7 @@ public class ShellViewModel : ViewModelBase
         ImportPipingScriptCommand = new RelayCommand(_ => ImportPipingScript());
         ExportPipingScriptCommand = new RelayCommand(_ => ExportPipingScript());
         AnalyzePipingScriptCommand = new RelayCommand(_ => AnalyzePipingScript());
+        OpenAiChatCommand = new RelayCommand(_ => OpenAiChat());
         
         ImportPointsListCommand = new RelayCommand(_ => ImportPointsList());
 
@@ -1600,6 +1602,7 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand ImportPipingScriptCommand { get; }
     public System.Windows.Input.ICommand ExportPipingScriptCommand { get; }
     public System.Windows.Input.ICommand AnalyzePipingScriptCommand { get; }
+    public System.Windows.Input.ICommand OpenAiChatCommand { get; }
 
     private void AnalyzePipingScript()
     {
@@ -1607,6 +1610,13 @@ public class ShellViewModel : ViewModelBase
         var results = analyzer.AnalyzeScript(PipingScriptText);
         
         var aiWindow = new RCS.Cogo.Wpf.Views.AiAnalysisWindow(results);
+        aiWindow.Owner = App.Current.MainWindow;
+        aiWindow.ShowDialog();
+    }
+
+    private void OpenAiChat()
+    {
+        var aiWindow = new RCS.Cogo.Wpf.Views.AiScriptChatWindow(PipingScriptText);
         aiWindow.Owner = App.Current.MainWindow;
         aiWindow.ShowDialog();
     }

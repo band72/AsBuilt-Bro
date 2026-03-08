@@ -405,12 +405,20 @@
                             <TextBlock Text="{Binding CommandHint}" Foreground="White" FontFamily="Consolas" FontSize="14"/>
                         </Border>
 
-                        <TextBox x:Name="CogoInputTextBox" Grid.Row="1" Text="{Binding CommandInput, UpdateSourceTrigger=PropertyChanged}" 
-                                 FontFamily="Consolas" FontSize="16" Height="30">
-                            <TextBox.InputBindings>
-                                <KeyBinding Key="Enter" Command="{Binding SubmitCommand}"/>
-                            </TextBox.InputBindings>
-                        </TextBox>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="CogoInputTextBox" Grid.Column="0" Text="{Binding CommandInput, UpdateSourceTrigger=PropertyChanged}" 
+                                     FontFamily="Consolas" FontSize="16" Height="30">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Enter" Command="{Binding SubmitCommand}"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Button Grid.Column="1" Content="✨ AI Helper" Command="{Binding OpenConvertImageCommand}" 
+                                    Margin="5,0,0,0" Padding="15,0" Background="#8A2BE2" Foreground="White" FontWeight="Bold" ToolTip="Open AI Vision to COGO Translator"/>
+                        </Grid>
                     </Grid>
                 </TabItem>
                 
@@ -763,11 +771,15 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="10"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Button Grid.Column="0" Content="Process Script" Command="{Binding ProcessPipingScriptCommand}" 
                                     Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
-                            <Button Grid.Column="2" Content="Sync To Assets" Command="{Binding SyncToAssetsCommand}" 
+                            <Button Grid.Column="2" Content="✨ AI Chat" Command="{Binding OpenAiChatCommand}" 
+                                    Padding="20,5" Background="#007ACC" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold" ToolTip="Start AI Chat Assistant"/>
+                            <Button Grid.Column="4" Content="Sync To Assets" Command="{Binding SyncToAssetsCommand}" 
                                     Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
                         </Grid>
 

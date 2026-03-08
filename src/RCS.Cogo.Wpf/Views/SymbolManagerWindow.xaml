@@ -15,6 +15,13 @@
                 <ResourceDictionary Source="pack://application:,,,/RCS.Cogo.Wpf;component/Resources/Symbols.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <localViews:StringToResourceTemplateSelector x:Key="SymbolTemplateSelector" />
+            
+            <DataTemplate x:Key="ImageSymbolTemplateString">
+                <Image Source="{Binding}" Width="28" Height="28" Stretch="Uniform"/>
+            </DataTemplate>
+            <DataTemplate x:Key="ImageSymbolTemplateEntity">
+                <Image Source="{Binding Symbol}" Width="28" Height="28" Stretch="Uniform"/>
+            </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
 

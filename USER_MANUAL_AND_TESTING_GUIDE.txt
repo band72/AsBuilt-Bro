@@ -367,8 +367,8 @@ an XC command explicitly provides parameters when dealing with spiral transition
 4.8 Database Maintenance Commands
 --------------------------------------------------------------------------------
 ** DELPT (Delete Point)
-Syntax: DELPT [PointID]
-Action: Wipes the coordinate from RAM and SQLite completely.
+Syntax: DELPT [PointID | StartPt-EndPt]
+Action: Wipes a single point or a continuous range of points from RAM and SQLite completely.
 
 ** EDTPT (Edit Point)
 Syntax: EDTPT [PointID] [Optional N] [Optional E] [Optional Z]

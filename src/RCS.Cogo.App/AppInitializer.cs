@@ -49,6 +49,7 @@ public static class AppInitializer
         registry.Register(new XptPtsCommand());
         registry.Register(new SyncPtsCommand());
         registry.Register(new CopyPtCommand());
+        registry.Register(new DelPtCommand());
         
         // Aliases
         registry.Register(new StartCommand());
