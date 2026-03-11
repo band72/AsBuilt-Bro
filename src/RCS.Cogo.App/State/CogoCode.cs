@@ -32,7 +32,7 @@ public class CogoCode
             bool isWater = !isSewer && (d.Contains("WATER") || sys == "W" || sys.Contains("WAT") || sys.Contains("FIRE"));
             bool isStorm = d.Contains("STORM") || d.Contains("DRAIN") || sys.Contains("ST") || sys == "D";
             bool isGas   = d.Contains("GAS") || sys.Contains("G");
-            bool isElec  = d.Contains("ELEC") || d.Contains("POWER") || d.Contains("LIGHT") || d.Contains("POLE") || d.Contains("GUY") || sys.Contains("E");
+            bool isElec  = d.Contains("ELEC") || d.Contains("POWER") || d.Contains("LIGHT") || d.Contains("POLE") || d.Contains("GUY") || d.Contains("WPP") || sys.Contains("E");
             bool isRec   = d.Contains("RECLAIM") || sys.Contains("REC");
             bool isChil  = d.Contains("CHILL") || sys.Contains("CH");
 
@@ -44,7 +44,7 @@ public class CogoCode
             bool isARV     = d.Contains("AIR RELEASE") || d.Contains("ARV") || d.Contains("AIRVAC");
             bool isMeter   = d.Contains("METER");
             bool isHydrant = d.Contains("HYDRANT") || d.Contains("FH");
-            bool isPole    = d.Contains("POLE") || d.Contains("LIGHT");
+            bool isPole    = d.Contains("POLE") || d.Contains("LIGHT") || d.Contains("WPP");
             bool isBox     = d.Contains("BOX") || d.Contains("PEDESTAL") || d.Contains("PULL");
             bool isLine    = d.Contains("LINE") || d.Contains("PIPE") || d.Contains("MAIN") || d.Contains("RUN") || d.Contains("CONDUIT");
             bool isBFP     = d.Contains("BACK FLOW") || d.Contains("BFP") || d.Contains("PREVENTER");

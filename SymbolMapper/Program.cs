@@ -100,7 +100,7 @@ class Program
     static string GetSymbolType(string desc)
     {
         string d = desc.ToUpper();
-        if (d.Contains("POLE")) return "pole";
+        if (d.Contains("POLE") || d.Contains("WPP")) return "pole";
         if (d.Contains("BOX")) return "box";
         if (d.Contains("AIR RELEASE") || d.Contains("ARV")) return "air_release";
         if (d.Contains("HEADWALL") || d.Contains("HW")) return "headwall";

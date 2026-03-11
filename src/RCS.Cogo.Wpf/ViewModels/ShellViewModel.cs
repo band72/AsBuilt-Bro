@@ -85,6 +85,8 @@ public class ShellViewModel : ViewModelBase
 {
     private readonly ScriptEngine _engine;
     private readonly CogoContext _context;
+    
+    public CogoContext GetContext() => _context;
 
     private string _commandInput = "";
     private string _commandHint = "";
@@ -135,6 +137,7 @@ public class ShellViewModel : ViewModelBase
             case "AD": CommandHint = "AD <NewPt> <AngleRight_DMS> <Dist> [Desc]"; break;
             case "DD": CommandHint = "DD <NewPt> <Deflection_DMS> <Dist> [Desc]"; break;
             case "ZD": CommandHint = "ZD <NewPt> <Zenith_DMS> <Dist> [Desc]"; break;
+            case "COPYPT":
             case "COPY-PT": CommandHint = "COPY-PT <OldPt> <NewPt> [Desc]"; break;
             case "DELPT": CommandHint = "DELPT <PointID | StartPt-EndPt>"; break;
 
@@ -184,6 +187,7 @@ public class ShellViewModel : ViewModelBase
     public ObservableCollection<PointViewModel> Points { get; } = new();
     public ObservableCollection<FigureViewModel> Figures { get; } = new();
     public ObservableCollection<StructureViewModel> StructureGraphics { get; } = new();
+    public ObservableCollection<StructureViewModel> HighlightedAssets { get; } = new();
 
     private Project _currentProject = new Project();
     public Project CurrentProject
@@ -442,6 +446,7 @@ public class ShellViewModel : ViewModelBase
                      if (proj == null) return;
                      
                      #pragma warning disable CS8602
+                     // Explicit point mapping for LiteDb
                      proj.Points = _context.GetAllPoints().Select(p => new RCS.Cogo.App.Models.PointEntry 
                      {
                          Id = p.Id ?? "",
@@ -451,6 +456,35 @@ public class ShellViewModel : ViewModelBase
                          Description = p.Description ?? ""
                      }).ToList();
                      #pragma warning restore CS8602
+
+                     // Ensure SQLite is completely synced at the moment of Save as well
+                     try
+                     {
+                         using (var db = new RCS.Data.AppDbContext())
+                         {
+                             var projIdString = proj.Id.ToString();
+                             var newSurveyPoints = proj.Points.Select(p => new RCS.Data.Entities.SurveyPoint 
+                             {
+                                 Id = $"{projIdString}_{p.Id}", 
+                                 PointNumber = p.Id,
+                                 ProjectId = projIdString, 
+                                 Northing = p.Northing, Easting = p.Easting, Elevation = p.Elevation, Description = p.Description 
+                             }).ToList();
+
+                             var existing = db.SurveyPoints.Where(p => p.ProjectId == projIdString).Select(p => p.Id).ToList();
+                             var toInsert = newSurveyPoints.Where(p => !existing.Contains(p.Id)).ToList();
+                             if (toInsert.Any())
+                             {
+                                 db.SurveyPoints.AddRange(toInsert);
+                                 db.SaveChanges();
+                             }
+                         }
+                     }
+                     catch (Exception dbEx)
+                     {
+                         string inner = dbEx.InnerException != null ? dbEx.InnerException.Message : dbEx.Message;
+                         _context.Log($"[AUDIT] Warning: Could not sync points via CancellationToken DB: {dbEx.Message}. Inner: {inner}");
+                     }
 
                      if (!string.IsNullOrEmpty(_currentDbPath))
                      {
@@ -533,6 +567,7 @@ public class ShellViewModel : ViewModelBase
             }
         });
         ExportDxfCommand = new RelayCommand(_ => ExportDxf());
+        ImportDxfCommand = new RelayCommand(_ => ImportDxfLinework());
         ExportBomCommand = new RelayCommand(_ => ExportBom());
         ExportEpanetCommand = new RelayCommand(_ => ExportEpanet());
         ExportScheduleCommand = new RelayCommand(_ => ExportSchedule());
@@ -587,6 +622,8 @@ public class ShellViewModel : ViewModelBase
         ClearCodesCommand = new RelayCommand(_ => ClearCodes());
         OpenSymbolManagerCommand = new RelayCommand(_ => OpenSymbolManager());
         SearchCodesCommand = new RelayCommand(_ => SearchCodes());
+        EditCogoCodeCommand = new RelayCommand(_ => EditCogoCode());
+        SaveCodesCommand = new RelayCommand(_ => SaveCodes());
         
         ImportCatalogCommand = new RelayCommand(_ => ImportCatalog());
         AddMaterialToProjectCommand = new RelayCommand(_ => AddMaterialToProject());
@@ -649,6 +686,7 @@ public class ShellViewModel : ViewModelBase
         
         InstalledAssets = new InstalledAssetsViewModel();
         InstalledAssets.LogAction = (msg) => CommandLog.Add(msg);
+        InstalledAssets.AssetSelected += InstalledAssets_AssetSelected;
         OpenValidationSettingsCommand = new RelayCommand(_ => OpenValidationSettings());
         OpenGeneralSettingsCommand = new RelayCommand(_ => OpenGeneralSettings());
         OpenAlignmentWindowCommand = new RelayCommand(_ => OpenAlignmentWindow());
@@ -676,6 +714,108 @@ public class ShellViewModel : ViewModelBase
              if (!string.IsNullOrEmpty(_currentProject.ProjectName)) pNum = _currentProject.ProjectName;
              
              await InstalledAssets.LoadProjectAsync(_currentProject.Id.ToString(), pNum);
+        }
+    }
+
+    private void InstalledAssets_AssetSelected(object? sender, RCS.Data.Entities.InstalledAsset asset)
+    {
+        if (asset == null) return;
+
+        double n = 0, e = 0;
+        bool found = false;
+        
+        var type = asset.GetType();
+        
+        // Handle Figure Type explicitly
+        if (asset is RCS.Data.Entities.Figure fig)
+        {
+            if (fig.Vertices != null && fig.Vertices.Count > 0)
+            {
+                var firstVertex = fig.Vertices.OrderBy(v => v.OrderIndex).FirstOrDefault();
+                if (firstVertex?.Point != null)
+                {
+                    n = firstVertex.Point.Northing;
+                    e = firstVertex.Point.Easting;
+                    found = true;
+                }
+            }
+            
+            // If the vertices aren't loaded in the memory graph, try parsing the Script Content
+            if (!found && !string.IsNullOrWhiteSpace(fig.ScriptContent))
+            {
+                // Rudimentary attempt to find the first coordinate in a script
+                var firstLine = fig.ScriptContent.Split('\n').FirstOrDefault(s => s.Contains("N") && s.Contains("E"));
+                // Fallback implemented later if needed, but the primary way to draw a figure is the script content.
+                // Or if it's already rendered on the screen, the ViewModel should have it!
+                var figureVisual = Figures.FirstOrDefault(f => f.Name == fig.Name);
+                if (figureVisual != null && figureVisual.Points.Count > 0)
+                {
+                    n = figureVisual.Points[0].Y; // Northing
+                    e = figureVisual.Points[0].X; // Easting
+                    found = true;
+                }
+            }
+        }
+
+        
+        System.Reflection.PropertyInfo? nProp = null;
+        System.Reflection.PropertyInfo? eProp = null;
+
+        // Check standard Point features first
+        if (!found)
+        {
+            nProp = type.GetProperty("Northing");
+            eProp = type.GetProperty("Easting");
+            
+            if (nProp != null && eProp != null)
+            {
+                var nVal = nProp.GetValue(asset);
+                var eVal = eProp.GetValue(asset);
+                if (nVal != null && eVal != null)
+                {
+                    n = Convert.ToDouble(nVal);
+                    e = Convert.ToDouble(eVal);
+                    found = true;
+                }
+            }
+        }
+        
+        // If not found (either properties missing, or values were null), try Line features (Pipes)
+        if (!found)
+        {
+            nProp = type.GetProperty("NorthingStart");
+            eProp = type.GetProperty("EastingStart");
+            if (nProp != null && eProp != null)
+            {
+                var nVal = nProp.GetValue(asset);
+                var eVal = eProp.GetValue(asset);
+                if (nVal != null && eVal != null)
+                {
+                    n = Convert.ToDouble(nVal);
+                    e = Convert.ToDouble(eVal);
+                    found = true;
+                }
+            }
+        }
+        
+        System.Windows.Application.Current?.Dispatcher.Invoke(() => {
+            string diag = $"[ASSET_SELECTED] {type.Name} - N:{n} E:{e} found:{found}. Properties (N:{type.GetProperty("Northing")!=null}, E:{type.GetProperty("Easting")!=null}, NStart:{type.GetProperty("NorthingStart")!=null})";
+            if (IsOutputLogDescending)
+                ResultLogText = diag + "\n" + ResultLogText;
+            else
+                ResultLogText += diag + "\n";
+        });
+        
+        if (found)
+        {
+            ZoomToPointRequested?.Invoke(this, new System.Windows.Point(e, n));
+            
+            HighlightedAssets.Clear();
+            HighlightedAssets.Add(new StructureViewModel(asset.Id, new Point3D(n, e), "Highlight"));
+        }
+        else
+        {
+            HighlightedAssets.Clear();
         }
     }
 
@@ -1189,9 +1329,86 @@ public class ShellViewModel : ViewModelBase
         set => SetField(ref _codeSearchText, value);
     }
     
+    private CogoCode? _selectedCogoCode;
+    public CogoCode? SelectedCogoCode { get => _selectedCogoCode; set => SetField(ref _selectedCogoCode, value); }
+    
     public System.Windows.Input.ICommand SearchCodesCommand { get; }
     public System.Windows.Input.ICommand ImportCodesCommand { get; }
     public System.Windows.Input.ICommand ExportCodesCommand { get; }
+    public System.Windows.Input.ICommand EditCogoCodeCommand { get; }
+    public System.Windows.Input.ICommand SaveCodesCommand { get; }
+
+    private void SaveCodes()
+    {
+        try
+        {
+            using (var db = new RCS.Data.AppDbContext())
+            {
+                var existing = db.CogoCodes.ToList();
+                foreach (var c in CogoCodes)
+                {
+                    var ent = existing.FirstOrDefault(e => e.LocalCode == c.LocalCode && e.SystemCode == c.SystemCode);
+                    if (ent != null)
+                    {
+                        ent.Block = c.Block;
+                    }
+                    else
+                    {
+                        db.CogoCodes.Add(new RCS.Data.Entities.CogoCodeEntity
+                        {
+                            LocalCode = c.LocalCode,
+                            SystemCode = c.SystemCode,
+                            Description = c.Description,
+                            Block = c.Block
+                        });
+                    }
+                }
+                db.SaveChanges();
+            }
+            CommandLog.Add($"Manually saved {CogoCodes.Count} codes to database.");
+            System.Windows.MessageBox.Show("Codes successfully saved to database.", "Save Complete", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            CommandLog.Add($"Error saving codes: {ex.Message}");
+            System.Windows.MessageBox.Show($"Error saving codes: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+        }
+    }
+
+    private void EditCogoCode()
+    {
+        if (SelectedCogoCode == null) return;
+        var win = new RCS.Cogo.Wpf.Views.EditCogoCodeWindow(SelectedCogoCode);
+        win.Owner = System.Windows.Application.Current.MainWindow;
+        if (win.ShowDialog() == true)
+        {
+            if (win.ResultAction == "Save" || win.ResultAction == "Delete")
+            {
+                // Refresh list from DB
+                LoadCodesFromDb();
+            }
+        }
+    }
+
+    private void LoadCodesFromDb()
+    {
+        try
+        {
+            using (var db = new RCS.Data.AppDbContext())
+            {
+                CogoCodes.Clear();
+                var codes = db.CogoCodes.ToList();
+                foreach (var c in codes)
+                {
+                    CogoCodes.Add(new CogoCode(c.LocalCode, c.SystemCode, c.Description, c.Block ?? ""));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            CommandLog.Add($"Error reloading codes: {ex.Message}");
+        }
+    }
 
     private void SearchCodes()
     {
@@ -2906,6 +3123,7 @@ public class ShellViewModel : ViewModelBase
     }
 
     public System.Windows.Input.ICommand ExportDxfCommand { get; }
+    public System.Windows.Input.ICommand ImportDxfCommand { get; }
     
     // Report Commands
     public System.Windows.Input.ICommand ReportWaterCommand { get; }
@@ -2948,6 +3166,237 @@ public class ShellViewModel : ViewModelBase
             Owner = System.Windows.Application.Current.MainWindow
         };
         win.ShowDialog();
+    }
+
+    private class DxfEntity
+    {
+        public string Type { get; set; } = "";
+        public string Layer { get; set; } = "";
+        public System.Collections.Generic.List<RCS.Cogo.Core.Primitives.Point3D> Points { get; set; } = new();
+    }
+
+    private void ImportDxfLinework()
+    {
+        if (CurrentProject == null)
+        {
+            System.Windows.MessageBox.Show("Please open or create a project first.", "No Project", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            return;
+        }
+
+        var dialog = new Microsoft.Win32.OpenFileDialog
+        {
+            Filter = "DXF Files (*.dxf)|*.dxf|All Files (*.*)|*.*",
+            DefaultExt = ".dxf"
+        };
+        
+        if (dialog.ShowDialog() == true)
+        {
+            try
+            {
+                var lines = System.IO.File.ReadAllLines(dialog.FileName);
+                bool inEntities = false;
+                string currentEntity = "";
+                string currentLayer = "0";
+                
+                double curX = 0, curY = 0, curX2 = 0, curY2 = 0;
+                var lwPoints = new System.Collections.Generic.List<RCS.Cogo.Core.Primitives.Point3D>();
+                var allDxfEntities = new System.Collections.Generic.List<DxfEntity>();
+                
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    string code = lines[i].Trim();
+                    string val = (i + 1 < lines.Length) ? lines[++i].Trim() : "";
+
+                    if (code == "0" && val == "SECTION")
+                    {
+                        var nextVal = lines[i + 2].Trim();
+                        if (nextVal == "ENTITIES") inEntities = true;
+                    }
+                    else if (code == "0" && val == "ENDSEC")
+                    {
+                        inEntities = false;
+                    }
+                    
+                    if (!inEntities) continue;
+                    
+                    if (code == "0")
+                    {
+                        if (currentEntity == "LINE")
+                        {
+                            var pts = new System.Collections.Generic.List<RCS.Cogo.Core.Primitives.Point3D> { 
+                                new RCS.Cogo.Core.Primitives.Point3D(curY, curX, 0), 
+                                new RCS.Cogo.Core.Primitives.Point3D(curY2, curX2, 0) 
+                            };
+                            allDxfEntities.Add(new DxfEntity { Type = "LINE", Layer = currentLayer, Points = pts });
+                        }
+                        else if (currentEntity == "LWPOLYLINE" && lwPoints.Count > 0)
+                        {
+                            allDxfEntities.Add(new DxfEntity { Type = "LWPOLYLINE", Layer = currentLayer, Points = lwPoints });
+                            lwPoints = new System.Collections.Generic.List<RCS.Cogo.Core.Primitives.Point3D>();
+                        }
+                        
+                        currentEntity = val;
+                        curX = curY = curX2 = curY2 = 0;
+                        currentLayer = "0";
+                    }
+                    else if (code == "8")
+                    {
+                        currentLayer = val;
+                    }
+                    else
+                    {
+                        if (currentEntity == "LINE")
+                        {
+                            if (code == "10") double.TryParse(val, out curX);
+                            if (code == "20") double.TryParse(val, out curY);
+                            if (code == "11") double.TryParse(val, out curX2);
+                            if (code == "21") double.TryParse(val, out curY2);
+                        }
+                        else if (currentEntity == "LWPOLYLINE")
+                        {
+                            if (code == "10") double.TryParse(val, out curX);
+                            if (code == "20") 
+                            {
+                                double.TryParse(val, out curY);
+                                lwPoints.Add(new RCS.Cogo.Core.Primitives.Point3D(curY, curX, 0));
+                            }
+                        }
+                    }
+                }
+                
+                // Finalize last entity
+                if (currentEntity == "LINE")
+                {
+                    allDxfEntities.Add(new DxfEntity { Type = "LINE", Layer = currentLayer, Points = new System.Collections.Generic.List<RCS.Cogo.Core.Primitives.Point3D> { new RCS.Cogo.Core.Primitives.Point3D(curY, curX, 0), new RCS.Cogo.Core.Primitives.Point3D(curY2, curX2, 0) } });
+                }
+                else if (currentEntity == "LWPOLYLINE" && lwPoints.Count > 0)
+                {
+                    allDxfEntities.Add(new DxfEntity { Type = "LWPOLYLINE", Layer = currentLayer, Points = lwPoints });
+                }
+
+                var uniqueLayers = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Distinct(System.Linq.Enumerable.Select(allDxfEntities, e => e.Layer)));
+                if (uniqueLayers.Count == 0)
+                {
+                    System.Windows.MessageBox.Show("No linework found in DXF.", "DXF Import");
+                    return;
+                }
+
+                var layerWindow = new RCS.Cogo.Wpf.Views.DxfLayerSelectWindow(uniqueLayers)
+                {
+                    Owner = System.Windows.Application.Current.MainWindow
+                };
+                
+                if (layerWindow.ShowDialog() != true || layerWindow.SelectedLayers.Count == 0)
+                {
+                    return; // Canceled
+                }
+                
+                var selectedLayers = layerWindow.SelectedLayers;
+                var entitiesToImport = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Where(allDxfEntities, e => selectedLayers.Contains(e.Layer)));
+                
+                int newPointsCount = System.Linq.Enumerable.Sum(entitiesToImport, e => e.Points.Count);
+                if (newPointsCount > 1000)
+                {
+                    System.Windows.MessageBox.Show($"The selected layers contain {newPointsCount} vertices, which exceeds the core database safety limit of 1000 per import. Please select fewer layers.", "Import Limit Exceeded", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                    return;
+                }
+
+                using (var db = new RCS.Data.AppDbContext())
+                {
+                    var existingDbPoints = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Where(db.SurveyPoints, sp => sp.ProjectId == CurrentProject.Id.ToString()));
+                    int maxPointNum = 90000;
+                    
+                    var numberedPts = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Where(existingDbPoints, p => int.TryParse(p.PointNumber, out int _)));
+                    if (numberedPts.Count > 0)
+                    {
+                        int currentHighest = System.Linq.Enumerable.Max(numberedPts, p => int.Parse(p.PointNumber));
+                        maxPointNum = System.Math.Max(maxPointNum, currentHighest + 1);
+                    }
+
+                    int importedFigsCount = 0;
+                    
+                    foreach (var entity in entitiesToImport)
+                    {
+                        var figureVertexList = new System.Collections.Generic.List<RCS.Data.Entities.FigureVertex>();
+                        int order = 0;
+                        string newGuid = System.Guid.NewGuid().ToString();
+                        string figName = $"DXF_{entity.Type}_{newGuid.Substring(0, 4)}";
+                        var memFigure = new RCS.Cogo.App.State.Figure(figName);
+                        
+                        foreach (var pt in entity.Points)
+                        {
+                            var matchedPoint = System.Linq.Enumerable.FirstOrDefault(existingDbPoints, p => 
+                                System.Math.Abs(p.Northing - pt.Northing) <= 0.01 && 
+                                System.Math.Abs(p.Easting - pt.Easting) <= 0.01);
+                                
+                            string targetPointId = "";
+                            
+                            if (matchedPoint != null)
+                            {
+                                targetPointId = matchedPoint.Id;
+                            }
+                            else
+                            {
+                                var newPt = new RCS.Data.Entities.SurveyPoint
+                                {
+                                    ProjectId = CurrentProject.Id.ToString(),
+                                    PointNumber = maxPointNum.ToString(),
+                                    Northing = pt.Northing,
+                                    Easting = pt.Easting,
+                                    Elevation = 0,
+                                    Description = $"DXF_IMP_{entity.Layer}"
+                                };
+                                db.SurveyPoints.Add(newPt);
+                                existingDbPoints.Add(newPt); 
+                                targetPointId = newPt.Id;
+                                maxPointNum++;
+                                
+                                _context.AddPoint(targetPointId, new RCS.Cogo.Core.Primitives.Point3D(pt.Northing, pt.Easting, 0), newPt.Description);
+                            }
+
+                            figureVertexList.Add(new RCS.Data.Entities.FigureVertex
+                            {
+                                Id = System.Guid.NewGuid().ToString(),
+                                PointId = targetPointId,
+                                OrderIndex = order++,
+                                Bulge = 0
+                            });
+                            memFigure.AddPoint(targetPointId);
+                        }
+                        
+                        var newFigure = new RCS.Data.Entities.Figure
+                        {
+                            Id = newGuid,
+                            ProjectId = CurrentProject.Id.ToString(),
+                            Name = figName,
+                            Layer = entity.Layer,
+                            DescriptionText = "DXF Imported Figure",
+                            IsClosed = false, 
+                            Vertices = figureVertexList,
+                            Discipline = "Survey",
+                            FeatureType = "DXF"
+                        };
+                        db.Figures.Add(newFigure);
+                        _context.AddFigure(memFigure);
+                        importedFigsCount++;
+                        
+                        // Let RefreshData handle view rendering
+                        // Figures.Add(new FigureViewModel(newFigure.Name, entity.Points, System.Windows.Media.Brushes.Cyan));
+                    }
+                    
+                    db.SaveChanges();
+                    CommandLog.Add($"Imported {importedFigsCount} DXF entities mapping {newPointsCount} virtual points to Database.");
+                    
+                    RefreshData(true);
+                    ZoomExtentsRequested?.Invoke(this, EventArgs.Empty);
+                }
+            }
+            catch (Exception ex)
+            {
+                CommandLog.Add($"Error importing DXF: {ex.Message}");
+                System.Windows.MessageBox.Show($"Error importing DXF: {ex.Message}", "DXF Import Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+        }
     }
 
     private void ExportDxf()
@@ -3278,7 +3727,7 @@ public class ShellViewModel : ViewModelBase
         RefreshData();
     }
 
-    private void RefreshData(bool autoZoomExtents = true)
+    public void RefreshData(bool autoZoomExtents = true)
     {
         System.Windows.Application.Current?.Dispatcher.Invoke(() => 
         {
@@ -3531,7 +3980,7 @@ public class ShellViewModel : ViewModelBase
                     {
                         var newSurveyPoints = CurrentProject.Points.Select(p => new RCS.Data.Entities.SurveyPoint 
                         {
-                            Id = p.Id, 
+                            Id = $"{CurrentProject.Id}_{p.Id}", 
                             PointNumber = p.Id,
                             ProjectId = CurrentProject.Id.ToString(), 
                             Northing = p.Northing, Easting = p.Easting, Elevation = p.Elevation, Description = p.Description 
@@ -3539,7 +3988,22 @@ public class ShellViewModel : ViewModelBase
 
                         var existing = db.SurveyPoints.Where(p => p.ProjectId == CurrentProject.Id.ToString()).Select(p => p.Id).ToList();
                         var toInsert = newSurveyPoints.Where(p => !existing.Contains(p.Id)).ToList();
-                        if (toInsert.Any())
+                        
+                        // We also need to update existing ones if coordinates changed to be totally robust
+                        var toUpdateIds = newSurveyPoints.Where(p => existing.Contains(p.Id)).ToList();
+                        foreach(var upPt in toUpdateIds)
+                        {
+                            var tracking = db.SurveyPoints.Local.FirstOrDefault(x => x.Id == upPt.Id) ?? db.SurveyPoints.FirstOrDefault(x => x.Id == upPt.Id);
+                            if (tracking != null)
+                            {
+                                tracking.Northing = upPt.Northing;
+                                tracking.Easting = upPt.Easting;
+                                tracking.Elevation = upPt.Elevation;
+                                tracking.Description = upPt.Description;
+                            }
+                        }
+
+                        if (toInsert.Any() || toUpdateIds.Any())
                         {
                             db.SurveyPoints.AddRange(toInsert);
                             db.SaveChanges();
@@ -3548,7 +4012,8 @@ public class ShellViewModel : ViewModelBase
                 }
                 catch (Exception dbEx)
                 {
-                    _context.Log($"[AUDIT] Warning: Could not sync points with Method 1 SQLite DB: {dbEx.Message}");
+                    string inner = dbEx.InnerException != null ? dbEx.InnerException.Message : dbEx.Message;
+                    _context.Log($"[AUDIT] Warning: Could not sync points with Method 1 SQLite DB: {dbEx.Message}. Inner: {inner}");
                 }
 
                 _context.Log($"[AUDIT] Saved project to {dialog.FileName} (LiteDB and EF Core DB)");
@@ -3811,7 +4276,7 @@ public class ShellViewModel : ViewModelBase
                             
                             newSurveyPoints.Add(new RCS.Data.Entities.SurveyPoint 
                             { 
-                                Id = id, 
+                                Id = $"{CurrentProject.Id}_{id}", 
                                 PointNumber = id,
                                 ProjectId = CurrentProject.Id.ToString(), 
                                 Northing = n, Easting = e, Elevation = z, Description = desc 
@@ -3829,7 +4294,22 @@ public class ShellViewModel : ViewModelBase
                     {
                         var existing = db.SurveyPoints.Where(p => p.ProjectId == CurrentProject.Id.ToString()).Select(p => p.Id).ToList();
                         var toInsert = newSurveyPoints.Where(p => !existing.Contains(p.Id)).ToList();
-                        if (toInsert.Any())
+                        
+                        // We also need to update existing ones if coordinates changed to be totally robust
+                        var toUpdateIds = newSurveyPoints.Where(p => existing.Contains(p.Id)).ToList();
+                        foreach(var upPt in toUpdateIds)
+                        {
+                            var tracking = db.SurveyPoints.Local.FirstOrDefault(x => x.Id == upPt.Id) ?? db.SurveyPoints.FirstOrDefault(x => x.Id == upPt.Id);
+                            if (tracking != null)
+                            {
+                                tracking.Northing = upPt.Northing;
+                                tracking.Easting = upPt.Easting;
+                                tracking.Elevation = upPt.Elevation;
+                                tracking.Description = upPt.Description;
+                            }
+                        }
+
+                        if (toInsert.Any() || toUpdateIds.Any())
                         {
                             db.SurveyPoints.AddRange(toInsert);
                             db.SaveChanges();
@@ -3838,7 +4318,8 @@ public class ShellViewModel : ViewModelBase
                 }
                 catch (Exception dbEx)
                 {
-                    _context.Log($"[AUDIT] Warning: Could not sync points with Method 1 SQLite DB: {dbEx.Message}");
+                    string inner = dbEx.InnerException != null ? dbEx.InnerException.Message : dbEx.Message;
+                    _context.Log($"[AUDIT] Warning: Could not sync points with Method 1 SQLite DB: {dbEx.Message}. Inner: {inner}");
                 }
 
                 _context.Log($"[AUDIT] Imported {count} points from {dialog.FileName}");

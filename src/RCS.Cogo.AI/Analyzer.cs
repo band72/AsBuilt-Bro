@@ -22,7 +22,7 @@ public class AiAnalyzer
         "PRUN", "SS-B", "SS-C", "SS-E", "SM-C", "SM-E", "BD", "BEG", "BS", "CONT", "DD",
         "COGO-ENGINE-ON", "COGO-ENGINE-OFF", "PIPE-ENGINE-ON", "PIPE-ENGINE-OFF",
         "END", "F1", "F2", "LNLN", "LOAD", "PNT", "PT", "POINT", "RKRK", "SAVE", "SAVE-HALN", "SAVE-PFL", "STN", "TRAV", "XC", "ZD", "SYNC-PTS", "XPT-PTS",
-        "AD", "AP", "ARCARC", "DISP", "LIST", "START", "CLOSE", "OC", "FS", "FIG", "A", "B", "L", "C", "D", "COPY-PT", "DELPT",
+        "AD", "AP", "ARCARC", "DISP", "LIST", "START", "CLOSE", "OC", "FS", "FIG", "A", "B", "L", "C", "D", "COPY-PT", "COPYPT", "DELPT",
         "HELP", "LN", "ROT", "AREA", "CALC", "SD", "VD", "GRADE", "SLOPE", "STADIA", "PC", "CRV", "RT", "C3", "MOD", "MCS", "MCE", "RKLN", "RKAZ", "RKBRG", "BL", "CL", "HI", "XS", "LAT", "EXPORT",
         "ALGN", "PROF", "VPI", "HALBL-ON", "HALBL-OFF",
         "RESET", "RESET-ON", "RESET-OFF",
@@ -142,6 +142,7 @@ public class AiAnalyzer
                 else if (args[1].ToUpper() != "PTS" && args[1].ToUpper() != "FIG") AddWarn("DEL target is unusual.", "Standard targets are PTS or FIG");
                 break;
             case "COPY-PT":
+            case "COPYPT":
                 if (args.Length < 3) AddError("COPY-PT requires OldPoint and NewPoint numbers.", "COPY-PT <old_pt> <new_pt> [desc]");
                 else 
                 {

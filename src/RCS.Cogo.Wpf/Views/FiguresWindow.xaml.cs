@@ -75,6 +75,62 @@ namespace RCS.Cogo.Wpf.Views
             ApplyFilter();
         }
 
+        private void ActiveViewerButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (FiguresDataGrid.SelectedItems.Count > 0)
+            {
+                if (System.Windows.Application.Current.MainWindow?.DataContext is ShellViewModel vm)
+                {
+                    try
+                    {
+                        int count = 0;
+                        foreach (var item in FiguresDataGrid.SelectedItems)
+                        {
+                            if (item is Figure figure)
+                            {
+                                var memFigure = new RCS.Cogo.App.State.Figure(figure.Name);
+                                
+                                if (figure.Vertices != null)
+                                {
+                                    var ordered = figure.Vertices.OrderBy(v => v.OrderIndex).ToList();
+                                    foreach (var v in ordered)
+                                    {
+                                        if (v.Point != null)
+                                        {
+                                            if (!vm.GetContext().PointExists(v.PointId))
+                                            {
+                                                vm.GetContext().AddPoint(v.PointId, new RCS.Cogo.Core.Primitives.Point3D(v.Point.Northing, v.Point.Easting, v.Point.Elevation), v.Point.Description);
+                                            }
+                                            memFigure.AddPoint(v.PointId);
+                                        }
+                                    }
+                                }
+                                
+                                // Delete existing from context if it exists to overwrite
+                                vm.GetContext().DeleteFigure(figure.Name);
+                                vm.GetContext().AddFigure(memFigure);
+                                count++;
+                            }
+                        }
+                        
+                        if (count > 0)
+                        {
+                            vm.RefreshData(true);
+                            MessageBox.Show($"{count} figure(s) explicitly added to active viewer.", "Active Viewer", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                         MessageBox.Show($"Error activating figures: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select at least one figure to activate.", "No Figure Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
         private void SyncButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -129,7 +185,144 @@ namespace RCS.Cogo.Wpf.Views
 
         private void FiguresDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (FiguresDataGrid.SelectedItem is Figure figure && figure.Vertices != null)
+            {
+                PointsDataGrid.ItemsSource = figure.Vertices.OrderBy(v => v.OrderIndex).ToList();
+            }
+            else
+            {
+                PointsDataGrid.ItemsSource = null;
+            }
+            if (PointEditForm != null) PointEditForm.IsEnabled = false;
             DrawFigure();
+        }
+
+        private void PointsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (PointsDataGrid.SelectedItem is FigureVertex vertex)
+            {
+                PointEditForm.IsEnabled = true;
+                TxtOrderIndex.Text = vertex.OrderIndex.ToString();
+                TxtBulge.Text = vertex.Bulge.ToString();
+                if (vertex.Point != null)
+                {
+                    TxtNorthing.Text = vertex.Point.Northing.ToString("F4");
+                    TxtEasting.Text = vertex.Point.Easting.ToString("F4");
+                    TxtElevation.Text = vertex.Point.Elevation.ToString("F4");
+                }
+                else
+                {
+                    TxtNorthing.Text = "0";
+                    TxtEasting.Text = "0";
+                    TxtElevation.Text = "0";
+                }
+            }
+            else
+            {
+                PointEditForm.IsEnabled = false;
+            }
+            DrawFigure();
+            RecalculateSlopes();
+        }
+
+        private void VertexCoordinate_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            RecalculateSlopes();
+        }
+
+        private void RecalculateSlopes()
+        {
+            if (LblSlopePrev == null || LblSlopeNext == null) return;
+            
+            LblSlopePrev.Text = "Slope from Prev: N/A";
+            LblSlopeNext.Text = "Slope to Next: N/A";
+
+            if (PointsDataGrid.SelectedItem is not FigureVertex currentVertex || 
+                FiguresDataGrid.SelectedItem is not Figure figure || 
+                figure.Vertices == null) return;
+
+            if (!double.TryParse(TxtNorthing.Text, out double n)) return;
+            if (!double.TryParse(TxtEasting.Text, out double east)) return;
+            if (!double.TryParse(TxtElevation.Text, out double z)) return;
+
+            var ordered = figure.Vertices.OrderBy(v => v.OrderIndex).ToList();
+            int idx = ordered.IndexOf(currentVertex);
+            if (idx < 0) return;
+
+            if (idx > 0)
+            {
+                var prev = ordered[idx - 1];
+                if (prev.Point != null)
+                {
+                    double dN = n - prev.Point.Northing;
+                    double dE = east - prev.Point.Easting;
+                    double horizDist = Math.Sqrt(dN * dN + dE * dE);
+                    if (horizDist > 0.001)
+                    {
+                        double dZ = z - prev.Point.Elevation;
+                        double slope = Math.Abs(dZ / horizDist) * 100.0;
+                        string dir = dZ >= 0 ? "Up" : "Down";
+                        LblSlopePrev.Text = $"Slope from Prev: {slope:F2}% {dir}";
+                    }
+                }
+            }
+
+            if (idx < ordered.Count - 1)
+            {
+                var next = ordered[idx + 1];
+                if (next.Point != null)
+                {
+                    double dN = next.Point.Northing - n;
+                    double dE = next.Point.Easting - east;
+                    double horizDist = Math.Sqrt(dN * dN + dE * dE);
+                    if (horizDist > 0.001)
+                    {
+                        double dZ = next.Point.Elevation - z;
+                        double slope = Math.Abs(dZ / horizDist) * 100.0;
+                        string dir = dZ >= 0 ? "Up" : "Down";
+                        LblSlopeNext.Text = $"Slope to Next: {slope:F2}% {dir}";
+                    }
+                }
+            }
+        }
+
+        private void SavePointButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (PointsDataGrid.SelectedItem is FigureVertex vertex)
+            {
+                if (int.TryParse(TxtOrderIndex.Text, out int oIdx)) vertex.OrderIndex = oIdx;
+                if (double.TryParse(TxtBulge.Text, out double blg)) vertex.Bulge = blg;
+
+                if (vertex.Point != null)
+                {
+                    if (double.TryParse(TxtNorthing.Text, out double n)) vertex.Point.Northing = n;
+                    if (double.TryParse(TxtEasting.Text, out double east)) vertex.Point.Easting = east;
+                    if (double.TryParse(TxtElevation.Text, out double elev)) vertex.Point.Elevation = elev;
+                }
+
+                try
+                {
+                    _context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error saving point: {ex.Message}", "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                
+                // Refresh points grid UI (Order may have changed)
+                if (FiguresDataGrid.SelectedItem is Figure figure && figure.Vertices != null)
+                {
+                    PointsDataGrid.ItemsSource = null;
+                    PointsDataGrid.ItemsSource = figure.Vertices.OrderBy(v => v.OrderIndex).ToList();
+                }
+                
+                // Keep the selection if possible
+                PointsDataGrid.SelectedItem = vertex;
+                
+                DrawFigure();
+                MessageBox.Show("Vertex saved.");
+            }
         }
 
         private void FigureCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -208,16 +401,20 @@ namespace RCS.Cogo.Wpf.Views
             FigureCanvas.Children.Add(path);
 
             // Add Ellipses for Vertices
-            foreach (var pt in points)
+            foreach (var v in orderedVertices)
             {
-                double px = offsetX + (pt.X - minEasting) * scale;
-                double py = FigureCanvas.ActualHeight - (offsetY + (pt.Y - minNorthing) * scale);
+                if (v.Point == null) continue;
+                double px = offsetX + (v.Point.Easting - minEasting) * scale;
+                double py = FigureCanvas.ActualHeight - (offsetY + (v.Point.Northing - minNorthing) * scale);
+                
+                bool isSelected = PointsDataGrid.SelectedItem == v;
+                
                 Ellipse el = new Ellipse
                 {
-                    Width = 6,
-                    Height = 6,
-                    Fill = Brushes.Yellow,
-                    Margin = new Thickness(px - 3, py - 3, 0, 0)
+                    Width = isSelected ? 12 : 6,
+                    Height = isSelected ? 12 : 6,
+                    Fill = isSelected ? Brushes.Red : Brushes.Yellow,
+                    Margin = new Thickness(px - (isSelected ? 6 : 3), py - (isSelected ? 6 : 3), 0, 0)
                 };
                 FigureCanvas.Children.Add(el);
             }

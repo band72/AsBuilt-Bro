@@ -25,6 +25,7 @@
                     </Style>
                     <Style TargetType="DataGrid">
                         <EventSetter Event="MouseDoubleClick" Handler="DataGrid_MouseDoubleClick"/>
+                        <EventSetter Event="SelectionChanged" Handler="DataGrid_SelectionChanged"/>
                         <Setter Property="MaxHeight" Value="300"/>
                         <Setter Property="Background" Value="#252526"/>
                         <Setter Property="RowBackground" Value="#252526"/>

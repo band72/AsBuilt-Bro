@@ -13,6 +13,13 @@ public class InstalledAssetsViewModel : ViewModelBase
     private readonly AppDbContext _dbContext;
     public Action<string>? LogAction { get; set; }
     
+    public event EventHandler<InstalledAsset>? AssetSelected;
+    
+    public void NotifyAssetSelected(InstalledAsset asset)
+    {
+        AssetSelected?.Invoke(this, asset);
+    }
+    
     // Pipe Crossing Service
     private readonly InstalledAssetService<PipeCrossing> _pipeCrossingService;
 

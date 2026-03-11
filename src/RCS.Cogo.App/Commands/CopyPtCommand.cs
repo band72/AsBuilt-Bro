@@ -7,8 +7,15 @@ namespace RCS.Cogo.App.Commands;
 
 public class CopyPtCommand : ICommand
 {
-    public string Name => "COPY-PT";
-    public string Description => "Copy a point to a new point number with an optional description. Usage: COPY-PT <OldPt> <NewPt> [Desc]";
+    private readonly string _name;
+
+    public CopyPtCommand(string name = "COPY-PT")
+    {
+        _name = name;
+    }
+
+    public string Name => _name;
+    public string Description => $"Copy a point to a new point number with an optional description. Usage: {Name} <OldPt> <NewPt> [Desc]";
 
     public Task ExecuteAsync(string[] args, ICogoContext context)
     {

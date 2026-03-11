@@ -58,6 +58,7 @@ public static class AppInitializer
         registry.Register(new InverseCommand());
         registry.Register(new OcCommand());
         registry.Register(new FsCommand());
+        registry.Register(new CopyPtCommand("COPYPT"));
         
         registry.Register(new FigCommand());
         registry.Register(new PtCommand());

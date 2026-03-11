@@ -80,7 +80,7 @@ public partial class ShellWindow : Window
     private void ZoomExtents()
     {
         var vm = DataContext as ShellViewModel;
-        if (vm == null || vm.Points.Count == 0) return;
+        if (vm == null || (vm.Points.Count == 0 && vm.Figures.Count == 0)) return;
         
         double minX = double.MaxValue, maxX = double.MinValue;
         double minY = double.MaxValue, maxY = double.MinValue;
@@ -289,5 +289,142 @@ public partial class ShellWindow : Window
                 }
             }
         }
+    }
+
+    private void btnToggleLineNumbers_Click(object sender, RoutedEventArgs e)
+    {
+        if (btnToggleLineNumbers.IsChecked == true)
+        {
+            txtPipingLineNumbers.Visibility = Visibility.Visible;
+            UpdateLineNumbers();
+        }
+        else
+        {
+            txtPipingLineNumbers.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private void txtPipingScript_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+    {
+        if (txtPipingLineNumbers.Visibility == Visibility.Visible)
+        {
+            UpdateLineNumbers();
+        }
+    }
+
+    private void txtPipingScript_ScrollChanged(object sender, System.Windows.Controls.ScrollChangedEventArgs e)
+    {
+        if (txtPipingLineNumbers.Visibility == Visibility.Visible)
+        {
+            txtPipingLineNumbers.ScrollToVerticalOffset(e.VerticalOffset);
+        }
+    }
+
+    private void UpdateLineNumbers()
+    {
+        int lineCount = txtPipingScript.LineCount;
+        if (lineCount == 0) lineCount = 1;
+        var sb = new System.Text.StringBuilder();
+        for (int i = 1; i <= lineCount; i++)
+        {
+            sb.AppendLine(i.ToString());
+        }
+        txtPipingLineNumbers.Text = sb.ToString();
+    }
+
+    private void ExtendSelectionToFullLines(System.Windows.Controls.TextBox txt)
+    {
+        int start = txt.SelectionStart;
+        int length = txt.SelectionLength;
+        int end = start + length;
+        
+        int startOfSelectionLine = 0;
+        for (int i = start - 1; i >= 0; i--)
+        {
+            if (txt.Text[i] == '\n')
+            {
+                startOfSelectionLine = i + 1;
+                break;
+            }
+        }
+
+        int endOfSelectionLine = txt.Text.Length;
+        int checkEnd = end > 0 && txt.Text[end - 1] == '\n' ? end - 1 : end;
+        
+        for (int i = checkEnd; i < txt.Text.Length; i++)
+        {
+            if (txt.Text[i] == '\r' || txt.Text[i] == '\n')
+            {
+                endOfSelectionLine = i;
+                break;
+            }
+        }
+        
+        txt.Select(startOfSelectionLine, endOfSelectionLine - startOfSelectionLine);
+    }
+
+    private void btnCommentPipingScript_Click(object sender, RoutedEventArgs e)
+    {
+        ExtendSelectionToFullLines(txtPipingScript);
+        
+        int selStart = txtPipingScript.SelectionStart;
+        string selectedText = txtPipingScript.SelectedText;
+        
+        if (string.IsNullOrEmpty(selectedText)) return;
+        
+        var lines = selectedText.Split(new[] { "\r\n", "\r", "\n" }, System.StringSplitOptions.None);
+        var sb = new System.Text.StringBuilder();
+        for(int i = 0; i < lines.Length; i++)
+        {
+            sb.Append("//" + lines[i]);
+            if (i < lines.Length - 1) sb.AppendLine();
+        }
+        
+        txtPipingScript.SelectedText = sb.ToString();
+        txtPipingScript.Select(selStart, txtPipingScript.SelectedText.Length);
+    }
+
+    private void btnUncommentPipingScript_Click(object sender, RoutedEventArgs e)
+    {
+        ExtendSelectionToFullLines(txtPipingScript);
+        
+        int selStart = txtPipingScript.SelectionStart;
+        string selectedText = txtPipingScript.SelectedText;
+        
+        if (string.IsNullOrEmpty(selectedText)) return;
+        
+        var lines = selectedText.Split(new[] { "\r\n", "\r", "\n" }, System.StringSplitOptions.None);
+        var sb = new System.Text.StringBuilder();
+        for(int i = 0; i < lines.Length; i++)
+        {
+            if (lines[i].StartsWith("//"))
+            {
+                sb.Append(lines[i].Substring(2));
+            }
+            else
+            {
+                sb.Append(lines[i]);
+            }
+            if (i < lines.Length - 1) sb.AppendLine();
+        }
+
+        txtPipingScript.SelectedText = sb.ToString();
+        txtPipingScript.Select(selStart, txtPipingScript.SelectedText.Length);
+    }
+
+    private void btnMixPipingScript_Click(object sender, RoutedEventArgs e)
+    {
+        string header = "COGO-ENGINE-OFF\r\nPIPE-ENGINE-ON\r\n";
+        
+        string currentText = txtPipingScript.Text ?? "";
+        
+        if (currentText.TrimStart().StartsWith("COGO-ENGINE-OFF", System.StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        txtPipingScript.Text = header + currentText;
+        txtPipingScript.Focus();
+        txtPipingScript.CaretIndex = header.Length;
     }
 }

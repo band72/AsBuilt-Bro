@@ -32,9 +32,9 @@ The fastest way to build geometric nodes in a script is to store them explicitly
 **Example:** `ST 102 5050.0 5100.0 12.0 Valve`
 * An alias/alternative to `NEZ` for standard coordinate geometry workflows.
 
-### Copy Point (`COPY-PT`)
+### Copy Point (`COPY-PT` or `COPYPT`)
 **Syntax:** `COPY-PT <OldPtNumber> <NewPtNumber> [Description]`
-**Example:** `COPY-PT 100 101 NEW_POINT`
+**Example:** `COPYPT 100 101 NEW_POINT`
 * Copies the coordinates (Northing, Easting, Elevation) of an existing point to a new point ID, optionally providing a new description.
 
 

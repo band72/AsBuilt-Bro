@@ -120,6 +120,7 @@
                 <Separator/>
                 <MenuItem Header="_Import">
                     <MenuItem Header="Process Batch Script..." Command="{Binding ImportBatchCommand}"/>
+                    <MenuItem Header="Import DXF Linework..." Command="{Binding ImportDxfCommand}"/>
                 </MenuItem>
                 <MenuItem Header="_Export">
                     <MenuItem Header="Export Output Log to TXT..." Command="{Binding ExportOutputLogCommand}"/>
@@ -735,6 +736,13 @@
                             <TextBlock Text="Enter Piping Script:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
                             <Button Content="Import..." Command="{Binding ImportPipingScriptCommand}" Padding="5,2" Margin="0,0,5,0" Background="#2D2D30" Foreground="White" DockPanel.Dock="Left"/>
                             
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Left" Margin="20,0,0,0">
+                                <ToggleButton x:Name="btnToggleLineNumbers" Content="#" Click="btnToggleLineNumbers_Click" Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Line Numbers"/>
+                                <Button Content="C" Click="btnCommentPipingScript_Click" Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Comment Selected Lines"/>
+                                <Button Content="U" Click="btnUncommentPipingScript_Click" Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Uncomment Selected Lines"/>
+                                <Button Content="MIX" Click="btnMixPipingScript_Click" Width="35" Margin="0,0,10,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Insert Mixed Engine Directives"/>
+                            </StackPanel>
+                            
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
                                 <ToggleButton Content="P" IsChecked="{Binding ShowPointNumbers}" Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Numbers"/>
                                 <ToggleButton Content="X" IsChecked="{Binding ShowPointMarkers}" Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Markers"/>
@@ -763,9 +771,20 @@
                             <TextBlock Text="{Binding PipingScriptHint}" Foreground="White" FontFamily="Consolas" FontSize="14"/>
                         </Border>
 
-                        <TextBox Grid.Row="1" Text="{Binding PipingScriptText, UpdateSourceTrigger=PropertyChanged}" 
-                                 AcceptsReturn="True" FontFamily="Consolas" VerticalScrollBarVisibility="Auto"
-                                 Background="#1E1E1E" Foreground="#D4D4D4" BorderThickness="1" BorderBrush="#3E3E42" Padding="5" Panel.ZIndex="1"/>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="txtPipingLineNumbers" IsReadOnly="True" Background="#2D2D30" Foreground="#858585" 
+                                     BorderThickness="0" TextAlignment="Right" Padding="5,5,5,5" 
+                                     FontFamily="Consolas" VerticalScrollBarVisibility="Hidden"
+                                     Visibility="Collapsed" MinWidth="30" Margin="0,0,2,0" />
+                            <TextBox x:Name="txtPipingScript" Grid.Column="1" Text="{Binding PipingScriptText, UpdateSourceTrigger=PropertyChanged}" 
+                                     AcceptsReturn="True" FontFamily="Consolas" VerticalScrollBarVisibility="Auto"
+                                     Background="#1E1E1E" Foreground="#D4D4D4" BorderThickness="1" BorderBrush="#3E3E42" Padding="5" Panel.ZIndex="1"
+                                     TextChanged="txtPipingScript_TextChanged" ScrollViewer.ScrollChanged="txtPipingScript_ScrollChanged"/>
+                        </Grid>
                         
                         <Grid Grid.Row="2" Margin="0,10,0,0">
                             <Grid.ColumnDefinitions>
@@ -810,7 +829,8 @@
                                 <Button Content="Import CSV" Command="{Binding ImportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
                                 <Button Content="Export CSV" Command="{Binding ExportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
                                 <Button Content="Clear DB" Command="{Binding ClearCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" FontWeight="Bold" ToolTip="Deletes ALL codes from the Master Database" BorderThickness="1" BorderBrush="White"/>
-                                <Button Content="Symbol Manager..." Command="{Binding OpenSymbolManagerCommand}" Padding="10,5" Background="#007ACC" Foreground="White" FontWeight="Bold" BorderThickness="0" ToolTip="Open the graphical Symbol Manager"/>
+                                <Button Content="Symbol Manager..." Command="{Binding OpenSymbolManagerCommand}" Padding="10,5" Margin="0,0,10,0" Background="#007ACC" Foreground="White" FontWeight="Bold" BorderThickness="0" ToolTip="Open the graphical Symbol Manager"/>
+                                <Button Content="S" Command="{Binding SaveCodesCommand}" Padding="10,5" Background="#28A745" Foreground="White" FontWeight="Bold" ToolTip="Save Grid to Database"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                                 <TextBox Text="{Binding CodeSearchText, UpdateSourceTrigger=PropertyChanged}" Width="108" Height="25" VerticalAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Left" Background="#1E1E1E" Foreground="White" BorderThickness="1" BorderBrush="Gray" Padding="2,0,0,0" ToolTip="Search Codes (wildcard * accepted)"/>
@@ -818,7 +838,10 @@
                             </StackPanel>
                         </Grid>
                         
-                        <DataGrid Grid.Row="1" ItemsSource="{Binding CogoCodes}" AutoGenerateColumns="False" Margin="0,5">
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding CogoCodes}" SelectedItem="{Binding SelectedCogoCode}" IsReadOnly="True" AutoGenerateColumns="False" Margin="0,5">
+                            <DataGrid.InputBindings>
+                                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditCogoCodeCommand}" />
+                            </DataGrid.InputBindings>
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn Header="Symbol" Width="60" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
@@ -1057,6 +1080,46 @@
                                         </Style>
                                     </ContentControl.Style>
                                 </ContentControl>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Highlight Asset -->
+                <ItemsControl ItemsSource="{Binding HighlightedAssets}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding Easting}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Northing}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Width="60" Height="60" RenderTransformOrigin="0.5,0.5">
+                                <Grid.RenderTransform>
+                                    <TransformGroup>
+                                        <TranslateTransform X="-30" Y="-30"/>
+                                        <ScaleTransform ScaleX="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        ScaleY="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </TransformGroup>
+                                </Grid.RenderTransform>
+                                <Ellipse Stroke="#FFFF00" StrokeThickness="4" Width="60" Height="60">
+                                    <Ellipse.Triggers>
+                                        <EventTrigger RoutedEvent="Loaded">
+                                            <BeginStoryboard>
+                                                <Storyboard RepeatBehavior="Forever">
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.2" Duration="0:0:1" AutoReverse="True"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Ellipse.Triggers>
+                                </Ellipse>
+                                <Ellipse Fill="#FFFF00" Opacity="0.3" Width="60" Height="60"/>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

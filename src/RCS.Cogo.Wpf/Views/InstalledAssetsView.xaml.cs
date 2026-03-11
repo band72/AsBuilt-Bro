@@ -70,4 +70,15 @@ public partial class InstalledAssetsView : UserControl
             }
         }
     }
+
+    private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is DataGrid grid && grid.SelectedItem is RCS.Data.Entities.InstalledAsset asset)
+        {
+            if (DataContext is InstalledAssetsViewModel vm)
+            {
+                vm.NotifyAssetSelected(asset);
+            }
+        }
+    }
 }

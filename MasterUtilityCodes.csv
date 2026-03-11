@@ -34,6 +34,7 @@ EV,JEAEV,Electric Valve
 EF,JEAEF,Electric Fitting
 EM,JEAEM,Electric Vault / Manhole
 EMET,JEAEMET,Electric Meter
+WPP,E-POLE,Wood Power Pole
 
 G,G,Gas Pipe Run
 GAS,JEAG,Gas Point
