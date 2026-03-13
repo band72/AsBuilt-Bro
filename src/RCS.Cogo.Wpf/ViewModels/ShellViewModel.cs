@@ -425,6 +425,14 @@ public class ShellViewModel : ViewModelBase
             });
         })
         {
+             OpenHelpWindowAction = (commands) =>
+             {
+                 System.Windows.Application.Current?.Dispatcher.Invoke(() =>
+                 {
+                     var win = new RCS.Cogo.Wpf.Views.HelpCommandsWindow(commands);
+                     win.Show();
+                 });
+             },
              SaveHorizontalAlignmentAction = (name, desc) => 
              {
                  System.Windows.Application.Current?.Dispatcher.Invoke(async () => {
@@ -640,6 +648,7 @@ public class ShellViewModel : ViewModelBase
         NewProjectCommand = new RelayCommand(_ => NewProject());
         EditProjectCommand = new RelayCommand(_ => EditProject());
         SaveProjectCommand = new RelayCommand(_ => SaveProject());
+        SaveProjectAsCommand = new RelayCommand(_ => SaveProjectAs());
         OpenProjectCommand = new RelayCommand(_ => OpenProject());
         CloseProjectCommand = new RelayCommand(_ => CloseProject());
         OpenReportSettingsCommand = new RelayCommand(_ => OpenReportSettings());
@@ -822,6 +831,7 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand NewProjectCommand { get; }
     public System.Windows.Input.ICommand EditProjectCommand { get; }
     public System.Windows.Input.ICommand SaveProjectCommand { get; }
+    public System.Windows.Input.ICommand SaveProjectAsCommand { get; }
     public System.Windows.Input.ICommand OpenProjectCommand { get; }
     public System.Windows.Input.ICommand CloseProjectCommand { get; }
     public System.Windows.Input.ICommand ImportPointsListCommand { get; }
@@ -3851,12 +3861,30 @@ public class ShellViewModel : ViewModelBase
 
             // Structures
             StructureGraphics.Clear();
+            var renderedPoints = new HashSet<string>();
+            var allPts = _context.GetAllPoints().ToDictionary(p => p.Id, p => p, StringComparer.OrdinalIgnoreCase);
+
             foreach(var s in Structures) // Note: s is PipeStructure model
             {
-                var p = _context.GetPoint(s.PointId);
-                if (p != null)
+                if (allPts.TryGetValue(s.PointId, out var pData))
                 {
-                    StructureGraphics.Add(new StructureViewModel(s.PointId, p, s.Type));
+                    string combinedType = $"{s.Type} {pData.Description}".Trim();
+                    StructureGraphics.Add(new StructureViewModel(s.PointId, pData.Point, combinedType));
+                    renderedPoints.Add(s.PointId);
+                }
+            }
+
+            // Map standard Cogo points into symbol graphics if their descriptions match a predefined code
+            foreach(var p in _context.GetAllPoints())
+            {
+                if (!renderedPoints.Contains(p.Id) && !string.IsNullOrWhiteSpace(p.Description))
+                {
+                    var sym = new StructureViewModel(p.Id, p.Point, p.Description);
+                    if (sym.SymbolType != "Default" || validCodes.Contains(p.Description, StringComparer.OrdinalIgnoreCase))
+                    {
+                        StructureGraphics.Add(sym);
+                        renderedPoints.Add(p.Id);
+                    }
                 }
             }
 
@@ -3945,6 +3973,18 @@ public class ShellViewModel : ViewModelBase
 
     private void SaveProject()
     {
+        if (string.IsNullOrWhiteSpace(_currentDbPath))
+        {
+            SaveProjectAs();
+        }
+        else
+        {
+            SaveProjectInternal(_currentDbPath);
+        }
+    }
+
+    private void SaveProjectAs()
+    {
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
             Filter = "RCS Project (*.db)|*.db|All Files (*.*)|*.*",
@@ -3953,76 +3993,81 @@ public class ShellViewModel : ViewModelBase
 
         if (dialog.ShowDialog() == true)
         {
+            SaveProjectInternal(dialog.FileName);
+        }
+    }
+
+    private void SaveProjectInternal(string filePath)
+    {
+        try 
+        {
+            // Sync Data to Project Model
+            CurrentProject.Points = _context.GetAllPoints().Select(p => new PointEntry 
+            {
+                Id = p.Id,
+                Northing = p.Point.Northing,
+                Easting = p.Point.Easting,
+                Elevation = p.Point.Elevation,
+                Description = p.Description
+            }).ToList();
+
+            CurrentProject.PipeRuns = _pipeNetwork.Runs.Values.ToList();
+            CurrentProject.Structures = _pipeNetwork.Structures.Values.ToList();
+            CurrentProject.Materials = ProjectMaterials.ToList();
+
+            var service = new LiteDbProjectService();
+            service.SaveProject(filePath, CurrentProject);
+            _currentDbPath = filePath; // Store path for maintenance and point syncing operations
+            
+            // Method 1: Push points to Survey Linework Entity Framework DB for Figures foreign keys
             try 
             {
-                // Sync Data to Project Model
-                CurrentProject.Points = _context.GetAllPoints().Select(p => new PointEntry 
+                using (var db = new RCS.Data.AppDbContext())
                 {
-                    Id = p.Id,
-                    Northing = p.Point.Northing,
-                    Easting = p.Point.Easting,
-                    Elevation = p.Point.Elevation,
-                    Description = p.Description
-                }).ToList();
-
-                CurrentProject.PipeRuns = _pipeNetwork.Runs.Values.ToList();
-                CurrentProject.Structures = _pipeNetwork.Structures.Values.ToList();
-                CurrentProject.Materials = ProjectMaterials.ToList();
-
-                var service = new LiteDbProjectService();
-                service.SaveProject(dialog.FileName, CurrentProject);
-                _currentDbPath = dialog.FileName; // Store path for maintenance and point syncing operations
-                
-                // Method 1: Push points to Survey Linework Entity Framework DB for Figures foreign keys
-                try 
-                {
-                    using (var db = new RCS.Data.AppDbContext())
+                    var newSurveyPoints = CurrentProject.Points.Select(p => new RCS.Data.Entities.SurveyPoint 
                     {
-                        var newSurveyPoints = CurrentProject.Points.Select(p => new RCS.Data.Entities.SurveyPoint 
-                        {
-                            Id = $"{CurrentProject.Id}_{p.Id}", 
-                            PointNumber = p.Id,
-                            ProjectId = CurrentProject.Id.ToString(), 
-                            Northing = p.Northing, Easting = p.Easting, Elevation = p.Elevation, Description = p.Description 
-                        }).ToList();
+                        Id = $"{CurrentProject.Id}_{p.Id}", 
+                        PointNumber = p.Id,
+                        ProjectId = CurrentProject.Id.ToString(), 
+                        Northing = p.Northing, Easting = p.Easting, Elevation = p.Elevation, Description = p.Description 
+                    }).ToList();
 
-                        var existing = db.SurveyPoints.Where(p => p.ProjectId == CurrentProject.Id.ToString()).Select(p => p.Id).ToList();
-                        var toInsert = newSurveyPoints.Where(p => !existing.Contains(p.Id)).ToList();
-                        
-                        // We also need to update existing ones if coordinates changed to be totally robust
-                        var toUpdateIds = newSurveyPoints.Where(p => existing.Contains(p.Id)).ToList();
-                        foreach(var upPt in toUpdateIds)
+                    var existing = db.SurveyPoints.Where(p => p.ProjectId == CurrentProject.Id.ToString()).Select(p => p.Id).ToList();
+                    var toInsert = newSurveyPoints.Where(p => !existing.Contains(p.Id)).ToList();
+                    
+                    // We also need to update existing ones if coordinates changed to be totally robust
+                    var toUpdateIds = newSurveyPoints.Where(p => existing.Contains(p.Id)).ToList();
+                    foreach(var upPt in toUpdateIds)
+                    {
+                        var tracking = db.SurveyPoints.Local.FirstOrDefault(x => x.Id == upPt.Id) ?? db.SurveyPoints.FirstOrDefault(x => x.Id == upPt.Id);
+                        if (tracking != null)
                         {
-                            var tracking = db.SurveyPoints.Local.FirstOrDefault(x => x.Id == upPt.Id) ?? db.SurveyPoints.FirstOrDefault(x => x.Id == upPt.Id);
-                            if (tracking != null)
-                            {
-                                tracking.Northing = upPt.Northing;
-                                tracking.Easting = upPt.Easting;
-                                tracking.Elevation = upPt.Elevation;
-                                tracking.Description = upPt.Description;
-                            }
-                        }
-
-                        if (toInsert.Any() || toUpdateIds.Any())
-                        {
-                            db.SurveyPoints.AddRange(toInsert);
-                            db.SaveChanges();
+                            tracking.Northing = upPt.Northing;
+                            tracking.Easting = upPt.Easting;
+                            tracking.Elevation = upPt.Elevation;
+                            tracking.Description = upPt.Description;
                         }
                     }
-                }
-                catch (Exception dbEx)
-                {
-                    string inner = dbEx.InnerException != null ? dbEx.InnerException.Message : dbEx.Message;
-                    _context.Log($"[AUDIT] Warning: Could not sync points with Method 1 SQLite DB: {dbEx.Message}. Inner: {inner}");
-                }
 
-                _context.Log($"[AUDIT] Saved project to {dialog.FileName} (LiteDB and EF Core DB)");
+                    if (toInsert.Any() || toUpdateIds.Any())
+                    {
+                        db.SurveyPoints.AddRange(toInsert);
+                        db.SaveChanges();
+                    }
+                }
             }
-            catch(Exception ex)
+            catch (Exception dbEx)
             {
-                _context.Log($"[AUDIT] Error Saving Project: {ex.Message}");
-                System.Windows.MessageBox.Show($"Error Saving Project: {ex.Message}");
+                string inner = dbEx.InnerException != null ? dbEx.InnerException.Message : dbEx.Message;
+                _context.Log($"[AUDIT] Warning: Could not sync points with Method 1 SQLite DB: {dbEx.Message}. Inner: {inner}");
             }
+
+            _context.Log($"[AUDIT] Saved project to {filePath} (LiteDB and EF Core DB)");
+        }
+        catch(Exception ex)
+        {
+            _context.Log($"[AUDIT] Error Saving Project: {ex.Message}");
+            System.Windows.MessageBox.Show($"Error Saving Project: {ex.Message}");
         }
     }
 
@@ -4392,13 +4437,13 @@ public class StructureViewModel : ViewModelBase
         Type = type;
         
         string t = type.ToUpper();
-        if (t.Contains("MANHOLE") || t.Equals("MH") || t.Contains("INLET") || t.Contains("CB")) SymbolType = "Manhole";
-        else if (t.Contains("VALVE") || t.EndsWith("V") || t.EndsWith("VLV")) SymbolType = "Valve";
+        if (t.Contains("MET") || t.Equals("WMET") || t.Equals("GMET") || t.Equals("EMET")) SymbolType = "Meter";
+        else if (t.Contains("MH") || t.Contains("MANHOLE") || t.Contains("INLET") || t.Contains("CB") || t.EndsWith("M") || t.EndsWith("MH") || t.Contains("STM") || t.Equals("WWM")) SymbolType = "Manhole";
+        else if (t.Contains("VALVE") || t.EndsWith("V") || t.EndsWith("VLV") || t.Equals("WAR") || t.Equals("WWV") || t.EndsWith("BFP") || t.EndsWith("BO")) SymbolType = "Valve";
         else if (t.Contains("HYDRANT") || t.EndsWith("H") || t.EndsWith("HYD")) SymbolType = "Hydrant";
-        else if (t.Contains("METER") || t.EndsWith("M")) SymbolType = "Meter";
-        else if (t.Contains("FITTING") || t.Contains("BEND") || t.Contains("TEE")) SymbolType = "Fitting";
-        else if (t.Contains("POLE")) SymbolType = "Pole";
-        else if (t.Contains("BOX")) SymbolType = "Box";
+        else if (t.Contains("FITTING") || t.Contains("BEND") || t.Contains("TEE") || t.EndsWith("F") || t.Equals("WF") || t.Equals("WWF") || t.Equals("STF")) SymbolType = "Fitting";
+        else if (t.Contains("POLE") || t.Equals("WPP") || t.Equals("EPOLE")) SymbolType = "Pole";
+        else if (t.Contains("BOX") || t.Equals("EBOX")) SymbolType = "Box";
         else SymbolType = "Default";
         // Color Logic
         if (type.Equals("Manhole", StringComparison.OrdinalIgnoreCase)) Fill = System.Windows.Media.Brushes.Magenta;

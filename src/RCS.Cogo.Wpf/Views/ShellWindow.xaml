@@ -93,6 +93,7 @@
                 <MenuItem Header="Edit Project Details..." Command="{Binding EditProjectCommand}"/> <!-- Need this command -->
                 <Separator/>
                 <MenuItem Header="Save Project" Command="{Binding SaveProjectCommand}"/>
+                <MenuItem Header="Save Project As..." Command="{Binding SaveProjectAsCommand}"/>
                 <MenuItem Header="Open Project..." Command="{Binding OpenProjectCommand}"/>
                 <MenuItem Header="Close Project" Command="{Binding CloseProjectCommand}"/>
                 <Separator/>

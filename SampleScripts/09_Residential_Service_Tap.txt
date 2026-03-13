@@ -1,0 +1,77 @@
+// RESIDENTIAL WATER SERVICE CONNECTION
+// Layout: 50x100 Lot, 20x40 House centered on lot.
+// 8" PVC Water Main running parallel to front lot line.
+// 2" PE service tapping Main (Saddle), running to Meter at ROW, then continuing to House.
+
+CLEAR
+
+// 1. PROPERTY LOT (50ft wide x 100ft deep)
+// Front corners at Y=1000. Back corners at Y=1100.
+PT 10 5000 1000 100 CORNER
+PT 11 5050 1000 100 CORNER
+PT 12 5050 1100 100 CORNER
+PT 13 5000 1100 100 CORNER
+
+BEG LOT
+CONT 10
+CONT 11
+CONT 12
+CONT 13
+CLOSE
+
+// 2. HOUSE BOUNDARY (20ft wide x 40ft deep)
+// Centered in lot: X=5015 to 5035 (20ft wide). Y=1030 to 1070 (40ft deep).
+PT 20 5015 1030 101 CORNER
+PT 21 5035 1030 101 CORNER
+PT 22 5035 1070 101 CORNER
+PT 23 5015 1070 101 CORNER
+
+// Point for the water hookup at front of house
+PT 24 5025 1030 101 WAT
+
+BEG HOUSE
+CONT 20
+CONT 21
+CONT 22
+CONT 23
+CLOSE
+
+// 3. 8-INCH WATER MAIN IN STREET
+// Main running parallel to front property line, 10 feet out into street row. 
+PT 100 4950 990 95 WM
+PT 101 5025 990 95 WF  // Tapping Saddle Location exactly inline with House center (X=5025)
+PT 102 5100 990 95 WM
+
+// 4. METER & SERVICE LINE NODES
+// Meter is placed directly on the front property line (Y=1000)
+PT 105 5025 1000 97 WMET
+
+// ===================================
+// COMPILE PIPING NETWORK
+// ===================================
+
+PIPE-ENGINE-ON
+
+// 8-Inch Main Line
+PRUN START W DIAM 8 MAT PVC FIG WM
+WM-B 100
+WM-C 101
+WM-C 102
+WM-E
+PRUN END
+
+// 2-Inch Lateral Service running from 8" Main (Saddle) to Meter
+PRUN START W DIAM 2 MAT PE FIG SERV
+SERV-B 101
+SERV-C 105
+SERV-E
+PRUN END
+
+// 2-Inch DOMESTIC running from Meter to House connection
+PRUN START W DIAM 2 MAT PE FIG DOM
+DOM-B 105
+DOM-C 24
+DOM-E
+PRUN END
+
+PIPE-ENGINE-OFF

@@ -1,0 +1,51 @@
+// OVERHEAD ELECTRICAL AND BURIED TELECOM NETWORK
+// 20+ lines demonstrating the E and T pipe class directives mapping over generated locations
+
+CLEAR
+
+PT 800 8000 8000 110.0 EPOLE
+PT 801 8000 8100 110.0 EPOLE
+PT 802 8000 8200 110.0 EPOLE
+PT 803 8000 8300 110.0 WPP
+PT 804 8000 8400 110.0 EPOLE
+PT 805 8000 8500 110.0 WPP
+PT 806 8000 8600 110.0 EPOLE
+PT 807 8000 8700 110.0 EBOX
+PT 808 8000 8800 110.0 EMET
+
+// Telecommunications Fiber Node
+PT 850 8000 8700 95.0 EBOX
+PT 851 8100 8700 95.0 EBOX
+PT 852 8200 8700 95.0 EM
+
+PIPE-ENGINE-ON
+
+// High-Voltage Overhead AC Path
+PRUN START E DIAM 2 MAT ALUM FIG E
+E-B 800
+E-C 801
+E-C 802
+E-C 803
+E-C 804
+E-C 805
+E-C 806
+E-C 807
+E-E
+PRUN END
+
+// Standard Wattage Power Line connecting from Transformer base to Meter
+PRUN START E DIAM 1 MAT ALUM FIG E
+E-B 807
+E-C 808
+E-E
+PRUN END
+
+// Optical Fiber Subsystem Routing starting at underground Pedestal
+PRUN START E DIAM 4 MAT PE FIG EL
+EL-B 850
+EL-C 851
+EL-C 852
+EL-E
+PRUN END
+
+PIPE-ENGINE-OFF

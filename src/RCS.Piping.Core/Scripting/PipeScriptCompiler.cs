@@ -112,8 +112,8 @@ public sealed class PipeScriptCompiler
                 }
 
                 // 3. Special: SS-C (Store Structure)
-                // Usage: SS-C <PointID> <Code>
-                if (tokens[0].Equals("SS-C", StringComparison.OrdinalIgnoreCase))
+                // Usage: SS-C <PointID> <Code> outside of PRUN contexts
+                if (prun == null && tokens[0].Equals("SS-C", StringComparison.OrdinalIgnoreCase))
                 {
                     if (tokens.Count < 3)
                     {

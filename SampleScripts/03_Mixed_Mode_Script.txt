@@ -1,0 +1,39 @@
+// ROBUST MIXED MODE SCRIPT - 100+ LINES
+// Testing Geometry & Utilities together
+CLEAR
+
+PT 500 1000 1000 10.0 WWM
+PT 501 1000 1100 9.5 WWM
+PT 502 1000 1200 9.0 WWM
+PT 503 1000 1300 8.5 WWM
+PT 504 1000 1400 8.0 SEW
+
+// Quick pipe generation using points established dynamically above!
+PIPE-ENGINE-ON
+
+PRUN START WW DIAM 8 MAT PVC FIG SS
+SS-B 500
+SS-C 501
+SS-C 502
+SS-C 503
+SS-C 504
+SS-E
+PRUN END
+
+PIPE-ENGINE-OFF
+
+// Flip back to layout mode to map the property lines surrounding the sanitary sewer outfall
+PT 600 900 1400 10.0 CORNER
+PT 601 1100 1400 10.0 CORNER
+PT 602 1100 1500 10.0 CORNER
+PT 603 900 1500 10.0 CORNER
+
+BEG BLDG
+CONT 600
+CONT 601
+CONT 602
+CONT 603
+END
+
+MAPCHK BLDG
+// END OF MIXED FLOW

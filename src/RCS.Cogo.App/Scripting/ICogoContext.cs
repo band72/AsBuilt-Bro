@@ -131,4 +131,9 @@ public interface ICogoContext
     /// Action to sync in-memory points.
     /// </summary>
     System.Action? SyncPointsAction { get; set; }
+
+    /// <summary>
+    /// Action to open the Help UI with all commands.
+    /// </summary>
+    System.Action<IEnumerable<ICommand>>? OpenHelpWindowAction { get; set; }
 }

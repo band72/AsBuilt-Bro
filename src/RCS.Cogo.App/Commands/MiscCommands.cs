@@ -68,11 +68,17 @@ public class HelpCommand : ICommand
     public HelpCommand(CommandRegistry registry) => _registry = registry;
     
     public string Name => "HELP";
-    public string Description => "List all commands.";
+    public string Description => "List all commands in a separate form.";
 
     public Task ExecuteAsync(string[] args, ICogoContext context)
     {
         var cmds = _registry.GetAllCommands().OrderBy(c => c.Name);
+        if (context.OpenHelpWindowAction != null)
+        {
+            context.OpenHelpWindowAction(cmds);
+            return Task.CompletedTask;
+        }
+
         var sb = new StringBuilder();
         sb.AppendLine("--- Available Commands ---");
         foreach(var c in cmds)

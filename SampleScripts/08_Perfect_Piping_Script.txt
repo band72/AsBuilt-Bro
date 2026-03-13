@@ -1,0 +1,68 @@
+// MASTER PIPING NETWORK TEST SCRIPT
+// Strict COGO Geometry + Piping Validation
+// Contains Potable Water (W), Sanitary Sewer (WW), and Electric (E) runs
+
+CLEAR
+
+// ==========================================
+// 1. DEFINE GEOMETRY WITH VALID SYMBOL CODES
+// ==========================================
+
+// --- Water Points (WAT, WM, WV, HYD) ---
+PT 100 5000 5000 100 WM
+PT 101 5000 5100 100 WV
+PT 102 5000 5200 100 WAT
+PT 103 5050 5100 100 HYD
+
+// --- Sewer Points (WWM, SEW) ---
+// Note: Gravity Sewers require downward slopes!
+PT 200 4000 4000 90.00 WWM
+PT 201 4000 4100 85.00 WWM
+PT 202 4000 4200 80.00 WWM
+PT 203 4000 4300 75.00 SEW
+
+// --- Electric Points (EPOLE, EBOX, WPP) ---
+PT 300 6000 6000 120 EPOLE
+PT 301 6000 6100 120 EPOLE
+PT 302 6000 6200 120 EBOX
+
+// ==========================================
+// 2. COMPILE PIPING LOGIC
+// ==========================================
+PIPE-ENGINE-ON
+
+// --- WATER RUN (Pressure, 8-inch PVC) ---
+// Since we don't specify FIG, the prefix defaults to the Utility Type (W)
+PRUN START W DIAM 8 MAT PVC
+W-B 100
+W-C 101
+W-C 102
+W-E
+PRUN END
+
+// --- WATER HYDRANT LATERAL (Pressure, 6-inch DIP) ---
+PRUN START W DIAM 6 MAT DIP
+W-B 101
+W-C 103
+W-E
+PRUN END
+
+// --- SEWER RUN (Gravity, 12-inch PVC) ---
+// Here we specify FIG SS, so the prefix must be SS-
+PRUN START WW DIAM 12 MAT PVC FIG SS
+SS-B 200
+SS-C 201
+SS-C 202
+SS-C 203
+SS-E
+PRUN END
+
+// --- ELECTRIC RUN (Overhead, 2-inch ALUM) ---
+PRUN START E DIAM 2 MAT ALUM FIG E
+E-B 300
+E-C 301
+E-C 302
+E-E
+PRUN END
+
+PIPE-ENGINE-OFF

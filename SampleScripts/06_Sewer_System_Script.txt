@@ -1,0 +1,49 @@
+// GRAVITY SEWER SYSTEM DEMONSTRATION
+// Dedicated standalone logic outlining continuous gravity flow rules over a subset of nodes
+// All point descriptions are rigorously typed to match 'MasterUtilityCodes.csv' LocalCodes.
+
+CLEAR
+
+PT 500 2000 2000 100.00 WWM
+PT 501 2000 2100 99.50 WWM
+PT 502 2000 2200 99.00 WWM
+PT 503 2000 2300 98.50 WWM
+PT 504 2000 2400 98.00 WWM
+PT 505 2000 2500 97.40 WWM
+PT 506 2000 2600 96.90 WWM
+PT 507 2000 2700 96.40 WWM
+PT 508 2000 2800 95.90 WWM
+PT 509 2000 2900 95.40 WWM
+PT 510 2000 3000 94.90 WWM
+
+// Lateral connecting to 505
+PT 600 2100 2500 102.00 SEW
+PT 601 2050 2500 100.00 SEW
+
+PIPE-ENGINE-ON
+
+// Main Sub-Basin interceptor starting at Station 2000+00
+PRUN START WW DIAM 12 MAT PVC FIG SS
+SS-B 500
+SS-C 501
+SS-C 502
+SS-C 503
+SS-C 504
+SS-C 505
+SS-C 506
+SS-C 507
+SS-C 508
+SS-C 509
+SS-C 510
+SS-E
+PRUN END
+
+// Laterals running into MH 505 drop-connection
+PRUN START WW DIAM 6 MAT PVC FIG SS
+SS-B 600
+SS-C 601
+SS-C 505
+SS-E
+PRUN END
+
+PIPE-ENGINE-OFF

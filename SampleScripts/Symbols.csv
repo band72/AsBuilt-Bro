@@ -1,0 +1,8 @@
+WM-6-PVC,WM-6-PVC,Symbol_Default,pipe,water
+METER,METER,Symbol_Meter,meter,water
+WPP,POLE,C:\Users\Daryl Banks\source\repos\RCS.Cogo.Enterprise.Modern\SymbolsLibrary\CBI_JEACBI.png,meter,electric
+METER,METER,C:\Users\Daryl Banks\source\repos\RCS.Cogo.Enterprise.Modern\SymbolsLibrary\EMET_JEAEMET.png,meter,electric
+ELT,EBOX,C:\Users\Daryl Banks\source\repos\RCS.Cogo.Enterprise.Modern\SymbolsLibrary\BOX_E-BOX.png,meter,electric
+LS,LIFT-STATION,Symbol_Inlet,meter,sewer
+SEPTNK,SEPTIC-TANK,C:\Users\Daryl Banks\source\repos\RCS.Cogo.Enterprise.Modern\SymbolsLibrary\WWM_JEAWWM.png,manhole,sewer
+WM,WATER METER,Symbol_Meter,meter,water

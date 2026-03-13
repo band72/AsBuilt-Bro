@@ -1,0 +1,69 @@
+// INDEPENDENT WATER DISTRIBUTION SYSTEM DEMONSTRATION
+// Generates ~25 geometric setup points followed by 3 discrete water distribution pipelines
+// All point descriptions are rigorously typed to match 'MasterUtilityCodes.csv' LocalCodes.
+
+CLEAR
+
+PT 1 5000 5000 100 WM
+PT 2 5000 5050 100 WV
+PT 3 5000 5100 100 WV
+PT 4 5000 5150 100 HYD
+PT 5 5000 5200 100 WF
+PT 6 5000 5250 100 WF
+PT 7 5000 5300 100 WV
+PT 8 5000 5350 100 WF
+PT 9 5000 5400 100 WV
+PT 10 5000 5450 100 WAT
+
+PT 11 5050 5350 100 HYD
+PT 12 5100 5350 100 WV
+PT 13 5150 5350 100 WBO
+
+PT 20 4950 5350 100 WV
+PT 21 4900 5350 100 WF
+PT 22 4850 5350 100 WMET
+PT 23 4800 5350 100 WAT
+
+PIPE-ENGINE-ON
+
+// Main Transmission Trunk (12-inch DIP)
+PRUN START W DIAM 12 MAT DIP
+W-B 1
+W-C 2
+W-C 3
+W-C 4
+W-C 5
+W-C 6
+W-E
+PRUN END
+
+// Distribution branch post-reduction (8-inch PVC)
+PRUN START W DIAM 8 MAT PVC
+W-B 6
+W-C 7
+W-C 8
+W-C 9
+W-C 10
+W-E
+PRUN END
+
+// Fire Hydrant Leg Off 8" Branch
+PRUN START W DIAM 6 MAT DIP
+W-B 8
+W-C 11
+W-C 12
+W-C 13
+W-E
+PRUN END
+
+// Service Connection off 8" Main
+PRUN START W DIAM 2 MAT PE
+W-B 8
+W-C 20
+W-C 21
+W-C 22
+W-C 23
+W-E
+PRUN END
+
+PIPE-ENGINE-OFF
