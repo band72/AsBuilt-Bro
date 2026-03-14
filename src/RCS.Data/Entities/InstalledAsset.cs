@@ -12,8 +12,21 @@ public abstract class InstalledAsset
     public string? PartKey { get; set; }
     public string? Discipline { get; set; }
     public string? FeatureType { get; set; }
+    public string? Subtype { get; set; }
+    public string? FacilityOwner { get; set; }
     public string? Size { get; set; }
+    public string? SizeSecondary { get; set; }
     public string? Material { get; set; }
+    public string? PipeClass { get; set; }
+    public string? LiningManufacturer { get; set; }
+    public string? LiningMaterial { get; set; }
+    public string? Orientation { get; set; }
+    public string? PipeRole { get; set; }
+    public string? RfidBarcode { get; set; }
+    public string? DropType { get; set; }
+    public string? InvertElevationsWithDirections { get; set; }
+    public string? ExteriorJointTapeType { get; set; }
+    public string? ExteriorJointTapeManufacturer { get; set; }
     public int? Quantity { get; set; }
     public string? Manufacturer { get; set; }
     public string? ManufacturerPartNo { get; set; }

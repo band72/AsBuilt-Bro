@@ -598,9 +598,9 @@ public class ShellViewModel : ViewModelBase
         ReportGasCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("Gas Report Not Implemented", "Reports"));
         ReportElectricCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("Electric Report Not Implemented", "Reports"));
         ReportDrainageCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("Drainage Report Not Implemented", "Reports"));
-        ReportAllAssetsCsvCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("All Assets CSV Report Not Implemented", "Reports"));
-        ReportAllAssetsTxtCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("All Assets TXT Report Not Implemented", "Reports"));
-        ReportAllAssetsXlsCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("All Assets XLS Report Not Implemented", "Reports"));
+        ReportAllAssetsCsvCommand = new RelayCommand(_ => ExportAllAssets("csv"));
+        ReportAllAssetsTxtCommand = new RelayCommand(_ => ExportAllAssets("txt"));
+        ReportAllAssetsXlsCommand = new RelayCommand(_ => ExportAllAssets("xls"));
         
         SaveHorizontalAlignmentCommand = new RelayCommand(_ => SaveHorizontalAlignmentFromMenu());
         SaveVerticalAlignmentCommand = new RelayCommand(_ => SaveVerticalAlignmentFromMenu());
@@ -3170,6 +3170,43 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand ReportAllAssetsCsvCommand { get; }
     public System.Windows.Input.ICommand ReportAllAssetsTxtCommand { get; }
     public System.Windows.Input.ICommand ReportAllAssetsXlsCommand { get; }
+
+    private void ExportAllAssets(string format)
+    {
+        string filter = format switch {
+            "csv" => "CSV Files (*.csv)|*.csv",
+            "txt" => "Text Files (*.txt)|*.txt",
+            _ => "Excel Files (*.xls;*.xlsx)|*.xls;*.xlsx"
+        };
+        string ext = format switch {
+            "csv" => ".csv",
+            "txt" => ".txt",
+            _ => ".xlsx"
+        };
+        string title = "Report All Assets - " + format.ToUpper();
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = title,
+            Filter = filter,
+            FileName = $"AllAssets_Report{ext}"
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            try
+            {
+                InstalledAssets.ExportAllToSingleFile(dialog.FileName, format);
+                _context.Log($"[AUDIT] Exported All Assets ({format.ToUpper()}) to {dialog.FileName}");
+                System.Windows.MessageBox.Show($"Exported successfully to:\n{dialog.FileName}", "Success", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            }
+            catch(Exception ex)
+            {
+                _context.Log($"[ERROR] Export All Assets Error: {ex.Message}");
+                System.Windows.MessageBox.Show($"Export failed: {ex.Message}", "Error");
+            }
+        }
+    }
 
     private void ExecuteTestNativeSecurity()
     {

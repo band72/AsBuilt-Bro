@@ -7,4 +7,7 @@ public class Valve : InstalledAsset
     public double? Easting { get; set; }
     public double? Elevation { get; set; }
     public string? Type { get; set; } // Gate, Check, etc.
+    public string? OpenDirection { get; set; }
+    public double? TurnsToOpen { get; set; }
+    public double? NutElevation { get; set; }
 }

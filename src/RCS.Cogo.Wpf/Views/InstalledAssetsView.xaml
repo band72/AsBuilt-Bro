@@ -67,6 +67,31 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Crossing Num" Binding="{Binding CrossingNumber}"/>
+                             <DataGridTextColumn Header="Upper Type" Binding="{Binding UpperPipeType}"/>
+                             <DataGridTextColumn Header="Upper Size" Binding="{Binding UpperPipeSize}"/>
+                             <DataGridTextColumn Header="Finish Grade Elev" Binding="{Binding FinishedGradeElevation}"/>
+                             <DataGridTextColumn Header="Upper Top Elev" Binding="{Binding UpperPipeTopElevation}"/>
+                             <DataGridTextColumn Header="Upper Cover" Binding="{Binding UpperCover}"/>
+                             <DataGridTextColumn Header="Upper Bot Elev" Binding="{Binding UpperPipeBottomElevation}"/>
+                             <DataGridTextColumn Header="Lower Type" Binding="{Binding LowerPipeType}"/>
+                             <DataGridTextColumn Header="Lower Size" Binding="{Binding LowerPipeSize}"/>
+                             <DataGridTextColumn Header="Lower Top Elev" Binding="{Binding LowerPipeTopElevation}"/>
+                             <DataGridTextColumn Header="Lower Cover" Binding="{Binding LowerCover}"/>
+                             <DataGridTextColumn Header="Separation" Binding="{Binding Separation}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Desc (User)" Binding="{Binding Description}"/>
@@ -115,7 +140,22 @@
                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
-                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                                                         <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
+                             <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
                             <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
                             <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
                             <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
@@ -141,6 +181,21 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -183,6 +238,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/> <!-- Fitting Type -->
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -225,6 +293,22 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Open Dir" Binding="{Binding OpenDirection}"/>
+                             <DataGridTextColumn Header="Turns To Open" Binding="{Binding TurnsToOpen}"/>
+                             <DataGridTextColumn Header="Nut Elev" Binding="{Binding NutElevation}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -267,6 +351,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -309,6 +406,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -351,6 +461,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -400,7 +523,22 @@
                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
-                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                                                         <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
+                             <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
                             <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
                             <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
                             <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
@@ -426,7 +564,22 @@
                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
-                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                                                         <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
+                             <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
                             <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
                             <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
                             <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
@@ -452,6 +605,21 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -494,6 +662,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -536,6 +717,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -578,6 +772,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -620,6 +827,22 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Open Dir" Binding="{Binding OpenDirection}"/>
+                             <DataGridTextColumn Header="Turns To Open" Binding="{Binding TurnsToOpen}"/>
+                             <DataGridTextColumn Header="Nut Elev" Binding="{Binding NutElevation}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -662,6 +885,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -711,7 +947,22 @@
                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
-                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                                                         <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
+                             <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
                             <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
                             <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
                             <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
@@ -737,6 +988,21 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -779,6 +1045,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -821,6 +1100,22 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Open Dir" Binding="{Binding OpenDirection}"/>
+                             <DataGridTextColumn Header="Turns To Open" Binding="{Binding TurnsToOpen}"/>
+                             <DataGridTextColumn Header="Nut Elev" Binding="{Binding NutElevation}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -863,6 +1158,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -905,6 +1213,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -947,6 +1268,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -996,7 +1330,22 @@
                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
-                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                                                         <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
+                             <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
                             <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
                             <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
                             <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
@@ -1022,7 +1371,22 @@
                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
-                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                                                         <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
+                             <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
                             <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
                             <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
                             <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
@@ -1048,6 +1412,21 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1090,6 +1469,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1132,6 +1524,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1174,6 +1579,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1216,6 +1634,22 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Open Dir" Binding="{Binding OpenDirection}"/>
+                             <DataGridTextColumn Header="Turns To Open" Binding="{Binding TurnsToOpen}"/>
+                             <DataGridTextColumn Header="Nut Elev" Binding="{Binding NutElevation}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1258,6 +1692,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1307,7 +1754,22 @@
                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
-                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                                                         <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
+                             <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
                             <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
                             <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
                             <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
@@ -1333,7 +1795,22 @@
                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
-                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                                                         <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
+                             <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
                             <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
                             <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
                             <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
@@ -1359,6 +1836,21 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1401,6 +1893,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1443,6 +1948,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1485,6 +2003,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1527,6 +2058,22 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Open Dir" Binding="{Binding OpenDirection}"/>
+                             <DataGridTextColumn Header="Turns To Open" Binding="{Binding TurnsToOpen}"/>
+                             <DataGridTextColumn Header="Nut Elev" Binding="{Binding NutElevation}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1569,6 +2116,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1618,7 +2178,22 @@
                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
-                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                                                         <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
+                             <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
                             <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
                             <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
                             <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
@@ -1644,7 +2219,22 @@
                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
-                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                                                         <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
+                             <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
                             <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
                             <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
                             <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
@@ -1670,6 +2260,21 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1712,6 +2317,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1754,6 +2372,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1796,6 +2427,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1838,6 +2482,22 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Open Dir" Binding="{Binding OpenDirection}"/>
+                             <DataGridTextColumn Header="Turns To Open" Binding="{Binding TurnsToOpen}"/>
+                             <DataGridTextColumn Header="Nut Elev" Binding="{Binding NutElevation}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1880,6 +2540,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1929,7 +2602,22 @@
                             <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                             <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
-                            <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
+                                                         <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
+                             <DataGridTextColumn Header="N Start" Binding="{Binding NorthingStart}"/>
                             <DataGridTextColumn Header="E Start" Binding="{Binding EastingStart}"/>
                             <DataGridTextColumn Header="N End" Binding="{Binding NorthingEnd}"/>
                             <DataGridTextColumn Header="E End" Binding="{Binding EastingEnd}"/>
@@ -1955,6 +2643,21 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Grade Elev Start" Binding="{Binding GradeElevationAtInvertStart}"/>
+                             <DataGridTextColumn Header="Grade Elev End" Binding="{Binding GradeElevationAtInvertEnd}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -1997,6 +2700,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -2039,6 +2755,22 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
+                             <DataGridTextColumn Header="Open Dir" Binding="{Binding OpenDirection}"/>
+                             <DataGridTextColumn Header="Turns To Open" Binding="{Binding TurnsToOpen}"/>
+                             <DataGridTextColumn Header="Nut Elev" Binding="{Binding NutElevation}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -2081,6 +2813,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>
@@ -2123,6 +2868,19 @@
                              <DataGridTextColumn Header="Type" Binding="{Binding FeatureType}"/>
                              <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
                              <DataGridTextColumn Header="Mat" Binding="{Binding Material}"/>
+                                                          <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
+                             <DataGridTextColumn Header="Size Sec" Binding="{Binding SizeSecondary}"/>
+                             <DataGridTextColumn Header="Pipe Class" Binding="{Binding PipeClass}"/>
+                             <DataGridTextColumn Header="Lining Manuf" Binding="{Binding LiningManufacturer}"/>
+                             <DataGridTextColumn Header="Lining Mat" Binding="{Binding LiningMaterial}"/>
+                             <DataGridTextColumn Header="Orientation" Binding="{Binding Orientation}"/>
+                             <DataGridTextColumn Header="Pipe Role" Binding="{Binding PipeRole}"/>
+                             <DataGridTextColumn Header="RFID/Barcode" Binding="{Binding RfidBarcode}"/>
+                             <DataGridTextColumn Header="Drop Type" Binding="{Binding DropType}"/>
+                             <DataGridTextColumn Header="Invert Elev Dirs" Binding="{Binding InvertElevationsWithDirections}"/>
+                             <DataGridTextColumn Header="Joint Tape Type" Binding="{Binding ExteriorJointTapeType}"/>
+                             <DataGridTextColumn Header="Joint Tape Man" Binding="{Binding ExteriorJointTapeManufacturer}"/>
                              <DataGridTextColumn Header="N" Binding="{Binding Northing}"/>
                              <DataGridTextColumn Header="E" Binding="{Binding Easting}"/>
                              <DataGridTextColumn Header="Elev" Binding="{Binding Elevation}"/>

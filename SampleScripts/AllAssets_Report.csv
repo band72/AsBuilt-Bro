@@ -1,0 +1,365 @@
+--- PipeCrossings ---
+PartKey,Description,Northing,Easting,Notes,Manufacturer,Size,Material,Year,Confidence,Source,Warning
+
+--- FigureAssets ---
+AssetId,Name,Layer,Description,ScriptContent
+
+--- WaterPipeRun ---
+PartKey,Description,Diameter,Size,Material,N_Start,E_Start,N_End,E_End,Inv_Start,Inv_End,Notes,Manufacturer,Year,Confidence,Source,Warning
+"W-PIPE-6-PVC","",6,"","PVC",5000,950,5000,1020,98,98,"[ScriptID:Run-9f569420-2afd-4120-bad8-bd0275bc67c5]","","","","Script",""
+"W-PIPE-6-PVC","",6,"","PVC",5000,1020,5000,1070,98,98,"[ScriptID:Run-299b8a01-d04b-4ee7-b6c1-38841367d165]","","","","Script",""
+"W-PIPE-6-PVC","",6,"","PVC",5000,1070,5000,1120,98,98,"[ScriptID:Run-5fc17e0b-5d29-4d31-b7f2-00f95f5bc165]","","","","Script",""
+"W-PIPE-6-PVC","",6,"","PVC",5000,1120,5000,1170,98,98,"[ScriptID:Run-ca9fb89a-409c-48bd-a7fb-417b3d1a41ea]","","","","Script",""
+"W-PIPE-6-PVC","",6,"","PVC",5000,1170,5000,1220,98,98,"[ScriptID:Run-5b81e6e7-b7af-4e7c-946f-55c55aa2b43e]","","","","Script",""
+"W-PIPE-6-PVC","",6,"","PVC",5000,1220,5000,1300,98,98,"[ScriptID:Run-986257e2-3f33-49ae-b7ac-31d5c87c1f76]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4955,1020,4975,1020,101,100,"[ScriptID:Run-bbdd974e-d81a-444a-b784-8cf7c5786464]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4975,1020,5000,1020,100,98,"[ScriptID:Run-78ba5cac-4545-430a-87ec-764ce14e54e5]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5000,1020,5025,1020,98,100,"[ScriptID:Run-d930897a-73f8-434f-bcee-f3dd408c7937]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5025,1020,5045,1020,100,101,"[ScriptID:Run-32e1b3b3-3acd-4cba-bd33-c41e1545ced2]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4955,1070,4975,1070,101,100,"[ScriptID:Run-c0832bd4-405b-4730-8a1d-b1a45383e99a]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4975,1070,5000,1070,100,98,"[ScriptID:Run-bba5360a-cac9-41b3-acc8-2040d00b0088]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5000,1070,5025,1070,98,100,"[ScriptID:Run-2a0842f1-9f54-42b3-a43c-753244638dac]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5025,1070,5045,1070,100,101,"[ScriptID:Run-64305103-e377-403a-955c-f238f1840037]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4955,1120,4975,1120,101,100,"[ScriptID:Run-41223c28-fc17-4c8b-984d-48aa31910166]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4975,1120,5000,1120,100,98,"[ScriptID:Run-d978f8bd-48d9-4dff-a886-43138482eb68]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5000,1120,5025,1120,98,100,"[ScriptID:Run-5404b787-e816-4e41-abe0-482004e75f2e]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5025,1120,5045,1120,100,101,"[ScriptID:Run-fbdefcc2-884a-4cb6-bd30-225f0c93c5d7]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4955,1170,4975,1170,101,100,"[ScriptID:Run-baa6868e-f520-4989-873b-788f86afd182]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4975,1170,5000,1170,100,98,"[ScriptID:Run-a99cb857-824e-4399-b2a9-441ff86fb062]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5000,1170,5025,1170,98,100,"[ScriptID:Run-894ba98b-60e4-4def-afb3-217a8338dfbe]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5025,1170,5045,1170,100,101,"[ScriptID:Run-94ea9728-343b-452b-97d2-4b496f8edbe6]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4955,1220,4975,1220,101,100,"[ScriptID:Run-87394255-9f12-4ca2-b315-1e99a8523699]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4975,1220,5000,1220,100,98,"[ScriptID:Run-e628f28d-affb-4483-a1fb-4a98234417a2]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5000,1220,5025,1220,98,100,"[ScriptID:Run-9d5aab63-1408-4d68-abf1-e50324dd01bf]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5025,1220,5045,1220,100,101,"[ScriptID:Run-531fec86-9131-425a-b12c-7dccc4885038]","","","","Script",""
+"W-PIPE-6-PVC","",6,"","PVC",5000,950,5000,1020,98,98,"[ScriptID:Run-1c74b241-3a0e-483b-9cfa-623e2fd89b61]","","","","Script",""
+"W-PIPE-6-PVC","",6,"","PVC",5000,1020,5000,1070,98,98,"[ScriptID:Run-af25e642-6100-44cd-9f5d-113b64bac883]","","","","Script",""
+"W-PIPE-6-PVC","",6,"","PVC",5000,1070,5000,1120,98,98,"[ScriptID:Run-f19bd1e5-da77-4e26-af3e-19bf657f71b0]","","","","Script",""
+"W-PIPE-6-PVC","",6,"","PVC",5000,1120,5000,1170,98,98,"[ScriptID:Run-999362da-75a6-4e99-9b50-744171d45302]","","","","Script",""
+"W-PIPE-6-PVC","",6,"","PVC",5000,1170,5000,1220,98,98,"[ScriptID:Run-67f41be4-c9a1-4f04-885c-fd564c6cedba]","","","","Script",""
+"W-PIPE-6-PVC","",6,"","PVC",5000,1220,5000,1300,98,98,"[ScriptID:Run-8683c346-f9f6-4080-b612-c97104095646]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4955,1020,4975,1020,101,100,"[ScriptID:Run-264058ca-68fe-4e45-9e0a-9afe3499e2f6]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4975,1020,5000,1020,100,98,"[ScriptID:Run-1227c3b7-aa02-4bf4-b43e-bdca25b4b4bb]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5000,1020,5025,1020,98,100,"[ScriptID:Run-939c6784-8b60-4b0c-8de3-af84881d75fc]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5025,1020,5045,1020,100,101,"[ScriptID:Run-f313e4b4-dff3-4a3b-9459-9b888862b0b5]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4955,1070,4975,1070,101,100,"[ScriptID:Run-93726c1b-e87b-46f6-8f91-38797713cc7d]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4975,1070,5000,1070,100,98,"[ScriptID:Run-3377aff0-ff78-4c18-a0c2-647a8b04a3eb]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5000,1070,5025,1070,98,100,"[ScriptID:Run-825f407a-8db2-4400-a2d5-148c3b5fef46]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5025,1070,5045,1070,100,101,"[ScriptID:Run-f3e02c46-c90e-43da-aac4-fa3d4adbb7a4]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4955,1120,4975,1120,101,100,"[ScriptID:Run-d9f85b12-931a-4e40-b49c-26dfb43b68c8]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4975,1120,5000,1120,100,98,"[ScriptID:Run-677b0362-af01-4a04-96c6-4d338a816844]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5000,1120,5025,1120,98,100,"[ScriptID:Run-cb9223d0-b23c-40b3-8fc0-2ad8696988dc]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5025,1120,5045,1120,100,101,"[ScriptID:Run-60127b3f-57d6-42a7-9973-8ab8b6de539d]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4955,1170,4975,1170,101,100,"[ScriptID:Run-15eda14b-36b6-48b7-81f7-c857de245bf1]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4975,1170,5000,1170,100,98,"[ScriptID:Run-e7047db2-e7a5-4324-baeb-ac96fd2e93d9]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5000,1170,5025,1170,98,100,"[ScriptID:Run-3d124881-3c94-45a7-998b-9830c7826dd4]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5025,1170,5045,1170,100,101,"[ScriptID:Run-db341a33-ea2c-4ff2-9254-472452e9ac34]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4955,1220,4975,1220,101,100,"[ScriptID:Run-7189c7f8-fe09-42ac-bf9c-efe386c8440a]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",4975,1220,5000,1220,100,98,"[ScriptID:Run-81be7e56-cd51-49d3-92f1-83430d561bde]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5000,1220,5025,1220,98,100,"[ScriptID:Run-5dce6767-7f5e-4fa0-8187-23fdde86bb57]","","","","Script",""
+"W-PIPE-2-PE","",2,"","PE",5025,1220,5045,1220,100,101,"[ScriptID:Run-4c126a1b-e366-491f-8736-3d57446baaea]","","","","Script",""
+
+--- WaterPointsAlongPipe ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- WaterFitting ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+"W","","",5000,950,98,"[ScriptID:Pt-100]","","","","Script",""
+"W","","",5000,1020,98,"[ScriptID:Pt-101]","","","","Script",""
+"W","","",5000,1070,98,"[ScriptID:Pt-102]","","","","Script",""
+"W","","",5000,1120,98,"[ScriptID:Pt-103]","","","","Script",""
+"W","","",5000,1170,98,"[ScriptID:Pt-104]","","","","Script",""
+"W","","",5000,1220,98,"[ScriptID:Pt-105]","","","","Script",""
+"W","","",5000,1300,98,"[ScriptID:Pt-106]","","","","Script",""
+"W","","",4955,1020,101,"[ScriptID:Pt-316]","","","","Script",""
+"W","","",5045,1020,101,"[ScriptID:Pt-311]","","","","Script",""
+"W","","",4955,1070,101,"[ScriptID:Pt-317]","","","","Script",""
+"W","","",5045,1070,101,"[ScriptID:Pt-312]","","","","Script",""
+"W","","",4955,1120,101,"[ScriptID:Pt-318]","","","","Script",""
+"W","","",5045,1120,101,"[ScriptID:Pt-313]","","","","Script",""
+"W","","",4955,1170,101,"[ScriptID:Pt-319]","","","","Script",""
+"W","","",5045,1170,101,"[ScriptID:Pt-314]","","","","Script",""
+"W","","",4955,1220,101,"[ScriptID:Pt-320]","","","","Script",""
+"W","","",5045,1220,101,"[ScriptID:Pt-315]","","","","Script",""
+"WW","","",4990,1300,90,"[ScriptID:Pt-200]","","","","Script",""
+"WW","","",4990,1210,89.5,"[ScriptID:Pt-201]","","","","Script",""
+"WW","","",4990,1160,89,"[ScriptID:Pt-202]","","","","Script",""
+"WW","","",4990,1110,88.5,"[ScriptID:Pt-203]","","","","Script",""
+"WW","","",4990,1060,88,"[ScriptID:Pt-204]","","","","Script",""
+"WW","","",4990,1010,87.5,"[ScriptID:Pt-205]","","","","Script",""
+"WW","","",4990,950,87,"[ScriptID:Pt-206]","","","","Script",""
+"WW","","",5045,1210,92.5,"[ScriptID:Pt-415]","","","","Script",""
+"WW","","",5025,1210,90.5,"[ScriptID:Pt-405]","","","","Script",""
+"WW","","",4955,1210,92.5,"[ScriptID:Pt-420]","","","","Script",""
+"WW","","",4975,1210,90.5,"[ScriptID:Pt-410]","","","","Script",""
+"WW","","",5045,1160,92,"[ScriptID:Pt-414]","","","","Script",""
+"WW","","",5025,1160,90,"[ScriptID:Pt-404]","","","","Script",""
+"WW","","",4955,1160,92,"[ScriptID:Pt-419]","","","","Script",""
+"WW","","",4975,1160,90,"[ScriptID:Pt-409]","","","","Script",""
+"WW","","",5045,1110,91.5,"[ScriptID:Pt-413]","","","","Script",""
+"WW","","",5025,1110,89.5,"[ScriptID:Pt-403]","","","","Script",""
+"WW","","",4955,1110,91.5,"[ScriptID:Pt-418]","","","","Script",""
+"WW","","",4975,1110,89.5,"[ScriptID:Pt-408]","","","","Script",""
+"WW","","",5045,1060,91,"[ScriptID:Pt-412]","","","","Script",""
+"WW","","",5025,1060,89,"[ScriptID:Pt-402]","","","","Script",""
+"WW","","",4955,1060,91,"[ScriptID:Pt-417]","","","","Script",""
+"WW","","",4975,1060,89,"[ScriptID:Pt-407]","","","","Script",""
+"WW","","",5045,1010,90.5,"[ScriptID:Pt-411]","","","","Script",""
+"WW","","",5025,1010,88.5,"[ScriptID:Pt-401]","","","","Script",""
+"WW","","",4955,1010,90.5,"[ScriptID:Pt-416]","","","","Script",""
+"WW","","",4975,1010,88.5,"[ScriptID:Pt-406]","","","","Script",""
+
+--- WaterValve ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- WaterHydrant ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- WaterMeter ---
+PartKey,Description,Size,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+"W","","",4975,1020,100,"[ScriptID:Pt-306]","","","","Script",""
+"W","","",5025,1020,100,"[ScriptID:Pt-301]","","","","Script",""
+"W","","",4975,1070,100,"[ScriptID:Pt-307]","","","","Script",""
+"W","","",5025,1070,100,"[ScriptID:Pt-302]","","","","Script",""
+"W","","",4975,1120,100,"[ScriptID:Pt-308]","","","","Script",""
+"W","","",5025,1120,100,"[ScriptID:Pt-303]","","","","Script",""
+"W","","",4975,1170,100,"[ScriptID:Pt-309]","","","","Script",""
+"W","","",5025,1170,100,"[ScriptID:Pt-304]","","","","Script",""
+"W","","",4975,1220,100,"[ScriptID:Pt-310]","","","","Script",""
+"W","","",5025,1220,100,"[ScriptID:Pt-305]","","","","Script",""
+
+--- WaterLocateBox ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- WWGravityPipeRun ---
+PartKey,Description,Diameter,Size,Material,N_Start,E_Start,N_End,E_End,Inv_Start,Inv_End,Notes,Manufacturer,Year,Confidence,Source,Warning
+"WW-PIPE-8-PVC","",8,"","PVC",4990,1300,4990,1210,90,89.5,"[ScriptID:Run-50d2b1b6-f195-4574-8fcc-ecceb406821f]","","","","Script",""
+"WW-PIPE-8-PVC","",8,"","PVC",4990,1210,4990,1160,89.5,89,"[ScriptID:Run-52afccbb-ed04-4414-ab2c-9502071799ba]","","","","Script",""
+"WW-PIPE-8-PVC","",8,"","PVC",4990,1160,4990,1110,89,88.5,"[ScriptID:Run-100645d6-9b57-4ea7-8fb4-7f232a129957]","","","","Script",""
+"WW-PIPE-8-PVC","",8,"","PVC",4990,1110,4990,1060,88.5,88,"[ScriptID:Run-73dc69fe-ae51-4eb4-9723-0268c339a893]","","","","Script",""
+"WW-PIPE-8-PVC","",8,"","PVC",4990,1060,4990,1010,88,87.5,"[ScriptID:Run-558b607d-495f-4a0f-b442-f192a2036a34]","","","","Script",""
+"WW-PIPE-8-PVC","",8,"","PVC",4990,1010,4990,950,87.5,87,"[ScriptID:Run-9cca2242-163a-4c0e-a346-2139d5cb2645]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5045,1210,5025,1210,92.5,90.5,"[ScriptID:Run-db0c4ac5-f505-40ea-8b74-d5ad8bc4a03e]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5025,1210,4990,1210,90.5,89.5,"[ScriptID:Run-28f7970d-1898-44fa-922e-06b47aeb63df]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4955,1210,4975,1210,92.5,90.5,"[ScriptID:Run-bd2a8cba-97c1-452b-b907-5cfda5307c87]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4975,1210,4990,1210,90.5,89.5,"[ScriptID:Run-44a9b553-d5eb-40b3-a032-75b68e59f861]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5045,1160,5025,1160,92,90,"[ScriptID:Run-51240539-4b78-4d53-8acb-9269f6dcc900]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5025,1160,4990,1160,90,89,"[ScriptID:Run-6e8a5bb4-33d9-47b8-bda9-f028948fa042]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4955,1160,4975,1160,92,90,"[ScriptID:Run-ec728be6-51d7-4593-a7d4-589dc5711522]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4975,1160,4990,1160,90,89,"[ScriptID:Run-b1fe77ea-5f4e-4cab-a8dc-48344588bb60]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5045,1110,5025,1110,91.5,89.5,"[ScriptID:Run-40f3fcd4-46b8-4b7b-9d30-f35c96fa94e9]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5025,1110,4990,1110,89.5,88.5,"[ScriptID:Run-9a195f40-34f2-4792-ac50-8308db550a49]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4955,1110,4975,1110,91.5,89.5,"[ScriptID:Run-084e5e7d-a9df-40c6-a33b-7706d325378d]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4975,1110,4990,1110,89.5,88.5,"[ScriptID:Run-577243f6-4545-4046-afa3-d8b0a55ddcc6]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5045,1060,5025,1060,91,89,"[ScriptID:Run-0ab5058e-34f7-4559-b51e-4449298b0a8f]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5025,1060,4990,1060,89,88,"[ScriptID:Run-c1ac6090-0013-4178-be32-5839e8e702b9]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4955,1060,4975,1060,91,89,"[ScriptID:Run-74736fa4-c7d1-4d9d-b6b2-bd0169a64c09]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4975,1060,4990,1060,89,88,"[ScriptID:Run-a4045870-528b-49cd-8075-d45fd5e48211]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5045,1010,5025,1010,90.5,88.5,"[ScriptID:Run-4d31aaad-aa13-41c9-828a-6670ddf8bb49]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5025,1010,4990,1010,88.5,87.5,"[ScriptID:Run-588dd475-cabc-4158-b121-5c0e2fe96660]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4955,1010,4975,1010,90.5,88.5,"[ScriptID:Run-dab0e617-8b7e-42ea-a65f-bf53d36aac07]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4975,1010,4990,1010,88.5,87.5,"[ScriptID:Run-fe3f0e8d-a997-4789-bf50-898c184a9939]","","","","Script",""
+"WW-PIPE-8-PVC","",8,"","PVC",4990,1300,4990,1210,90,89.5,"[ScriptID:Run-b07cdf41-cfcc-4b9b-9fc6-da50af03d179]","","","","Script",""
+"WW-PIPE-8-PVC","",8,"","PVC",4990,1210,4990,1160,89.5,89,"[ScriptID:Run-6f59f498-2507-4684-ae0e-12ea6708408b]","","","","Script",""
+"WW-PIPE-8-PVC","",8,"","PVC",4990,1160,4990,1110,89,88.5,"[ScriptID:Run-889f94c1-b824-4192-96f1-08b647ae08e1]","","","","Script",""
+"WW-PIPE-8-PVC","",8,"","PVC",4990,1110,4990,1060,88.5,88,"[ScriptID:Run-d191737e-028f-4a95-a8a2-3d6f34b0cc86]","","","","Script",""
+"WW-PIPE-8-PVC","",8,"","PVC",4990,1060,4990,1010,88,87.5,"[ScriptID:Run-16777d85-83aa-4a6a-aa89-04f3dafc1e47]","","","","Script",""
+"WW-PIPE-8-PVC","",8,"","PVC",4990,1010,4990,950,87.5,87,"[ScriptID:Run-61387d19-bd89-4236-a490-ac36c6a8daef]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5045,1210,5025,1210,92.5,90.5,"[ScriptID:Run-66eb8167-df3f-42df-b539-d59d4a0dab74]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5025,1210,4990,1210,90.5,89.5,"[ScriptID:Run-a13d74cc-ecf7-4446-be1e-c6d817dc2f7b]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4955,1210,4975,1210,92.5,90.5,"[ScriptID:Run-cc3b57dd-6c5a-4236-9956-be542b06a0ea]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4975,1210,4990,1210,90.5,89.5,"[ScriptID:Run-a265c437-16ad-4dca-bffc-b56c3172e698]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5045,1160,5025,1160,92,90,"[ScriptID:Run-1a135173-1a4f-415e-97f5-386ec8743acf]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5025,1160,4990,1160,90,89,"[ScriptID:Run-1f75c543-57f6-4e66-90f1-cb04c6dc4668]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4955,1160,4975,1160,92,90,"[ScriptID:Run-a17cb8dd-558e-4b5b-95bb-1b164535e3a7]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4975,1160,4990,1160,90,89,"[ScriptID:Run-ebad2384-15b9-4282-8091-75fa82495c95]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5045,1110,5025,1110,91.5,89.5,"[ScriptID:Run-d01a8780-4cd3-4b4e-85ae-c597a4bda8d9]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5025,1110,4990,1110,89.5,88.5,"[ScriptID:Run-94545770-46d9-467b-b014-ba4a640e4b6e]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4955,1110,4975,1110,91.5,89.5,"[ScriptID:Run-95a4838c-f4fd-4b74-ad04-35b65d04bb64]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4975,1110,4990,1110,89.5,88.5,"[ScriptID:Run-cdf9e633-0939-40ee-9272-f54e0f3a53ae]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5045,1060,5025,1060,91,89,"[ScriptID:Run-ef8b406a-32f7-4a13-946f-bae4923c66b5]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5025,1060,4990,1060,89,88,"[ScriptID:Run-cdabaca4-daba-43d3-9998-d36fff0d516d]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4955,1060,4975,1060,91,89,"[ScriptID:Run-0b947ed3-82e6-4fb4-ae71-8df5b42695b1]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4975,1060,4990,1060,89,88,"[ScriptID:Run-762eb474-6894-4a18-80c4-672274ddce3c]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5045,1010,5025,1010,90.5,88.5,"[ScriptID:Run-303bcffd-657d-4a93-9952-ef024e209bf2]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",5025,1010,4990,1010,88.5,87.5,"[ScriptID:Run-f65bf2c8-0d25-482d-bc30-8842ad7cf55b]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4955,1010,4975,1010,90.5,88.5,"[ScriptID:Run-6e07261a-4b8a-4e8f-a83f-ae332725240f]","","","","Script",""
+"WW-PIPE-4-PVC","",4,"","PVC",4975,1010,4990,1010,88.5,87.5,"[ScriptID:Run-4aa1adb0-90be-4ea9-bc0b-f8271b5befd6]","","","","Script",""
+
+--- WWPressurePipeRun ---
+PartKey,Description,Diameter,Size,Material,N_Start,E_Start,N_End,E_End,Inv_Start,Inv_End,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- WWPointsAlongPipe ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- WWFitting ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- Manhole ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- WWServicePointMeter ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- WWValve ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- WWLocateBox ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ReclaimedPipeRun ---
+PartKey,Description,Diameter,Size,Material,N_Start,E_Start,N_End,E_End,Inv_Start,Inv_End,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ReclaimedPointsAlongPipe ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ReclaimedFitting ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ReclaimedValve ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ReclaimedHydrant ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ReclaimedMeter ---
+PartKey,Description,Size,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ReclaimedLocateBox ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ChilledPipeRun ---
+PartKey,Description,Diameter,Size,Material,N_Start,E_Start,N_End,E_End,Inv_Start,Inv_End,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ChilledPointsAlongPipe ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ChilledFitting ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ChilledValve ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ChilledMeter ---
+PartKey,Description,Size,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ChilledLocateBox ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- GasGravityPipeRun ---
+PartKey,Description,Diameter,Size,Material,N_Start,E_Start,N_End,E_End,Inv_Start,Inv_End,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- GasPressurePipeRun ---
+PartKey,Description,Diameter,Size,Material,N_Start,E_Start,N_End,E_End,Inv_Start,Inv_End,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- GasPointsAlongPipe ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- GasFitting ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- GasManhole ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- GasServicePointMeter ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- GasValve ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- GasLocateBox ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ElectricGravityPipeRun ---
+PartKey,Description,Diameter,Size,Material,N_Start,E_Start,N_End,E_End,Inv_Start,Inv_End,Notes,Manufacturer,Year,Confidence,Source,Warning
+"E-PIPE-2-ALUM","",2,"","ALUM",5120,1025,5120,1075,120,120,"[ScriptID:Run-94678d5e-3149-49c2-890e-58addadc8e9a]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",5120,1075,5120,1125,120,120,"[ScriptID:Run-94d1913d-fdff-493e-b2dc-084e4ff3b2dd]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",5120,1125,5120,1175,120,120,"[ScriptID:Run-086bed82-2741-418a-b4b9-43e9ffc46d73]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",5120,1175,5120,1225,120,120,"[ScriptID:Run-d59d404e-7553-4d9a-bce7-2562aa8cd6f0]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",4880,1025,4880,1075,120,120,"[ScriptID:Run-9c36f628-189c-4d70-b5d3-a0de7ef41ef9]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",4880,1075,4880,1125,120,120,"[ScriptID:Run-57f70fff-90a0-4f12-a2ab-79f7fcc80c2a]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",4880,1125,4880,1175,120,120,"[ScriptID:Run-47fc0468-ebfe-4e08-9552-afe88f047698]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",4880,1175,4880,1225,120,120,"[ScriptID:Run-3e4d002d-d79b-47e9-8e9f-577b919f151e]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",5120,1025,5120,1075,120,120,"[ScriptID:Run-1e3fd8d1-fb1a-4449-a13e-53695581da95]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",5120,1075,5120,1125,120,120,"[ScriptID:Run-6413f1ce-e09c-4b85-93d4-749bf70ef390]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",5120,1125,5120,1175,120,120,"[ScriptID:Run-6c1a97da-4f43-414b-a5c9-85b3627c8e80]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",5120,1175,5120,1225,120,120,"[ScriptID:Run-1884652c-0e9e-43b8-af7d-ae4a465df1b6]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",4880,1025,4880,1075,120,120,"[ScriptID:Run-f3bb1c3e-3581-4a1e-a8b8-8c1cac879187]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",4880,1075,4880,1125,120,120,"[ScriptID:Run-0736cd6e-ac78-4acb-a91f-06d3c425999a]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",4880,1125,4880,1175,120,120,"[ScriptID:Run-02d260e0-b532-47e6-ac8e-807a0680e4c3]","","","","Script",""
+"E-PIPE-2-ALUM","",2,"","ALUM",4880,1175,4880,1225,120,120,"[ScriptID:Run-7386aadf-970e-4128-95b7-9bc68be7457b]","","","","Script",""
+
+--- ElectricPressurePipeRun ---
+PartKey,Description,Diameter,Size,Material,N_Start,E_Start,N_End,E_End,Inv_Start,Inv_End,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ElectricPointsAlongPipe ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ElectricFitting ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+"E","","",5120,1025,120,"[ScriptID:Pt-601]","","","","Script",""
+"E","","",5120,1075,120,"[ScriptID:Pt-602]","","","","Script",""
+"E","","",5120,1125,120,"[ScriptID:Pt-603]","","","","Script",""
+"E","","",5120,1175,120,"[ScriptID:Pt-604]","","","","Script",""
+"E","","",5120,1225,120,"[ScriptID:Pt-605]","","","","Script",""
+"E","","",4880,1025,120,"[ScriptID:Pt-606]","","","","Script",""
+"E","","",4880,1075,120,"[ScriptID:Pt-607]","","","","Script",""
+"E","","",4880,1125,120,"[ScriptID:Pt-608]","","","","Script",""
+"E","","",4880,1175,120,"[ScriptID:Pt-609]","","","","Script",""
+"E","","",4880,1225,120,"[ScriptID:Pt-610]","","","","Script",""
+
+--- ElectricManhole ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ElectricServicePointMeter ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ElectricValve ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- ElectricLocateBox ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- STGravityPipeRun ---
+PartKey,Description,Diameter,Size,Material,N_Start,E_Start,N_End,E_End,Inv_Start,Inv_End,Notes,Manufacturer,Year,Confidence,Source,Warning
+"ST-PIPE-18-RCP","",18,"","RCP",5010,1300,5010,1225,95,94.5,"[ScriptID:Run-e3b22184-8826-4370-8077-b422f25e76d7]","","","","Script",""
+"ST-PIPE-18-RCP","",18,"","RCP",5010,1225,5010,1175,94.5,94,"[ScriptID:Run-a42a09b0-9fec-4e5f-bde3-85923711b0fd]","","","","Script",""
+"ST-PIPE-18-RCP","",18,"","RCP",5010,1175,5010,1125,94,93.5,"[ScriptID:Run-1891af88-1525-4f1f-bfdb-e2310985ca4b]","","","","Script",""
+"ST-PIPE-18-RCP","",18,"","RCP",5010,1125,5010,1075,93.5,93,"[ScriptID:Run-a2f4be06-c812-46fb-9a23-2635379c2922]","","","","Script",""
+"ST-PIPE-18-RCP","",18,"","RCP",5010,1075,5010,1025,93,92.5,"[ScriptID:Run-86c2895c-785b-4835-81cf-e4228da984c2]","","","","Script",""
+"ST-PIPE-18-RCP","",18,"","RCP",5010,1025,5010,950,92.5,92,"[ScriptID:Run-04a6b798-4b62-4f16-ae56-ff26d3283349]","","","","Script",""
+"ST-PIPE-18-RCP","",18,"","RCP",5010,1300,5010,1225,95,94.5,"[ScriptID:Run-3ed81bc1-f3ab-4ac6-850c-6fe6f9470640]","","","","Script",""
+"ST-PIPE-18-RCP","",18,"","RCP",5010,1225,5010,1175,94.5,94,"[ScriptID:Run-a3ac3f01-d176-4f0e-8dcf-9a8fbe6a1e08]","","","","Script",""
+"ST-PIPE-18-RCP","",18,"","RCP",5010,1175,5010,1125,94,93.5,"[ScriptID:Run-9365d023-04d2-41ee-b974-0ef0751b14c2]","","","","Script",""
+"ST-PIPE-18-RCP","",18,"","RCP",5010,1125,5010,1075,93.5,93,"[ScriptID:Run-7297f323-53a9-4abb-8f7e-97792d7d12b4]","","","","Script",""
+"ST-PIPE-18-RCP","",18,"","RCP",5010,1075,5010,1025,93,92.5,"[ScriptID:Run-e0ce909d-49d7-4b92-90bf-14dbfb23cc16]","","","","Script",""
+"ST-PIPE-18-RCP","",18,"","RCP",5010,1025,5010,950,92.5,92,"[ScriptID:Run-1a098bbd-386b-4d61-85ed-5dbc8eb1f7e7]","","","","Script",""
+
+--- STPressurePipeRun ---
+PartKey,Description,Diameter,Size,Material,N_Start,E_Start,N_End,E_End,Inv_Start,Inv_End,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- STPointsAlongPipe ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- STFitting ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- STManhole ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+"ST","",5010,1300,95,"[ScriptID:Pt-500]","","","","Script",""
+"ST","",5010,1225,94.5,"[ScriptID:Pt-501]","","","","Script",""
+"ST","",5010,1175,94,"[ScriptID:Pt-502]","","","","Script",""
+"ST","",5010,1125,93.5,"[ScriptID:Pt-503]","","","","Script",""
+"ST","",5010,1075,93,"[ScriptID:Pt-504]","","","","Script",""
+"ST","",5010,1025,92.5,"[ScriptID:Pt-505]","","","","Script",""
+"ST","",5010,950,92,"[ScriptID:Pt-506]","","","","Script",""
+
+--- STServicePointMeter ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- STValve ---
+PartKey,Description,Type,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+
+--- STLocateBox ---
+PartKey,Description,Northing,Easting,Elevation,Notes,Manufacturer,Year,Confidence,Source,Warning
+

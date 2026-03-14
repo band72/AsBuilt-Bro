@@ -9,5 +9,7 @@ public class Pipe : InstalledAsset
     public double? EastingEnd { get; set; }
     public double? InvertStart { get; set; }
     public double? InvertEnd { get; set; }
+    public double? GradeElevationAtInvertStart { get; set; }
+    public double? GradeElevationAtInvertEnd { get; set; }
     public double? Diameter { get; set; }
 }

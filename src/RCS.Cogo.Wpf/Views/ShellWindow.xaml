@@ -87,6 +87,10 @@
         <Menu Grid.Row="0" Background="#2D2D30" Foreground="#D4D4D4" Padding="5,2">
             <MenuItem Header="_File">
                 <MenuItem Header="E_xit" Command="{Binding CloseCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Export">
+                    <MenuItem Header="Create Upload Package..." Command="{Binding CreateUploadPackageCommand}"/>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="_Project">
                 <MenuItem Header="New Project..." Command="{Binding NewProjectCommand}"/>
@@ -160,6 +164,8 @@
                 <MenuItem Header="Gas" Command="{Binding ReportGasCommand}"/>
                 <MenuItem Header="Electric" Command="{Binding ReportElectricCommand}"/>
                 <MenuItem Header="Drainage" Command="{Binding ReportDrainageCommand}"/>
+                <Separator/>
+                <MenuItem Header="Utility Report-0-ft" Command="{Binding ReportUtilityZeroFootCommand}"/>
                 <Separator/>
                 <MenuItem Header="All Assets CSV" Command="{Binding ReportAllAssetsCsvCommand}"/>
                 <MenuItem Header="All Assets TXT" Command="{Binding ReportAllAssetsTxtCommand}"/>

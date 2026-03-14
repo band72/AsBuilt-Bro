@@ -34,11 +34,56 @@ public partial class ProjectDetailsWindow : Window
         DialogResult = true;
         Close();
     }
+    private void BrowseFolder_Click(object sender, RoutedEventArgs e)
+    {
+        var vm = (ProjectDetailsViewModel)DataContext;
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = "Select Base Project Folder",
+            FileName = "Save_Here", 
+            Filter = "Directory|*.directory",
+            CheckFileExists = false,
+            CheckPathExists = true,
+            ValidateNames = false
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            string basePath = System.IO.Path.GetDirectoryName(dialog.FileName) ?? "";
+            
+            // Build the requested JEA name string using the packaging format
+            if (string.IsNullOrWhiteSpace(vm.AvailNo))
+            {
+                vm.AvailNo = DateTime.Now.ToString("MMddyyyyffff");
+            }
+            string availNo = vm.AvailNo;
+            string projectName = string.IsNullOrWhiteSpace(vm.ProjectName) ? "UNKNOWN" : vm.ProjectName;
+            string utility = string.IsNullOrWhiteSpace(vm.Utility) ? "Mixed" : vm.Utility;
+            string units = string.IsNullOrWhiteSpace(vm.Units) ? "FT" : vm.Units;
+            
+            string lockedStem = RCS.Packaging.Naming.JeaNaming.LockedStem(availNo, projectName, utility, units);
+            
+            vm.SaveLocation = System.IO.Path.Combine(basePath, lockedStem);
+        }
+    }
 }
 
-public class ProjectDetailsViewModel
+public class ProjectDetailsViewModel : System.ComponentModel.INotifyPropertyChanged
 {
     private Project _model;
+
+    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+    protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+    {
+        PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+    }
+
+    private string _saveLocation;
+    public string SaveLocation 
+    { 
+        get => _saveLocation; 
+        set { _saveLocation = value; OnPropertyChanged(); } 
+    }
 
     public string ProjectName { get; set; }
     public string AvailNo { get; set; }
@@ -58,25 +103,19 @@ public class ProjectDetailsViewModel
         Utility = project.Utility;
         Units = project.Units;
         Revision = project.Revision;
+        SaveLocation = project.SaveLocation;
         Settings = project.Settings ?? new ProjectSettings();
     }
 
     public void Commit()
     {
-        // Create timestamp suffix if AvailNo is empty
         if (string.IsNullOrWhiteSpace(AvailNo))
         {
-            // Format: -MMddyyyyffff (Month Day Year 4-digit Milliseconds)
-            string suffix = DateTime.Now.ToString("-MMddyyyyffff");
-            
-            // Avoid duplicate appending if the suffix already exists (simple heuristic: ends with 13 chars of digits)
-            // But 'ffff' changes every time. Just append if not already looking like it.
-            // Actually, user requested "if the availability number is empty, append...".
-            // Let's modify the Property directly so the Model reflects it.
-            ProjectName += suffix;
+            AvailNo = DateTime.Now.ToString("MMddyyyyffff");
         }
 
         _model.ProjectName = ProjectName;
+        _model.SaveLocation = SaveLocation;
         _model.AvailNo = AvailNo;
         _model.Utility = Utility;
         _model.Units = Units;
@@ -88,5 +127,15 @@ public class ProjectDetailsViewModel
         if (Settings.RequirePdfReport) _model.Deliverables.Add(new Deliverable { Name = "Certification Report (PDF)" });
         if (Settings.RequireLandXml) _model.Deliverables.Add(new Deliverable { Name = "LandXML Export" });
         if (Settings.RequireCsv) _model.Deliverables.Add(new Deliverable { Name = "CSV Point Export" });
+        
+        // Actually physically create the directory!
+        if (!string.IsNullOrWhiteSpace(_model.SaveLocation))
+        {
+            try 
+            {
+                System.IO.Directory.CreateDirectory(_model.SaveLocation);
+            }
+            catch (Exception) { /* Ignoring file io exceptions directly here for now */ }
+        }
     }
 }

@@ -21,6 +21,7 @@ public sealed class Project
     public Guid Id { get; set; } = Guid.NewGuid();
     public string AvailNo { get; set; } = "";
     public string ProjectName { get; set; } = "New Project";
+    public string SaveLocation { get; set; } = "";
     public string Utility { get; set; } = "";
     public string Units { get; set; } = "USFT";
     public int Revision { get; set; } = 1;
