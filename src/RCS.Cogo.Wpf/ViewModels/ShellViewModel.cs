@@ -2414,23 +2414,40 @@ public class ShellViewModel : ViewModelBase
             }
         }
 
+        var allPts = _context.GetAllPoints().ToDictionary(p => p.Id, p => p, StringComparer.OrdinalIgnoreCase);
+
         foreach (var s in result.Structures)
         {
             var p = _context.GetPoint(s.PointId);
             double n = p?.Northing ?? 0; double e = p?.Easting ?? 0; double z = p?.Elevation ?? 0;
-
-            string t = (s.Type ?? "").ToUpper();
+            
+            string desc = allPts.TryGetValue(s.PointId, out var pData) ? pData.Description : "";
+            string t = $"{s.Type} {desc}".Trim().ToUpper();
+            var tokens = t.Split(new[] { ' ', '-' }, StringSplitOptions.RemoveEmptyEntries);
             string key = $"Pt-{s.PointId}";
 
             RCS.Data.Entities.InstalledAsset? existing = null;
             RCS.Data.Entities.InstalledAsset? assetToSave = null;
             
-            // Helper to process common logic (unfortunately types are different)
-            // We have to iterate types manually or use reflection (too risky here)
-            
-            if (t.StartsWith("JEAW") && !t.StartsWith("JEAWW") || t == "VALVE" || t == "HYDRANT" || t.StartsWith("W-")) 
+            bool isWater = tokens.Any(x => x.StartsWith("W") || x.Contains("WAT") || x == "FH" || x.StartsWith("JEAW") && !x.StartsWith("JEAWW"));
+            bool isSewer = tokens.Any(x => x == "WW" || x == "WWM" || x == "WWV" || x.Contains("SAN") || x.Contains("SEW") || x.StartsWith("JEAWW"));
+            bool isStorm = tokens.Any(x => x == "ST" || x.StartsWith("STM") || x == "S" || x == "D" || x.Contains("SW") || x.Contains("STORM") || x.StartsWith("JEAST"));
+            bool isGas = tokens.Any(x => x.StartsWith("G") || x.Contains("GAS") || x.StartsWith("JEAG"));
+            bool isElectric = tokens.Any(x => x.StartsWith("E") || x.Contains("ELEC") || x.Contains("PWR") || x.Contains("POLE") || x == "PP" || x == "GUY" || x.StartsWith("JEAE"));
+            bool isReclaim = tokens.Any(x => x == "R" || x.Contains("RECLAIM") || x.StartsWith("JEAR"));
+
+            // Note: If no group matches, it might skip creating an asset unless we define a fallback.
+            if (isWater)
             {
-                if (t.EndsWith("V") || t == "VALVE") 
+                if (tokens.Any(x => x.Contains("MET") || x == "WMET")) 
+                {
+                     var specific = InstalledAssets.WaterMeters.FirstOrDefault(x => HasScriptKey(x, key));
+                     var item = specific ?? new RCS.Data.Entities.WaterMeter();
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
+                     item.Notes = AddScriptKey(item.Notes, key);
+                     assetToSave = item; existing = specific;
+                }
+                else if (tokens.Any(x => x.Contains("VALVE") || x.EndsWith("V") || x.EndsWith("VLV") || x == "WAR" || x.StartsWith("JEAWV"))) 
                 {
                      var specific = InstalledAssets.WaterValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.WaterValve();
@@ -2438,7 +2455,7 @@ public class ShellViewModel : ViewModelBase
                      item.Notes = AddScriptKey(item.Notes, key);
                      assetToSave = item; existing = specific;
                 }
-                else if (t.EndsWith("H") || t == "HYDRANT") 
+                else if (tokens.Any(x => x.Contains("HYDRANT") || x.EndsWith("H") || x.EndsWith("HYD") || x == "FH")) 
                 {
                      var specific = InstalledAssets.WaterHydrants.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.WaterHydrant();
@@ -2455,17 +2472,17 @@ public class ShellViewModel : ViewModelBase
                      assetToSave = item; existing = specific;
                 }
             }
-            else if (t.Contains("JEAWW") || t.Contains("MH") || t.Contains("MANHOLE")) 
+            else if (isSewer)
             {
-                if (t.Contains("MH") || t.Contains("MANHOLE")) 
+                if (tokens.Any(x => x.Contains("MH") || x.Contains("MANHOLE") || x == "WWM" || x.StartsWith("JEAWWM"))) 
                 {
-                     var specific = InstalledAssets.Manholes.FirstOrDefault(x => HasScriptKey(x, key));
+                     var specific = InstalledAssets.Manholes.FirstOrDefault(x => HasScriptKey(x, key)); // Using generic Manholes since no WWManhole exists specifically
                      var item = specific ?? new RCS.Data.Entities.Manhole();
                      item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
                      item.Notes = AddScriptKey(item.Notes, key);
                      assetToSave = item; existing = specific;
                 }
-                else if (t.EndsWith("V")) 
+                else if (tokens.Any(x => x.Contains("VALVE") || x.EndsWith("V") || x.EndsWith("VLV") || x == "WWV" || x.StartsWith("JEAWWV"))) 
                 {
                      var specific = InstalledAssets.WWValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.WWValve();
@@ -2482,9 +2499,17 @@ public class ShellViewModel : ViewModelBase
                      assetToSave = item; existing = specific;
                 }
             }
-            else if (t.StartsWith("JEAR")) 
+            else if (isReclaim)
             {
-                 if (t.EndsWith("V")) 
+                 if (tokens.Any(x => x.Contains("MET") || x == "RMET")) 
+                 {
+                     var specific = InstalledAssets.ReclaimedMeters.FirstOrDefault(x => HasScriptKey(x, key));
+                     var item = specific ?? new RCS.Data.Entities.ReclaimedMeter();
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
+                     item.Notes = AddScriptKey(item.Notes, key);
+                     assetToSave = item; existing = specific;
+                 }
+                 else if (tokens.Any(x => x.Contains("VALVE") || x.EndsWith("V") || x.EndsWith("VLV"))) 
                  {
                      var specific = InstalledAssets.ReclaimedValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.ReclaimedValve();
@@ -2492,7 +2517,7 @@ public class ShellViewModel : ViewModelBase
                      item.Notes = AddScriptKey(item.Notes, key);
                      assetToSave = item; existing = specific;
                  }
-                 else if (t.EndsWith("H")) 
+                 else if (tokens.Any(x => x.Contains("HYDRANT") || x.EndsWith("H") || x.EndsWith("HYD"))) 
                  {
                      var specific = InstalledAssets.ReclaimedHydrants.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.ReclaimedHydrant();
@@ -2509,9 +2534,9 @@ public class ShellViewModel : ViewModelBase
                      assetToSave = item; existing = specific;
                  }
             }
-            else if (t.StartsWith("JEAG"))
+            else if (isGas)
             {
-                 if (t.EndsWith("V")) 
+                 if (tokens.Any(x => x.Contains("VALVE") || x.EndsWith("V") || x.EndsWith("VLV"))) 
                  {
                      var specific = InstalledAssets.GValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.GValve();
@@ -2527,10 +2552,10 @@ public class ShellViewModel : ViewModelBase
                      item.Notes = AddScriptKey(item.Notes, key);
                      assetToSave = item; existing = specific;
                  }
-            }
-            else if (t.StartsWith("JEAE"))
-            {
-                 if (t.EndsWith("V")) 
+             }
+             else if (isElectric)
+             {
+                 if (tokens.Any(x => x.Contains("VALVE") || x.EndsWith("V") || x.EndsWith("VLV"))) 
                  {
                      var specific = InstalledAssets.EValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.EValve();
@@ -2540,16 +2565,17 @@ public class ShellViewModel : ViewModelBase
                  }
                  else 
                  {
+                     // Treat poles/boxes as Fittings for now since EL doesn't have EPole in db? Wait. Does it? We can use EFitting. Let's just use EFitting.
                      var specific = InstalledAssets.EFittings.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.EFitting();
                      item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
                      item.Notes = AddScriptKey(item.Notes, key);
                      assetToSave = item; existing = specific;
                  }
-            }
-            else if (t.StartsWith("JEAST"))
-            {
-                 if (t.EndsWith("V")) 
+             }
+             else if (isStorm)
+             {
+                 if (tokens.Any(x => x.Contains("VALVE") || x.EndsWith("V") || x.EndsWith("VLV"))) 
                  {
                      var specific = InstalledAssets.STValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.STValve();
@@ -2557,7 +2583,7 @@ public class ShellViewModel : ViewModelBase
                      item.Notes = AddScriptKey(item.Notes, key);
                      assetToSave = item; existing = specific;
                  }
-                 else if (t.Contains("STM") || t.Contains("CBI") || t.Contains("MANHOLE") || t.Contains("INLET") || t.Contains("BASIN"))
+                 else if (tokens.Any(x => x.Contains("MH") || x.Contains("MANHOLE") || x.Contains("CBI") || x.Contains("INLET") || x.Contains("BASIN") || x.Contains("STM")))
                  {
                      var specific = InstalledAssets.STManholes.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.STManhole();
@@ -2573,7 +2599,7 @@ public class ShellViewModel : ViewModelBase
                      item.Notes = AddScriptKey(item.Notes, key);
                      assetToSave = item; existing = specific;
                  }
-            }
+             }
 
             if (assetToSave != null)
             {
@@ -4437,26 +4463,28 @@ public class StructureViewModel : ViewModelBase
         Type = type;
         
         string t = type.ToUpper();
-        if (t.Contains("MET") || t.Equals("WMET") || t.Equals("GMET") || t.Equals("EMET")) SymbolType = "Meter";
-        else if (t.Contains("MH") || t.Contains("MANHOLE") || t.Contains("INLET") || t.Contains("CB") || t.EndsWith("M") || t.EndsWith("MH") || t.Contains("STM") || t.Equals("WWM")) SymbolType = "Manhole";
-        else if (t.Contains("VALVE") || t.EndsWith("V") || t.EndsWith("VLV") || t.Equals("WAR") || t.Equals("WWV") || t.EndsWith("BFP") || t.EndsWith("BO")) SymbolType = "Valve";
-        else if (t.Contains("HYDRANT") || t.EndsWith("H") || t.EndsWith("HYD")) SymbolType = "Hydrant";
-        else if (t.Contains("FITTING") || t.Contains("BEND") || t.Contains("TEE") || t.EndsWith("F") || t.Equals("WF") || t.Equals("WWF") || t.Equals("STF")) SymbolType = "Fitting";
-        else if (t.Contains("POLE") || t.Equals("WPP") || t.Equals("EPOLE")) SymbolType = "Pole";
-        else if (t.Contains("BOX") || t.Equals("EBOX")) SymbolType = "Box";
+        var tokens = t.Split(new[] { ' ', '-' }, StringSplitOptions.RemoveEmptyEntries);
+
+        if (tokens.Any(x => x.Contains("MET") || x == "WMET" || x == "GMET" || x == "EMET")) SymbolType = "Meter";
+        else if (tokens.Any(x => x.Contains("MH") || x.Contains("MANHOLE") || x.Contains("INLET") || x.Contains("CB") || x.EndsWith("M") || x.EndsWith("MH") || x.Contains("STM") || x == "WWM")) SymbolType = "Manhole";
+        else if (tokens.Any(x => x.Contains("VALVE") || x.EndsWith("V") || x.EndsWith("VLV") || x == "WAR" || x == "WWV" || x.EndsWith("BFP") || x.EndsWith("BO"))) SymbolType = "Valve";
+        else if (tokens.Any(x => x.Contains("HYDRANT") || x.EndsWith("H") || x.EndsWith("HYD") || x == "FH")) SymbolType = "Hydrant";
+        else if (tokens.Any(x => x.Contains("FITTING") || x.Contains("BEND") || x.Contains("TEE") || x.EndsWith("F") || x == "WF" || x == "WWF" || x == "STF")) SymbolType = "Fitting";
+        else if (tokens.Any(x => x.Contains("POLE") || x == "WPP" || x == "EPOLE" || x == "PP" || x == "GUY")) SymbolType = "Pole";
+        else if (tokens.Any(x => x.Contains("BOX") || x == "EBOX" || x == "PB" || x == "JB")) SymbolType = "Box";
         else SymbolType = "Default";
+
         // Color Logic
-        if (type.Equals("Manhole", StringComparison.OrdinalIgnoreCase)) Fill = System.Windows.Media.Brushes.Magenta;
-        else if (type.Equals("Valve", StringComparison.OrdinalIgnoreCase)) Fill = System.Windows.Media.Brushes.Red;
-        else if (type.Equals("Inlet", StringComparison.OrdinalIgnoreCase)) Fill = System.Windows.Media.Brushes.Orange;
-        // Utility Types
-        else if (type.Contains("WW") || type.Contains("SAN")) Fill = System.Windows.Media.Brushes.Green;
-        else if (type == "ST" || type == "S" || type == "D" || type.Contains("SW") || type.Contains("STORM")) Fill = System.Windows.Media.Brushes.Cyan;
-        else if (type == "W" || type.Contains("WATER")) Fill = System.Windows.Media.Brushes.Blue;
-        else if (type == "R" || type.Contains("RECLAIM")) Fill = System.Windows.Media.Brushes.Purple;
-        else if (type == "G" || type.Contains("GAS") || type.StartsWith("GAS")) Fill = System.Windows.Media.Brushes.Orange;
-        else if (type == "E" || type == "EL" || type.Contains("ELEC") || type.StartsWith("E") || type.StartsWith("E-")) Fill = System.Windows.Media.Brushes.Red;
-        else if (type == "CH" || type.Contains("CHILL")) Fill = System.Windows.Media.Brushes.LightSkyBlue;
+        if (tokens.Any(x => x == "WW" || x == "WWM" || x == "WWV" || x.Contains("SAN") || x.Contains("SEW"))) Fill = System.Windows.Media.Brushes.Green;
+        else if (tokens.Any(x => x == "ST" || x.StartsWith("STM") || x == "S" || x == "D" || x.Contains("SW") || x.Contains("STORM"))) Fill = System.Windows.Media.Brushes.Cyan;
+        else if (tokens.Any(x => x.StartsWith("W") || x.Contains("WAT") || x == "FH")) Fill = System.Windows.Media.Brushes.Blue;
+        else if (tokens.Any(x => x == "R" || x.Contains("RECLAIM"))) Fill = System.Windows.Media.Brushes.Purple;
+        else if (tokens.Any(x => x.StartsWith("G") || x.Contains("GAS"))) Fill = System.Windows.Media.Brushes.Orange;
+        else if (tokens.Any(x => x.StartsWith("E") || x.Contains("ELEC") || x.Contains("PWR") || x.Contains("POLE") || x == "PP" || x == "GUY")) Fill = System.Windows.Media.Brushes.Red;
+        else if (tokens.Any(x => x == "CH" || x.Contains("CHILL"))) Fill = System.Windows.Media.Brushes.LightSkyBlue;
+        else if (type.Equals("Manhole", StringComparison.OrdinalIgnoreCase)) Fill = System.Windows.Media.Brushes.Gray;
+        else if (type.Equals("Valve", StringComparison.OrdinalIgnoreCase)) Fill = System.Windows.Media.Brushes.Gray;
+        else if (type.Equals("Inlet", StringComparison.OrdinalIgnoreCase)) Fill = System.Windows.Media.Brushes.Gray;
         else Fill = System.Windows.Media.Brushes.White; // Default 
     }
 }
