@@ -14,6 +14,8 @@
   <ItemGroup>
     <ProjectReference Include="..\RCS.Cogo.AI\RCS.Cogo.AI.csproj" />
     <ProjectReference Include="..\RCS.Alignments.Core\RCS.Alignments.Core.csproj" />
+    <ProjectReference Include="..\RCS.Geo.Wpf\RCS.Geo.Wpf.csproj" />
+    <ProjectReference Include="..\RCS.Geo.ProjNet\RCS.Geo.ProjNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>

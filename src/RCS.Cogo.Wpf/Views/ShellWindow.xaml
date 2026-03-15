@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:RCS.Cogo.Wpf.ViewModels"
         xmlns:views="clr-namespace:RCS.Cogo.Wpf.Views"
+        xmlns:geo="clr-namespace:RCS.Geo.Wpf.Views;assembly=RCS.Geo.Wpf"
         mc:Ignorable="d"
         Title="RCS COGO Enterprise" Height="800" Width="1200"
         Background="#1E1E1E" Foreground="#D4D4D4">
@@ -937,6 +938,12 @@
                         </DataGrid>
                         
                         <Button Grid.Row="6" Content="Export Project Schedule (CSV)" Command="{Binding ExportMaterialsCommand}" HorizontalAlignment="Right" Padding="10,5" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+                    </Grid>
+                </TabItem>
+                <!-- Tab 8: Coordinate Transform -->
+                <TabItem Header="GPS Proj">
+                    <Grid Margin="10">
+                        <geo:CoordinateTransformControl DataContext="{Binding CoordinateTransformVm}" />
                     </Grid>
                 </TabItem>
             </TabControl>

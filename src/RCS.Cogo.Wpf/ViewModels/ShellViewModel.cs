@@ -15,6 +15,11 @@ using System.IO;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
+using RCS.Geo.Core;
+using RCS.Geo.ProjNet;
+using RCS.Geo.Abstractions;
+using GeoWpf = RCS.Geo.Wpf.ViewModels;
+
 namespace RCS.Cogo.Wpf.ViewModels;
 
 public class PointViewModel : ViewModelBase
@@ -236,6 +241,7 @@ public class ShellViewModel : ViewModelBase
                     5 => "Piping Script",
                     6 => "Codes",
                     7 => "Materials",
+                    8 => "GPS Proj",
                     _ => $"Tab {value}"
                 };
                 _context.Log($"[AUDIT] Switched to tab: {tabName}");
@@ -385,6 +391,8 @@ public class ShellViewModel : ViewModelBase
         set => SetField(ref _isRunningScript, value);
     }
 
+    public GeoWpf.CoordinateTransformViewModel CoordinateTransformVm { get; }
+
     public System.Windows.Input.ICommand SubmitCommand { get; }
     public System.Windows.Input.ICommand ImportBatchCommand { get; }
     public System.Windows.Input.ICommand RunBatchCommand { get; }
@@ -405,6 +413,10 @@ public class ShellViewModel : ViewModelBase
     public ShellViewModel()
     {
         var registry = AppInitializer.InitializeRegistry();
+        
+        var staticCrsRegistry = new StaticCrsRegistry();
+        var projNetTransform = new ProjNetCoordinateTransformService(staticCrsRegistry);
+        CoordinateTransformVm = new GeoWpf.CoordinateTransformViewModel(projNetTransform);
         
         // Context logs to our ResultLogText
         _context = new CogoContext(log => 
