@@ -198,8 +198,19 @@ public static class DbInitializer
              // Schema Backfill: Add newly introduced columns to all Asset Tables
              // This prevents "no such column: Description" (or descriptor) crashes
              var textColumns = new[] { 
-                 "Discriminator", "Description", "PartKey", "Discipline", "FeatureType", "Size", "Material", 
-                 "Manufacturer", "ManufacturerPartNo", "YearManufactured", "Confidence", "Source", "Warning", "Notes" 
+                 "Discriminator", "PartKey", "Discipline", "FeatureType", "Subtype", "FacilityOwner",
+                 "Size", "SizeSecondary", "Material", "PipeClass", "LiningManufacturer", "LiningMaterial",
+                 "Orientation", "PipeRole", "DropType", "InvertElevationsWithDirections", "ExteriorJointTapeType",
+                 "ExteriorJointTapeManufacturer", "Manufacturer", "ManufacturerPartNo", "YearManufactured", "RfidBarcode",
+                 "ValveType", "OpenDirection", "ManholeType",
+                 "CrossingNumber", "UpperPipeType", "UpperPipeSize", "LowerPipeType", "LowerPipeSize"
+             };
+
+             var realColumns = new[] {
+                 "GradeElevation", "TopElevation", "Depth", "Cover", "Length", "DownstreamInvert", "DownstreamGrade",
+                 "UpstreamInvert", "UpstreamGrade", "Slope", "Easting", "Northing", "Latitude", "Longitude",
+                 "TurnsToOpen", "NutElevation", "DepthToNut", "RimElevation", "LowestInvertElevation",
+                 "UpperPipeTopElevation", "UpperCover", "UpperPipeBottomElevation", "LowerPipeTopElevation", "LowerCover", "Separation"
              };
              
              foreach (var entityType in context.Model.GetEntityTypes())
@@ -212,6 +223,10 @@ public static class DbInitializer
                      foreach (var col in textColumns)
                      {
                          try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{tableName}\" ADD COLUMN \"{col}\" TEXT NULL;"); } catch { }
+                     }
+                     foreach (var col in realColumns)
+                     {
+                         try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{tableName}\" ADD COLUMN \"{col}\" REAL NULL;"); } catch { }
                      }
                      try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{tableName}\" ADD COLUMN \"Quantity\" INTEGER NULL;"); } catch { }
                  }

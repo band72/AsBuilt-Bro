@@ -47,7 +47,68 @@
 
                     <StackPanel>
                         <TextBlock Text="Material:" Margin="0,5,0,0"/>
-                        <TextBox Text="{Binding Material}" Background="#252526" Foreground="White" Padding="5"/>
+                        <ComboBox Text="{Binding Material}" ItemsSource="{Binding MaterialsList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                    </StackPanel>
+
+                    <!-- Core Added JEA Common Fields -->
+                    <StackPanel>
+                        <TextBlock Text="Subtype:" Margin="0,5,0,0"/>
+                        <ComboBox Text="{Binding Subtype}" ItemsSource="{Binding SubtypesList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Facility Owner:" Margin="0,5,0,0"/>
+                        <ComboBox Text="{Binding FacilityOwner}" ItemsSource="{Binding FacilityOwnersList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Size Secondary:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding SizeSecondary}" Background="#252526" Foreground="White" Padding="5"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Pipe Class:" Margin="0,5,0,0"/>
+                        <ComboBox Text="{Binding PipeClass}" ItemsSource="{Binding PipeClassList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Lining Manufacturer:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding LiningManufacturer}" Background="#252526" Foreground="White" Padding="5"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Lining Material:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding LiningMaterial}" Background="#252526" Foreground="White" Padding="5"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Orientation:" Margin="0,5,0,0"/>
+                        <ComboBox Text="{Binding Orientation}" ItemsSource="{Binding OrientationsList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Pipe Role:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding PipeRole}" Background="#252526" Foreground="White" Padding="5"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Drop Type:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding DropType}" Background="#252526" Foreground="White" Padding="5"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Invert Elevations w/ Directions:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding InvertElevationsWithDirections}" Background="#252526" Foreground="White" Padding="5"/>
+                    </StackPanel>
+                    
+                    <StackPanel>
+                        <TextBlock Text="Exterior Joint Tape Type:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding ExteriorJointTapeType}" Background="#252526" Foreground="White" Padding="5"/>
+                    </StackPanel>
+                    
+                    <StackPanel>
+                        <TextBlock Text="Exterior Joint Tape Mfr:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding ExteriorJointTapeManufacturer}" Background="#252526" Foreground="White" Padding="5"/>
                     </StackPanel>
 
                     <!-- Point Geometry (Structures, Valves, Meters, etc) -->
@@ -66,14 +127,14 @@
                             <TextBox Text="{Binding Easting, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Margin="5,0,0,0">
-                            <TextBlock Text="Elevation/Invert:"/>
+                            <TextBlock Text="Top/Grade Elev:"/>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Text="{Binding Elevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
-                                <Button Grid.Column="1" Content="..." Width="25" Margin="5,0,0,0" Tag="Elevation" Click="CalculateInvert_Click"/>
+                                <TextBox Grid.Column="0" Text="{Binding TopElevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5" Margin="0,0,2,0"/>
+                                <TextBox Grid.Column="1" Text="{Binding GradeElevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5" Margin="2,0,0,0"/>
                             </Grid>
                         </StackPanel>
                     </Grid>
@@ -86,22 +147,22 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                            <TextBlock Text="Start Northing:"/>
-                            <TextBox Text="{Binding NorthingStart, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBlock Text="Upstream Invert:"/>
+                            <TextBox Text="{Binding UpstreamInvert, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="5,0,5,0">
-                            <TextBlock Text="Start Easting:"/>
-                            <TextBox Text="{Binding EastingStart, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBlock Text="Upstream Grade:"/>
+                            <TextBox Text="{Binding UpstreamGrade, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Margin="5,0,0,0">
-                            <TextBlock Text="Start Invert:"/>
+                            <TextBlock Text="Length / Slope:"/>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Text="{Binding InvertStart, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
-                                <Button Grid.Column="1" Content="..." Width="25" Margin="5,0,0,0" Tag="InvertStart" Click="CalculateInvert_Click"/>
+                                <TextBox Grid.Column="0" Text="{Binding Length, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5" Margin="0,0,2,0"/>
+                                <TextBox Grid.Column="1" Text="{Binding Slope, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5" Margin="2,0,0,0"/>
                             </Grid>
                         </StackPanel>
                     </Grid>
@@ -113,23 +174,14 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                            <TextBlock Text="End Northing:"/>
-                            <TextBox Text="{Binding NorthingEnd, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBlock Text="Downstream Invert:"/>
+                            <TextBox Text="{Binding DownstreamInvert, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="5,0,5,0">
-                            <TextBlock Text="End Easting:"/>
-                            <TextBox Text="{Binding EastingEnd, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBlock Text="Downstream Grade:"/>
+                            <TextBox Text="{Binding DownstreamGrade, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Margin="5,0,0,0">
-                            <TextBlock Text="End Invert:"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox Text="{Binding InvertEnd, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
-                                <Button Grid.Column="1" Content="..." Width="25" Margin="5,0,0,0" Tag="InvertEnd" Click="CalculateInvert_Click"/>
-                            </Grid>
                         </StackPanel>
                     </Grid>
 
@@ -153,28 +205,6 @@
                         <TextBlock Text="Year Manufactured:"/>
                         <TextBox Text="{Binding YearManufactured}" Background="#252526" Foreground="White" Padding="5"/>
                     </StackPanel>
-
-                    <StackPanel Margin="0,15,0,0">
-                        <TextBlock Text="Confidence/Source:" FontWeight="Bold" Foreground="CornflowerBlue"/>
-                        <Grid Margin="0,5,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Text="{Binding Confidence}" Background="#252526" Foreground="White" Padding="5" Margin="0,0,5,0"/>
-                            <TextBox Grid.Column="1" Text="{Binding Source}" Background="#252526" Foreground="White" Padding="5" Margin="5,0,0,0"/>
-                        </Grid>
-                    </StackPanel>
-
-                    <StackPanel Margin="0,5,0,0">
-                        <TextBlock Text="Description (User):"/>
-                        <TextBox Text="{Binding Description}" Background="#252526" Foreground="White" Padding="5" AcceptsReturn="False"/>
-                    </StackPanel>
-                    
-                    <StackPanel Margin="0,5,0,0">
-                        <TextBlock Text="Notes:"/>
-                        <TextBox Text="{Binding Notes}" IsReadOnly="True" Background="#252526" Foreground="White" Padding="5" AcceptsReturn="True" Height="60" TextWrapping="Wrap"/>
-                    </StackPanel>
                 </StackPanel>
             </ScrollViewer>
         </Border>
@@ -183,17 +213,12 @@
         <TextBlock x:Name="MsgTxt" Grid.Row="3" Foreground="LightGreen" Margin="0,0,0,10"/>
         
         <Grid Grid.Row="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            
-            <Button Grid.Column="0" Content="Materials" Click="Materials_Click" Padding="15,5" Background="#6B8E23" Foreground="White" FontWeight="Bold"/>
-
-            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Delete Asset" Click="Delete_Click" Padding="15,5" Margin="0,0,10,0" Background="#A52A2A" Foreground="White" FontWeight="Bold"/>
-                <Button Content="Cancel" Click="Cancel_Click" Padding="15,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
-                <Button Content="Save to DB" Click="Save_Click" Padding="25,5" Background="#007ACC" Foreground="White" FontWeight="Bold"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Materials" Click="Materials_Click" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                <Button Content="Universal" Click="Universal_Click" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" ToolTip="Apply these metadata settings to all other records in the current grid" Foreground="White"/>
+                <Button Content="Delete" Click="Delete_Click" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                <Button Content="Cancel" Click="Cancel_Click" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                <Button Content="Save" Click="Save_Click" Padding="10,5" Background="#2D2D30" Foreground="White"/>
             </StackPanel>
         </Grid>
     </Grid>

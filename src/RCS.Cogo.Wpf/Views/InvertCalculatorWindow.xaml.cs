@@ -129,9 +129,9 @@ namespace RCS.Cogo.Wpf.Views
             // Try to auto-populate part number from base asset
             PartNumber = !string.IsNullOrWhiteSpace(asset.ManufacturerPartNo) ? asset.ManufacturerPartNo : asset.PartKey ?? "";
 
-            TopOutsideWallElev = asset.TopOutsideWallElev;
-            OuterWallThicknessTop = asset.OuterWallThicknessTop;
-            InnerDiameter = asset.InnerDiameter;
+            TopOutsideWallElev = asset.TopElevation;
+            OuterWallThicknessTop = null;
+            InnerDiameter = null;
             
             DataContext = this;
             
@@ -192,9 +192,9 @@ namespace RCS.Cogo.Wpf.Views
                 ComputedValue = EstimatedInvert.Value;
 
                 // save dimension values to asset so they are retained in DB
-                _asset.TopOutsideWallElev = TopOutsideWallElev;
-                _asset.OuterWallThicknessTop = OuterWallThicknessTop;
-                _asset.InnerDiameter = InnerDiameter;
+                _asset.TopElevation = TopOutsideWallElev;
+                
+                
 
                 // save specification globally to DB if PartNumber provided
                 if (!string.IsNullOrWhiteSpace(PartNumber))

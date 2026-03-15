@@ -2234,7 +2234,7 @@ public class ShellViewModel : ViewModelBase
 
     private bool HasScriptKey(RCS.Data.Entities.InstalledAsset asset, string key) 
     {
-        return asset.Notes?.Contains($"[ScriptID:{key}]") == true;
+        return asset.SourceSheetRowIndex?.Contains($"[ScriptID:{key}]") == true;
     }
 
     private string AddScriptKey(string? notes, string key)
@@ -2271,10 +2271,10 @@ public class ShellViewModel : ViewModelBase
                  var specific = InstalledAssets.WaterPipes.FirstOrDefault(x => HasScriptKey(x, key));
                  var item = specific ?? new RCS.Data.Entities.WaterPipe();
                  
-                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material;
-                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
-                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
-                 item.Notes = AddScriptKey(item.Notes, key);
+                 item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material;
+                 
+                 item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                  
                  assetToSave = item;
                  existing = specific;
@@ -2284,10 +2284,10 @@ public class ShellViewModel : ViewModelBase
                  var specific = InstalledAssets.WWGravityPipes.FirstOrDefault(x => HasScriptKey(x, key));
                  var item = specific ?? new RCS.Data.Entities.WWGravityPipe();
                  
-                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
-                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
-                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
-                 item.Notes = AddScriptKey(item.Notes, key);
+                 item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
+                 
+                 item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                  
                  assetToSave = item;
                  existing = specific;
@@ -2297,10 +2297,10 @@ public class ShellViewModel : ViewModelBase
                  var specific = InstalledAssets.WWPressurePipes.FirstOrDefault(x => HasScriptKey(x, key));
                  var item = specific ?? new RCS.Data.Entities.WWPressurePipe();
                  
-                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
-                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
-                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
-                 item.Notes = AddScriptKey(item.Notes, key);
+                 item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
+                 
+                 item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                  
                  assetToSave = item;
                  existing = specific;
@@ -2310,10 +2310,10 @@ public class ShellViewModel : ViewModelBase
                  var specific = InstalledAssets.ReclaimedPipes.FirstOrDefault(x => HasScriptKey(x, key));
                  var item = specific ?? new RCS.Data.Entities.ReclaimedPipe();
                  
-                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
-                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
-                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
-                 item.Notes = AddScriptKey(item.Notes, key);
+                 item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
+                 
+                 item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
                  existing = specific;
@@ -2323,10 +2323,10 @@ public class ShellViewModel : ViewModelBase
                  var specific = InstalledAssets.GGravityPipes.FirstOrDefault(x => HasScriptKey(x, key));
                  var item = specific ?? new RCS.Data.Entities.GGravityPipe();
                  
-                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
-                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
-                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
-                 item.Notes = AddScriptKey(item.Notes, key);
+                 item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
+                 
+                 item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
                  existing = specific;
@@ -2336,10 +2336,10 @@ public class ShellViewModel : ViewModelBase
                  var specific = InstalledAssets.GPressurePipes.FirstOrDefault(x => HasScriptKey(x, key));
                  var item = specific ?? new RCS.Data.Entities.GPressurePipe();
                  
-                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
-                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
-                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
-                 item.Notes = AddScriptKey(item.Notes, key);
+                 item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
+                 
+                 item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
                  existing = specific;
@@ -2349,10 +2349,10 @@ public class ShellViewModel : ViewModelBase
                  var specific = InstalledAssets.EGravityPipes.FirstOrDefault(x => HasScriptKey(x, key));
                  var item = specific ?? new RCS.Data.Entities.EGravityPipe();
                  
-                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
-                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
-                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
-                 item.Notes = AddScriptKey(item.Notes, key);
+                 item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
+                 
+                 item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
                  existing = specific;
@@ -2362,10 +2362,10 @@ public class ShellViewModel : ViewModelBase
                  var specific = InstalledAssets.EPressurePipes.FirstOrDefault(x => HasScriptKey(x, key));
                  var item = specific ?? new RCS.Data.Entities.EPressurePipe();
                  
-                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
-                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
-                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
-                 item.Notes = AddScriptKey(item.Notes, key);
+                 item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
+                 
+                 item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
                  existing = specific;
@@ -2375,10 +2375,10 @@ public class ShellViewModel : ViewModelBase
                  var specific = InstalledAssets.STGravityPipes.FirstOrDefault(x => HasScriptKey(x, key));
                  var item = specific ?? new RCS.Data.Entities.STGravityPipe();
                  
-                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
-                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
-                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
-                 item.Notes = AddScriptKey(item.Notes, key);
+                 item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
+                 
+                 item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
                  existing = specific;
@@ -2388,10 +2388,10 @@ public class ShellViewModel : ViewModelBase
                  var specific = InstalledAssets.STPressurePipes.FirstOrDefault(x => HasScriptKey(x, key));
                  var item = specific ?? new RCS.Data.Entities.STPressurePipe();
                  
-                 item.PartKey = run.PartKey; item.Diameter = run.Diameter; item.Material = run.Material; 
-                 item.NorthingStart = n1; item.EastingStart = e1; item.NorthingEnd = n2; item.EastingEnd = e2;
-                 item.InvertStart = run.InvertStart; item.InvertEnd = run.InvertEnd; item.Source = "Script";
-                 item.Notes = AddScriptKey(item.Notes, key);
+                 item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
+                 
+                 item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
                  existing = specific;
@@ -2443,32 +2443,32 @@ public class ShellViewModel : ViewModelBase
                 {
                      var specific = InstalledAssets.WaterMeters.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.WaterMeter();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                 }
                 else if (tokens.Any(x => x.Contains("VALVE") || x.EndsWith("V") || x.EndsWith("VLV") || x == "WAR" || x.StartsWith("JEAWV"))) 
                 {
                      var specific = InstalledAssets.WaterValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.WaterValve();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                 }
                 else if (tokens.Any(x => x.Contains("HYDRANT") || x.EndsWith("H") || x.EndsWith("HYD") || x == "FH")) 
                 {
                      var specific = InstalledAssets.WaterHydrants.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.WaterHydrant();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                 }
                 else 
                 {
                      var specific = InstalledAssets.WaterFittings.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.WaterFitting();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                 }
             }
@@ -2478,24 +2478,24 @@ public class ShellViewModel : ViewModelBase
                 {
                      var specific = InstalledAssets.Manholes.FirstOrDefault(x => HasScriptKey(x, key)); // Using generic Manholes since no WWManhole exists specifically
                      var item = specific ?? new RCS.Data.Entities.Manhole();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                 }
                 else if (tokens.Any(x => x.Contains("VALVE") || x.EndsWith("V") || x.EndsWith("VLV") || x == "WWV" || x.StartsWith("JEAWWV"))) 
                 {
                      var specific = InstalledAssets.WWValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.WWValve();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                 }
                 else 
                 {
                      var specific = InstalledAssets.WWFittings.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.WWFitting();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                 }
             }
@@ -2505,32 +2505,32 @@ public class ShellViewModel : ViewModelBase
                  {
                      var specific = InstalledAssets.ReclaimedMeters.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.ReclaimedMeter();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                  }
                  else if (tokens.Any(x => x.Contains("VALVE") || x.EndsWith("V") || x.EndsWith("VLV"))) 
                  {
                      var specific = InstalledAssets.ReclaimedValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.ReclaimedValve();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                  }
                  else if (tokens.Any(x => x.Contains("HYDRANT") || x.EndsWith("H") || x.EndsWith("HYD"))) 
                  {
                      var specific = InstalledAssets.ReclaimedHydrants.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.ReclaimedHydrant();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                  }
                  else 
                  {
                      var specific = InstalledAssets.ReclaimedFittings.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.ReclaimedFitting();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                  }
             }
@@ -2540,16 +2540,16 @@ public class ShellViewModel : ViewModelBase
                  {
                      var specific = InstalledAssets.GValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.GValve();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                  }
                  else 
                  {
                      var specific = InstalledAssets.GFittings.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.GFitting();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                  }
              }
@@ -2559,8 +2559,8 @@ public class ShellViewModel : ViewModelBase
                  {
                      var specific = InstalledAssets.EValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.EValve();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                  }
                  else 
@@ -2568,8 +2568,8 @@ public class ShellViewModel : ViewModelBase
                      // Treat poles/boxes as Fittings for now since EL doesn't have EPole in db? Wait. Does it? We can use EFitting. Let's just use EFitting.
                      var specific = InstalledAssets.EFittings.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.EFitting();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                  }
              }
@@ -2579,24 +2579,24 @@ public class ShellViewModel : ViewModelBase
                  {
                      var specific = InstalledAssets.STValves.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.STValve();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                  }
                  else if (tokens.Any(x => x.Contains("MH") || x.Contains("MANHOLE") || x.Contains("CBI") || x.Contains("INLET") || x.Contains("BASIN") || x.Contains("STM")))
                  {
                      var specific = InstalledAssets.STManholes.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.STManhole();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                  }
                  else 
                  {
                      var specific = InstalledAssets.STFittings.FirstOrDefault(x => HasScriptKey(x, key));
                      var item = specific ?? new RCS.Data.Entities.STFitting();
-                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.Elevation = z; item.Source = "Script";
-                     item.Notes = AddScriptKey(item.Notes, key);
+                     item.PartKey = s.Type; item.Northing = n; item.Easting = e; item.TopElevation = z;
+                     item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                      assetToSave = item; existing = specific;
                  }
              }
@@ -4326,7 +4326,7 @@ public class ShellViewModel : ViewModelBase
          {
              try
              {
-                 InstalledAssets.ExportToFolder(dialog.FileName);
+                 InstalledAssets.ExportToFolder(System.IO.Path.GetDirectoryName(dialog.FileName) ?? "", "csv");
                  _context.Log($"[AUDIT] Exported Installed Assets to {System.IO.Path.GetDirectoryName(dialog.FileName)}");
              }
              catch(Exception ex)

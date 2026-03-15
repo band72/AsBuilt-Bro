@@ -9,6 +9,14 @@ namespace RCS.Cogo.Wpf.Views
 {
     public partial class EditAssetWindow : Window
     {
+        public System.Collections.Generic.List<string> FacilityOwnersList { get; } = new() { "JEA", "Private", "Other" };
+        public System.Collections.Generic.List<string> YesNoList { get; } = new() { "Yes", "No", "Unknown" };
+        public System.Collections.Generic.List<string> MaterialsList { get; } = new() { "PVC", "DIP", "RCP", "HDPE", "Steel", "Copper", "Other" };
+        public System.Collections.Generic.List<string> SubtypesList { get; } = new() { "Chilled Fitting", "Locate Box", "Manhole", "Reclaimed Fitting", "Reclaimed Meter", "Reclaimed Pipe", "Reclaimed Valve", "Sewer Customer Point", "Sewer Fitting", "Sewer Gravity Pipe", "Sewer Pressure Pipe", "Sewer Valve", "Water Fitting", "Water Meter", "Water Pipe", "Water Valve" };
+        public System.Collections.Generic.List<string> PipeClassList { get; } = new() { "Class 52", "Class 51", "Class 150", "Class 200", "SDR-35", "SDR-26", "Sch 40", "Sch 80", "Other" };
+        public System.Collections.Generic.List<string> TrueFalseList { get; } = new() { "True", "False" };
+        public System.Collections.Generic.List<string> OrientationsList { get; } = new() { "Horizontal", "Vertical", "Diagonal", "Unknown" };
+
         private InstalledAsset _editingAsset;
         private InstalledAssetsViewModel _viewModel;
         // Constructor for Editing
@@ -99,7 +107,7 @@ namespace RCS.Cogo.Wpf.Views
                         if (string.IsNullOrWhiteSpace(_editingAsset.YearManufactured) && !string.IsNullOrWhiteSpace(mat.Year)) _editingAsset.YearManufactured = mat.Year;
                         
                         // User requests note field to be readonly, and likely wants material note filled into asset note
-                        if (string.IsNullOrWhiteSpace(_editingAsset.Notes) && !string.IsNullOrWhiteSpace(mat.Notes)) _editingAsset.Notes = mat.Notes;
+                        
 
                         // Rebind to update UI
                         DataContext = null;
@@ -126,6 +134,75 @@ namespace RCS.Cogo.Wpf.Views
                 await _viewModel.ReloadAsync(); // refresh
                 DialogResult = true;
                 Close();
+            }
+        }
+
+        private async void Universal_Click(object sender, RoutedEventArgs e)
+        {
+            var res = MessageBox.Show($"Are you sure you want to continuously apply the metadata settings from this asset ({_editingAsset.PartKey}) to ALL other {_editingAsset.GetType().Name} assets in the current grid view?", "Universal Apply", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (res == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    // Update all other assets in the matching ViewModel collection with the current asset's properties
+                    var collProp = _viewModel.GetType().GetProperties()
+                        .FirstOrDefault(p => p.PropertyType.IsGenericType &&
+                                             p.PropertyType.GetGenericTypeDefinition() == typeof(System.Collections.ObjectModel.ObservableCollection<>) &&
+                                             p.PropertyType.GenericTypeArguments[0] == _editingAsset.GetType());
+
+                    if (collProp != null)
+                    {
+                        var collection = collProp.GetValue(_viewModel) as System.Collections.IEnumerable;
+                        if (collection != null)
+                        {
+                            foreach (var item in collection)
+                            {
+                                var asset = item as InstalledAsset;
+                                // DO NOT override unique spatial fields like coords, partkeys, or notes
+                                if (asset != null && asset.Id != _editingAsset.Id)
+                                {
+                                    asset.Discipline = _editingAsset.Discipline;
+                                    asset.FeatureType = _editingAsset.FeatureType;
+                                    asset.Size = _editingAsset.Size;
+                                    asset.SizeSecondary = _editingAsset.SizeSecondary;
+                                    asset.Material = _editingAsset.Material;
+                                    asset.Subtype = _editingAsset.Subtype;
+                                    asset.FacilityOwner = _editingAsset.FacilityOwner;
+                                    asset.PipeClass = _editingAsset.PipeClass;
+                                    asset.Orientation = _editingAsset.Orientation;
+                                    asset.PipeRole = _editingAsset.PipeRole;
+                                    asset.DropType = _editingAsset.DropType;
+                                    asset.LiningManufacturer = _editingAsset.LiningManufacturer;
+                                    asset.LiningMaterial = _editingAsset.LiningMaterial;
+                                    asset.ExteriorJointTapeType = _editingAsset.ExteriorJointTapeType;
+                                    asset.ExteriorJointTapeManufacturer = _editingAsset.ExteriorJointTapeManufacturer;
+                                    
+                                    asset.Manufacturer = _editingAsset.Manufacturer;
+                                    asset.ManufacturerPartNo = _editingAsset.ManufacturerPartNo;
+                                    asset.YearManufactured = _editingAsset.YearManufactured;
+
+                                                                        
+                                    await _viewModel.SaveItemAsync(asset);
+                                }
+                            }
+                        }
+                    }
+
+                    // Save the current editing asset too since it might have unsaved edits from the UI
+                    await _viewModel.SaveItemAsync(_editingAsset);
+                    await _viewModel.ReloadAsync();
+
+                    MsgTxt.Text = "Universal settings applied matching assets!";
+                    MsgTxt.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightGreen);
+                    
+                    DialogResult = true;
+                    Close();
+                }
+                catch (Exception ex)
+                {
+                    MsgTxt.Text = $"Universal Apply Error: {ex.Message}";
+                    MsgTxt.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Red);
+                }
             }
         }
 

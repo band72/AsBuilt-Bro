@@ -20,10 +20,22 @@ public class PointCommand : ICommand
 public class CloseCommand : ICommand
 {
     public string Name => "CLOSE";
-    public string Description => "Ends Figure (and implies closure). Alias for END.";
-    // For now, mapping to END. Real CLOSE might draw a line to start, but END just stops defining.
-    // If the figure needs to be 'Closed', ContCommand logic or MapCheck logic handles the geometry.
-    public Task ExecuteAsync(string[] args, ICogoContext context) => new EndCommand().ExecuteAsync(args, context);
+    public string Description => "Closes Figure path back to start and then ends it.";
+    public Task ExecuteAsync(string[] args, ICogoContext context)
+    {
+        var fig = context.CurrentFigure;
+        if (fig != null && fig.PointIds.Count > 0)
+        {
+            var firstPt = fig.PointIds[0];
+            var lastPt = fig.PointIds[fig.PointIds.Count - 1];
+            // Only add the closing line if not already explicitly closed by the user
+            if (firstPt != lastPt)
+            {
+                new ContCommand().ExecuteAsync(new string[] { "CONT", firstPt }, context);
+            }
+        }
+        return new EndCommand().ExecuteAsync(args, context);
+    }
 }
 
 public class InverseCommand : ICommand
