@@ -13,11 +13,15 @@ public class BegCommand : ICommand
     {
         if (args.Length < 2)
         {
-            context.Log("Error: Usage: BEG <FigureName>");
+            context.Log("Error: Usage: BEG <FigureName> or BEG FIG <FigureName>");
             return Task.CompletedTask;
         }
 
         string figName = args[1];
+        if (args.Length >= 3 && figName.Equals("FIG", System.StringComparison.OrdinalIgnoreCase))
+        {
+            figName = args[2];
+        }
         
         // Check if exists? Overwrite?
         if (context.GetFigure(figName) != null)

@@ -74,7 +74,8 @@ public sealed class PipeScriptCompiler
                 
                 // Allow unified scripts without throwing errors in the Pipe Engine for COGO toggles
                 if (cmd == "COGO-ENGINE-OFF" || cmd == "COGO-ENGINE-ON" || 
-                    cmd == "RESET" || cmd == "RESET-OFF" || cmd == "RESET-ON" || cmd == "CLEAR" || cmd == "ECHO" || cmd == "LOG" || cmd == "LIST" || cmd == "REPORT" || cmd == "ABOUT" || cmd == "SET" || cmd == "SHOW" || cmd == "UNITS" || cmd == "ANGLES")
+                    cmd == "RESET" || cmd == "RESET-OFF" || cmd == "RESET-ON" || cmd == "CLEAR" || cmd == "ECHO" || cmd == "LOG" || cmd == "LIST" || cmd == "REPORT" || cmd == "ABOUT" || cmd == "SET" || cmd == "SHOW" || cmd == "UNITS" || cmd == "ANGLES" ||
+                    cmd == "BEG" || cmd == "CONT" || cmd == "CLOSE" || cmd == "END" || cmd == "DEL" || cmd == "INV" || cmd == "MAPCHECK" || cmd == "AREA" || cmd == "FIG")
                     continue;
 
                 // Track local COGO point creations so unified scripts don't fail cross-validation
@@ -266,7 +267,7 @@ public sealed class PipeScriptCompiler
                 UtilityType = util,
                 Diameter = diam,
                 Material = mat,
-                Feature = fig,
+                Feature = fig ?? $"{util}-L{lineNo}",
             };
 
             if (!string.IsNullOrWhiteSpace(mat) && validMaterials.Count > 0 && !validMaterials.Contains(mat))
@@ -463,6 +464,7 @@ public sealed class PipeScriptCompiler
         return new PipeRun
         {
             Type = prun.UtilityType,
+            FigureName = prun.Feature ?? prun.UtilityType,
             FromPointId = fromPt,
             ToPointId = toPt,
             Diameter = diam,
@@ -536,6 +538,7 @@ public sealed class PipeScriptCompiler
             var run = new PipeRun
             {
                 Type = prun.UtilityType, // W, WW, R
+                FigureName = prun.Feature ?? prun.UtilityType,
                 FromPointId = from,
                 ToPointId = to,
                 Diameter = prun.Diameter ?? 0,

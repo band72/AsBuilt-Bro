@@ -51,6 +51,15 @@
                          <DataGrid.Columns>
                              <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}"/>
                              <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                             <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                             <DataGridTextColumn Header="Discipline" Binding="{Binding Discipline}"/>
+                             <DataGridTextColumn Header="FeatureType" Binding="{Binding FeatureType}"/>
+                             <DataGridTextColumn Header="Material" Binding="{Binding Material}"/>
+                             <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                             <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}"/>
+                             <DataGridTextColumn Header="Model" Binding="{Binding ManufacturerPartNo}"/>
+                             <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                             <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
                              <DataGridTextColumn Header="Layer" Binding="{Binding Layer}"/>
                              <DataGridTextColumn Header="Description" Binding="{Binding DescriptionText}"/>
                              <DataGridTextColumn Header="Script Content" Binding="{Binding ScriptContent}" Visibility="Collapsed"/>

@@ -113,8 +113,21 @@ LOG OFF";
 
             try
             {
-                string result = await ProcessImageWithAIAsync(imagePath, apiKey, engine, DefaultPrompt);
-                ResultScriptBox.Text = CleanResult(result);
+                string tracingColor = GlobalSettingsService.GetSetting("BoundaryTracingColor", "dark blue");
+                string checkPrompt = $"Does the uploaded document prominently contain the color {tracingColor}? Answer exactly 'YES' or 'NO'.";
+                string colorCheckResult = await ProcessImageWithAIAsync(imagePath, apiKey, engine, checkPrompt);
+
+                if (colorCheckResult.Trim().ToUpper().StartsWith("NO"))
+                {
+                    tracingColor = "black";
+                    GlobalSettingsService.SaveSetting("BoundaryTracingColor", "black");
+                    ResultScriptBox.Text += $"[Settings Log] The color was not found in the uploaded document. Boundary tracing color has been set to black.\n\n";
+                }
+
+                string executionPrompt = DefaultPrompt + $"\n\nMake sure to trace the geometric boundary that is colored {tracingColor}.";
+                
+                string result = await ProcessImageWithAIAsync(imagePath, apiKey, engine, executionPrompt);
+                ResultScriptBox.Text += CleanResult(result);
             }
             catch (Exception ex)
             {

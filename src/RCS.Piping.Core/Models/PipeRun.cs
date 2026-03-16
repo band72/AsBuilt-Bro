@@ -5,6 +5,7 @@ public class PipeRun
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public string PartKey { get; set; } = string.Empty;
     public string Type { get; set; } = "Generic";
+    public string FigureName { get; set; } = string.Empty;
 
     // Connectivity (References Cogo Point IDs)
     public string FromPointId { get; set; } = string.Empty;

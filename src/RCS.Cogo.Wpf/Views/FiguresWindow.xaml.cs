@@ -131,6 +131,51 @@ namespace RCS.Cogo.Wpf.Views
             }
         }
 
+        private void MaterialButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (FiguresDataGrid.SelectedItem is Figure figure)
+            {
+                var selectionWindow = new MaterialSelectionWindow(figure.Name);
+                selectionWindow.Owner = this;
+                
+                if (selectionWindow.ShowDialog() == true && selectionWindow.SelectedMaterial != null)
+                {
+                    var mat = selectionWindow.SelectedMaterial;
+                    
+                    if (!string.IsNullOrWhiteSpace(mat.Discipline)) figure.Discipline = mat.Discipline;
+                    if (!string.IsNullOrWhiteSpace(mat.FeatureType)) figure.FeatureType = mat.FeatureType;
+                    if (!string.IsNullOrWhiteSpace(mat.Size)) figure.Size = mat.Size;
+                    if (!string.IsNullOrWhiteSpace(mat.Material)) figure.Material = mat.Material;
+                    if (!string.IsNullOrWhiteSpace(mat.Manufacturer)) figure.Manufacturer = mat.Manufacturer;
+                    if (!string.IsNullOrWhiteSpace(mat.Model)) figure.ManufacturerPartNo = mat.Model;
+                    if (!string.IsNullOrWhiteSpace(mat.Year)) figure.YearManufactured = mat.Year;
+                    
+                    try
+                    {
+                        if (_context.Entry(figure).State == EntityState.Detached)
+                        {
+                            _context.Figures.Update(figure);
+                        }
+                        else
+                        {
+                            _context.Entry(figure).State = EntityState.Modified;
+                        }
+                        _context.SaveChanges();
+                        FiguresDataGrid.Items.Refresh();
+                        MessageBox.Show("Material properties applied to the selected figure.", "Material Updated", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error saving material: {ex.Message}", "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a figure to apply a material to.", "No Figure Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
         private void SyncButton_Click(object sender, RoutedEventArgs e)
         {
             try

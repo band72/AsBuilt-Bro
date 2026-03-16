@@ -1004,43 +1004,63 @@ public class ShellViewModel : ViewModelBase
         {
             try
             {
+                _context.SyncPointsAction?.Invoke(); // Make sure new script points get recorded
                 int count = 0;
-                foreach (var fig in _context.GetAllFigures())
+                int updated = 0;
+                var allPtsDict = _context.GetAllPoints().ToDictionary(p => p.Id, p => p, StringComparer.OrdinalIgnoreCase);
+
+                foreach (var memFig in _context.GetAllFigures())
                 {
-                    var f = new RCS.Data.Entities.Figure 
+                    var existingFig = InstalledAssets.FigureAssets.FirstOrDefault(f => string.Equals(f.Name, memFig.Name, StringComparison.OrdinalIgnoreCase));
+                    var newFig = existingFig ?? new RCS.Data.Entities.Figure 
                     { 
-                        Name = fig.Name, 
-                        DescriptionText = "Auto-saved figure from Script", 
-                        ScriptContent = this.BatchScriptContent, 
-                        Layer = "Geometry"
+                         Name = memFig.Name, 
+                         Layer = "Geometry",
+                         PartKey = $"FIG-{Guid.NewGuid().ToString().Substring(0, 5)}",
+                         ProjectId = _currentProject?.Id.ToString() ?? "",
+                         DescriptionText = "Auto-saved figure from Script", 
+                         ScriptContent = this.BatchScriptContent
                     };
-                    
-                    int order = 0;
-                    foreach(var ptId in fig.PointIds)
+
+                    if (string.IsNullOrEmpty(newFig.Subtype))
                     {
-                        var p = _context.GetPoint(ptId);
-                        if (p != null)
-                        {
-                            var vertex = new RCS.Data.Entities.FigureVertex 
-                            {
-                                Point = new RCS.Data.Entities.SurveyPoint 
-                                {
-                                    PointNumber = ptId,
-                                    Northing = p.Northing,
-                                    Easting = p.Easting,
-                                    Elevation = p.Elevation,
-                                    Description = ""
-                                },
-                                OrderIndex = order++
-                            };
-                            f.Vertices.Add(vertex);
-                        }
+                        var upperName = memFig.Name.ToUpper();
+                        if (upperName.Contains("LOT")) newFig.Subtype = "Lot";
+                        else if (upperName.Contains("BLDG") || upperName.Contains("BUILDING")) newFig.Subtype = "Building";
+                        else if (upperName.Contains("EDGE") || upperName.Contains("EOP") || upperName.Contains("EP") || upperName.Contains("ROAD")) newFig.Subtype = "Edge of Pavement";
+                        else newFig.Subtype = "Linework";
                     }
                     
-                    if (f.Vertices.Count > 0)
+                    bool isClosed = memFig.PointIds.Count > 2 && memFig.PointIds.First() == memFig.PointIds.Last();
+                    newFig.IsClosed = isClosed;
+                    newFig.UpdatedUtc = DateTime.UtcNow;
+                    
+                    newFig.Vertices.Clear();
+                    
+                    int vIdx = 0;
+                    foreach (var pid in memFig.PointIds)
                     {
-                        await InstalledAssets.AddItemAsync(f);
+                        if (allPtsDict.TryGetValue(pid, out var pData))
+                        {
+                            var survPt = pData.Point;
+                            newFig.Vertices.Add(new RCS.Data.Entities.FigureVertex 
+                            {
+                                PointId = $"{_currentProject?.Id.ToString() ?? ""}_{pid}",
+                                OrderIndex = vIdx++
+                            });
+                        }
+                    }
+
+                    if (existingFig == null)
+                    {
+                        newFig.CreatedUtc = DateTime.UtcNow;
+                        await InstalledAssets.AddItemAsync(newFig);
                         count++;
+                    }
+                    else
+                    {
+                        await InstalledAssets.SaveItemAsync(newFig);
+                        updated++;
                     }
                 }
                 
@@ -2258,6 +2278,9 @@ public class ShellViewModel : ViewModelBase
 
     private async Task SyncToAssetsAsync(RCS.Piping.Core.Scripting.ScriptCompileResult result)
     {
+      try
+      {
+        _context.SyncPointsAction?.Invoke(); // Make sure new script points get recorded
         _context.Log("--- Syncing to Installed Assets ---");
         int count = 0;
         int updated = 0;
@@ -2630,7 +2653,136 @@ public class ShellViewModel : ViewModelBase
             }
         }
 
+        // --- Process Pipe Figures ---
+        var allPtsDict = _context.GetAllPoints().ToDictionary(p => p.Id, p => p, StringComparer.OrdinalIgnoreCase);
+        var runsByFig = result.Runs.GroupBy(r => r.FigureName).Where(g => !string.IsNullOrWhiteSpace(g.Key));
+        foreach (var group in runsByFig)
+        {
+            string figName = group.Key;
+            string figLayer = group.First().Type;
+            
+            var pts = new System.Collections.Generic.List<string>();
+            foreach (var run in group)
+            {
+                if (pts.Count == 0 || pts.Last() != run.FromPointId)
+                {
+                    pts.Add(run.FromPointId);
+                }
+                pts.Add(run.ToPointId);
+            }
+            if (pts.Count < 2) continue;
+            
+            bool isClosed = pts.First() == pts.Last() && pts.Count > 2;
+            
+            var existingFig = InstalledAssets.FigureAssets.FirstOrDefault(f => string.Equals(f.Name, figName, StringComparison.OrdinalIgnoreCase));
+            var newFig = existingFig ?? new RCS.Data.Entities.Figure 
+            { 
+                 Name = figName, 
+                 Layer = figLayer,
+                 PartKey = $"FIG-{Guid.NewGuid().ToString().Substring(0, 5)}",
+                 ProjectId = _currentProject?.Id.ToString() ?? ""
+            };
+            
+            var firstRun = group.First();
+            newFig.Subtype = string.IsNullOrEmpty(newFig.Subtype) ? firstRun.Type : newFig.Subtype;
+            newFig.Material = string.IsNullOrEmpty(newFig.Material) ? firstRun.Material : newFig.Material;
+            newFig.Size = string.IsNullOrEmpty(newFig.Size) ? firstRun.Diameter.ToString() : newFig.Size;
+
+            newFig.IsClosed = isClosed;
+            newFig.UpdatedUtc = DateTime.UtcNow;
+            newFig.Vertices.Clear();
+            
+            int vIdx = 0;
+            foreach (var pid in pts)
+            {
+                if (allPtsDict.TryGetValue(pid, out var pData))
+                {
+                    var survPt = pData.Point;
+                    newFig.Vertices.Add(new RCS.Data.Entities.FigureVertex 
+                    {
+                        PointId = $"{_currentProject?.Id.ToString() ?? ""}_{pid}",
+                        OrderIndex = vIdx++
+                    });
+                }
+            }
+            
+            if (existingFig == null)
+            {
+                newFig.CreatedUtc = DateTime.UtcNow;
+                await InstalledAssets.AddItemAsync(newFig);
+                count++;
+            }
+            else
+            {
+                await InstalledAssets.SaveItemAsync(newFig);
+                updated++;
+            }
+        }
+
+        // --- Process Pure COGO Figures ---
+        foreach (var memFig in _context.GetAllFigures())
+        {
+            var existingFig = InstalledAssets.FigureAssets.FirstOrDefault(f => string.Equals(f.Name, memFig.Name, StringComparison.OrdinalIgnoreCase));
+            var newFig = existingFig ?? new RCS.Data.Entities.Figure 
+            { 
+                 Name = memFig.Name, 
+                 Layer = "Geometry",
+                 PartKey = $"FIG-{Guid.NewGuid().ToString().Substring(0, 5)}",
+                 ProjectId = _currentProject?.Id.ToString() ?? ""
+            };
+
+            // Derive subtype automatically if it starts with known prefixes
+            if (string.IsNullOrEmpty(newFig.Subtype))
+            {
+                var upperName = memFig.Name.ToUpper();
+                if (upperName.Contains("LOT")) newFig.Subtype = "Lot";
+                else if (upperName.Contains("BLDG") || upperName.Contains("BUILDING")) newFig.Subtype = "Building";
+                else if (upperName.Contains("EDGE") || upperName.Contains("EOP") || upperName.Contains("EP") || upperName.Contains("ROAD")) newFig.Subtype = "Edge of Pavement";
+                else newFig.Subtype = "Linework";
+            }
+            
+            bool isClosed = memFig.PointIds.Count > 2 && memFig.PointIds.First() == memFig.PointIds.Last();
+            newFig.IsClosed = isClosed;
+            newFig.UpdatedUtc = DateTime.UtcNow;
+            
+            newFig.Vertices.Clear();
+            
+            int vIdx = 0;
+            foreach (var pid in memFig.PointIds)
+            {
+                if (allPtsDict.TryGetValue(pid, out var pData))
+                {
+                    var survPt = pData.Point;
+                    newFig.Vertices.Add(new RCS.Data.Entities.FigureVertex 
+                    {
+                        PointId = $"{_currentProject?.Id.ToString() ?? ""}_{pid}",
+                        OrderIndex = vIdx++
+                    });
+                }
+            }
+
+            if (existingFig == null)
+            {
+                newFig.CreatedUtc = DateTime.UtcNow;
+                await InstalledAssets.AddItemAsync(newFig);
+                count++;
+            }
+            else
+            {
+                await InstalledAssets.SaveItemAsync(newFig);
+                updated++;
+            }
+        }
+
         _context.Log($"[AUDIT] Synced to Installed Assets: {count} Added, {updated} Updated.");
+      }
+      catch (Exception ex)
+      {
+           System.Windows.Application.Current?.Dispatcher.Invoke(() => {
+               _context.Log($"[SYNC ERROR] Database synchronization failed: {ex.Message}");
+               if (ex.InnerException != null) _context.Log($"[INNER DB ERROR] {ex.InnerException.Message}");
+           });
+      }
     }
 
     // --- Dropdown Sources ---

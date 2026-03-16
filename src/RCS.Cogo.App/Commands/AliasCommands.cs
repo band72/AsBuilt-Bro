@@ -49,8 +49,8 @@ public class InverseCommand : ICommand
 public class FigCommand : ICommand
 {
     public string Name => "FIG";
-    public string Description => "Alias for CONT (Add Point to Figure).";
-    public Task ExecuteAsync(string[] args, ICogoContext context) => new ContCommand().ExecuteAsync(args, context);
+    public string Description => "Alias for BEG (Begin Figure).";
+    public Task ExecuteAsync(string[] args, ICogoContext context) => new BegCommand().ExecuteAsync(args, context);
 }
 
 public class PtCommand : ICommand

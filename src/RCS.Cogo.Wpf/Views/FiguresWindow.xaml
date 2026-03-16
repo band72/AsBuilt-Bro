@@ -41,6 +41,7 @@
                     </Style>
                 </ComboBox.ItemContainerStyle>
             </ComboBox>
+            <Button Content="Set Material..." Width="120" Margin="20,0,0,0" Click="MaterialButton_Click" Background="#8A2BE2" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
             <Button Content="Active Viewer" Width="120" Margin="20,0,0,0" Click="ActiveViewerButton_Click" Background="#28A745" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
             <Button Content="Sync Figures" Width="120" Margin="20,0,0,0" Click="SyncButton_Click" Background="#007acc" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
             <Button Content="Delete Selected Figure" Width="150" Margin="20,0,0,0" Click="DeleteButton_Click" Background="#c53030" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
@@ -65,6 +66,15 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="PartKey" Binding="{Binding PartKey}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="Subtype" Binding="{Binding Subtype}"/>
+                        <DataGridTextColumn Header="Discipline" Binding="{Binding Discipline}"/>
+                        <DataGridTextColumn Header="FeatureType" Binding="{Binding FeatureType}"/>
+                        <DataGridTextColumn Header="Material" Binding="{Binding Material}"/>
+                        <DataGridTextColumn Header="Size" Binding="{Binding Size}"/>
+                        <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}"/>
+                        <DataGridTextColumn Header="Model" Binding="{Binding ManufacturerPartNo}"/>
+                        <DataGridTextColumn Header="Year" Binding="{Binding YearManufactured}"/>
+                        <DataGridTextColumn Header="Facility Owner" Binding="{Binding FacilityOwner}"/>
                         <DataGridTextColumn Header="Layer" Binding="{Binding Layer}"/>
                         <DataGridTextColumn Header="Description" Binding="{Binding DescriptionText}"/>
                         <DataGridCheckBoxColumn Header="Closed" Binding="{Binding IsClosed}" IsReadOnly="True" />
