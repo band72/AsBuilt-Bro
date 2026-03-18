@@ -64,9 +64,7 @@ public partial class InstalledAssetsView : UserControl
                     return;
                 }
 
-                var window = new EditAssetWindow(asset, vm);
-                window.Owner = Window.GetWindow(this);
-                window.ShowDialog();
+                if (asset is RCS.Data.Entities.Figure figure) { var window = new FiguresWindow(figure.ProjectId, async () => { await vm.ReloadAsync(); }); window.Owner = Window.GetWindow(this); window.ShowDialog(); } else { var window = new EditAssetWindow(asset, vm); window.Owner = Window.GetWindow(this); window.ShowDialog(); }
             }
         }
     }
@@ -82,3 +80,5 @@ public partial class InstalledAssetsView : UserControl
         }
     }
 }
+
+

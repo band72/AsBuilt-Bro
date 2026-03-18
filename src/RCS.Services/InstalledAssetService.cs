@@ -15,9 +15,12 @@ public class InstalledAssetService<T> : IInstalledAssetService<T> where T : Inst
 
     public async Task<List<T>> LoadAsync(string projectId)
     {
-        return await _context.Set<T>()
-            .Where(x => x.ProjectId == projectId)
-            .ToListAsync();
+        var query = _context.Set<T>().Where(x => x.ProjectId == projectId);
+        if (typeof(T) == typeof(Figure))
+        {
+            query = query.Include("Vertices.Point");
+        }
+        return await query.ToListAsync();
     }
 
     public async Task<T> UpsertAsync(string projectId, T row)

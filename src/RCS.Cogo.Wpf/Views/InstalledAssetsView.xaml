@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:views="clr-namespace:RCS.Cogo.Wpf.Views"
              mc:Ignorable="d" 
              d:DesignHeight="1200" d:DesignWidth="800">
     <Grid Background="#1E1E1E">
@@ -11,7 +12,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
-        <TextBlock Text="Installed Assets" FontWeight="Bold" Foreground="#D4D4D4" Margin="10" FontSize="16"/>
+        <TextBlock Text="Installed Assets Data" FontWeight="Bold" Foreground="#D4D4D4" Margin="10" FontSize="16"/>
         
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel>

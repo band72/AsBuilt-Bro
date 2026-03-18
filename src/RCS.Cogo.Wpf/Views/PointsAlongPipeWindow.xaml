@@ -1,0 +1,43 @@
+<Window x:Class="RCS.Cogo.Wpf.Views.PointsAlongPipeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Points Along Pipe (PAP)" Height="350" Width="400"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Background="#1E1E1E" Foreground="#D4D4D4">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Generate Points Along Pipes" FontSize="18" FontWeight="Bold" Margin="0,0,0,15" HorizontalAlignment="Center"/>
+
+        <GroupBox Header="Disciplines" Grid.Row="1" Foreground="White" BorderBrush="#333" Margin="0,0,0,15">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <UniformGrid Columns="3" Margin="10">
+                    <CheckBox x:Name="CbWA" Content="Water (WA)" IsChecked="True" Foreground="White" Margin="5"/>
+                    <CheckBox x:Name="CbWW" Content="Sewer (WW)" IsChecked="True" Foreground="White" Margin="5"/>
+                    <CheckBox x:Name="CbRC" Content="Reclaimed (RC)" IsChecked="True" Foreground="White" Margin="5"/>
+                    <CheckBox x:Name="CbGS" Content="Gas (GS)" IsChecked="True" Foreground="White" Margin="5"/>
+                    <CheckBox x:Name="CbEL" Content="Electric (EL)" IsChecked="True" Foreground="White" Margin="5"/>
+                    <CheckBox x:Name="CbCH" Content="Chilled (CH)" IsChecked="True" Foreground="White" Margin="5"/>
+                </UniformGrid>
+            </StackPanel>
+        </GroupBox>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+            <TextBlock Text="Distance Separation:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox x:Name="CmbDistance" Width="100" SelectedIndex="1">
+                <ComboBoxItem Content="25 ft"/>
+                <ComboBoxItem Content="50 ft"/>
+                <ComboBoxItem Content="100 ft"/>
+                <ComboBoxItem Content="250 ft"/>
+                <ComboBoxItem Content="500 ft"/>
+            </ComboBox>
+        </StackPanel>
+
+        <Button Grid.Row="3" Content="Compute Points" Click="Compute_Click" Width="120" Height="35" Background="#007ACC" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center"/>
+    </Grid>
+</Window>

@@ -170,6 +170,22 @@ public static class DbInitializer
 
              context.SaveChanges();
 
+             // REMOVED
+             if (!context.AssetSubtypes.Any(s => s.Category == "Chilled Fitting"))
+             {
+                 var chilledFittings = new[] {
+                     "Cross", "Elbow 11.25", "Elbow 22.5", "Elbow 45", "Elbow 90", "Plug", "Reducer", 
+                     "Repair Coupling", "Sleeve", "Tapping Sleeve", "Tee", "Transition Coupling", "Other", 
+                     "Unknown Fitting", "Vertical"
+                 };
+
+                 foreach (var cf in chilledFittings)
+                 {
+                     context.AssetSubtypes.Add(new Entities.AssetSubtypeEntity { Category = "Chilled Fitting", SubtypeName = cf });
+                 }
+                 context.SaveChanges();
+             }
+
              // Force creation of newly added tables (e.g. WaterPipes, WWValves, etc.) 
              // since EnsureCreated() skips them if DB file already exists.
              var createScript = context.Database.GenerateCreateScript();
@@ -195,15 +211,58 @@ public static class DbInitializer
                  }
              }
 
-             // Schema Backfill: Add newly introduced columns to all Asset Tables
-             // This prevents "no such column: Description" (or descriptor) crashes
+             // Seed Asset Subtypes Dynamically
+             if (!context.AssetSubtypes.Any(s => s.Category == "Chilled Pipe Class"))
+             {
+                 var seedCategories = new System.Collections.Generic.Dictionary<string, string[]> {
+                     { "Chilled Fitting", new[] { "Cross", "Elbow 11.25", "Elbow 22.5", "Elbow 45", "Elbow 90", "Plug", "Reducer", "Repair Coupling", "Sleeve", "Tapping Sleeve", "Tee", "Transition Coupling", "Other", "Unknown Fitting", "Vertical" } },
+                     { "Locate Box", new[] { "Marker Ball", "Locate Wire Box" } },
+                     { "Manhole", new[] { "Collection", "Effluent", "Force Main", "Low Pressure", "Trunk" } },
+                     { "Reclaimed Fitting", new[] { "Cross", "Elbow 11.25", "Elbow 22.5", "Elbow 45", "Elbow 90", "Lateral Main Connection", "Plug", "Reducer", "Repair Coupling", "Service Lateral Fitting", "Sleeve", "Tapping Sleeve", "Tapping Saddle", "Tee", "Transition Coupling", "WYE", "Other", "Unknown Fitting", "Vertical", "Cap, Tapped", "Stub", "Cap" } },
+                     { "Reclaimed Meter", new[] { "Control Meter", "Major Meter", "Minor Meter", "Plant Meter" } },
+                     { "Reclaimed Pipe", new[] { "Augmentation Main", "Hydrant Lateral", "Reclaimed Main", "Service Lateral" } },
+                     { "Reclaimed Valve", new[] { "Valve", "Backflow Preventor", "Hydrant Valve" } },
+                     { "Sewer Customer Point", new[] { "Customer Point", "Sewer Flow Meter" } },
+                     { "Sewer Fitting", new[] { "Cleanout", "Cross", "Elbow 11.25", "Elbow 22.5", "Elbow 45", "Elbow 90", "Lateral Main Connection", "Other", "Plug", "Reducer", "Repair Coupling", "Service Lateral Fitting", "Sleeve", "Stub", "Tapping Sleeve", "Tapping Saddle", "Tee", "Transition Coupling", "Unknown Fitting", "Vertical", "WYE", "Cap, Tapped", "Stub", "Cap" } },
+                     { "Sewer Gravity Pipe", new[] { "Collection Main", "Trunk Main", "Collection Lateral" } },
+                     { "Sewer Valve", new[] { "Valve", "Pump Out", "Air Release Valve" } },
+                     { "Water Fitting", new[] { "Cross", "Elbow 11.25", "Elbow 22.5", "Elbow 45", "Elbow 90", "Lateral Main Connection", "Plug", "Reducer", "Repair Coupling", "Service Lateral Fitting", "Sleeve", "Tapping Sleeve", "Tapping Saddle", "Tee", "Transition Coupling", "Vertical", "WYE", "Other", "Unknown Fitting", "Cap, Tapped", "Stub", "Cap" } },
+                     { "Water Meter", new[] { "Interconnect", "Major Meter", "Minor Meter", "Plant Meter", "Irrigation Meter", "Fire Meter" } },
+                     { "Water Pipe", new[] { "Distribution Main", "Fire Line Main", "Raw Water Main", "Transmission Main", "Service Lateral", "Hydrant Lateral" } },
+                     { "Water Valve", new[] { "Valve", "Backflow Preventor", "Hydrant Valve", "Air Release Valve" } },
+                     { "Chilled Pipe Class", new[] { "CL50", "CL51", "DR11", "DR14", "DR17", "DR18", "DR25", "PC150", "PC250", "N/A", "Other", "Unknown" } },
+                     { "Chilled Pipe Role", new[] { "Return", "Supply" } },
+                     { "County", new[] { "Clay", "Duval", "Nassau", "St Johns" } },
+                     { "Crossing Pipe Type", new[] { "Potable Water", "Gravity Sewer", "Force Main", "Vacuum Sewer", "Reclaimed", "Storm" } },
+                     { "Facility Owner", new[] { "JEA", "Private", "Unknown" } },
+                     { "Fitting Manufacturers", new[] { "American Cast Iron Pipe Company", "Cascade Waterworks Mfg", "Charlotte Pipe and Foundry Co", "Chemtrol/NIBCO", "Clow Valve", "Dresser Inc/GE", "FERNCO", "Ford Meter Box", "Galaxy Plastics", "Georg Fisher Sloane Manufacturing", "GPK Products Inc", "Harco Inc", "Harrington Corporation (HARCO)", "Ipex", "JCM Industries Inc", "Lasco Fittings Inc", "M&H Valve Company", "Mueller", "Mueller Aqua Grip", "Mueller Company", "Multi-Fittings", "Other", "Plastic Trends (Royal Building Projects)", "Power Seal", "Romac", "Romac Industries Inc", "Sigma Corp (Russell Pipe)", "SIP Industries", "Smith-Blair", "Spears Manufacturing", "Star Pipe Products", "TigreADS USA", "TPS Hymax", "Tyler Union", "Unknown", "US Pipe" } },
+                     { "Hydrant Model", new[] { "American Darling", "American Flow", "AVK", "Clow", "Kennedy", "M&H", "Matthews", "Mueller", "US Pipe", "Waterous", "Other", "Unknown" } },
+                     { "Manhole Drop Type", new[] { "Outside", "Inside", "Unknown" } },
+                     { "Manhole Exterior Joint Tape Manufacturer", new[] { "Con Seal", "Rub-R-Nek/Henry Company", "Wrapid Seal (CCI Pipeline systems)", "Other", "Unknown" } }
+                 };
+
+                 foreach (var kvp in seedCategories)
+                 {
+                     string cat = kvp.Key;
+                     foreach (var subName in kvp.Value)
+                     {
+                         if (!context.AssetSubtypes.Any(s => s.Category == cat && s.SubtypeName == subName))
+                         {
+                             context.AssetSubtypes.Add(new Entities.AssetSubtypeEntity { Category = cat, SubtypeName = subName });
+                         }
+                     }
+                 }
+                 context.SaveChanges();
+             }
+
              var textColumns = new[] { 
                  "Discriminator", "PartKey", "Discipline", "FeatureType", "Subtype", "FacilityOwner",
                  "Size", "SizeSecondary", "Material", "PipeClass", "LiningManufacturer", "LiningMaterial",
                  "Orientation", "PipeRole", "DropType", "InvertElevationsWithDirections", "ExteriorJointTapeType",
                  "ExteriorJointTapeManufacturer", "Manufacturer", "ManufacturerPartNo", "YearManufactured", "RfidBarcode",
                  "ValveType", "OpenDirection", "ManholeType",
-                 "CrossingNumber", "UpperPipeType", "UpperPipeSize", "LowerPipeType", "LowerPipeSize"
+                 "CrossingNumber", "UpperPipeType", "UpperPipeSize", "LowerPipeType", "LowerPipeSize",
+                 "UpstreamPointId", "DownstreamPointId"
              };
 
              var realColumns = new[] {
@@ -239,3 +298,6 @@ public static class DbInitializer
         }
     }
 }
+
+
+

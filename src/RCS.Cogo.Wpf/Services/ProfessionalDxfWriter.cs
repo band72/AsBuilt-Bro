@@ -9,6 +9,15 @@ public class ProfessionalDxfWriter
 {
     private readonly StringBuilder _sb = new();
     private int _handleCounter = 0x100;
+    
+    private string SanitizeLayer(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input)) return "DEFAULT";
+        var invalidChars = new[] { '<', '>', '/', '\\', '"', ':', ';', '?', '*', '|', '=', '`', ' ' };
+        var result = input;
+        foreach (var c in invalidChars) result = result.Replace(c, '_');
+        return result.Length > 255 ? result.Substring(0, 255) : result;
+    }
 
     private string NextHandle() => (++_handleCounter).ToString("X");
     
@@ -139,7 +148,7 @@ public class ProfessionalDxfWriter
         _sb.AppendLine("0");
         _sb.AppendLine("POINT");
         _sb.AppendLine("8");
-        _sb.AppendLine(layer);
+        _sb.AppendLine(SanitizeLayer(layer));
         _sb.AppendLine("10");
         _sb.AppendLine(p.Easting.ToString("F4"));
         _sb.AppendLine("20");
@@ -153,7 +162,7 @@ public class ProfessionalDxfWriter
         _sb.AppendLine("0");
         _sb.AppendLine("LINE");
         _sb.AppendLine("8");
-        _sb.AppendLine(layer);
+        _sb.AppendLine(SanitizeLayer(layer));
         _sb.AppendLine("10");
         _sb.AppendLine(x1.ToString("F4"));
         _sb.AppendLine("20");
@@ -169,7 +178,7 @@ public class ProfessionalDxfWriter
         _sb.AppendLine("0");
         _sb.AppendLine("CIRCLE");
         _sb.AppendLine("8");
-        _sb.AppendLine(layer);
+        _sb.AppendLine(SanitizeLayer(layer));
         _sb.AppendLine("10");
         _sb.AppendLine(x.ToString("F4"));
         _sb.AppendLine("20");
@@ -183,7 +192,7 @@ public class ProfessionalDxfWriter
         _sb.AppendLine("0");
         _sb.AppendLine("TEXT");
         _sb.AppendLine("8");
-        _sb.AppendLine(layer);
+        _sb.AppendLine(SanitizeLayer(layer));
         _sb.AppendLine("10");
         _sb.AppendLine(x.ToString("F4"));
         _sb.AppendLine("20");
@@ -208,7 +217,7 @@ public class ProfessionalDxfWriter
         _sb.AppendLine("0");
         _sb.AppendLine("INSERT");
         _sb.AppendLine("8");
-        _sb.AppendLine(layer);
+        _sb.AppendLine(SanitizeLayer(layer));
         _sb.AppendLine("2");
         _sb.AppendLine(blockName);
         _sb.AppendLine("10");

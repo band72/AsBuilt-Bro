@@ -50,6 +50,8 @@ public abstract class InstalledAsset
     public double? Northing { get; set; }
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
+    public string? UpstreamPointId { get; set; }
+    public string? DownstreamPointId { get; set; }
 
     // Valves
     public string? ValveType { get; set; }

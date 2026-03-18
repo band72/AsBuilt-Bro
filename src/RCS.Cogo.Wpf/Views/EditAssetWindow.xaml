@@ -1,10 +1,14 @@
 <Window x:Class="RCS.Cogo.Wpf.Views.EditAssetWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Edit Installed Asset" Height="650" Width="500"
+        x:Name="Root"
+        Title="Edit Installed Asset" Height="800" Width="600"
         Background="#1E1E1E" Foreground="#D4D4D4"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         ShowInTaskbar="False">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
     
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -32,7 +36,7 @@
                     <!-- Dynamic form rows -->
                     <StackPanel>
                         <TextBlock Text="Discipline:" Margin="0,5,0,0"/>
-                        <TextBox Text="{Binding Discipline}" Background="#252526" Foreground="White" Padding="5"/>
+                        <ComboBox Text="{Binding Discipline}" ItemsSource="{Binding DisciplineList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
@@ -42,7 +46,7 @@
 
                     <StackPanel>
                         <TextBlock Text="Size:" Margin="0,5,0,0"/>
-                        <TextBox Text="{Binding Size}" Background="#252526" Foreground="White" Padding="5"/>
+                        <ComboBox Text="{Binding Size}" ItemsSource="{Binding PipeSizeList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
@@ -73,12 +77,12 @@
 
                     <StackPanel>
                         <TextBlock Text="Lining Manufacturer:" Margin="0,5,0,0"/>
-                        <TextBox Text="{Binding LiningManufacturer}" Background="#252526" Foreground="White" Padding="5"/>
+                        <ComboBox Text="{Binding LiningManufacturer}" ItemsSource="{Binding LiningManufacturerList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
                         <TextBlock Text="Lining Material:" Margin="0,5,0,0"/>
-                        <TextBox Text="{Binding LiningMaterial}" Background="#252526" Foreground="White" Padding="5"/>
+                        <ComboBox Text="{Binding LiningMaterial}" ItemsSource="{Binding LiningMaterialList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
@@ -87,13 +91,13 @@
                     </StackPanel>
 
                     <StackPanel>
-                        <TextBlock Text="Pipe Role:" Margin="0,5,0,0"/>
-                        <TextBox Text="{Binding PipeRole}" Background="#252526" Foreground="White" Padding="5"/>
+                        <TextBlock Text="Pipe Type:" Margin="0,5,0,0"/>
+                        <ComboBox Text="{Binding PipeRole}" ItemsSource="{Binding PipeRoleList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
                         <TextBlock Text="Drop Type:" Margin="0,5,0,0"/>
-                        <TextBox Text="{Binding DropType}" Background="#252526" Foreground="White" Padding="5"/>
+                        <ComboBox Text="{Binding DropType}" ItemsSource="{Binding DropTypeList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
@@ -102,17 +106,17 @@
                     </StackPanel>
                     
                     <StackPanel>
-                        <TextBlock Text="Exterior Joint Tape Type:" Margin="0,5,0,0"/>
-                        <TextBox Text="{Binding ExteriorJointTapeType}" Background="#252526" Foreground="White" Padding="5"/>
+                        <TextBlock Text="Tape Type:" Margin="0,5,0,0"/>
+                        <ComboBox Text="{Binding ExteriorJointTapeType}" ItemsSource="{Binding TapeTypeList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
                     </StackPanel>
                     
                     <StackPanel>
                         <TextBlock Text="Exterior Joint Tape Mfr:" Margin="0,5,0,0"/>
-                        <TextBox Text="{Binding ExteriorJointTapeManufacturer}" Background="#252526" Foreground="White" Padding="5"/>
+                        <ComboBox Text="{Binding ExteriorJointTapeManufacturer}" ItemsSource="{Binding ExteriorJointTapeManufacturerList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
                     </StackPanel>
 
                     <!-- Point Geometry (Structures, Valves, Meters, etc) -->
-                    <Grid Margin="0,5,0,0">
+                    <Grid Margin="0,5,0,0" Visibility="{Binding Path=IsPointGeometry, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -140,7 +144,7 @@
                     </Grid>
 
                     <!-- Line Geometry (Pipes) -->
-                    <Grid Margin="0,15,0,0">
+                    <Grid Margin="0,15,0,0" Visibility="{Binding Path=IsPipe, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -167,7 +171,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <Grid Margin="0,5,0,0">
+                    <Grid Margin="0,5,0,0" Visibility="{Binding Path=IsPipe, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -185,26 +189,163 @@
                         </StackPanel>
                     </Grid>
 
-                    <StackPanel Margin="0,5,0,0">
+                    <StackPanel Margin="0,5,0,0" Visibility="{Binding Path=IsPointGeometry, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBlock Text="Quantity:"/>
                         <TextBox Text="{Binding Quantity}" Background="#252526" Foreground="White" Padding="5"/>
+                    </StackPanel>
+
+                    <!-- Pipe Crossing Geometry -->
+                    <StackPanel Visibility="{Binding Path=IsPipeCrossing, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock Text="Crossing Specific Info" FontWeight="Bold" Foreground="LimeGreen" Margin="0,15,0,5"/>
+
+                        <StackPanel Margin="0,5,0,0">
+                            <TextBlock Text="Crossing Number:"/>
+                            <TextBox Text="{Binding CrossingNumber}" Background="#252526" Foreground="White" Padding="5"/>
+                        </StackPanel>
+                        
+                        <Grid Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                                <TextBlock Text="Upper Pipe Type:"/>
+                                <TextBox Text="{Binding UpperPipeType}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                                <TextBlock Text="Lower Pipe Type:"/>
+                                <TextBox Text="{Binding LowerPipeType}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                        </Grid>
+                        
+                        <Grid Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                                <TextBlock Text="Upper Pipe Size:"/>
+                                <TextBox Text="{Binding UpperPipeSize}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                                <TextBlock Text="Lower Pipe Size:"/>
+                                <TextBox Text="{Binding LowerPipeSize}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Margin="0,5,0,0">
+                            <TextBlock Text="Finished Grade Elevation (Feet):"/>
+                            <TextBox Text="{Binding GradeElevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                        </StackPanel>
+
+                        <Grid Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                                <TextBlock Text="Upper Pipe Top Elev:"/>
+                                <TextBox Text="{Binding UpperPipeTopElevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                                <TextBlock Text="Lower Pipe Top Elev:"/>
+                                <TextBox Text="{Binding LowerPipeTopElevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                                <TextBlock Text="Cover to Top of Upper Pipe:"/>
+                                <TextBox Text="{Binding UpperCover, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                                <TextBlock Text="Cover to Top of Lower Pipe:"/>
+                                <TextBox Text="{Binding LowerCover, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                                <TextBlock Text="Upper Pipe Bottom Elev:"/>
+                                <TextBox Text="{Binding UpperPipeBottomElevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                                <TextBlock Text="Separation Between Pipes:"/>
+                                <TextBox Text="{Binding Separation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                                <TextBlock Text="Northing:"/>
+                                <TextBox Text="{Binding Northing, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                                <TextBlock Text="Easting:"/>
+                                <TextBox Text="{Binding Easting, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                                <TextBlock Text="Latitude:"/>
+                                <TextBox Text="{Binding Latitude, StringFormat=\{0:F6\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                                <TextBlock Text="Longitude:"/>
+                                <TextBox Text="{Binding Longitude, StringFormat=\{0:F6\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
 
                     <!-- Manufacturer info -->
                     <StackPanel Margin="0,15,0,0">
                         <TextBlock Text="Manufacturer:" FontWeight="Bold" Foreground="CornflowerBlue"/>
-                        <TextBox Text="{Binding Manufacturer}" Background="#252526" Foreground="White" Padding="5" Margin="0,5,0,0"/>
+                        <ComboBox Text="{Binding Manufacturer}" ItemsSource="{Binding ManufacturerList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5" Margin="0,5,0,0"/>
                     </StackPanel>
 
                     <StackPanel Margin="0,5,0,0">
                         <TextBlock Text="Model / Part No:"/>
-                        <TextBox Text="{Binding ManufacturerPartNo}" Background="#252526" Foreground="White" Padding="5"/>
+                        <ComboBox Text="{Binding ManufacturerPartNo}" ItemsSource="{Binding HydrantModelList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel Margin="0,5,0,0">
                         <TextBlock Text="Year Manufactured:"/>
                         <TextBox Text="{Binding YearManufactured}" Background="#252526" Foreground="White" Padding="5"/>
                     </StackPanel>
+                    <!-- Figure Vertices (Figures) -->
+                    <Grid Margin="0,15,0,0" Visibility="{Binding Path=IsFigure, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel>
+                            <TextBlock Text="Figure Vertices:" FontWeight="Bold" Foreground="#007ACC" Margin="0,0,0,5"/>
+                            <DataGrid ItemsSource="{Binding Path=FigureVertices, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                      AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" MaxHeight="200"
+                                      Background="#252526" RowBackground="#252526" Foreground="#D4D4D4" BorderThickness="1" BorderBrush="#3E3E42">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Order" Binding="{Binding OrderIndex}" IsReadOnly="True" Width="50"/>
+                                    <DataGridTextColumn Header="Point ID" Binding="{Binding PointId}" IsReadOnly="True" Width="80"/>
+                                    <DataGridTextColumn Header="Northing" Binding="{Binding Point.Northing, StringFormat=\{0:F3\}}" Width="100"/>
+                                    <DataGridTextColumn Header="Easting" Binding="{Binding Point.Easting, StringFormat=\{0:F3\}}" Width="100"/>
+                                    <DataGridTextColumn Header="Bulge" Binding="{Binding Bulge, StringFormat=\{0:F4\}}" Width="60"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Grid>
                 </StackPanel>
             </ScrollViewer>
         </Border>

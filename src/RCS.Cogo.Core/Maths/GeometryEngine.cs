@@ -160,4 +160,31 @@ public static class GeometryEngine
 
         return (Forward(p1, Angle.FromRadians(azLeft), r1), Forward(p1, Angle.FromRadians(azRight), r1));
     }
+
+    /// <summary>
+    /// Calculates the intersection of two line segments, if they intersect within their bounds.
+    /// </summary>
+    public static Point3D? IntersectionSegmentSegment(Point3D p1, Point3D p2, Point3D p3, Point3D p4)
+    {
+        double E1 = p1.Easting, N1 = p1.Northing;
+        double E2 = p2.Easting, N2 = p2.Northing;
+        double E3 = p3.Easting, N3 = p3.Northing;
+        double E4 = p4.Easting, N4 = p4.Northing;
+
+        double denom = (N4 - N3) * (E2 - E1) - (E4 - E3) * (N2 - N1);
+        if (Math.Abs(denom) < 1e-9) return null; // Parallel or collinear
+
+        double uA = ((E4 - E3) * (N1 - N3) - (N4 - N3) * (E1 - E3)) / denom;
+        double uB = ((E2 - E1) * (N1 - N3) - (N2 - N1) * (E1 - E3)) / denom;
+
+        if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1)
+        {
+            double intE = E1 + (uA * (E2 - E1));
+            double intN = N1 + (uA * (N2 - N1));
+            double intElev = p1.Elevation + (uA * (p2.Elevation - p1.Elevation)); 
+            return new Point3D(intN, intE, intElev);
+        }
+
+        return null;
+    }
 }

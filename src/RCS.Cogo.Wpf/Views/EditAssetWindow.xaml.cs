@@ -9,26 +9,122 @@ namespace RCS.Cogo.Wpf.Views
 {
     public partial class EditAssetWindow : Window
     {
-        public System.Collections.Generic.List<string> FacilityOwnersList { get; } = new() { "JEA", "Private", "Other" };
+        public System.Collections.Generic.List<string> FacilityOwnersList { get; set; } = new() { "JEA", "Private", "Other", "Unknown" };
         public System.Collections.Generic.List<string> YesNoList { get; } = new() { "Yes", "No", "Unknown" };
         public System.Collections.Generic.List<string> MaterialsList { get; } = new() { "PVC", "DIP", "RCP", "HDPE", "Steel", "Copper", "Other" };
-        public System.Collections.Generic.List<string> SubtypesList { get; } = new() { "Chilled Fitting", "Locate Box", "Manhole", "Reclaimed Fitting", "Reclaimed Meter", "Reclaimed Pipe", "Reclaimed Valve", "Sewer Customer Point", "Sewer Fitting", "Sewer Gravity Pipe", "Sewer Pressure Pipe", "Sewer Valve", "Water Fitting", "Water Meter", "Water Pipe", "Water Valve" };
-        public System.Collections.Generic.List<string> PipeClassList { get; } = new() { "Class 52", "Class 51", "Class 150", "Class 200", "SDR-35", "SDR-26", "Sch 40", "Sch 80", "Other" };
+        public System.Collections.Generic.List<string> SubtypesList { get; set; } = new() { "Chilled Fitting", "Locate Box", "Manhole", "Reclaimed Fitting", "Reclaimed Meter", "Reclaimed Pipe", "Reclaimed Valve", "Sewer Customer Point", "Sewer Fitting", "Sewer Gravity Pipe", "Sewer Pressure Pipe", "Sewer Valve", "Water Fitting", "Water Meter", "Water Pipe", "Water Valve" };
+        public System.Collections.Generic.List<string> PipeClassList { get; set; } = new() { "Class 52", "Class 51", "Class 150", "Class 200", "SDR-35", "SDR-26", "Sch 40", "Sch 80", "Other" };
         public System.Collections.Generic.List<string> TrueFalseList { get; } = new() { "True", "False" };
         public System.Collections.Generic.List<string> OrientationsList { get; } = new() { "Horizontal", "Vertical", "Diagonal", "Unknown" };
+
+        public System.Collections.Generic.List<string> PipeRoleList { get; set; } = new() { "Return", "Supply", "Unknown", "N/A" };
+        public System.Collections.Generic.List<string> ManufacturerList { get; set; } = new();
+        public System.Collections.Generic.List<string> HydrantModelList { get; set; } = new();
+        public System.Collections.Generic.List<string> DropTypeList { get; set; } = new() { "Inside", "Outside", "Unknown", "None" };
+        public System.Collections.Generic.List<string> ExteriorJointTapeManufacturerList { get; set; } = new() { "Con Seal", "Rub-R-Nek/Henry Company", "Wrapid Seal", "Other", "Unknown", "None" };
+        public System.Collections.Generic.List<string> TapeTypeList { get; set; } = new() { "Con Seal", "Rub-R-Nek/Henry Company", "Wrapid Seal", "Other", "Unknown", "None" };
+        public System.Collections.Generic.List<string> PipeSizeList { get; set; } = new() { "0.625", "0.75", "1", "1.5", "2", "2.5", "3", "4", "6", "8", "10", "12", "14", "16", "18", "20", "24", "30", "36", "42", "48", "60", "72" };
+        public System.Collections.Generic.List<string> LiningManufacturerList { get; set; } = new() { "Induron", "Tnemec", "Protecto 401", "Sherwin Williams", "Other", "Unknown", "None" };
+        public System.Collections.Generic.List<string> LiningMaterialList { get; set; } = new() { "Ceramic Epoxy", "Cement", "Polyurethane", "Epoxy", "HDPE", "Glass", "Other", "Unknown", "None" };
+        public System.Collections.Generic.List<string> DisciplineList { get; } = new() { "WA", "WW", "DR", "GS", "EL", "RC", "CH" };
+        public InstalledAsset EditingAsset => _editingAsset;
+        public bool IsPipeCrossing => _editingAsset is PipeCrossing || _editingAsset.GetType().Name.Contains("Crossing");
+        public bool IsFigure => _editingAsset is Figure;
+        public bool IsPipe => !IsPipeCrossing && (_editingAsset is Pipe || _editingAsset.GetType().Name.Contains("Pipe"));
+        public bool IsPointGeometry => !IsFigure && !IsPipe && !IsPipeCrossing;
+        
+        public System.Collections.ObjectModel.ObservableCollection<FigureVertex>? FigureVertices 
+        {
+            get
+            {
+                if (_editingAsset is Figure f)
+                {
+                    return new System.Collections.ObjectModel.ObservableCollection<FigureVertex>(f.Vertices.OrderBy(v => v.OrderIndex));
+                }
+                return null;
+            }
+        }
 
         private InstalledAsset _editingAsset;
         private InstalledAssetsViewModel _viewModel;
         // Constructor for Editing
         public EditAssetWindow(InstalledAsset asset, InstalledAssetsViewModel vm)
         {
-            InitializeComponent();
             _editingAsset = asset;
+
+            try
+            {
+                using var db = new AppDbContext();
+                
+                var allSubtypes = db.AssetSubtypes.ToList();
+                
+                string typeName = asset.GetType().Name;
+                string searchCategory = typeName;
+                
+                // Formally Map Entity Classes to user's defined "Category" Database strings
+                if (typeName.Contains("LocateBox") || typeName == "LocateBox") searchCategory = "Locate Box";
+                else if (typeName.Contains("Manhole") || typeName == "Manhole") searchCategory = "Manhole";
+                else if (typeName.Contains("Crossing") || typeName == "PipeCrossing") searchCategory = "Crossing Pipe Type";
+                else if (typeName == "WWPoint" || typeName == "WWServicePoint") searchCategory = "Sewer Customer Point";
+                else 
+                {
+                    // Map generic prefix abstractions
+                    if (typeName.StartsWith("WW")) searchCategory = searchCategory.Replace("WW", "Sewer");
+                    if (typeName.StartsWith("ST")) searchCategory = searchCategory.Replace("ST", "Storm");
+                    if (typeName.StartsWith("G") && !typeName.StartsWith("Ga")) searchCategory = "Gas" + searchCategory.Substring(1);
+                    if (typeName.StartsWith("E") && !typeName.StartsWith("El")) searchCategory = "Electric" + searchCategory.Substring(1);
+
+                    // Break class camel-casing visually (e.g. SewerGravityPipe -> Sewer Gravity Pipe)
+                    searchCategory = System.Text.RegularExpressions.Regex.Replace(searchCategory, "([a-z])([A-Z])", "$1 $2");
+                    searchCategory = searchCategory.Replace("  ", " ").Trim();
+                }
+
+                var dynamicOptions = allSubtypes.Where(s => string.Equals(s.Category, searchCategory, StringComparison.OrdinalIgnoreCase)).Select(s => s.SubtypeName).ToList();
+                if (dynamicOptions.Any()) SubtypesList = dynamicOptions;
+
+                var foOptions = allSubtypes.Where(s => s.Category == "Facility Owner").Select(s => s.SubtypeName).ToList();
+                if (foOptions.Any()) FacilityOwnersList = foOptions;
+
+                var pcOptions = allSubtypes.Where(s => s.Category == "Chilled Pipe Class").Select(s => s.SubtypeName).ToList();
+                if (pcOptions.Any()) PipeClassList = pcOptions;
+
+                var prOptions = allSubtypes.Where(s => s.Category == "Chilled Pipe Role" || s.Category == "Pipe Role" || s.Category == "Pipe Type").Select(s => s.SubtypeName).ToList();
+                if (prOptions.Any()) PipeRoleList = prOptions;
+                
+                ManufacturerList = allSubtypes.Where(s => s.Category == "Fitting Manufacturers").Select(s => s.SubtypeName).ToList();
+                HydrantModelList = allSubtypes.Where(s => s.Category == "Hydrant Model").Select(s => s.SubtypeName).ToList();
+                
+                var dtOptions = allSubtypes.Where(s => s.Category == "Manhole Drop Type" || s.Category == "Drop Type").Select(s => s.SubtypeName).ToList();
+                if (dtOptions.Any()) DropTypeList = dtOptions;
+                
+                var ejtmOptions = allSubtypes.Where(s => s.Category == "Manhole Exterior Joint Tape Manufacturer" || s.Category == "Tape Type").Select(s => s.SubtypeName).ToList();
+                if (ejtmOptions.Any()) {
+                    ExteriorJointTapeManufacturerList = ejtmOptions;
+                    TapeTypeList = ejtmOptions;
+                }
+                
+                var sizeOptions = allSubtypes.Where(s => s.Category == "Pipe Size").Select(s => s.SubtypeName).ToList();
+                if (sizeOptions.Any()) PipeSizeList = sizeOptions;
+
+                var lmOptions = allSubtypes.Where(s => s.Category == "Lining Manufacturer").Select(s => s.SubtypeName).ToList();
+                if (lmOptions.Any()) LiningManufacturerList = lmOptions;
+
+                var lmatOptions = allSubtypes.Where(s => s.Category == "Lining Material").Select(s => s.SubtypeName).ToList();
+                if (lmatOptions.Any()) LiningMaterialList = lmatOptions;
+            }
+            catch { }
+            
+            InitializeComponent();
             
             // Remove pipe delimiters to match visual formatting and prevent binding issues
             if (!string.IsNullOrEmpty(_editingAsset.PartKey) && _editingAsset.PartKey.Contains("|"))
             {
                 _editingAsset.PartKey = _editingAsset.PartKey.Replace("|", "-");
+            }
+
+            if (IsPipeCrossing && string.IsNullOrEmpty(_editingAsset.FeatureType))
+            {
+                _editingAsset.FeatureType = "Pipe";
             }
 
             _viewModel = vm;

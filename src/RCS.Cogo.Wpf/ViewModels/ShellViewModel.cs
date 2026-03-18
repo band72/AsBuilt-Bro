@@ -208,12 +208,68 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
+    private async void FindCrossings()
+    {
+        if (!EnsureActiveProject()) return;
+        
+        var allSegments = new System.Collections.Generic.List<(Point3D Start, Point3D End, string Source)>();
+
+        foreach (var fig in Figures)
+        {
+             if (fig.Points == null || fig.Points.Count < 2) continue;
+             for (int i = 0; i < fig.Points.Count - 1; i++) 
+             {
+                  Point3D start = new Point3D(fig.Points[i].Y, fig.Points[i].X, 0); 
+                  Point3D end = new Point3D(fig.Points[i+1].Y, fig.Points[i+1].X, 0);
+                  allSegments.Add((start, end, fig.Name));
+             }
+        }
+        
+        int matchCount = 0;
+        for (int i = 0; i < allSegments.Count; i++)
+        {
+            for (int j = i + 1; j < allSegments.Count; j++)
+            {
+                 if (allSegments[i].Source == allSegments[j].Source) continue;
+                 
+                 var intersection = RCS.Cogo.Core.Maths.GeometryEngine.IntersectionSegmentSegment(
+                     allSegments[i].Start, allSegments[i].End,
+                     allSegments[j].Start, allSegments[j].End
+                 );
+                 
+                 if (intersection != null)
+                 {
+                      matchCount++;
+                      HighlightedAssets.Add(new StructureViewModel(
+                          $"x{matchCount}",
+                          intersection,
+                          "CONFLICT"
+                      ));
+                      
+                      var crossing = new RCS.Data.Entities.PipeCrossing
+                      {
+                          CrossingNumber = $"X-{matchCount}",
+                          UpperPipeType = allSegments[i].Source,
+                          LowerPipeType = allSegments[j].Source,
+                          Northing = intersection.Northing,
+                          Easting = intersection.Easting,
+                          ProjectId = CurrentProject.Id.ToString()
+                      };
+                      
+                      await InstalledAssets.AddItemAsync(crossing);
+                 }
+            }
+        }
+        
+        CommandLog.Add($"[SYSTEM] Generated {matchCount} pipe crossing(s) to Installed Assets.");
+    }
+
     public bool HasActiveProject 
     {
         get => CurrentProject != null && !string.IsNullOrWhiteSpace(CurrentProject.ProjectName) && CurrentProject.ProjectName != "New Project";
     }
 
-    private bool EnsureActiveProject()
+    public bool EnsureActiveProject()
     {
         if (!HasActiveProject)
         {
@@ -393,6 +449,8 @@ public class ShellViewModel : ViewModelBase
 
     public GeoWpf.CoordinateTransformViewModel CoordinateTransformVm { get; }
 
+    public System.Windows.Input.ICommand FindCrossingsCommand { get; }
+    public System.Windows.Input.ICommand OpenPapCommand { get; }
     public System.Windows.Input.ICommand SubmitCommand { get; }
     public System.Windows.Input.ICommand ImportBatchCommand { get; }
     public System.Windows.Input.ICommand RunBatchCommand { get; }
@@ -601,8 +659,11 @@ public class ShellViewModel : ViewModelBase
         EditPointsCommand = new RelayCommand(_ => EditPoints());
         RefreshPointsCommand = new RelayCommand(_ => RefreshPointsValidation());
         SaveFiguresCommand = new RelayCommand(_ => SaveFigures());
-        // ExportDxfCommand = new RelayCommand(_ => ExportDxf()); // This line was moved up
         SyncToAssetsCommand = new RelayCommand(_ => SyncAssets());
+        FindCrossingsCommand = new RelayCommand(_ => FindCrossings());
+        OpenPapCommand = new RelayCommand(_ => new Views.PointsAlongPipeWindow(this) { Owner = App.Current.MainWindow }.ShowDialog());
+
+
         
         // Report Commands
         ReportWaterCommand = new RelayCommand(_ => System.Windows.MessageBox.Show("Water Report Not Implemented", "Reports"));
@@ -2309,6 +2370,7 @@ public class ShellViewModel : ViewModelBase
                  item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material;
                  
                  item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.UpstreamPointId = run.FromPointId; item.DownstreamPointId = run.ToPointId;
                  item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                  
                  assetToSave = item;
@@ -2322,6 +2384,7 @@ public class ShellViewModel : ViewModelBase
                  item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
                  
                  item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.UpstreamPointId = run.FromPointId; item.DownstreamPointId = run.ToPointId;
                  item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                  
                  assetToSave = item;
@@ -2335,6 +2398,7 @@ public class ShellViewModel : ViewModelBase
                  item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
                  
                  item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.UpstreamPointId = run.FromPointId; item.DownstreamPointId = run.ToPointId;
                  item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
                  
                  assetToSave = item;
@@ -2348,6 +2412,7 @@ public class ShellViewModel : ViewModelBase
                  item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
                  
                  item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.UpstreamPointId = run.FromPointId; item.DownstreamPointId = run.ToPointId;
                  item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
@@ -2361,6 +2426,7 @@ public class ShellViewModel : ViewModelBase
                  item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
                  
                  item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.UpstreamPointId = run.FromPointId; item.DownstreamPointId = run.ToPointId;
                  item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
@@ -2374,6 +2440,7 @@ public class ShellViewModel : ViewModelBase
                  item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
                  
                  item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.UpstreamPointId = run.FromPointId; item.DownstreamPointId = run.ToPointId;
                  item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
@@ -2387,6 +2454,7 @@ public class ShellViewModel : ViewModelBase
                  item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
                  
                  item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.UpstreamPointId = run.FromPointId; item.DownstreamPointId = run.ToPointId;
                  item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
@@ -2400,6 +2468,7 @@ public class ShellViewModel : ViewModelBase
                  item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
                  
                  item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.UpstreamPointId = run.FromPointId; item.DownstreamPointId = run.ToPointId;
                  item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
@@ -2413,6 +2482,7 @@ public class ShellViewModel : ViewModelBase
                  item.PartKey = run.PartKey; item.Size = run.Diameter.ToString(); item.Material = run.Material; 
                  
                  item.UpstreamInvert = run.InvertStart; item.DownstreamInvert = run.InvertEnd;
+                 item.UpstreamPointId = run.FromPointId; item.DownstreamPointId = run.ToPointId;
                  item.SourceSheetRowIndex = AddScriptKey(item.SourceSheetRowIndex, key);
 
                  assetToSave = item;
@@ -4014,16 +4084,25 @@ public class ShellViewModel : ViewModelBase
                     System.Windows.Media.Brush pipeBrush = System.Windows.Media.Brushes.Gray;
                     
                     var type = run.Type?.ToUpper() ?? "";
-                if (type == "WW" || type.Contains("SAN")) pipeBrush = System.Windows.Media.Brushes.Green;
-                else if (type == "ST" || type == "S" || type == "D" || type.Contains("SW") || type.Contains("STORM")) pipeBrush = System.Windows.Media.Brushes.Cyan;
-                else if (type == "W" || type.Contains("WATER")) pipeBrush = System.Windows.Media.Brushes.Blue;
-                else if (type == "R" || type.Contains("RECLAIM")) pipeBrush = System.Windows.Media.Brushes.Purple;
-                else if (type == "G" || type.Contains("GAS")) pipeBrush = System.Windows.Media.Brushes.Orange;
-                else if (type == "E" || type == "EL" || type.Contains("ELEC")) pipeBrush = System.Windows.Media.Brushes.Red;
-                else if (type == "CH" || type.Contains("CHILL")) pipeBrush = System.Windows.Media.Brushes.LightSkyBlue;
-                else if (type.Contains("PP") || type.Contains("PRESS")) pipeBrush = System.Windows.Media.Brushes.Red;
+                    if (type == "WW" || type.Contains("SAN")) pipeBrush = System.Windows.Media.Brushes.Green;
+                    else if (type == "ST" || type == "S" || type == "D" || type.Contains("SW") || type.Contains("STORM")) pipeBrush = System.Windows.Media.Brushes.Cyan;
+                    else if (type == "W" || type.Contains("WATER")) pipeBrush = System.Windows.Media.Brushes.Blue;
+                    else if (type == "R" || type.Contains("RECLAIM")) pipeBrush = System.Windows.Media.Brushes.Purple;
+                    else if (type == "G" || type.Contains("GAS")) pipeBrush = System.Windows.Media.Brushes.Orange;
+                    else if (type == "E" || type == "EL" || type.Contains("ELEC")) pipeBrush = System.Windows.Media.Brushes.Red;
+                    else if (type == "CH" || type.Contains("CHILL")) pipeBrush = System.Windows.Media.Brushes.LightSkyBlue;
+                    else if (type.Contains("PP") || type.Contains("PRESS")) pipeBrush = System.Windows.Media.Brushes.Red;
                     
-                    var fig = new FigureViewModel($"Pipe-{run.Id}", pts, pipeBrush);
+                    string code = "UNK";
+                    if (type == "WW" || type.Contains("SAN")) code = "WW";
+                    else if (type == "W" || type.Contains("WATER")) code = "WA";
+                    else if (type == "R" || type.Contains("RECLAIM")) code = "RC";
+                    else if (type == "G" || type.Contains("GAS")) code = "GS";
+                    else if (type == "E" || type == "EL" || type.Contains("ELEC")) code = "EL";
+                    else if (type == "CH" || type.Contains("CHILL")) code = "CH";
+                    else if (type == "ST" || type == "S" || type == "D" || type.Contains("SW") || type.Contains("STORM")) code = "DR";
+
+                    var fig = new FigureViewModel($"Pipe-[{code}]-{run.Id}", pts, pipeBrush);
                     Figures.Add(fig);
                 }
             }

@@ -100,6 +100,9 @@ public class AppDbContext : DbContext
     // Symbols
     public DbSet<SymbolManagerEntity> SymbolManagers { get; set; }
 
+    // Dynamic Options Tables
+    public DbSet<AssetSubtypeEntity> AssetSubtypes { get; set; }
+
     public string DbPath { get; private set; } = string.Empty;
 
     public AppDbContext()

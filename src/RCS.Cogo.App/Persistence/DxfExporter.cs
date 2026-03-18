@@ -9,6 +9,18 @@ namespace RCS.Cogo.App.Persistence;
 
 public static class DxfExporter
 {
+    private static string SanitizeLayerName(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input)) return "DEFAULT";
+        var invalidChars = new[] { '<', '>', '/', '\\', '"', ':', ';', '?', '*', '|', '=', '`', ' ' };
+        var result = input;
+        foreach (var c in invalidChars)
+        {
+            result = result.Replace(c, '_');
+        }
+        return result.Length > 255 ? result.Substring(0, 255) : result;
+    }
+
     public static void Export(
         string filePath, 
         IEnumerable<Point3D> points, 
@@ -45,7 +57,7 @@ public static class DxfExporter
                 double x = p.Easting;
                 double y = p.Northing;
                 double z = p.Elevation;
-                string layer = $"STRUCT_{structure.Type}";
+                string layer = SanitizeLayerName($"STRUCT_{structure.Type}");
 
                 if (type.Contains("MANHOLE") || type.Contains("MH"))
                 {
@@ -112,7 +124,7 @@ public static class DxfExporter
                 if (p1 != null && p2 != null)
                 {
                     writer.WriteLine("  0\nLINE");
-                    writer.WriteLine($"  8\n{fig.Name}");
+                    writer.WriteLine($"  8\n{SanitizeLayerName(fig.Name)}");
                     writer.WriteLine($" 10\n{p1.Easting:F4}");
                     writer.WriteLine($" 20\n{p1.Northing:F4}");
                     writer.WriteLine($" 30\n{p1.Elevation:F4}");
@@ -131,7 +143,7 @@ public static class DxfExporter
             if (p1 != null && p2 != null)
             {
                 writer.WriteLine("  0\nLINE");
-                writer.WriteLine($"  8\nUTILITY_{run.Type}");
+                writer.WriteLine($"  8\n{SanitizeLayerName($"UTILITY_{run.Type}")}");
                 writer.WriteLine($" 10\n{p1.Easting:F4}");
                 writer.WriteLine($" 20\n{p1.Northing:F4}");
                 writer.WriteLine($" 30\n{(p1.Elevation - run.InvertStart):F4}");
