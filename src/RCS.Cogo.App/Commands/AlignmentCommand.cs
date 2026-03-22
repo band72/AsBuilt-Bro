@@ -26,17 +26,41 @@ public class AlignmentCommand : ICommand
         {
             case "BEG":
                 if (args.Length < 3) throw new ArgumentException("ALGN BEG requires a name.");
-                string name = args[2];
+                
+                int nameIdx = 2;
+                if (args[nameIdx].Equals("FIG", StringComparison.OrdinalIgnoreCase))
+                {
+                    nameIdx++;
+                    if (args.Length <= nameIdx) throw new ArgumentException("ALGN BEG requires a name.");
+                }
+                
+                string name = args[nameIdx];
                 double startStation = 0.0;
-                if (args.Length >= 4)
+                
+                int stIdx = nameIdx + 1;
+                if (args.Length > stIdx)
                 {
                     // Parse station like 10+00.00 -> 1000.0
-                    string raw = args[3].Replace("+", "");
+                    string raw = args[stIdx].Replace("+", "");
                     if (double.TryParse(raw, out double st)) startStation = st;
                 }
                 
                 context.CurrentAlignment = new Alignment { Name = name, StartStation = startStation };
                 context.Log($"[INFO] Began Alignment '{name}' at station {startStation:F2}");
+
+                // IMPLICIT FIGURE TO SYNC ALIGNMENT
+                var existingFig = context.GetFigure(name);
+                if (existingFig == null)
+                {
+                    var fig = new RCS.Cogo.App.State.Figure(name);
+                    context.AddFigure(fig);
+                    context.CurrentFigure = fig;
+                }
+                else
+                {
+                    existingFig.PointIds.Clear();
+                    context.CurrentFigure = existingFig;
+                }
                 break;
 
             case "TANGENT":
@@ -50,6 +74,15 @@ public class AlignmentCommand : ICommand
                 var line = new LineElement { StartPoint = p1, EndPoint = p2 };
                 context.CurrentAlignment.AddElement(line);
                 context.Log($"[INFO] Added Tangent from Pt {args[2]} to Pt {args[3]} length {line.Length:F2}");
+
+                // IMPLICIT FIGURE
+                if (context.CurrentFigure != null && context.CurrentFigure.Name == context.CurrentAlignment.Name)
+                {
+                    if (context.CurrentFigure.PointIds.Count == 0 || context.CurrentFigure.PointIds.Last() != args[2])
+                        context.CurrentFigure.PointIds.Add(args[2]);
+                    
+                    context.CurrentFigure.PointIds.Add(args[3]);
+                }
                 break;
                 
             case "CURVE":
@@ -89,6 +122,15 @@ public class AlignmentCommand : ICommand
                 };
                 context.CurrentAlignment.AddElement(arc);
                 context.Log($"[INFO] Added Curve: R={radius:F2}");
+
+                // IMPLICIT FIGURE
+                if (context.CurrentFigure != null && context.CurrentFigure.Name == context.CurrentAlignment.Name)
+                {
+                    if (context.CurrentFigure.PointIds.Count == 0 || context.CurrentFigure.PointIds.Last() != args[2])
+                        context.CurrentFigure.PointIds.Add(args[2]);
+                    
+                    context.CurrentFigure.PointIds.Add(args[4]);
+                }
                 break;
 
             case "END":
@@ -120,6 +162,12 @@ public class AlignmentCommand : ICommand
 
                 context.AddAlignment(context.CurrentAlignment);
                 context.Log($"[INFO] Ended Alignment '{context.CurrentAlignment.Name}'. Total length {context.CurrentAlignment.Elements.Sum(e => e.Length):F2}");
+
+                if (context.CurrentFigure != null && context.CurrentFigure.Name == context.CurrentAlignment.Name)
+                {
+                    context.CurrentFigure = null;
+                }
+
                 context.CurrentAlignment = null;
                 break;
                 
@@ -147,9 +195,15 @@ public class ProfileCommand : ICommand
         string sub = args[1].ToUpper();
         if (sub == "BEG")
         {
-            if (args.Length < 4) throw new ArgumentException("PROF BEG requires alignment_name and type (EG/FG).");
-            string algnName = args[2];
-            string pType = args[3];
+            int algnIdx = 2;
+            if (args.Length > 2 && args[algnIdx].Equals("FIG", StringComparison.OrdinalIgnoreCase))
+            {
+                algnIdx++;
+            }
+            if (args.Length < algnIdx + 2) throw new ArgumentException("PROF BEG requires alignment_name and type (EG/FG).");
+            
+            string algnName = args[algnIdx];
+            string pType = args[algnIdx + 1];
             
             var algn = context.GetAlignment(algnName);
             if (algn == null) throw new ArgumentException($"Alignment '{algnName}' not found. Create it first.");

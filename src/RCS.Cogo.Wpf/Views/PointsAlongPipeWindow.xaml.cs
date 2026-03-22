@@ -36,6 +36,7 @@ namespace RCS.Cogo.Wpf.Views
             if (CbGS.IsChecked == true) selectedDisciplines.Add("GS");
             if (CbEL.IsChecked == true) selectedDisciplines.Add("EL");
             if (CbCH.IsChecked == true) selectedDisciplines.Add("CH");
+            if (CbDR.IsChecked == true) selectedDisciplines.Add("DR");
 
             // Get selected distance
             double distance = 50;
@@ -151,6 +152,9 @@ namespace RCS.Cogo.Wpf.Views
                     break;
                 case "CH":
                     await _assetsVm.AddItemAsync(new RCS.Data.Entities.ChilledPoint { PartKey = pk, ProjectId = pId, Subtype = "Chilled Point Along Pipe", Discipline = "CH", Northing = northing, Easting = easting });
+                    break;
+                case "DR":
+                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.STPoint { PartKey = pk, ProjectId = pId, Subtype = "Storm Point Along Pipe", Discipline = "DR", Northing = northing, Easting = easting });
                     break;
             }
 

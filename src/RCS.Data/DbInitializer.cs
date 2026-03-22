@@ -288,6 +288,7 @@ public static class DbInitializer
                          try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{tableName}\" ADD COLUMN \"{col}\" REAL NULL;"); } catch { }
                      }
                      try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{tableName}\" ADD COLUMN \"Quantity\" INTEGER NULL;"); } catch { }
+                     try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{tableName}\" ADD COLUMN \"IsVisible\" INTEGER NOT NULL DEFAULT 1;"); } catch (Exception e) { System.Console.WriteLine($"DB INIT FAIL {tableName}: {e.Message}"); }
                  }
              }
         }

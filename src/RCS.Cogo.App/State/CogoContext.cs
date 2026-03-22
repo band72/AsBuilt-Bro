@@ -36,6 +36,7 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
     public string PrismMode { get; set; } = "0";
     public double MapCheckClosureTolerance { get; set; } = 0.01;
     public bool ShowAlignmentLabels { get; set; } = true;
+    public double MinimumBoundaryArea { get; set; } = 100.0;
 
     public CogoContext(Action<string> logger)
     {

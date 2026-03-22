@@ -78,6 +78,7 @@
                         <DataGridTextColumn Header="Layer" Binding="{Binding Layer}"/>
                         <DataGridTextColumn Header="Description" Binding="{Binding DescriptionText}"/>
                         <DataGridCheckBoxColumn Header="Closed" Binding="{Binding IsClosed}" IsReadOnly="True" />
+                        <DataGridCheckBoxColumn Header="Visible" Binding="{Binding IsVisible, UpdateSourceTrigger=PropertyChanged}" />
                     </DataGrid.Columns>
                 </DataGrid>
 

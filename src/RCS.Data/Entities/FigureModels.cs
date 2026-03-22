@@ -33,6 +33,7 @@ public class Figure : InstalledAsset
     // Will be "Horizontal_Align", "Vertical_Align", or "Parcel"
     public string Layer { get; set; } = string.Empty;
     public bool IsClosed { get; set; }
+    public bool IsVisible { get; set; } = true;
 
     public string? DescriptionText { get; set; } // So user can input a custom description
     

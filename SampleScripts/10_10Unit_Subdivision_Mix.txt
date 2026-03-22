@@ -571,3 +571,25 @@ ELineWest-E
 PRUN END
 
 PIPE-ENGINE-OFF
+COGO-ENGINE-ON
+
+// ==========================================
+// 3. ROADWAY ALIGNMENT & PROFILES
+// ==========================================
+
+// --- Alignment Points ---
+PT 50 5000 950 100 CL
+PT 51 5000 1300 100 CL
+
+// --- Horizontal Alignment ---
+HALBL-ON
+ALGN BEG MAIN_STREET 10+00.00
+ALGN TANGENT 50 51
+ALGN END
+
+// --- Vertical Profile ---
+PROF BEG MAIN_STREET FG
+VPI 10+00.00 100.00
+VPI 11+75.00 105.00 50
+VPI 13+50.00 100.00
+PROF END

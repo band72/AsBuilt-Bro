@@ -364,6 +364,20 @@ public class ShellViewModel : ViewModelBase
             OnPropertyChanged();
         }
     }
+
+    public double MinimumBoundaryArea
+    {
+        get => _context.MinimumBoundaryArea;
+        set
+        {
+            if (_context.MinimumBoundaryArea != value)
+            {
+                _context.MinimumBoundaryArea = value;
+                OnPropertyChanged();
+                RefreshData(false);
+            }
+        }
+    }
     
     private double _pointNumberSize = 24.0;
     public double PointNumberSize
@@ -619,6 +633,7 @@ public class ShellViewModel : ViewModelBase
             if (double.TryParse(RCS.Services.GlobalSettingsService.GetSetting("PointMarkerSize", "1.0"), out double pms)) PointMarkerSize = pms;
             if (double.TryParse(RCS.Services.GlobalSettingsService.GetSetting("FigureLineWidth", "3.0"), out double flw)) FigureLineWidth = flw;
             if (double.TryParse(RCS.Services.GlobalSettingsService.GetSetting("MapCheckClosureTolerance", "0.01"), out double tol)) MapCheckClosureTolerance = tol;
+            if (double.TryParse(RCS.Services.GlobalSettingsService.GetSetting("MinimumBoundaryArea", "100.0"), out double mba)) MinimumBoundaryArea = mba;
         }
         catch (Exception ex)
         {
@@ -1072,6 +1087,27 @@ public class ShellViewModel : ViewModelBase
 
                 foreach (var memFig in _context.GetAllFigures())
                 {
+                    bool isClosed = memFig.PointIds.Count > 2 && memFig.PointIds.First() == memFig.PointIds.Last();
+                    
+                    if (isClosed)
+                    {
+                        var pts = new System.Collections.Generic.List<Point3D>();
+                        foreach (var id in memFig.PointIds)
+                        {
+                            var p = _context.GetPoint(id);
+                            if (p != null) pts.Add(p);
+                        }
+                        double areaSum = 0;
+                        for (int i = 0; i < pts.Count; i++)
+                        {
+                            var p1 = pts[i];
+                            var p2 = pts[(i + 1) % pts.Count];
+                            areaSum += (p1.Easting * p2.Northing) - (p2.Easting * p1.Northing);
+                        }
+                        double area = Math.Abs(areaSum) * 0.5;
+                        if (area < MinimumBoundaryArea) continue; // Ignore parcels smaller than minimum
+                    }
+
                     var existingFig = InstalledAssets.FigureAssets.FirstOrDefault(f => string.Equals(f.Name, memFig.Name, StringComparison.OrdinalIgnoreCase));
                     var newFig = existingFig ?? new RCS.Data.Entities.Figure 
                     { 
@@ -1092,7 +1128,6 @@ public class ShellViewModel : ViewModelBase
                         else newFig.Subtype = "Linework";
                     }
                     
-                    bool isClosed = memFig.PointIds.Count > 2 && memFig.PointIds.First() == memFig.PointIds.Last();
                     newFig.IsClosed = isClosed;
                     newFig.UpdatedUtc = DateTime.UtcNow;
                     
@@ -2792,6 +2827,26 @@ public class ShellViewModel : ViewModelBase
         // --- Process Pure COGO Figures ---
         foreach (var memFig in _context.GetAllFigures())
         {
+            bool isClosed = memFig.PointIds.Count > 2 && memFig.PointIds.First() == memFig.PointIds.Last();
+            if (isClosed)
+            {
+                var pts = new System.Collections.Generic.List<Point3D>();
+                foreach (var id in memFig.PointIds)
+                {
+                    var p = _context.GetPoint(id);
+                    if (p != null) pts.Add(p);
+                }
+                double areaSum = 0;
+                for (int i = 0; i < pts.Count; i++)
+                {
+                    var p1 = pts[i];
+                    var p2 = pts[(i + 1) % pts.Count];
+                    areaSum += (p1.Easting * p2.Northing) - (p2.Easting * p1.Northing);
+                }
+                double area = Math.Abs(areaSum) * 0.5;
+                if (area < MinimumBoundaryArea) continue; // Ignore parcels smaller than minimum
+            }
+
             var existingFig = InstalledAssets.FigureAssets.FirstOrDefault(f => string.Equals(f.Name, memFig.Name, StringComparison.OrdinalIgnoreCase));
             var newFig = existingFig ?? new RCS.Data.Entities.Figure 
             { 
@@ -2811,7 +2866,6 @@ public class ShellViewModel : ViewModelBase
                 else newFig.Subtype = "Linework";
             }
             
-            bool isClosed = memFig.PointIds.Count > 2 && memFig.PointIds.First() == memFig.PointIds.Last();
             newFig.IsClosed = isClosed;
             newFig.UpdatedUtc = DateTime.UtcNow;
             
@@ -4057,11 +4111,28 @@ public class ShellViewModel : ViewModelBase
             Figures.Clear();
             foreach (var fig in _context.GetAllFigures())
             {
+                var existingAsset = InstalledAssets?.FigureAssets?.FirstOrDefault(f => string.Equals(f.Name, fig.Name, StringComparison.OrdinalIgnoreCase));
+                if (existingAsset != null && !existingAsset.IsVisible) continue; // Skip rendering hidden figures
+
+                bool isClosed = fig.PointIds.Count > 2 && fig.PointIds.First() == fig.PointIds.Last();
                 var pts = new System.Collections.Generic.List<Point3D>();
                 foreach (var id in fig.PointIds)
                 {
                     var p = _context.GetPoint(id);
                     if (p != null) pts.Add(p);
+                }
+                
+                if (isClosed)
+                {
+                    double areaSum = 0;
+                    for (int i = 0; i < pts.Count; i++)
+                    {
+                        var p1 = pts[i];
+                        var p2 = pts[(i + 1) % pts.Count];
+                        areaSum += (p1.Easting * p2.Northing) - (p2.Easting * p1.Northing);
+                    }
+                    double area = Math.Abs(areaSum) * 0.5;
+                    if (area < MinimumBoundaryArea) continue; // Skip rendering
                 }
                 
                 if (pts.Count > 1)

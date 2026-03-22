@@ -23,6 +23,7 @@
                     <CheckBox x:Name="CbGS" Content="Gas (GS)" IsChecked="True" Foreground="White" Margin="5"/>
                     <CheckBox x:Name="CbEL" Content="Electric (EL)" IsChecked="True" Foreground="White" Margin="5"/>
                     <CheckBox x:Name="CbCH" Content="Chilled (CH)" IsChecked="True" Foreground="White" Margin="5"/>
+                    <CheckBox x:Name="CbDR" Content="Storm (DR)" IsChecked="True" Foreground="White" Margin="5"/>
                 </UniformGrid>
             </StackPanel>
         </GroupBox>

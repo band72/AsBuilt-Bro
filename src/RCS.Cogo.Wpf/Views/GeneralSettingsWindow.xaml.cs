@@ -20,6 +20,7 @@ public partial class GeneralSettingsWindow : Window
             RCS.Services.GlobalSettingsService.SaveSetting("PointMarkerSize", vm.PointMarkerSize.ToString());
             RCS.Services.GlobalSettingsService.SaveSetting("FigureLineWidth", vm.FigureLineWidth.ToString());
             RCS.Services.GlobalSettingsService.SaveSetting("MapCheckClosureTolerance", vm.MapCheckClosureTolerance.ToString());
+            RCS.Services.GlobalSettingsService.SaveSetting("MinimumBoundaryArea", vm.MinimumBoundaryArea.ToString());
         }
         Close();
     }
