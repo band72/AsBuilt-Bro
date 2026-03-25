@@ -72,10 +72,42 @@ public sealed class PipeScriptCompiler
                     continue;
                 }
                 
-                // Allow unified scripts without throwing errors in the Pipe Engine for COGO toggles
-                if (cmd == "COGO-ENGINE-OFF" || cmd == "COGO-ENGINE-ON" || 
-                    cmd == "RESET" || cmd == "RESET-OFF" || cmd == "RESET-ON" || cmd == "CLEAR" || cmd == "ECHO" || cmd == "LOG" || cmd == "LIST" || cmd == "REPORT" || cmd == "ABOUT" || cmd == "SET" || cmd == "SHOW" || cmd == "UNITS" || cmd == "ANGLES" ||
-                    cmd == "BEG" || cmd == "CONT" || cmd == "CLOSE" || cmd == "END" || cmd == "DEL" || cmd == "INV" || cmd == "MAPCHECK" || cmd == "AREA" || cmd == "FIG")
+                // Allow unified/pure-COGO scripts to pass through the Pipe compiler without
+                // spurious errors. Any command not related to piping is silently skipped.
+                if (cmd == "COGO-ENGINE-OFF" || cmd == "COGO-ENGINE-ON" ||
+                    cmd == "RESET" || cmd == "RESET-OFF" || cmd == "RESET-ON" ||
+                    cmd == "CLEAR" || cmd == "ECHO" || cmd == "LOG" || cmd == "LIST" ||
+                    cmd == "REPORT" || cmd == "ABOUT" || cmd == "SET" || cmd == "SHOW" ||
+                    cmd == "UNITS" || cmd == "ANGLES" ||
+                    cmd == "BEG" || cmd == "CONT" || cmd == "CLOSE" || cmd == "END" ||
+                    cmd == "DEL" || cmd == "FIG" || cmd == "AREA" ||
+                    cmd == "STN" || cmd == "BS" || cmd == "BD" || cmd == "AD" ||
+                    cmd == "AZ" || cmd == "INV" || cmd == "INVERSE" || cmd == "DIST" ||
+                    cmd == "ANG" || cmd == "TRAV" || cmd == "ZD" || cmd == "DD" ||
+                    cmd == "OC" || cmd == "FS" || cmd == "F1" || cmd == "F2" ||
+                    cmd == "XC" || cmd == "RKRK" ||
+                    cmd == "MAPCHECK" || cmd == "MAPCHK" ||
+                    cmd == "COPYPT" || cmd == "COPY-PT" ||
+                    cmd == "DELPT" || cmd == "DEL-PT" || cmd == "SYNC-PTS" || cmd == "XPT-PTS" ||
+                    cmd == "PC" || cmd == "CRV" || cmd == "RT" || cmd == "C3" ||
+                    cmd == "OFFSET" || cmd == "MOD" || cmd == "AP" ||
+                    cmd == "LN" || cmd == "TRN" || cmd == "ROT" ||
+                    cmd == "MCS" || cmd == "MCE" || cmd == "RKLN" || cmd == "RKAZ" ||
+                    cmd == "RKBRG" || cmd == "BL" || cmd == "CL" || cmd == "HI" ||
+                    cmd == "XS" || cmd == "LAT" ||
+                    cmd == "TEMP" || cmd == "PRESS" || cmd == "SF" || cmd == "CR" ||
+                    cmd == "ATMOS" || cmd == "EDM" || cmd == "PRISM" || cmd == "COLL" ||
+                    cmd == "VERT" || cmd == "HORIZ" ||
+                    cmd == "REDRAW" || cmd == "PAN" || cmd == "ZOOM" || cmd == "DISP" ||
+                    cmd == "SKIP" || cmd == "ID" || cmd == "L" || cmd == "C" ||
+                    cmd == "SAVE" || cmd == "LOAD" || cmd == "SAVE-HALN" || cmd == "SAVE-PFL" ||
+                    cmd == "LNLN" || cmd == "AZAZ" || cmd == "BB" || cmd == "ARCARC" ||
+                    cmd == "CALC" || cmd == "SD" || cmd == "VD" || cmd == "GRADE" ||
+                    cmd == "SLOPE" || cmd == "STADIA" ||
+                    cmd == "ALIGNMENT" || cmd == "PROFILE" || cmd == "VPI" ||
+                    cmd == "HALBL-ON" || cmd == "HALBL-OFF" ||
+                    cmd == "HELP" || cmd == "START" || cmd == "POINT" || cmd == "OUTPUT" ||
+                    cmd == "HISTORY" || cmd == "DITTO" || cmd == "SQ" || cmd == "PNT")
                     continue;
 
                 // Track local COGO point creations so unified scripts don't fail cross-validation

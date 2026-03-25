@@ -1,7 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\src\RCS.Data\RCS.Data.csproj" />
+    <ProjectReference Include="..\src\RCS.Cogo.App\RCS.Cogo.App.csproj" />
+    <ProjectReference Include="..\src\RCS.Piping.Core\RCS.Piping.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

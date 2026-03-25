@@ -1105,7 +1105,11 @@ public class ShellViewModel : ViewModelBase
                             areaSum += (p1.Easting * p2.Northing) - (p2.Easting * p1.Northing);
                         }
                         double area = Math.Abs(areaSum) * 0.5;
-                        if (area < MinimumBoundaryArea) continue; // Ignore parcels smaller than minimum
+                        if (area < MinimumBoundaryArea) 
+                        {
+                            _context.Log($"[DEBUG] Figure '{memFig.Name}' area ({area}) is less than MinimumBoundaryArea ({MinimumBoundaryArea}). Saving anyway.");
+                            // continue; // Ignore parcels smaller than minimum
+                        }
                     }
 
                     var existingFig = InstalledAssets.FigureAssets.FirstOrDefault(f => string.Equals(f.Name, memFig.Name, StringComparison.OrdinalIgnoreCase));
@@ -2844,7 +2848,11 @@ public class ShellViewModel : ViewModelBase
                     areaSum += (p1.Easting * p2.Northing) - (p2.Easting * p1.Northing);
                 }
                 double area = Math.Abs(areaSum) * 0.5;
-                if (area < MinimumBoundaryArea) continue; // Ignore parcels smaller than minimum
+                if (area < MinimumBoundaryArea) 
+                {
+                    _context.Log($"[DEBUG] Figure '{memFig.Name}' area ({area}) < Minimum. Saving anyway.");
+                    // continue; // Ignore parcels smaller than minimum
+                }
             }
 
             var existingFig = InstalledAssets.FigureAssets.FirstOrDefault(f => string.Equals(f.Name, memFig.Name, StringComparison.OrdinalIgnoreCase));
@@ -4132,7 +4140,10 @@ public class ShellViewModel : ViewModelBase
                         areaSum += (p1.Easting * p2.Northing) - (p2.Easting * p1.Northing);
                     }
                     double area = Math.Abs(areaSum) * 0.5;
-                    if (area < MinimumBoundaryArea) continue; // Skip rendering
+                    if (area < MinimumBoundaryArea) 
+                    {
+                        // continue; // Skip rendering
+                    }
                 }
                 
                 if (pts.Count > 1)
@@ -4508,6 +4519,53 @@ public class ShellViewModel : ViewModelBase
                         {
                             ProjectMaterials.Clear();
                             foreach(var m in CurrentProject.Materials) ProjectMaterials.Add(m);
+                        }
+
+                        // *** KEY FIX: Rehydrate figures from SQLite into the in-memory context ***
+                        // IMPORTANT: Do NOT use InstalledAssets.FigureAssets here — it loads via a 
+                        // fire-and-forget async method and may still be empty at this point.
+                        // Instead query SQLite directly with a fresh context.
+                        var projIdStr = _currentProject?.Id.ToString() ?? "";
+                        try
+                        {
+                            using var figDb = new RCS.Data.AppDbContext();
+                            var dbFigures = figDb.Set<RCS.Data.Entities.Figure>()
+                                .Include("Vertices.Point")
+                                .Where(f => f.ProjectId == projIdStr)
+                                .ToList();
+
+                            foreach (var dbFig in dbFigures)
+                            {
+                                if (dbFig.Vertices == null || dbFig.Vertices.Count == 0) continue;
+                                var memFig = new RCS.Cogo.App.State.Figure(dbFig.Name);
+                                
+                                bool anyMissing = false;
+                                foreach (var v in dbFig.Vertices.OrderBy(v => v.OrderIndex))
+                                {
+                                    // PointId = "{projectId}_{rawPointNumber}" — strip prefix
+                                    var rawPid = v.PointId;
+                                    var prefix = projIdStr + "_";
+                                    if (!string.IsNullOrEmpty(prefix) && rawPid.StartsWith(prefix))
+                                        rawPid = rawPid.Substring(prefix.Length);
+
+                                    // LiteDB points are authoritative; only fall back to SQLite coords if missing
+                                    if (!_context.PointExists(rawPid))
+                                    {
+                                        if (v.Point != null)
+                                            _context.AddPoint(rawPid, new Point3D(v.Point.Northing, v.Point.Easting, v.Point.Elevation), "");
+                                        else
+                                        { anyMissing = true; break; }
+                                    }
+                                    memFig.PointIds.Add(rawPid);
+                                }
+                                if (!anyMissing && memFig.PointIds.Count > 1)
+                                    _context.AddFigure(memFig);
+                            }
+                            _context.Log($"[AUDIT] Rehydrated {_context.GetAllFigures().Count()} figures from database.");
+                        }
+                        catch (Exception figEx)
+                        {
+                            _context.Log($"[WARN] Could not rehydrate figures: {figEx.Message}");
                         }
                         
                         _context.Log($"[AUDIT] Opened Project: {dialog.FileName}");

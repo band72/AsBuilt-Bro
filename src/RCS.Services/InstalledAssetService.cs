@@ -45,6 +45,31 @@ public class InstalledAssetService<T> : IInstalledAssetService<T> where T : Inst
             // Map properties from incoming 'row' to 'existing'
             _context.Entry(existing).CurrentValues.SetValues(row);
             
+            // Handle Navigation Properties manually since SetValues only does scalars
+            if (existing is Figure existingFig && row is Figure rowFig)
+            {
+                // Snapshot the new geometry nodes into cloned objects to prevent tracking collisions
+                var newVertices = rowFig.Vertices.Select(v => new FigureVertex 
+                {
+                    PointId = v.PointId,
+                    OrderIndex = v.OrderIndex,
+                    Bulge = v.Bulge
+                }).ToList();
+
+                var oldVertices = _context.Set<FigureVertex>().Where(v => v.FigureId == existingFig.Id).ToList();
+                _context.Set<FigureVertex>().RemoveRange(oldVertices);
+
+                existingFig.Vertices.Clear();
+                foreach (var rv in newVertices)
+                {
+                    // EF will trace as new inserts securely tied to the existing Figure
+                    rv.Id = Guid.NewGuid().ToString(); 
+                    rv.FigureId = existingFig.Id;
+                    _context.Set<FigureVertex>().Add(rv);
+                    existingFig.Vertices.Add(rv); // Vital: must map to memory so returned result displays perfectly in UI
+                }
+            }
+
             // Restore special fields
             existing.CreatedUtc = created;
             existing.UpdatedUtc = DateTime.UtcNow;

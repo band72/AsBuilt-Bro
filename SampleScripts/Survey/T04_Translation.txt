@@ -1,0 +1,139 @@
+// ============================================================
+//  TUTORIAL 04 — TRANSLATION
+//  Topic: How to move (translate) a group of points by matching
+//         a surveyed point to a known control coordinate.
+//
+//  Scenario: A utility survey crew collected data with a local
+//            assumed origin of (0, 0). The actual origin point
+//            (the meter box at the street corner) has a known
+//            state-plane coordinate of N:20000 / E:15000.
+//            All crew points need to be shifted to state-plane.
+//
+//  Command: TRN <SourcePt> <DestPt> <PointRange>
+//    - SourcePt = the point in your LOCAL coordinate system
+//                 that corresponds to the known control point.
+//    - DestPt   = the KNOWN CONTROL point with the correct coords.
+//    - The delta (DestPt - SourcePt) is applied to all points
+//      in PointRange, rigidly shifting the entire dataset.
+// ============================================================
+
+CLEAR
+
+// ----------------------------------------------------------
+// SECTION 1: Local Crew Data (assumed origin at 0,0)
+// ----------------------------------------------------------
+// The crew assumed their starting point was 0,0.
+// All subsequent shots are relative to that assumption.
+
+PT 1   0.00      0.00   95.50  WM       // Water Meter — the local origin
+PT 2   0.00    100.00   95.48  HYD      // Hydrant, 100 ft north
+PT 3   0.00    200.00   95.46  WV       // Valve, 200 ft north
+PT 4  50.00    200.00   95.44  WF       // Fitting, NE of valve
+PT 5  50.00    100.00   95.42  WBO      // Blowoff, NE of hydrant
+
+// More topo points collected in local space
+PT 10  25.00   50.00   96.00  EP
+PT 11  75.00   50.00   96.05  EP
+PT 12  25.00  150.00   95.90  EP
+PT 13  75.00  150.00   95.88  EP
+
+// The crew's local system looks geometrically correct,
+// but all coordinates are relative to assumed (0, 0).
+
+// ----------------------------------------------------------
+// SECTION 2: Enter the Known Control Coordinate
+// ----------------------------------------------------------
+// GPS control has tied the starting water meter (local PT 1)
+// to the following state-plane coordinate:
+
+PT 99  20000.00  15000.00  95.50  WM_CONTROL
+
+// PT 99 is the SAME PHYSICAL POINT as PT 1, but in state-plane.
+// Translation delta will be:
+//   dN = 20000.00 - 0.00 = +20000.00
+//   dE = 15000.00 - 0.00 = +15000.00
+
+// ----------------------------------------------------------
+// SECTION 3: Check the BEFORE state
+// ----------------------------------------------------------
+INV 1 2
+// Reports: Due North, 100.00 ft (in local coords — correct geometry)
+
+// Figures in local coordinates:
+BEG WATER_MAIN_LOCAL
+CONT 1
+CONT 2
+CONT 3
+CONT 4
+CONT 5
+END
+
+// ----------------------------------------------------------
+// SECTION 4: Apply the Translation
+// ----------------------------------------------------------
+// TRN <SourcePt> <DestPt> <PointRange>
+//
+// Source = PT 1  (local origin —   N:0, E:0)
+// Dest   = PT 99 (state-plane — N:20000, E:15000)
+// Range  = all crew points 1–13
+
+TRN 1 99 1,2,3,4,5,10,11,12,13
+
+// The engine computes:
+//   dN = 20000.00 - 0.00 = +20000.00
+//   dE = 15000.00 - 0.00 = +15000.00
+// Every point in the range is shifted by that delta.
+
+// ----------------------------------------------------------
+// SECTION 5: Verify AFTER Translation
+// ----------------------------------------------------------
+
+INV 1 2
+// Still Due North, 100.00 ft — geometry is preserved
+
+INV 1 99
+// PT 1 and PT 99 are now coincident — distance = 0.0000
+
+// Check that PT 1 has been moved to the control coords:
+// PT 1 should now be: N=20000.00  E=15000.00
+// PT 2 should now be: N=20100.00  E=15000.00
+// PT 3 should now be: N=20200.00  E=15000.00
+
+AZ 1 2
+// Should still read due North
+
+// ----------------------------------------------------------
+// SECTION 6: Rebuild Figures in State-Plane
+// ----------------------------------------------------------
+BEG WATER_MAIN_STATEPLANE
+CONT 1
+CONT 2
+CONT 3
+CONT 4
+CONT 5
+END
+
+// Area and perimeter are identical to local — only position changed.
+
+// ----------------------------------------------------------
+// SECTION 7: Combining Translation + Rotation
+// ----------------------------------------------------------
+// In practice, a local survey usually needs BOTH:
+// 1. Rotate first  (ROT) to match the cardinal orientation
+// 2. Translate     (TRN) to shift to the correct position
+//
+// Example workflow order:
+//   ROT RefLine_Local-RefLine_Control <all points>
+//   TRN LocalOriginPt ControlOriginPt <all points>
+//
+// Always rotate BEFORE translating to avoid compounding errors.
+
+// ============================================================
+//  END OF TUTORIAL 04
+//  Key takeaways:
+//  - TRN shifts points by the vector from SourcePt to DestPt
+//  - Relative distances and angles are unchanged
+//  - Use it to convert assumed/local coords to state-plane
+//  - Always rotate first if orientation also needs correction
+//  - PT ranges: comma-separated (1,2,3) or span (1-13) or both
+// ============================================================

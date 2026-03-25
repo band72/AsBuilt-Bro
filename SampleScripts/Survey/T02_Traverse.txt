@@ -1,0 +1,129 @@
+// ============================================================
+//  TUTORIAL 02 — TRAVERSE
+//  Topic: How to walk a closed traverse by angle + distance
+//         from a known starting occupation point.
+//
+//  Scenario: A 5-sided parcel traversed clockwise from
+//            a known monument (PT 1). At the end, closure
+//            error is measured back to the start.
+//
+//  Commands used: CLEAR, PT, STN, BS, TRAV, INV, MAPCHK
+// ============================================================
+
+CLEAR
+
+// ----------------------------------------------------------
+// SECTION 1: Set up Starting Control
+// ----------------------------------------------------------
+// PT 1 is your known monument — the starting station.
+// PT 2 is the backsight monument (establishes your orientation).
+
+PT 1  5000.00  5000.00  100.00  MON_A
+PT 2  5000.00  5500.00  100.00  MON_B
+
+// ----------------------------------------------------------
+// SECTION 2: Occupy the Starting Point
+// ----------------------------------------------------------
+// STN sets the "instrument" at a known point.
+// BS sets the backsight direction (angle = 0 on this line).
+// Syntax: STN <PointID>
+//         BS  <BacksightPointID> [Angle]
+
+STN 1
+BS 2 0.0000
+
+// You are now standing at PT 1, aimed at PT 2.
+// All angles you turn are measured from this backsight direction.
+
+// ----------------------------------------------------------
+// SECTION 3: Open Traverse Mode + Walk the Parcel
+// ----------------------------------------------------------
+// TRAV ON  — enables traverse mode (each new point becomes the next station)
+// TRAV <NewPt> <AngleRight DMS> <Distance>
+//          — turns the specified angle right from your current backsight,
+//            then walks the given distance to set the new point.
+// TRAV OFF — disables traverse mode
+
+TRAV ON
+
+// Leg 1 — Turn 90° right (due East), walk 400 ft
+TRAV 10  90.0000  400.00
+
+// Leg 2 — Turn 125° right, walk 300 ft (SE diagonal)
+TRAV 11  125.0000  300.00
+
+// Leg 3 — Turn 95° right, walk 350 ft (heading south)
+TRAV 12  95.0000  350.00
+
+// Leg 4 — Turn 110° right, walk 280 ft (heading SW)
+TRAV 13  110.0000  280.00
+
+// Leg 5 — Turn 130° right, walk 420 ft (heading back NW toward start)
+TRAV 14  130.0000  420.00
+
+TRAV OFF
+
+// ----------------------------------------------------------
+// SECTION 4: Check the Misclosure
+// ----------------------------------------------------------
+// INV from the last traverse point back to the starting point
+// reveals the raw traverse closure error.
+// In a perfect traverse this distance = 0.0000.
+
+INV 14 1
+// A small non-zero distance here represents your field misclosure.
+// This is normal in real surveys — the misclosure is then balanced.
+
+// ----------------------------------------------------------
+// SECTION 5: Build the Figure and Run MapCheck
+// ----------------------------------------------------------
+
+BEG TRAVERSE_PARCEL
+CONT 1
+CONT 10
+CONT 11
+CONT 12
+CONT 13
+CONT 14
+CLOSE
+END
+
+MAPCHK TRAVERSE_PARCEL
+// The MAPCHK report shows:
+// - Each leg bearing and distance
+// - Total perimeter
+// - Computed area
+// - Closure error distance and bearing
+// - Precision ratio (e.g. 1:8500 — higher is better)
+
+// ----------------------------------------------------------
+// SECTION 6: Radial Sideshots from a Traverse Hub
+// ----------------------------------------------------------
+// While occupied at PT 12, shoot sideshots to topo features.
+// These are one-way shots that don't continue the traverse.
+
+STN 12
+BS 11
+
+// Sideshot a utility pole using BD (quadrant-bearing method):
+// BD <NewPt> <Quad 1-4> <Bearing DMS> <Distance> [Desc]
+// Quad 1=NE, 2=SE, 3=SW, 4=NW
+
+BD 50  2  35.0000  25.00  EPOLE
+BD 51  2  42.0000  30.00  HYD
+BD 52  1  15.0000  18.00  WV
+BD 53  3  20.0000  22.00  WWM
+
+INV 12 50
+INV 12 51
+
+// ============================================================
+//  END OF TUTORIAL 02
+//  Key takeaways:
+//  - STN sets your instrument position
+//  - BS sets your zero reference direction
+//  - TRAV walks angle-right + distance, chaining stations
+//  - INV from last to first reveals misclosure
+//  - MAPCHK reports full traverse analysis
+//  - BD shoots sidepoints by quadrant bearing from any station
+// ============================================================

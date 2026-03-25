@@ -1035,114 +1035,9 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <!-- Structures -->
-                <ItemsControl ItemsSource="{Binding StructureGraphics}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="ContentPresenter">
-                            <Setter Property="Canvas.Left" Value="{Binding Easting}"/>
-                            <Setter Property="Canvas.Top" Value="{Binding Northing}"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Width="28" Height="28">
-                                <Grid.RenderTransform>
-                                    <TranslateTransform X="-14" Y="-14"/>
-                                </Grid.RenderTransform>
-                                
-                                <ContentControl Content="{Binding}">
-                                    <ContentControl.Style>
-                                        <Style TargetType="ContentControl">
-                                            <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Default}"/>
-                                            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                                            <Setter Property="RenderTransform">
-                                                <Setter.Value>
-                                                     <ScaleTransform ScaleX="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                     ScaleY="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                            
-                                            <Style.Triggers>
-                                                <!-- Add Fallback text to verify loading -->
-                                                <DataTrigger Binding="{Binding SymbolType}" Value="Manhole">
-                                                    <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Manhole}"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding SymbolType}" Value="Valve">
-                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_WaterValve}"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding SymbolType}" Value="Hydrant">
-                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Hydrant}"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding SymbolType}" Value="Meter">
-                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Meter}"/>
-                                                </DataTrigger>
-                                                 <DataTrigger Binding="{Binding SymbolType}" Value="Fitting">
-                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Fitting}"/>
-                                                </DataTrigger>
-                                                 <DataTrigger Binding="{Binding SymbolType}" Value="Inlet">
-                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Manhole}"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding SymbolType}" Value="Pole">
-                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_ElectricPole}"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding SymbolType}" Value="Box">
-                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_ElectricBox}"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ContentControl.Style>
-                                </ContentControl>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-                <!-- Highlight Asset -->
-                <ItemsControl ItemsSource="{Binding HighlightedAssets}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="ContentPresenter">
-                            <Setter Property="Canvas.Left" Value="{Binding Easting}"/>
-                            <Setter Property="Canvas.Top" Value="{Binding Northing}"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Width="30" Height="30" RenderTransformOrigin="0.5,0.5">
-                                <Grid.RenderTransform>
-                                    <TransformGroup>
-                                        <TranslateTransform X="-15" Y="-15"/>
-                                        <ScaleTransform ScaleX="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                        ScaleY="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                                    </TransformGroup>
-                                </Grid.RenderTransform>
-                                <Ellipse Stroke="#FFFF00" StrokeThickness="3" Width="30" Height="30">
-                                    <Ellipse.Triggers>
-                                        <EventTrigger RoutedEvent="Loaded">
-                                            <BeginStoryboard>
-                                                <Storyboard RepeatBehavior="Forever">
-                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.2" Duration="0:0:1" AutoReverse="True"/>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                    </Ellipse.Triggers>
-                                </Ellipse>
-                                <Ellipse Fill="#FFFF00" Opacity="0.3" Width="30" Height="30"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
 
                 <!-- Points -->
+
                 <ItemsControl ItemsSource="{Binding Points}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -1190,6 +1085,107 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+
+                <!-- Structures (inside WorldTransform so they align with pipes/figures) -->
+                <ItemsControl ItemsSource="{Binding StructureGraphics}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding Easting}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Northing}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Width="28" Height="28">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform X="-14" Y="-14"/>
+                                </Grid.RenderTransform>
+                                <ContentControl Content="{Binding}">
+                                    <ContentControl.Style>
+                                        <Style TargetType="ContentControl">
+                                            <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Default}"/>
+                                            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                            <Setter Property="RenderTransform">
+                                                <Setter.Value>
+                                                     <ScaleTransform ScaleX="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                     ScaleY="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SymbolType}" Value="Manhole">
+                                                    <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Manhole}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SymbolType}" Value="Valve">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_WaterValve}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SymbolType}" Value="Hydrant">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Hydrant}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SymbolType}" Value="Meter">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Meter}"/>
+                                                </DataTrigger>
+                                                 <DataTrigger Binding="{Binding SymbolType}" Value="Fitting">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Fitting}"/>
+                                                </DataTrigger>
+                                                 <DataTrigger Binding="{Binding SymbolType}" Value="Inlet">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_Manhole}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SymbolType}" Value="Pole">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_ElectricPole}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SymbolType}" Value="Box">
+                                                     <Setter Property="ContentTemplate" Value="{StaticResource Symbol_ElectricBox}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Highlight/Crossing Markers (inside WorldTransform so they align with pipes) -->
+                <ItemsControl ItemsSource="{Binding HighlightedAssets}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding Easting}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Northing}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Width="30" Height="30" RenderTransformOrigin="0.5,0.5">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform X="-15" Y="-15"/>
+                                </Grid.RenderTransform>
+                                <Ellipse Stroke="#FFFF00" StrokeThickness="3" Width="30" Height="30">
+                                    <Ellipse.Triggers>
+                                        <EventTrigger RoutedEvent="Loaded">
+                                            <BeginStoryboard>
+                                                <Storyboard RepeatBehavior="Forever">
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.2" Duration="0:0:1" AutoReverse="True"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Ellipse.Triggers>
+                                </Ellipse>
+                                <Ellipse Fill="#FFFF00" Opacity="0.3" Width="30" Height="30"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
                 </Canvas>
                 <!-- Zoom Window Rectangle -->
                 <Rectangle x:Name="ZoomRect" Stroke="LightBlue" StrokeThickness="1" Fill="#33ADD8E6" 

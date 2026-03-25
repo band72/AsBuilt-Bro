@@ -1,0 +1,135 @@
+// ============================================================
+//  TUTORIAL 03 — ROTATION
+//  Topic: How to rotate a group of points around a pivot point
+//         to align a surveyed dataset with known control.
+//
+//  Scenario: A building outline was surveyed in a local
+//            coordinate system (north-up on paper). The control
+//            network shows the building is actually rotated 30°
+//            clockwise. We rotate the local points to match.
+//
+//  Command: ROT <Line1Start-Line1End> <Line2Start-Line2End> <PointRange>
+//    - Line 1 = the reference line BEFORE rotation (current bearing)
+//    - Line 2 = the reference line AFTER  rotation (target bearing)
+//    - The angle difference between Line1 and Line2 is applied
+//      to all points in PointRange, pivoting around Line1Start.
+// ============================================================
+
+CLEAR
+
+// ----------------------------------------------------------
+// SECTION 1: Define the Local Survey Points (un-rotated)
+// ----------------------------------------------------------
+// Imagine these were shot in local instrument coordinates
+// with north assumed to be 0°.
+
+// Reference pivot: NW corner of building
+PT 1  10000.00  10000.00  100.00  BLD_NW
+
+// Reference direction: NE corner (defines the "current north" line)
+PT 2  10000.00  10100.00  100.00  BLD_NE
+
+// Building footprint in local coords
+PT 10  10000.00  10000.00  100.00  BLDG
+PT 11  10000.00  10100.00  100.00  BLDG
+PT 12  10040.00  10100.00  100.00  BLDG
+PT 13  10040.00  10000.00  100.00  BLDG
+
+// Interior detail points (doors, window corners)
+PT 20  10010.00  10000.00  100.00  DOOR
+PT 21  10015.00  10000.00  100.00  DOOR
+PT 22  10020.00  10005.00  100.00  WIN
+PT 23  10020.00  10015.00  100.00  WIN
+
+// ----------------------------------------------------------
+// SECTION 2: Define the Target Orientation from Control
+// ----------------------------------------------------------
+// GPS control shots show the NW corner at PT 1 is correct,
+// but the NE corner should actually be at PT 9 — 30° off
+// from due East in the NE quadrant.
+
+// Target NE corner based on control (30° clockwise from assumed East)
+// N: 10000 + 100*cos(30°) = 10086.60
+// E: 10000 + 100*sin(30°) = 10050.00
+PT 9  10086.60  10050.00  100.00  CTRL_NE
+
+// ----------------------------------------------------------
+// SECTION 3: Check bearings BEFORE rotation
+// ----------------------------------------------------------
+INV 1 2
+// Should report: Bearing ~East (azimuth ≈ 90.0000°), Dist = 100.00
+
+INV 1 9
+// Should report: Bearing NE (azimuth ≈ 30.0000°), Dist ≈ 100.00
+
+AZ 1 2
+AZ 1 9
+
+// ----------------------------------------------------------
+// SECTION 4: Build the pre-rotation figure to see the shape
+// ----------------------------------------------------------
+BEG BUILDING_LOCAL
+CONT 10
+CONT 11
+CONT 12
+CONT 13
+CLOSE
+END
+
+MAPCHK BUILDING_LOCAL
+// Area: 100 x 40 = 4,000 sq ft (correct — rotation should NOT change area)
+
+// ----------------------------------------------------------
+// SECTION 5: Rotate the Survey Points
+// ----------------------------------------------------------
+// ROT <Line1Start-Line1End> <Line2Start-Line2End> <PointRange>
+//
+// Line 1 = PT1 to PT2 — the current reference direction (E)
+// Line 2 = PT1 to PT9 — the target reference direction  (NE 30°)
+//
+// All points 10-13 and 20-23 rotate around PT 1 by the
+// angular difference between Line1 and Line2.
+
+ROT 1-2 1-9 10,11,12,13,20,21,22,23
+
+// The engine computes: ΔAzimuth = AZ(1→9) - AZ(1→2)
+//                               = 30° - 90° = -60° (60° counterclockwise)
+// Each point is rotated -60° about PT 1.
+
+// ----------------------------------------------------------
+// SECTION 6: Verify AFTER Rotation
+// ----------------------------------------------------------
+INV 10 11
+// Now the NW–NE wall should read a bearing of ≈ N 60° E, Dist = 100.00
+
+INV 1 10
+// PT 1 and PT 10 should be coincident (pivot point doesn't move)
+
+// Rebuild the figure after rotation
+BEG BUILDING_ROTATED
+CONT 10
+CONT 11
+CONT 12
+CONT 13
+CLOSE
+END
+
+MAPCHK BUILDING_ROTATED
+// Area should still be 4,000 sq ft — rotation is a rigid body transform
+
+// ----------------------------------------------------------
+// SECTION 7: Pro tip — Rotate a large range at once
+// ----------------------------------------------------------
+// If points 100–199 are all part of the rotated dataset,
+// use a range: ROT 1-2 1-9 100-199
+// The range parser expands 100-199 to all integers in that span.
+
+// ============================================================
+//  END OF TUTORIAL 03
+//  Key takeaways:
+//  - ROT aligns local data to control by rotating around a pivot
+//  - Line 1 is your "from" direction, Line 2 is your "to" direction
+//  - The pivot point is always Line1Start
+//  - Area and shape are preserved — only orientation changes
+//  - Use point ranges (10,11,12 or 100-199) for bulk rotation
+// ============================================================
