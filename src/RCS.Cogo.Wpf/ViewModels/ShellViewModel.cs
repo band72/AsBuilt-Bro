@@ -4234,20 +4234,24 @@ public class ShellViewModel : ViewModelBase
                 
                 if (pts.Count > 1)
                 {
-                    // ── Crosslink detection ─────────────────────────────────
-                    // If any consecutive segment is suspiciously long (likely
-                    // a stitch error between unrelated point sequences) flag it.
-                    const double CrosslinkThreshold = 2000.0; // survey feet
+                    // ── Crosslink detection (same dual criteria as load-time splitter) ──
+                    var figIds = fig.PointIds;
                     bool hasCrosslink = false;
                     for (int i = 0; i < pts.Count - 1; i++)
                     {
                         double dx = pts[i + 1].Easting  - pts[i].Easting;
                         double dy = pts[i + 1].Northing - pts[i].Northing;
                         double dist = Math.Sqrt(dx * dx + dy * dy);
-                        if (dist > CrosslinkThreshold)
+
+                        int numA = (i < figIds.Count && int.TryParse(figIds[i], out var na)) ? na : -1;
+                        int numB = (i + 1 < figIds.Count && int.TryParse(figIds[i + 1], out var nb)) ? nb : -1;
+                        int ptJump = (numA >= 0 && numB >= 0) ? Math.Abs(numB - numA) : 0;
+
+                        bool segIsCrosslink = (ptJump >= 200 && dist > 50.0) || dist > 5000.0;
+                        if (segIsCrosslink)
                         {
                             hasCrosslink = true;
-                            _context.Log($"[⚠ CROSSLINK] Figure '{fig.Name}': Segment {i}→{i+1} is {dist:F1} ft — possible invalid stitch between unrelated points.");
+                            _context.Log($"[⚠ CROSSLINK] Figure '{fig.Name}': pt {figIds[i]}→{figIds[i+1]}, dist={dist:F0}ft, jump={ptJump}");
                         }
                     }
                     fig.IsInvalidCrosslink = hasCrosslink;
@@ -4671,11 +4675,11 @@ public class ShellViewModel : ViewModelBase
                                 }
                                 if (anyMissing || orderedIds.Count < 2) continue;
 
-                                // ── Split at crosslink gaps (>2000 ft) ──────────────────
-                                // A single saved figure may contain multiple disconnected runs
-                                // that were stitched by the old BEG bug. Split them here so
-                                // they reload as separate polylines with no crosslink.
-                                const double CrosslinkThresholdLoad = 2000.0;
+                                // ── Split at crosslink gaps ──────────────────────────────
+                                // Two triggers for a crosslink:
+                                //  1. Large point-number jump (≥200) AND physical distance > 50ft
+                                //     → catches 2001→204 type stitching errors
+                                //  2. Physical distance alone > 5000ft (regardless of point numbers)
                                 string baseName = dbFig.Name;
                                 int segIdx = 1;
                                 var currentSegIds = new System.Collections.Generic.List<string> { orderedIds[0] };
@@ -4688,7 +4692,15 @@ public class ShellViewModel : ViewModelBase
                                         ? Math.Sqrt(Math.Pow(ptB.Easting - ptA.Easting, 2) + Math.Pow(ptB.Northing - ptA.Northing, 2))
                                         : 0;
 
-                                    if (dist > CrosslinkThresholdLoad)
+                                    // Point-number jump heuristic
+                                    int numA = int.TryParse(orderedIds[i], out var na) ? na : -1;
+                                    int numB = int.TryParse(orderedIds[i + 1], out var nb) ? nb : -1;
+                                    int ptJump = (numA >= 0 && numB >= 0) ? Math.Abs(numB - numA) : 0;
+
+                                    bool isCrosslink = (ptJump >= 200 && dist > 50.0)   // large numeric jump + physically apart
+                                                    || dist > 5000.0;                    // or just absurdly far
+
+                                    if (isCrosslink)
                                     {
                                         // Flush current segment
                                         if (currentSegIds.Count > 1)
@@ -4697,7 +4709,7 @@ public class ShellViewModel : ViewModelBase
                                             var seg = new RCS.Cogo.App.State.Figure(segName);
                                             foreach (var id in currentSegIds) seg.PointIds.Add(id);
                                             _context.AddFigure(seg);
-                                            _context.Log($"[LOAD] Split '{baseName}' → '{segName}' ({currentSegIds.Count} pts). Crosslink gap: {dist:F0} ft.");
+                                            _context.Log($"[LOAD] Split '{baseName}' → '{segName}' ({currentSegIds.Count} pts). Gap: {dist:F0} ft, pt jump: {ptJump}.");
                                         }
                                         segIdx++;
                                         currentSegIds = new System.Collections.Generic.List<string>();
