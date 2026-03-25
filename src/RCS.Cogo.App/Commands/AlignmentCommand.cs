@@ -69,7 +69,14 @@ public class AlignmentCommand : ICommand
                 
                 var p1 = context.GetPoint(args[2]);
                 var p2 = context.GetPoint(args[3]);
-                if (p1 == null || p2 == null) throw new ArgumentException("One or both points not found for tangent.");
+                if (p1 == null || p2 == null)
+                {
+                    var allPts = context.GetAllPoints().Select(p => p.Id).ToList();
+                    string ptList = allPts.Count > 0 ? string.Join(", ", allPts) : "(none)";
+                    string missing = (p1 == null ? args[2] : "") + (p2 == null ? " " + args[3] : "");
+                    throw new ArgumentException(
+                        $"Point(s) {missing.Trim()} not found for TANGENT.  Points in context: {ptList}");
+                }
                 
                 var line = new LineElement { StartPoint = p1, EndPoint = p2 };
                 context.CurrentAlignment.AddElement(line);
@@ -208,16 +215,24 @@ public class ProfileCommand : ICommand
             var algn = context.GetAlignment(algnName);
             if (algn == null) throw new ArgumentException($"Alignment '{algnName}' not found. Create it first.");
             
-            context.CurrentProfile = new Profile { Name = algnName + "_" + pType, ProfileType = pType };
+            // Store algnName in a way we can reliably retrieve it, regardless of underscores
+            context.CurrentProfile = new Profile
+            {
+                Name        = algnName + "_" + pType,
+                ProfileType = pType,
+                AlignmentName = algnName          // new property — see Profile.cs
+            };
             context.Log($"[INFO] Began Profile '{context.CurrentProfile.Name}'");
+
         }
         else if (sub == "END")
         {
             if (context.CurrentProfile == null) throw new InvalidOperationException("No active profile to end.");
             
-            // Attach to its alignment
-            string algnName = context.CurrentProfile.Name.Split('_')[0];
+            // Use stored AlignmentName (safe for underscore-containing names like MAIN_RD)
+            string algnName = context.CurrentProfile.AlignmentName ?? context.CurrentProfile.Name;
             var algn = context.GetAlignment(algnName);
+
             if (algn != null)
             {
                 algn.Profiles.Add(context.CurrentProfile);

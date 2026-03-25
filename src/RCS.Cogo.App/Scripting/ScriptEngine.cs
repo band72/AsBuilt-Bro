@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,12 +19,23 @@ public class ScriptEngine
     public async Task ExecuteAsync(string commandLine, ICogoContext context)
     {
         if (string.IsNullOrWhiteSpace(commandLine)) return;
-        
-        // Ignore comments
-        if (commandLine.TrimStart().StartsWith("!")) return;
-        if (commandLine.TrimStart().StartsWith("//")) return;
-        if (commandLine.TrimStart().StartsWith("/")) return;
-        if (commandLine.TrimStart().StartsWith(";")) return;
+
+        // Strip inline comments before anything else.
+        // Handles: PT 1 100 200  // this is a comment
+        //          PT 1 100 200  ; or semicolon comment
+        commandLine = StripInlineComment(commandLine);
+
+        if (string.IsNullOrWhiteSpace(commandLine)) return;
+
+        string trimmed = commandLine.TrimStart();
+
+        // Skip whole-line comments
+        if (trimmed.StartsWith("!"))  return;
+        if (trimmed.StartsWith("//")) return;
+        if (trimmed.StartsWith("/"))  return;
+        if (trimmed.StartsWith(";"))  return;
+        if (trimmed.StartsWith("--")) return;   // SQL-style comment
+        if (trimmed.StartsWith("#"))  return;   // Python/hash comment
 
         var args = Tokenize(commandLine);
         if (args.Count == 0) return;
@@ -45,28 +57,23 @@ public class ScriptEngine
         }
 
         if (commandName.Equals("pipe-engine-off", StringComparison.OrdinalIgnoreCase) ||
-            commandName.Equals("pipe-engine-on", StringComparison.OrdinalIgnoreCase))
+            commandName.Equals("pipe-engine-on",  StringComparison.OrdinalIgnoreCase))
         {
-            // Ignored cleanly by COGO engine
             return;
         }
 
         if (_cogoEngineOff) return;
-        
+
         try
         {
             var command = _registry.GetCommand(commandName);
             if (command != null)
             {
-                // Pass all args including command name, or just the rest?
-                // Usually simpler to pass all so command knows its own name if aliased.
                 await command.ExecuteAsync(args.ToArray(), context);
             }
             else
             {
-                // If the command evaluates to an integer/number:
-                // If it provides coordinates (e.g. 1 5000 5000), it's defining a point (implicit PT/NEZ).
-                // If it's a single identifier, it's appending to a figure (implicit CONT).
+                // Numeric-first line → implicit PT or CONT
                 if (double.TryParse(commandName, out _))
                 {
                     if (args.Count >= 3)
@@ -93,7 +100,10 @@ public class ScriptEngine
                     }
                 }
 
-                context.Log($"Unknown command: {commandName}");
+                // Only log "Unknown command" for tokens that look like commands (not stray
+                // punctuation, unicode chars, or leftover fragments from comment stripping).
+                if (commandName.Length >= 2 && commandName.All(c => char.IsLetterOrDigit(c) || c == '-' || c == '_'))
+                    context.Log($"Unknown command: {commandName}");
             }
         }
         catch (Exception ex)
@@ -102,27 +112,53 @@ public class ScriptEngine
         }
     }
 
+    // ── Inline comment stripper ─────────────────────────────────────────────
+    // Removes everything from the first unquoted // or ; to end of line.
+    private static string StripInlineComment(string line)
+    {
+        bool inQuotes = false;
+        for (int i = 0; i < line.Length; i++)
+        {
+            char c = line[i];
+            if (c == '"') { inQuotes = !inQuotes; continue; }
+            if (inQuotes) continue;
+
+            // // comment
+            if (c == '/' && i + 1 < line.Length && line[i + 1] == '/')
+                return line[..i].TrimEnd();
+
+            // ; comment (but not if it's the first non-whitespace — that's handled above)
+            if (c == ';')
+                return line[..i].TrimEnd();
+        }
+        return line;
+    }
+
+    // ── Tokenizer ───────────────────────────────────────────────────────────
+    // Splits on whitespace, respects double-quoted strings. 
+    // Uppercases the first token (command name) automatically.
     private List<string> Tokenize(string input)
     {
         var tokens = new List<string>();
-        var sb = new StringBuilder();
+        var sb     = new StringBuilder();
         bool inQuotes = false;
+        bool firstToken = true;
 
         foreach (char c in input)
         {
             if (c == '"')
             {
                 inQuotes = !inQuotes;
-                // Don't add the quote char itself if we want clean strings
-                // But sometimes we want to keep them. Let's strip them for now.
-                continue; 
+                continue;
             }
 
             if (char.IsWhiteSpace(c) && !inQuotes)
             {
                 if (sb.Length > 0)
                 {
-                    tokens.Add(sb.ToString());
+                    string token = sb.ToString();
+                    tokens.Add(firstToken ? token.ToUpperInvariant() : token);
+                    firstToken = false;
                     sb.Clear();
                 }
             }
@@ -134,7 +170,8 @@ public class ScriptEngine
 
         if (sb.Length > 0)
         {
-            tokens.Add(sb.ToString());
+            string token = sb.ToString();
+            tokens.Add(firstToken ? token.ToUpperInvariant() : token);
         }
 
         return tokens;

@@ -15,6 +15,7 @@ public class Profile
 {
     public string Name { get; set; } = string.Empty;
     public string ProfileType { get; set; } = "FG"; // EG or FG
+    public string? AlignmentName { get; set; }       // parent alignment name (safe for underscore names)
 
     public List<Vpi> Intersections { get; } = new();
 
