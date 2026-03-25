@@ -23,19 +23,24 @@ public class BegCommand : ICommand
             figName = args[2];
         }
         
-        // Check if exists? Overwrite?
+        // ── If a figure with this name already exists, start a NEW segment ──
+        // Appending to the same figure stitches unrelated point sequences into
+        // one polyline and creates "crosslinks" (e.g. pt 204 → pt 2001).
+        // Instead, find the next free name: EP, EP_2, EP_3, ...
+        string baseName = figName;
         if (context.GetFigure(figName) != null)
         {
-            context.Log($"Warning: Figure {figName} already exists. Appending to it.");
-            context.CurrentFigure = context.GetFigure(figName);
+            int seg = 2;
+            while (context.GetFigure($"{baseName}_{seg}") != null)
+                seg++;
+            figName = $"{baseName}_{seg}";
+            context.Log($"[BEG] '{baseName}' already exists → starting new segment '{figName}'.");
         }
-        else
-        {
-            var fig = new Figure(figName);
-            context.AddFigure(fig);
-            context.CurrentFigure = fig;
-            context.Log($"Figure {figName} started.");
-        }
+
+        var fig = new Figure(figName);
+        context.AddFigure(fig);
+        context.CurrentFigure = fig;
+        context.Log($"Figure '{figName}' started.");
 
         return Task.CompletedTask;
     }
