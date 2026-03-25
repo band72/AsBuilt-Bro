@@ -1,0 +1,175 @@
+// ============================================================
+//  TUTORIAL 05 — ALIGNMENT, PROFILE & CROSS SECTIONS
+//  Topic: Define a road alignment, attach vertical profiles
+//         (EG and FG with parabolic VCs), generate stationing,
+//         and compute cross-section cut/fill volumes.
+//
+//  Commands: ALGN, PROF, VPI, STATION, XS
+// ============================================================
+
+CLEAR
+
+// ----------------------------------------------------------
+// SECTION 1: Define Control Points
+// ----------------------------------------------------------
+// These represent the centerline design points of a road.
+
+PT 1   10000.00  10000.00  95.00  PC_ROAD
+PT 2   10000.00  10300.00  94.50  MID_ROAD
+PT 3   10000.00  10600.00  93.80  PT_ROAD
+PT 4   10000.00  10900.00  93.00  END_ROAD
+
+// ----------------------------------------------------------
+// SECTION 2: Define Horizontal Alignment
+// ----------------------------------------------------------
+// ALGN BEG <Name> <StartStation>
+//   Name       = unique alignment identifier
+//   StartStation = "0+00" or "0" (default 0)
+//
+// ALGN TANGENT <Pt1> <Pt2>
+//   Adds a straight tangent segment between 2 control points
+//
+// ALGN END
+//   Closes the alignment and stores it
+
+ALGN BEG MAIN_RD 0+00
+
+ALGN TANGENT 1 2
+// Leg 1: PT1 → PT2, due North 300 ft, Sta 0+00 to 3+00
+
+ALGN TANGENT 2 3
+// Leg 2: PT2 → PT3, due North 300 ft, Sta 3+00 to 6+00
+
+ALGN TANGENT 3 4
+// Leg 3: PT3 → PT4, due North 300 ft, Sta 6+00 to 9+00
+
+ALGN END
+// Total alignment length: 900 ft
+
+// ----------------------------------------------------------
+// SECTION 3: Query Stationing
+// ----------------------------------------------------------
+// STATION <AlignmentName> <Station>
+//   Reports the N/E coordinate at the given station.
+
+STATION MAIN_RD 0+00
+STATION MAIN_RD 3+00
+STATION MAIN_RD 6+00
+STATION MAIN_RD 9+00
+STATION MAIN_RD 4+50
+
+// STATION <AlignmentName> PT <PointId>
+//   Reports what station+offset a stored COGO point falls on.
+
+STATION MAIN_RD PT 1
+STATION MAIN_RD PT 2
+STATION MAIN_RD PT 3
+
+// STATION <AlignmentName> LIST <From> <To> <Interval>
+//   Generates a station/coordinate table.
+
+STATION MAIN_RD LIST 0+00 9+00 100
+
+// ----------------------------------------------------------
+// SECTION 4: Existing Ground (EG) Profile
+// ----------------------------------------------------------
+// PROF BEG <AlignmentName> EG
+//   Start an existing ground profile tied to the named alignment.
+//
+// VPI <Station> <Elevation> [CurveLength]
+//   Add a vertical point of intersection.
+//   CurveLength = 0 (default) means sharp grade break (no VC)
+//
+// PROF END
+
+PROF BEG MAIN_RD EG
+VPI 0+00   95.00
+VPI 3+00   94.80
+VPI 6+00   94.20
+VPI 9+00   93.00
+PROF END
+
+// ----------------------------------------------------------
+// SECTION 5: Finished Grade (FG) Profile with Parabolic VCs
+// ----------------------------------------------------------
+// FG profile can have parabolic vertical curves at grade breaks.
+// VPI <Station> <Elevation> <CurveLength>
+//   CurveLength > 0 = parabolic VC centered on this VPI.
+
+PROF BEG MAIN_RD FG
+VPI 0+00   94.50   0
+// VPI at Sta 0: grade break, no VC
+VPI 3+00   94.00   200
+// VPI at Sta 3+00: 200 ft parabolic VC (BVC=2+00, EVC=4+00)
+VPI 6+00   93.20   100
+// VPI at Sta 6+00: 100 ft parabolic VC (BVC=5+50, EVC=6+50)
+VPI 9+00   92.50   0
+PROF END
+
+// ----------------------------------------------------------
+// SECTION 6: Cross Section Definition
+// ----------------------------------------------------------
+// XS BEG <AlignmentName>
+//   Open a cross-section session for the alignment.
+//
+// XS TEMPLATE WIDTH <LeftWidth> <RightWidth> SLOPE <LeftH:V> <RightH:V>
+//   Road template definition:
+//     Width   = half-width of paved surface from CL (ft)
+//     Slope   = foreslope ratio H:V (e.g. 2.0 = 2:1 = 50% slope)
+//
+// XS SHOT <Station> <Offset> <Elevation>
+//   Ground shot at a cross-section. Offset: + = right of CL, - = left
+//
+// XS COMPUTE <Interval>
+//   Generate all cross sections and print cut/fill report.
+//
+// XS END
+
+XS BEG MAIN_RD
+
+XS TEMPLATE WIDTH 12 12 SLOPE 2.0 2.0
+
+// Ground shots at Sta 0+00
+XS SHOT 0+00  -30   95.80
+XS SHOT 0+00  -15   95.40
+XS SHOT 0+00    0   95.00
+XS SHOT 0+00  +15   94.70
+XS SHOT 0+00  +30   94.20
+
+// Ground shots at Sta 3+00
+XS SHOT 3+00  -30   95.10
+XS SHOT 3+00  -15   94.90
+XS SHOT 3+00    0   94.80
+XS SHOT 3+00  +15   94.60
+XS SHOT 3+00  +30   94.30
+
+// Ground shots at Sta 6+00
+XS SHOT 6+00  -30   94.50
+XS SHOT 6+00  -15   94.30
+XS SHOT 6+00    0   94.20
+XS SHOT 6+00  +15   93.90
+XS SHOT 6+00  +30   93.70
+
+// Ground shots at Sta 9+00
+XS SHOT 9+00  -30   93.30
+XS SHOT 9+00  -15   93.20
+XS SHOT 9+00    0   93.00
+XS SHOT 9+00  +15   92.90
+XS SHOT 9+00  +30   92.60
+
+// Generate cross section data at 300 ft intervals and print cut/fill report
+XS COMPUTE 300
+
+XS END
+
+// ============================================================
+//  END OF TUTORIAL 05
+//  Key takeaways:
+//  - ALGN BEG/TANGENT/CURVE/END builds the horizontal alignment
+//  - STATION queries N/E coordinates at any station
+//  - PROF BEG/VPI/END defines EG (ground) or FG (design) profiles
+//  - VPI with CurveLength > 0 computes a parabolic vertical curve
+//  - XS TEMPLATE sets the road cross-section shape
+//  - XS SHOT captures existing ground across the section
+//  - XS COMPUTE generates cut/fill report with volumes
+// ============================================================

@@ -120,7 +120,8 @@ public static class AppInitializer
         registry.Register(new StakeoutCommand("BL"));
         registry.Register(new StakeoutCommand("CL"));
         registry.Register(new StakeoutCommand("HI"));
-        registry.Register(new StakeoutCommand("XS"));
+        registry.Register(new XsCommand());       // Cross-section definition
+        registry.Register(new StationCommand());    // Station query and table
         registry.Register(new ApCommand());
         registry.Register(new StakeoutCommand("LAT"));
 

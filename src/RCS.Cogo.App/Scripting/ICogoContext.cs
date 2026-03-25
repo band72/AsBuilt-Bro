@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RCS.Alignments.Core;
 using RCS.Cogo.App.State;
 using RCS.Cogo.Core.Primitives;
 
@@ -67,6 +68,15 @@ public interface ICogoContext
     void AddAlignment(RCS.Alignments.Core.Alignment alignment);
     RCS.Alignments.Core.Alignment? GetAlignment(string name);
     IEnumerable<RCS.Alignments.Core.Alignment> GetAllAlignments();
+
+    // --- Cross Section Session State ---
+    string?  XsAlignmentName  { get; set; }
+    List<(double Station, double Offset, double Elevation)>? XsGroundShots { get; set; }
+    double   XsTemplateWidthL { get; set; }
+    double   XsTemplateWidthR { get; set; }
+    double   XsForeslopeL     { get; set; }
+    double   XsForeslopeR     { get; set; }
+    List<CrossSection>? CrossSections { get; set; }
 
     /// <summary>
     /// Retrieves a figure by name.

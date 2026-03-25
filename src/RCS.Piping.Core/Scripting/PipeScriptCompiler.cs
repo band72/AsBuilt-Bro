@@ -105,6 +105,7 @@ public sealed class PipeScriptCompiler
                     cmd == "CALC" || cmd == "SD" || cmd == "VD" || cmd == "GRADE" ||
                     cmd == "SLOPE" || cmd == "STADIA" ||
                     cmd == "ALIGNMENT" || cmd == "PROFILE" || cmd == "VPI" ||
+                    cmd == "ALGN" || cmd == "PROF" || cmd == "STATION" || cmd == "XS" ||
                     cmd == "HALBL-ON" || cmd == "HALBL-OFF" ||
                     cmd == "HELP" || cmd == "START" || cmd == "POINT" || cmd == "OUTPUT" ||
                     cmd == "HISTORY" || cmd == "DITTO" || cmd == "SQ" || cmd == "PNT")

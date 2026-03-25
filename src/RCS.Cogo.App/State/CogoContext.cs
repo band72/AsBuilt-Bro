@@ -38,6 +38,16 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
     public bool ShowAlignmentLabels { get; set; } = true;
     public double MinimumBoundaryArea { get; set; } = 100.0;
 
+    // --- Cross Section Session State ---
+    public string? XsAlignmentName  { get; set; }
+    public List<(double Station, double Offset, double Elevation)>? XsGroundShots { get; set; }
+    public double XsTemplateWidthL  { get; set; } = 12.0;
+    public double XsTemplateWidthR  { get; set; } = 12.0;
+    public double XsForeslopeL      { get; set; } = 2.0;
+    public double XsForeslopeR      { get; set; } = 2.0;
+    public List<RCS.Alignments.Core.CrossSection>? CrossSections { get; set; }
+
+
     public CogoContext(Action<string> logger)
     {
         _logger = logger;
