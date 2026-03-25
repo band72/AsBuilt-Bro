@@ -4234,24 +4234,28 @@ public class ShellViewModel : ViewModelBase
                 
                 if (pts.Count > 1)
                 {
-                    // ── Crosslink detection (same dual criteria as load-time splitter) ──
+                    // ── Adaptive crosslink detection (5× median segment length) ──
                     var figIds = fig.PointIds;
-                    bool hasCrosslink = false;
+                    var rDists = new System.Collections.Generic.List<double>();
                     for (int i = 0; i < pts.Count - 1; i++)
                     {
-                        double dx = pts[i + 1].Easting  - pts[i].Easting;
+                        double dx = pts[i + 1].Easting - pts[i].Easting;
                         double dy = pts[i + 1].Northing - pts[i].Northing;
-                        double dist = Math.Sqrt(dx * dx + dy * dy);
+                        rDists.Add(Math.Sqrt(dx * dx + dy * dy));
+                    }
+                    var rSorted = new System.Collections.Generic.List<double>(rDists); rSorted.Sort();
+                    double rMedian = rSorted[rSorted.Count / 2];
+                    double rCutoff = Math.Max(rMedian * 5.0, 200.0);
 
-                        int numA = (i < figIds.Count && int.TryParse(figIds[i], out var na)) ? na : -1;
-                        int numB = (i + 1 < figIds.Count && int.TryParse(figIds[i + 1], out var nb)) ? nb : -1;
-                        int ptJump = (numA >= 0 && numB >= 0) ? Math.Abs(numB - numA) : 0;
-
-                        bool segIsCrosslink = (ptJump >= 200 && dist > 50.0) || dist > 5000.0;
-                        if (segIsCrosslink)
+                    bool hasCrosslink = false;
+                    for (int i = 0; i < rDists.Count; i++)
+                    {
+                        if (rDists[i] > rCutoff)
                         {
                             hasCrosslink = true;
-                            _context.Log($"[⚠ CROSSLINK] Figure '{fig.Name}': pt {figIds[i]}→{figIds[i+1]}, dist={dist:F0}ft, jump={ptJump}");
+                            string fromId = i < figIds.Count ? figIds[i] : "?";
+                            string toId   = (i + 1) < figIds.Count ? figIds[i + 1] : "?";
+                            _context.Log($"[⚠ CROSSLINK] Figure '{fig.Name}': pt {fromId}→{toId}, dist={rDists[i]:F0}ft (cutoff {rCutoff:F0}ft)");
                         }
                     }
                     fig.IsInvalidCrosslink = hasCrosslink;
@@ -4675,30 +4679,34 @@ public class ShellViewModel : ViewModelBase
                                 }
                                 if (anyMissing || orderedIds.Count < 2) continue;
 
-                                // ── Split at crosslink gaps ──────────────────────────────
-                                // Two triggers for a crosslink:
-                                //  1. Large point-number jump (≥200) AND physical distance > 50ft
-                                //     → catches 2001→204 type stitching errors
-                                //  2. Physical distance alone > 5000ft (regardless of point numbers)
+                                // ── Adaptive crosslink split ─────────────────────────────
+                                // Compute all segment distances, take the MEDIAN, then split
+                                // at any segment > 5× median. This catches 311→317 (short
+                                // numeric jump but physically an outlier) without needing
+                                // magic fixed thresholds.
+                                var segDists = new System.Collections.Generic.List<double>();
+                                for (int i = 0; i < orderedIds.Count - 1; i++)
+                                {
+                                    var pA = _context.GetPoint(orderedIds[i]);
+                                    var pB = _context.GetPoint(orderedIds[i + 1]);
+                                    segDists.Add((pA != null && pB != null)
+                                        ? Math.Sqrt(Math.Pow(pB.Easting - pA.Easting, 2) + Math.Pow(pB.Northing - pA.Northing, 2))
+                                        : 0);
+                                }
+                                var sorted = new System.Collections.Generic.List<double>(segDists);
+                                sorted.Sort();
+                                double medianDist = sorted[sorted.Count / 2];
+                                // Floor median at 10ft so single-point figures don't divide by ~0
+                                double crosslinkCutoff = Math.Max(medianDist * 5.0, 200.0);
+
                                 string baseName = dbFig.Name;
                                 int segIdx = 1;
                                 var currentSegIds = new System.Collections.Generic.List<string> { orderedIds[0] };
 
                                 for (int i = 0; i < orderedIds.Count - 1; i++)
                                 {
-                                    var ptA = _context.GetPoint(orderedIds[i]);
-                                    var ptB = _context.GetPoint(orderedIds[i + 1]);
-                                    double dist = (ptA != null && ptB != null)
-                                        ? Math.Sqrt(Math.Pow(ptB.Easting - ptA.Easting, 2) + Math.Pow(ptB.Northing - ptA.Northing, 2))
-                                        : 0;
-
-                                    // Point-number jump heuristic
-                                    int numA = int.TryParse(orderedIds[i], out var na) ? na : -1;
-                                    int numB = int.TryParse(orderedIds[i + 1], out var nb) ? nb : -1;
-                                    int ptJump = (numA >= 0 && numB >= 0) ? Math.Abs(numB - numA) : 0;
-
-                                    bool isCrosslink = (ptJump >= 200 && dist > 50.0)   // large numeric jump + physically apart
-                                                    || dist > 5000.0;                    // or just absurdly far
+                                    double dist = segDists[i];
+                                    bool isCrosslink = dist > crosslinkCutoff;
 
                                     if (isCrosslink)
                                     {
@@ -4709,7 +4717,7 @@ public class ShellViewModel : ViewModelBase
                                             var seg = new RCS.Cogo.App.State.Figure(segName);
                                             foreach (var id in currentSegIds) seg.PointIds.Add(id);
                                             _context.AddFigure(seg);
-                                            _context.Log($"[LOAD] Split '{baseName}' → '{segName}' ({currentSegIds.Count} pts). Gap: {dist:F0} ft, pt jump: {ptJump}.");
+                                            _context.Log($"[LOAD] Split '{baseName}' → '{segName}' ({currentSegIds.Count} pts). Outlier seg: {dist:F0} ft (cutoff {crosslinkCutoff:F0} ft).");
                                         }
                                         segIdx++;
                                         currentSegIds = new System.Collections.Generic.List<string>();
