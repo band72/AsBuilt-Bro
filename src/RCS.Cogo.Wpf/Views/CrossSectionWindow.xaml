@@ -1,0 +1,222 @@
+<Window x:Class="RCS.Cogo.Wpf.Views.CrossSectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RCS.Cogo.Wpf.ViewModels"
+        Title="Cross Section Viewer"
+        Height="600" Width="980" MinWidth="700" MinHeight="450"
+        WindowStartupLocation="CenterOwner"
+        Background="#141820"
+        Foreground="#E8EAF0"
+        SizeChanged="OnWindowSizeChanged">
+
+    <Window.Resources>
+        <!-- Nav button style -->
+        <Style x:Key="NavBtn" TargetType="Button">
+            <Setter Property="Background"   Value="#252D3C"/>
+            <Setter Property="Foreground"   Value="#B0C4DE"/>
+            <Setter Property="BorderBrush"  Value="#3A4A60"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding"      Value="14,6"/>
+            <Setter Property="FontSize"     Value="14"/>
+            <Setter Property="Cursor"       Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2E3D55"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.3"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ExportBtn" TargetType="Button" BasedOn="{StaticResource NavBtn}">
+            <Setter Property="Background"  Value="#1A3048"/>
+            <Setter Property="Foreground"  Value="#56CCF2"/>
+            <Setter Property="FontSize"    Value="11"/>
+            <Setter Property="Padding"     Value="10,5"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Toolbar -->
+            <RowDefinition Height="*"/>     <!-- Canvas -->
+            <RowDefinition Height="Auto"/>  <!-- Legend -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════ TOOLBAR ═══════════ -->
+        <Border Grid.Row="0" Background="#1C2430" Padding="12,8" BorderThickness="0,0,0,1" BorderBrush="#2C3E54">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Navigation: Prev / Station selector / Next -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="BtnPrev" Content="◀" Style="{StaticResource NavBtn}"
+                            Click="OnPrev" IsEnabled="{Binding CanPrev}" ToolTip="Previous Section"/>
+                    <StackPanel Margin="10,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding SectionCountLabel}" FontSize="10"
+                                   Foreground="#6A7F95" HorizontalAlignment="Center"/>
+                        <ComboBox x:Name="StationCombo"
+                                  ItemsSource="{Binding AllStationLabels}"
+                                  SelectedIndex="{Binding SelectedStationIndex, Mode=TwoWay}"
+                                  Width="110" FontSize="13" FontWeight="SemiBold"
+                                  Background="#252D3C" Foreground="#E8EAF0"
+                                  BorderBrush="#3A4A60"/>
+                    </StackPanel>
+                    <Button x:Name="BtnNext" Content="▶" Style="{StaticResource NavBtn}"
+                            Click="OnNext" IsEnabled="{Binding CanNext}" ToolTip="Next Section"/>
+                </StackPanel>
+
+                <!-- Center: CUT/FILL status badge -->
+                <Border Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                        CornerRadius="6" Padding="18,6"
+                        Background="{Binding CutFillBrush, Converter={x:Static vm:BrushAlphaConverter.Instance}}">
+                    <TextBlock Text="{Binding CutFillLabel}"
+                               FontSize="15" FontWeight="Bold"
+                               Foreground="{Binding CutFillBrush}"
+                               HorizontalAlignment="Center"/>
+                </Border>
+
+                <!-- Right: Export buttons -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="Export CSV"  Style="{StaticResource ExportBtn}" Click="OnExportCsv"  Margin="0,0,8,0"/>
+                    <Button Content="Export DXF"  Style="{StaticResource ExportBtn}" Click="OnExportDxf"  Margin="0,0,8,0"/>
+                    <Button Content="All Sheets"  Style="{StaticResource ExportBtn}" Click="OnExportAll"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════ CANVAS ═══════════ -->
+        <Border Grid.Row="1" Background="#0E1420" Margin="8,8,8,0" CornerRadius="6" ClipToBounds="True">
+            <Canvas x:Name="XsCanvas" SizeChanged="OnCanvasSizeChanged">
+
+                <!-- Fill polygons (cut = red, fill = green) -->
+                <ItemsControl ItemsSource="{Binding FillAreas}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate><Canvas/></ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Polygon Points="{Binding Points}"
+                                     Fill="{Binding Fill}"
+                                     Opacity="{Binding Opacity}"
+                                     Stroke="Transparent"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Grid + EG + FG polylines -->
+                <ItemsControl ItemsSource="{Binding Polylines}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate><Canvas/></ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Polyline Points="{Binding Points}"
+                                      Stroke="{Binding Stroke}"
+                                      StrokeThickness="{Binding Thickness}"
+                                      StrokeDashArray="{Binding DashArray}"
+                                      StrokeLineJoin="Round"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Tick marks (axis ticks, CL, edge lines) -->
+                <ItemsControl ItemsSource="{Binding Ticks}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate><Canvas/></ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Line X1="{Binding X1}" Y1="{Binding Y1}"
+                                  X2="{Binding X2}" Y2="{Binding Y2}"
+                                  Stroke="{Binding Stroke}" StrokeThickness="1"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Text labels -->
+                <ItemsControl ItemsSource="{Binding Labels}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate><Canvas/></ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Text}"
+                                       Foreground="{Binding Color}"
+                                       FontSize="{Binding FontSize}"
+                                       Canvas.Left="{Binding X}"
+                                       Canvas.Top="{Binding Y}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Bold}" Value="True">
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="{Binding RotationAngle}"/>
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </Canvas>
+        </Border>
+
+        <!-- ═══════════ LEGEND ═══════════ -->
+        <Border Grid.Row="2" Background="#1C2430" Padding="12,6,12,8"
+                BorderThickness="0,1,0,0" BorderBrush="#2C3E54">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,24,0">
+                    <Rectangle Width="28" Height="3" Fill="#4EA0F0" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Existing Ground (EG)" Foreground="#8A9BB0" FontSize="10" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,24,0">
+                    <Rectangle Width="28" Height="3" Fill="#FFD232" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Finished Grade (FG)" Foreground="#8A9BB0" FontSize="10" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,24,0">
+                    <Rectangle Width="16" Height="12" Fill="#DC3C3C" Opacity="0.5" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Cut Area" Foreground="#8A9BB0" FontSize="10" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,24,0">
+                    <Rectangle Width="16" Height="12" Fill="#3CC850" Opacity="0.45" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Fill Area" Foreground="#8A9BB0" FontSize="10" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="2" Height="14" Fill="#FFFF00" Opacity="0.6" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Centerline" Foreground="#8A9BB0" FontSize="10" VerticalAlignment="Center"/>
+                </StackPanel>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

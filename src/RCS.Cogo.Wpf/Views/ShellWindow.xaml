@@ -150,7 +150,9 @@
             <MenuItem Header="_Figures" Command="{Binding OpenFiguresWindowCommand}"/>
             <MenuItem Header="_Alignments">
                 <MenuItem Header="Edit Alignment..." Command="{Binding OpenAlignmentWindowCommand}"/>
+                <MenuItem Header="Cross Sections..." Command="{Binding OpenCrossSectionWindowCommand}"/>
                 <Separator/>
+
                 <MenuItem Header="Save Horizontal Alignment" Command="{Binding SaveHorizontalAlignmentCommand}"/>
                 <MenuItem Header="Save Vertical Alignment" Command="{Binding SaveVerticalAlignmentCommand}"/>
                 <Separator/>

@@ -790,6 +790,8 @@ public class ShellViewModel : ViewModelBase
         OpenAlignmentSettingsCommand = new RelayCommand(_ => OpenAlignmentSettings());
         OpenFiguresWindowCommand = new RelayCommand(_ => OpenFiguresWindow());
         OpenPipeCharacteristicsCommand = new RelayCommand(_ => OpenPipeCharacteristics());
+        OpenCrossSectionWindowCommand = new RelayCommand(_ => OpenCrossSectionWindow());
+
         // Load default/empty project
         _ = LoadInstalledAssetsAsync();
     }
@@ -959,6 +961,8 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand OpenAlignmentSettingsCommand { get; }
     public System.Windows.Input.ICommand OpenFiguresWindowCommand { get; }
     public System.Windows.Input.ICommand OpenPipeCharacteristicsCommand { get; }
+    public System.Windows.Input.ICommand OpenCrossSectionWindowCommand { get; }
+
 
     public System.Windows.Input.ICommand CloseCommand { get; }
     public System.Windows.Input.ICommand AboutCommand { get; }
@@ -1677,6 +1681,31 @@ public class ShellViewModel : ViewModelBase
     private void OpenAlignmentWindow()
     {
         var win = new RCS.Cogo.Wpf.Views.AlignmentWindow(this);
+        win.Show();
+    }
+
+    private void OpenCrossSectionWindow()
+    {
+        var sections = _context.CrossSections;
+        if (sections == null || sections.Count == 0)
+        {
+            System.Windows.MessageBox.Show(
+                "No cross sections have been computed yet.\n\n" +
+                "Run a COGO script containing:\n" +
+                "  XS BEG <AlignmentName>\n" +
+                "  XS TEMPLATE WIDTH <L> <R> SLOPE <L> <R>\n" +
+                "  XS SHOT <Station> <Offset> <Elevation>  (repeat)\n" +
+                "  XS COMPUTE <Interval>\n" +
+                "  XS END",
+                "No Cross Sections",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Information);
+            return;
+        }
+        var win = new RCS.Cogo.Wpf.Views.CrossSectionWindow(sections)
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
         win.Show();
     }
 
