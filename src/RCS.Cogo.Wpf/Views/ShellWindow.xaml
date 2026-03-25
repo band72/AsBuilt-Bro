@@ -327,10 +327,11 @@
                              <Button Content="Refresh" Command="{Binding RefreshPointsCommand}" Padding="10,5" Background="#1E1E1E" Foreground="White" BorderBrush="#3E3E42" BorderThickness="1" ToolTip="Validate points against local codes"/>
                         </StackPanel>
 
-                        <DataGrid Grid.Row="1" ItemsSource="{Binding Points}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding PointsView}" AutoGenerateColumns="False"
+                                  CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="True"
                                   BorderThickness="1" BorderBrush="#3E3E42">
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="Point Number" SortMemberPath="Id" Width="80" IsReadOnly="True">
+                                <DataGridTemplateColumn Header="Point Number" SortMemberPath="NumericId" Width="80" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Padding="5">

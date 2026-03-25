@@ -26,7 +26,10 @@ public class PointViewModel : ViewModelBase
 {
     private string _id;
     public string Id { get => _id; set => SetField(ref _id, value); }
-    
+
+    /// <summary>Numeric parse of Id for correct integer DataGrid sort order (1,2,10 not 1,10,2).</summary>
+    public int NumericId => int.TryParse(_id, out var n) ? n : int.MaxValue;
+
     private double _northing;
     public double Northing { get => _northing; set => SetField(ref _northing, value); }
     
@@ -190,6 +193,13 @@ public class ShellViewModel : ViewModelBase
     }
 
     public ObservableCollection<PointViewModel> Points { get; } = new();
+
+    /// <summary>
+    /// CollectionView wrapper — lets the DataGrid sort Points by any column
+    /// (including Point Number / Id) simply by clicking the column header.
+    /// </summary>
+    public System.ComponentModel.ICollectionView PointsView { get; }
+
     public ObservableCollection<FigureViewModel> Figures { get; } = new();
     public ObservableCollection<StructureViewModel> StructureGraphics { get; } = new();
     public ObservableCollection<StructureViewModel> HighlightedAssets { get; } = new();
@@ -509,6 +519,13 @@ public class ShellViewModel : ViewModelBase
     {
         var registry = AppInitializer.InitializeRegistry();
         
+        // ── Points CollectionView (enables DataGrid column-header sorting) ──
+        PointsView = System.Windows.Data.CollectionViewSource.GetDefaultView(Points);
+        PointsView.SortDescriptions.Add(
+            new System.ComponentModel.SortDescription(
+                nameof(PointViewModel.NumericId),
+                System.ComponentModel.ListSortDirection.Ascending));
+
         var staticCrsRegistry = new StaticCrsRegistry();
         var projNetTransform = new ProjNetCoordinateTransformService(staticCrsRegistry);
         CoordinateTransformVm = new GeoWpf.CoordinateTransformViewModel(projNetTransform);
