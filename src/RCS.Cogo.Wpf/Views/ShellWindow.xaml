@@ -1084,22 +1084,48 @@
                                                      ScaleY="{Binding DataContext.PointMarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
                                  </Canvas.RenderTransform>
 
+                                 <!-- ── Selection highlight ring — shown when IsSelected = True ── -->
+                                 <Ellipse Width="28" Height="28"
+                                          Canvas.Left="-14" Canvas.Top="-14"
+                                          Stroke="#FFD700" StrokeThickness="2.5"
+                                          Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                          IsHitTestVisible="False">
+                                     <Ellipse.Effect>
+                                         <BlurEffect Radius="5"/>
+                                     </Ellipse.Effect>
+                                 </Ellipse>
+                                 <Ellipse Width="20" Height="20"
+                                          Canvas.Left="-10" Canvas.Top="-10"
+                                          Fill="#FFD700" Opacity="0.35"
+                                          Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                          IsHitTestVisible="False"/>
+
                                  <!-- The Green X -->
                                  <Line X1="-5" Y1="-5" X2="5" Y2="5" Stroke="#00FF00" StrokeThickness="1.5"
                                        Visibility="{Binding DataContext.ShowPointMarkers, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                  <Line X1="5" Y1="-5" X2="-5" Y2="5" Stroke="#00FF00" StrokeThickness="1.5"
                                        Visibility="{Binding DataContext.ShowPointMarkers, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                                 <!-- The Point Number Label -->
-                                 <!-- Placed up and to the right, flipped upright so it doesn't render upside down in mathematical space -->
-                                 <TextBlock Text="{Binding Id}" Foreground="#00FF00" 
-                                            FontSize="{Binding DataContext.PointNumberSize, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                 <!-- The Point Number Label — turns gold when selected -->
+                                 <TextBlock Text="{Binding Id}"
+                                            FontSize="{Binding DataContext.PointNumberSize, RelativeSource={RelativeSource AncestorType=Window}}"
                                             FontWeight="Bold"
                                             Visibility="{Binding DataContext.ShowPointNumbers, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"
                                             Canvas.Left="8" Canvas.Top="22">
                                       <TextBlock.RenderTransform>
                                           <ScaleTransform ScaleY="-1"/>
                                       </TextBlock.RenderTransform>
+                                      <TextBlock.Style>
+                                          <Style TargetType="TextBlock">
+                                              <Setter Property="Foreground" Value="#00FF00"/>
+                                              <Style.Triggers>
+                                                  <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                      <Setter Property="Foreground" Value="#FFD700"/>
+                                                      <Setter Property="FontSize"   Value="16"/>
+                                                  </DataTrigger>
+                                              </Style.Triggers>
+                                          </Style>
+                                      </TextBlock.Style>
                                  </TextBlock>
                             </Canvas>
                         </DataTemplate>

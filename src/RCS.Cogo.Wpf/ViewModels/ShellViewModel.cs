@@ -30,6 +30,10 @@ public class PointViewModel : ViewModelBase
     /// <summary>Numeric parse of Id for correct integer DataGrid sort order (1,2,10 not 1,10,2).</summary>
     public int NumericId => int.TryParse(_id, out var n) ? n : int.MaxValue;
 
+    private bool _isSelected;
+    /// <summary>True when this point is the currently highlighted/selected point in the viewport.</summary>
+    public bool IsSelected { get => _isSelected; set => SetField(ref _isSelected, value); }
+
     private double _northing;
     public double Northing { get => _northing; set => SetField(ref _northing, value); }
     
@@ -696,8 +700,15 @@ public class ShellViewModel : ViewModelBase
         ZoomOutCommand = new RelayCommand(_ => ZoomOutRequested?.Invoke(this, EventArgs.Empty));
         ZoomExtentsCommand = new RelayCommand(_ => ZoomExtentsRequested?.Invoke(this, EventArgs.Empty));
         ZoomWindowCommand = new RelayCommand(_ => ZoomWindowRequested?.Invoke(this, EventArgs.Empty));
-        ZoomToImportedPointCommand = new RelayCommand(obj => {
-            if (obj is PointViewModel pt) {
+        ZoomToImportedPointCommand = new RelayCommand(obj =>
+        {
+            if (obj is PointViewModel pt)
+            {
+                // Clear previous selection
+                foreach (var p in Points) p.IsSelected = false;
+                // Highlight the clicked point
+                pt.IsSelected = true;
+
                 var zoomTarget = new System.Windows.Point(pt.Easting, pt.Northing);
                 ZoomToPointRequested?.Invoke(this, zoomTarget);
             }
