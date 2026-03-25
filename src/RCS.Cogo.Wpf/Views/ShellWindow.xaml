@@ -129,6 +129,13 @@
                     <MenuItem Header="Import DXF Linework..." Command="{Binding ImportDxfCommand}"/>
                 </MenuItem>
                 <MenuItem Header="_Export">
+                    <!-- ═══ JEA As-Built Deliverable ═════════════════════ -->
+                    <MenuItem Header="🏛 Export JEA As-Built Template (.xlsx)..."
+                              Command="{Binding ExportJeaTemplateCommand}"
+                              FontWeight="SemiBold" Foreground="#56CCF2"
+                              ToolTip="Fill the JEA As-Built Template with all project utility data and save as .xlsx"/>
+                    <Separator/>
+                    <!-- ═════════════════════════════════════════════════== -->
                     <MenuItem Header="Export Output Log to TXT..." Command="{Binding ExportOutputLogCommand}"/>
                     <Separator/>
                     <MenuItem Header="Export Script..." Command="{Binding ExportScriptCommand}"/>
@@ -146,6 +153,7 @@
                     <MenuItem Header="Export EPANET INP..." Command="{Binding ExportEpanetCommand}"/>
                     <MenuItem Header="Export Appurtenance Schedule..." Command="{Binding ExportScheduleCommand}"/>
                 </MenuItem>
+
             </MenuItem>
             <MenuItem Header="_Figures" Command="{Binding OpenFiguresWindowCommand}"/>
             <MenuItem Header="_Alignments">

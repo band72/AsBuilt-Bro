@@ -744,8 +744,9 @@ public class ShellViewModel : ViewModelBase
         CompactDbCommand = new RelayCommand(_ => CompactDatabase());
         VerifyDbCommand = new RelayCommand(_ => VerifyDatabase());
         RepairDbCommand = new RelayCommand(_ => RepairDatabase());
-        ExportDbCsvCommand = new RelayCommand(_ => ExportDatabaseCsv());
-        ExportInstalledAssetsCommand = new RelayCommand(_ => ExportInstalledAssets());
+        ExportDbCsvCommand               = new RelayCommand(_ => ExportDatabaseCsv());
+        ExportInstalledAssetsCommand     = new RelayCommand(_ => ExportInstalledAssets());
+        ExportJeaTemplateCommand         = new RelayCommand(_ => ExportJeaTemplate());
 
         CloseCommand = new RelayCommand(_ => System.Windows.Application.Current.Shutdown());
 
@@ -4778,6 +4779,93 @@ public class ShellViewModel : ViewModelBase
                  _context.Log($"[AUDIT] Export Error: {ex.Message}");
              }
          }
+    }
+
+    // ── JEA As-Built Template Export ─────────────────────────────────────
+    public System.Windows.Input.ICommand ExportJeaTemplateCommand { get; }
+
+    private void ExportJeaTemplate()
+    {
+        if (_currentProject == null)
+        {
+            System.Windows.MessageBox.Show("Please open a project first.",
+                "No Project", System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
+            return;
+        }
+
+        // Step 1: locate the blank JEA template
+        var templateDlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Title  = "Select Blank JEA As-Built Template (.xlsx)",
+            Filter = "Excel Workbook|*.xlsx",
+            FileName = "JEA As Built Template 2024.xlsx"
+        };
+        if (templateDlg.ShowDialog() != true) return;
+
+        // Step 2: choose output location (default = project folder, named after project)
+        var projectId   = _currentProject.Id.ToString();
+        var projectName = string.IsNullOrWhiteSpace(_currentProject.ProjectName)
+            ? "JEA_AsBuilt" : _currentProject.ProjectName;
+        var safeName = string.Join("_",
+            projectName.Split(System.IO.Path.GetInvalidFileNameChars()));
+
+        var saveDlg = new Microsoft.Win32.SaveFileDialog
+        {
+            Title    = "Save Filled JEA Template As",
+            Filter   = "Excel Workbook|*.xlsx",
+            FileName = $"{safeName}_AsBuilt_{DateTime.Now:yyyyMMdd}.xlsx",
+            InitialDirectory = string.IsNullOrWhiteSpace(_currentProject.SaveLocation)
+                ? System.IO.Path.GetDirectoryName(templateDlg.FileName) ?? ""
+                : _currentProject.SaveLocation
+        };
+        if (saveDlg.ShowDialog() != true) return;
+
+        // Step 3: run export
+        try
+        {
+            _context.Log("[JEA] Starting JEA As-Built export...");
+            var result = RCS.Cogo.Wpf.Services.JeaExportService.Export(
+                templateDlg.FileName,
+                saveDlg.FileName,
+                projectId,
+                projectName);
+
+            if (result.Success)
+            {
+                _context.Log(result.Summary());
+                _context.Log($"[JEA] Export complete → {saveDlg.FileName}");
+
+                var msg = $"JEA As-Built export complete!\n\n" +
+                          $"Total rows written: {result.TotalRows}\n" +
+                          $"Saved to:\n{saveDlg.FileName}\n\n" +
+                          $"Open the file now?";
+
+                var open = System.Windows.MessageBox.Show(msg, "Export Complete",
+                    System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Information);
+
+                if (open == System.Windows.MessageBoxResult.Yes)
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName  = saveDlg.FileName,
+                        UseShellExecute = true
+                    });
+            }
+            else
+            {
+                _context.Log($"[JEA] Export failed: {result.ErrorMessage}");
+                System.Windows.MessageBox.Show(
+                    $"Export failed:\n{result.ErrorMessage}", "Export Error",
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            _context.Log($"[JEA] Export exception: {ex.Message}");
+            System.Windows.MessageBox.Show(
+                $"Export failed:\n{ex.Message}", "Export Error",
+                System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+        }
     }
 
     private void CloseProject()
