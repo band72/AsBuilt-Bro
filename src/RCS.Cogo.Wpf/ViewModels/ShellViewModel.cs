@@ -378,7 +378,30 @@ public class ShellViewModel : ViewModelBase
             }
         }
     }
-    
+
+    // ── JEA Settings ──────────────────────────────────────────────────────
+    private string _jeaTemplatePath = string.Empty;
+    public string JeaTemplatePath
+    {
+        get => _jeaTemplatePath;
+        set { _jeaTemplatePath = value ?? string.Empty; OnPropertyChanged(); }
+    }
+
+    private string _jeaStatePlaneZone = "Florida East (EPSG:2236)";
+    public string JeaStatePlaneZone
+    {
+        get => _jeaStatePlaneZone;
+        set { _jeaStatePlaneZone = value ?? string.Empty; OnPropertyChanged(); }
+    }
+
+    public System.Collections.ObjectModel.ObservableCollection<string> AvailableStatePlaneZones { get; } =
+        new(new[]
+        {
+            "Florida East (EPSG:2236)",
+            "Florida West (EPSG:2237)",
+            "Florida North (EPSG:2238)",
+        });
+
     private double _pointNumberSize = 24.0;
     public double PointNumberSize
     {
@@ -634,6 +657,9 @@ public class ShellViewModel : ViewModelBase
             if (double.TryParse(RCS.Services.GlobalSettingsService.GetSetting("FigureLineWidth", "3.0"), out double flw)) FigureLineWidth = flw;
             if (double.TryParse(RCS.Services.GlobalSettingsService.GetSetting("MapCheckClosureTolerance", "0.01"), out double tol)) MapCheckClosureTolerance = tol;
             if (double.TryParse(RCS.Services.GlobalSettingsService.GetSetting("MinimumBoundaryArea", "100.0"), out double mba)) MinimumBoundaryArea = mba;
+            // ── JEA settings ────────────────────────────────────────────────
+            JeaTemplatePath   = RCS.Services.GlobalSettingsService.GetSetting("JeaTemplatePath",   string.Empty);
+            JeaStatePlaneZone = RCS.Services.GlobalSettingsService.GetSetting("JeaStatePlaneZone", "Florida East (EPSG:2236)");
         }
         catch (Exception ex)
         {
@@ -748,6 +774,7 @@ public class ShellViewModel : ViewModelBase
         ExportInstalledAssetsCommand     = new RelayCommand(_ => ExportInstalledAssets());
         ExportJeaTemplateCommand         = new RelayCommand(_ => ExportJeaTemplate());
         ValidateJeaCommand               = new RelayCommand(_ => OpenJeaValidation());
+        ImportJeaTemplateCommand         = new RelayCommand(_ => ImportJeaFromTemplate());
 
         CloseCommand = new RelayCommand(_ => System.Windows.Application.Current.Shutdown());
 
@@ -4825,16 +4852,25 @@ public class ShellViewModel : ViewModelBase
     private void RunJeaExport()
     {
         if (_currentProject == null) return;
-        // Step 1: locate the blank JEA template
-        var templateDlg = new Microsoft.Win32.OpenFileDialog
-        {
-            Title  = "Select Blank JEA As-Built Template (.xlsx)",
-            Filter = "Excel Workbook|*.xlsx",
-            FileName = "JEA As Built Template 2024.xlsx"
-        };
-        if (templateDlg.ShowDialog() != true) return;
 
-        // Step 2: choose output location (default = project folder, named after project)
+        // Use saved template path if available, otherwise browse
+        string templatePath = JeaTemplatePath;
+        if (string.IsNullOrWhiteSpace(templatePath) || !System.IO.File.Exists(templatePath))
+        {
+            var templateDlg = new Microsoft.Win32.OpenFileDialog
+            {
+                Title    = "Select Blank JEA As-Built Template (.xlsx)",
+                Filter   = "Excel Workbook|*.xlsx",
+            FileName = "JEA As Built Template 2024.xlsx"
+            };
+            if (templateDlg.ShowDialog() != true) return;
+            templatePath = templateDlg.FileName;
+            // Auto-save so user won't be asked again
+            JeaTemplatePath = templatePath;
+            RCS.Services.GlobalSettingsService.SaveSetting("JeaTemplatePath", templatePath);
+        }
+
+        // Step 2: choose output location
         var projectId   = _currentProject.Id.ToString();
         var projectName = string.IsNullOrWhiteSpace(_currentProject.ProjectName)
             ? "JEA_AsBuilt" : _currentProject.ProjectName;
@@ -4847,7 +4883,7 @@ public class ShellViewModel : ViewModelBase
             Filter   = "Excel Workbook|*.xlsx",
             FileName = $"{safeName}_AsBuilt_{DateTime.Now:yyyyMMdd}.xlsx",
             InitialDirectory = string.IsNullOrWhiteSpace(_currentProject.SaveLocation)
-                ? System.IO.Path.GetDirectoryName(templateDlg.FileName) ?? ""
+                ? System.IO.Path.GetDirectoryName(templatePath) ?? ""
                 : _currentProject.SaveLocation
         };
         if (saveDlg.ShowDialog() != true) return;
@@ -4857,7 +4893,7 @@ public class ShellViewModel : ViewModelBase
         {
             _context.Log("[JEA] Starting JEA As-Built export...");
             var result = RCS.Cogo.Wpf.Services.JeaExportService.Export(
-                templateDlg.FileName,
+                templatePath,
                 saveDlg.FileName,
                 projectId,
                 projectName);
@@ -4895,6 +4931,73 @@ public class ShellViewModel : ViewModelBase
             _context.Log($"[JEA] Export exception: {ex.Message}");
             System.Windows.MessageBox.Show(
                 $"Export failed:\n{ex.Message}", "Export Error",
+                System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+        }
+    }
+
+    // ── JEA Excel Import ──────────────────────────────────────────────────────
+    public System.Windows.Input.ICommand ImportJeaTemplateCommand { get; }
+
+    private void ImportJeaFromTemplate()
+    {
+        if (_currentProject == null)
+        {
+            System.Windows.MessageBox.Show("Please open a project first.",
+                "No Project", System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
+            return;
+        }
+
+        var dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Title  = "Select Filled JEA As-Built Excel File to Import",
+            Filter = "Excel Workbook|*.xlsx",
+        };
+        if (dlg.ShowDialog() != true) return;
+
+        try
+        {
+            _context.Log($"[JEA] Importing from: {dlg.FileName}");
+            var result = RCS.Cogo.Wpf.Services.JeaImportService.Import(
+                dlg.FileName, _currentProject.Id.ToString());
+
+            if (result.Success)
+            {
+                _context.Log("╔══════════════════════════════════════════════");
+                _context.Log("║  JEA Import Summary");
+                _context.Log("╠══════════════════════════════════════════════");
+                foreach (var s in result.Sheets.Where(sh => sh.Imported > 0 || sh.Warnings.Count > 0))
+                {
+                    _context.Log($"║  {s.SheetName,-38}: {s.Imported,4} rows  ({s.Skipped} skipped)");
+                    foreach (var w in s.Warnings.Take(5))
+                        _context.Log($"║     ⚠ {w}");
+                }
+                _context.Log("╠══════════════════════════════════════════════");
+                _context.Log($"║  TOTAL IMPORTED : {result.TotalImported,4}");
+                _context.Log($"║  TOTAL SKIPPED  : {result.TotalSkipped,4}");
+                _context.Log("╚══════════════════════════════════════════════");
+
+                RefreshData(true);
+
+                System.Windows.MessageBox.Show(
+                    $"Import complete!\n\n{result.Summary()}\n\nData is now available in the project.",
+                    "JEA Import Complete",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Information);
+            }
+            else
+            {
+                _context.Log($"[JEA] Import failed: {result.ErrorMessage}");
+                System.Windows.MessageBox.Show(
+                    $"Import failed:\n{result.ErrorMessage}", "Import Error",
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            _context.Log($"[JEA] Import exception: {ex.Message}");
+            System.Windows.MessageBox.Show(
+                $"Import failed:\n{ex.Message}", "Import Error",
                 System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
         }
     }

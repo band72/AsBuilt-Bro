@@ -127,6 +127,11 @@
                 <MenuItem Header="_Import">
                     <MenuItem Header="Process Batch Script..." Command="{Binding ImportBatchCommand}"/>
                     <MenuItem Header="Import DXF Linework..." Command="{Binding ImportDxfCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="📥 Import JEA As-Built Template (.xlsx)..."
+                              Command="{Binding ImportJeaTemplateCommand}"
+                              FontWeight="SemiBold" Foreground="#44E08B"
+                              ToolTip="Read a filled JEA As-Built Excel file and import records into the current project"/>
                 </MenuItem>
                 <MenuItem Header="_Export">
                     <!-- ═══ JEA As-Built Deliverable ═════════════════════ -->

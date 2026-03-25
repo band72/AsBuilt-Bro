@@ -10,6 +10,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -34,8 +35,37 @@
         <!-- Log Order -->
         <CheckBox Grid.Row="3" IsChecked="{Binding IsOutputLogDescending}" Content="Output Log Descending" Foreground="White" Background="#1E1E1E" ToolTip="Tick to show newest logs at the top (Descending)" Margin="0,0,0,15"/>
 
+        <!-- JEA Settings -->
+        <GroupBox Grid.Row="4" Header="JEA As-Built Settings" Foreground="#56CCF2"
+                  BorderBrush="#2C4060" Margin="0,0,0,15">
+            <StackPanel Margin="10">
+                <!-- Template Path -->
+                <TextBlock Text="Blank JEA Template Path:" Foreground="#AABBCC" Margin="0,0,0,4" FontSize="11"/>
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="JeaTemplatePathBox"
+                             Text="{Binding JeaTemplatePath, UpdateSourceTrigger=PropertyChanged}"
+                             Background="#252932" Foreground="White" BorderBrush="#2C4060"
+                             Padding="4,3" VerticalContentAlignment="Center"
+                             ToolTip="Path to the blank JEA As Built Template 2024.xlsx"/>
+                    <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0"
+                            Background="#1A3048" Foreground="#56CCF2" BorderBrush="#2C4060"
+                            Padding="10,3" Click="BrowseJeaTemplate_Click"/>
+                </Grid>
+                <!-- StatePlane Zone -->
+                <TextBlock Text="State Plane Zone (for Lat/Lon auto-compute):" Foreground="#AABBCC" Margin="0,0,0,4" FontSize="11"/>
+                <ComboBox x:Name="StatePlaneZoneBox"
+                          ItemsSource="{Binding AvailableStatePlaneZones}"
+                          SelectedItem="{Binding JeaStatePlaneZone}"
+                          Background="#252932" Foreground="White" BorderBrush="#2C4060"/>
+            </StackPanel>
+        </GroupBox>
+
         <!-- Cogo Marker GroupBox -->
-        <GroupBox Grid.Row="4" Header="Cogo Marker" Foreground="White" BorderBrush="#555555" Margin="0,0,0,15">
+        <GroupBox Grid.Row="5" Header="Cogo Marker" Foreground="White" BorderBrush="#555555" Margin="0,0,0,15">
             <StackPanel Margin="10">
                 <Grid Margin="0,5">
                     <Grid.ColumnDefinitions>
@@ -81,7 +111,7 @@
         </GroupBox>
 
         <!-- Save button is basically Close -->
-        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
             <Button Content="Close" Click="Close_Click" Padding="20,5" Background="#2D2D30" Foreground="White" BorderBrush="#3E3E42" BorderThickness="1"/>
         </StackPanel>
     </Grid>
