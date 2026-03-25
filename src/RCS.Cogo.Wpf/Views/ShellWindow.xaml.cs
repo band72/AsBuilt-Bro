@@ -60,7 +60,7 @@ public partial class ShellWindow : Window
 
     private void ZoomToPoint(Point target)
     {
-        double targetScale = 1.5;
+        double targetScale = 10.0;
         
         var matrix = new Matrix();
         matrix.M11 = targetScale;
