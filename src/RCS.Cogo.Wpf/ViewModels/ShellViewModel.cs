@@ -4649,18 +4649,17 @@ public class ShellViewModel : ViewModelBase
                             foreach (var dbFig in dbFigures)
                             {
                                 if (dbFig.Vertices == null || dbFig.Vertices.Count == 0) continue;
-                                var memFig = new RCS.Cogo.App.State.Figure(dbFig.Name);
-                                
+
+                                // Build the ordered point-id list first
+                                var orderedIds = new System.Collections.Generic.List<string>();
                                 bool anyMissing = false;
                                 foreach (var v in dbFig.Vertices.OrderBy(v => v.OrderIndex))
                                 {
-                                    // PointId = "{projectId}_{rawPointNumber}" — strip prefix
                                     var rawPid = v.PointId;
                                     var prefix = projIdStr + "_";
                                     if (!string.IsNullOrEmpty(prefix) && rawPid.StartsWith(prefix))
                                         rawPid = rawPid.Substring(prefix.Length);
 
-                                    // LiteDB points are authoritative; only fall back to SQLite coords if missing
                                     if (!_context.PointExists(rawPid))
                                     {
                                         if (v.Point != null)
@@ -4668,10 +4667,51 @@ public class ShellViewModel : ViewModelBase
                                         else
                                         { anyMissing = true; break; }
                                     }
-                                    memFig.PointIds.Add(rawPid);
+                                    orderedIds.Add(rawPid);
                                 }
-                                if (!anyMissing && memFig.PointIds.Count > 1)
-                                    _context.AddFigure(memFig);
+                                if (anyMissing || orderedIds.Count < 2) continue;
+
+                                // ── Split at crosslink gaps (>2000 ft) ──────────────────
+                                // A single saved figure may contain multiple disconnected runs
+                                // that were stitched by the old BEG bug. Split them here so
+                                // they reload as separate polylines with no crosslink.
+                                const double CrosslinkThresholdLoad = 2000.0;
+                                string baseName = dbFig.Name;
+                                int segIdx = 1;
+                                var currentSegIds = new System.Collections.Generic.List<string> { orderedIds[0] };
+
+                                for (int i = 0; i < orderedIds.Count - 1; i++)
+                                {
+                                    var ptA = _context.GetPoint(orderedIds[i]);
+                                    var ptB = _context.GetPoint(orderedIds[i + 1]);
+                                    double dist = (ptA != null && ptB != null)
+                                        ? Math.Sqrt(Math.Pow(ptB.Easting - ptA.Easting, 2) + Math.Pow(ptB.Northing - ptA.Northing, 2))
+                                        : 0;
+
+                                    if (dist > CrosslinkThresholdLoad)
+                                    {
+                                        // Flush current segment
+                                        if (currentSegIds.Count > 1)
+                                        {
+                                            string segName = segIdx == 1 ? baseName : $"{baseName}_{segIdx}";
+                                            var seg = new RCS.Cogo.App.State.Figure(segName);
+                                            foreach (var id in currentSegIds) seg.PointIds.Add(id);
+                                            _context.AddFigure(seg);
+                                            _context.Log($"[LOAD] Split '{baseName}' → '{segName}' ({currentSegIds.Count} pts). Crosslink gap: {dist:F0} ft.");
+                                        }
+                                        segIdx++;
+                                        currentSegIds = new System.Collections.Generic.List<string>();
+                                    }
+                                    currentSegIds.Add(orderedIds[i + 1]);
+                                }
+                                // Flush final segment
+                                if (currentSegIds.Count > 1)
+                                {
+                                    string segName = segIdx == 1 ? baseName : $"{baseName}_{segIdx}";
+                                    var seg = new RCS.Cogo.App.State.Figure(segName);
+                                    foreach (var id in currentSegIds) seg.PointIds.Add(id);
+                                    _context.AddFigure(seg);
+                                }
                             }
                             _context.Log($"[AUDIT] Rehydrated {_context.GetAllFigures().Count()} figures from database.");
                         }
