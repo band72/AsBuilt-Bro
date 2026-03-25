@@ -4234,7 +4234,33 @@ public class ShellViewModel : ViewModelBase
                 
                 if (pts.Count > 1)
                 {
-                    var stroke = fig.MapCheckFailed ? System.Windows.Media.Brushes.Red : System.Windows.Media.Brushes.Yellow;
+                    // ── Crosslink detection ─────────────────────────────────
+                    // If any consecutive segment is suspiciously long (likely
+                    // a stitch error between unrelated point sequences) flag it.
+                    const double CrosslinkThreshold = 2000.0; // survey feet
+                    bool hasCrosslink = false;
+                    for (int i = 0; i < pts.Count - 1; i++)
+                    {
+                        double dx = pts[i + 1].Easting  - pts[i].Easting;
+                        double dy = pts[i + 1].Northing - pts[i].Northing;
+                        double dist = Math.Sqrt(dx * dx + dy * dy);
+                        if (dist > CrosslinkThreshold)
+                        {
+                            hasCrosslink = true;
+                            _context.Log($"[⚠ CROSSLINK] Figure '{fig.Name}': Segment {i}→{i+1} is {dist:F1} ft — possible invalid stitch between unrelated points.");
+                        }
+                    }
+                    fig.IsInvalidCrosslink = hasCrosslink;
+
+                    System.Windows.Media.Brush stroke;
+                    if (fig.MapCheckFailed)
+                        stroke = System.Windows.Media.Brushes.Red;
+                    else if (fig.IsInvalidCrosslink)
+                        stroke = new System.Windows.Media.SolidColorBrush(
+                            System.Windows.Media.Color.FromRgb(0xFF, 0x88, 0x00)); // Orange
+                    else
+                        stroke = System.Windows.Media.Brushes.Yellow;
+
                     Figures.Add(new FigureViewModel(fig.Name, pts, stroke, fig.Labels));
                 }
             }

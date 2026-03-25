@@ -14,6 +14,9 @@ public class Figure
         Name = name;
     }
 
+    public string Color { get; set; } = "#FFFF00"; // Yellow default
+    public bool IsInvalidCrosslink { get; set; } = false;
+
     public void AddPoint(string pointId)
     {
         PointIds.Add(pointId);
