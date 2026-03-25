@@ -130,6 +130,10 @@
                 </MenuItem>
                 <MenuItem Header="_Export">
                     <!-- ═══ JEA As-Built Deliverable ═════════════════════ -->
+                    <MenuItem Header="🔍 Validate JEA Data..."
+                              Command="{Binding ValidateJeaCommand}"
+                              FontWeight="SemiBold" Foreground="#FFD232"
+                              ToolTip="Check all project assets against JEA validation rules before export"/>
                     <MenuItem Header="🏛 Export JEA As-Built Template (.xlsx)..."
                               Command="{Binding ExportJeaTemplateCommand}"
                               FontWeight="SemiBold" Foreground="#56CCF2"

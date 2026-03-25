@@ -163,10 +163,8 @@ public static class JeaExportService
                 Set(ws, r, 2,  x.FacilityOwner);
                 Set(ws, r, 3,  x.YearManufactured);
                 Set(ws, r, 4,  x.Manufacturer);
-                SetN(ws, r, 5,  x.Easting);
-                SetN(ws, r, 6,  x.Northing);
-                SetN(ws, r, 7,  x.Latitude);
-                SetN(ws, r, 8,  x.Longitude);
+                SetCoords(ws, r, 5, 6, 7, 8,
+                    x.Easting, x.Northing, x.Latitude, x.Longitude);
                 Set(ws, r, 9,  x.RfidBarcode);
             });
 
@@ -182,10 +180,8 @@ public static class JeaExportService
                 Set(ws, r, 5,  x.Orientation);
                 Set(ws, r, 6,  x.Manufacturer);
                 Set(ws, r, 7,  x.Material);
-                SetN(ws, r, 8,  x.Easting);
-                SetN(ws, r, 9,  x.Northing);
-                SetN(ws, r, 10, x.Latitude);
-                SetN(ws, r, 11, x.Longitude);
+                SetCoords(ws, r, 8, 9, 10, 11,
+                    x.Easting, x.Northing, x.Latitude, x.Longitude);
             });
 
         // ── Water Locate Box ────────────────────────────────────────────
@@ -308,10 +304,8 @@ public static class JeaExportService
                 SetN(ws, r, 13, x.LowestInvertElevation);
                 Set(ws, r, 14, x.ExteriorJointTapeType);
                 Set(ws, r, 15, x.ExteriorJointTapeManufacturer);
-                SetN(ws, r, 16, x.Easting);
-                SetN(ws, r, 17, x.Northing);
-                SetN(ws, r, 18, x.Latitude);
-                SetN(ws, r, 19, x.Longitude);
+                SetCoords(ws, r, 16, 17, 18, 19,
+                    x.Easting, x.Northing, x.Latitude, x.Longitude);
                 Set(ws, r, 20, x.RfidBarcode);
             });
 
@@ -522,8 +516,7 @@ public static class JeaExportService
         Set(ws, r, 1, x.PartKey); Set(ws, r, 2, x.Size); Set(ws, r, 3, x.Subtype);
         Set(ws, r, 4, x.FacilityOwner); Set(ws, r, 5, x.Orientation);
         Set(ws, r, 6, x.Manufacturer); Set(ws, r, 7, x.Material);
-        SetN(ws, r, 8, x.Easting); SetN(ws, r, 9, x.Northing);
-        SetN(ws, r, 10, x.Latitude); SetN(ws, r, 11, x.Longitude);
+        SetCoords(ws, r, 8, 9, 10, 11, x.Easting, x.Northing, x.Latitude, x.Longitude);
     }
 
     // ── Cell write helpers ───────────────────────────────────────────────
@@ -537,6 +530,37 @@ public static class JeaExportService
     {
         if (val.HasValue && val.Value != 0)
             ws.Cells[r, c].Value = val.Value;
+    }
+
+    /// <summary>
+    /// Writes Lat/Lon to the worksheet. If Lat/Lon is missing/zero but State Plane
+    /// coords are present, automatically projects via StatePlaneConverter (EPSG:2236).
+    /// </summary>
+    private static void SetCoords(ExcelWorksheet ws, int r,
+        int eastCol, int northCol, int latCol, int lonCol,
+        double? easting, double? northing, double? lat, double? lon)
+    {
+        SetN(ws, r, eastCol,  easting);
+        SetN(ws, r, northCol, northing);
+
+        bool hasLatLon = lat.HasValue && lat != 0 && lon.HasValue && lon != 0;
+
+        if (!hasLatLon && easting.HasValue && easting != 0
+                       && northing.HasValue && northing != 0
+                       && StatePlaneConverter.IsInJeaBounds(easting.Value, northing.Value))
+        {
+            try
+            {
+                var (computedLat, computedLon) = StatePlaneConverter.ToLatLon(
+                    easting.Value, northing.Value);
+                lat = computedLat;
+                lon = computedLon;
+            }
+            catch { /* leave null if projection fails */ }
+        }
+
+        SetN(ws, r, latCol, lat);
+        SetN(ws, r, lonCol, lon);
     }
 }
 

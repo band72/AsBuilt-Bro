@@ -747,6 +747,7 @@ public class ShellViewModel : ViewModelBase
         ExportDbCsvCommand               = new RelayCommand(_ => ExportDatabaseCsv());
         ExportInstalledAssetsCommand     = new RelayCommand(_ => ExportInstalledAssets());
         ExportJeaTemplateCommand         = new RelayCommand(_ => ExportJeaTemplate());
+        ValidateJeaCommand               = new RelayCommand(_ => OpenJeaValidation());
 
         CloseCommand = new RelayCommand(_ => System.Windows.Application.Current.Shutdown());
 
@@ -4781,8 +4782,24 @@ public class ShellViewModel : ViewModelBase
          }
     }
 
-    // ── JEA As-Built Template Export ─────────────────────────────────────
+    // ── JEA As-Built Template Export + Validation ────────────────────────
     public System.Windows.Input.ICommand ExportJeaTemplateCommand { get; }
+    public System.Windows.Input.ICommand ValidateJeaCommand       { get; }
+
+    private void OpenJeaValidation()
+    {
+        if (_currentProject == null)
+        {
+            System.Windows.MessageBox.Show("Please open a project first.",
+                "No Project", System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
+            return;
+        }
+        var win = new RCS.Cogo.Wpf.Views.JeaValidationWindow(
+            _currentProject.Id.ToString());
+        win.Owner = System.Windows.Application.Current.MainWindow;
+        win.ShowDialog();
+    }
 
     private void ExportJeaTemplate()
     {
@@ -4794,6 +4811,20 @@ public class ShellViewModel : ViewModelBase
             return;
         }
 
+        // Open validator first — it has a "Proceed to Export" button that
+        // calls back into the actual export logic
+        var validationWin = new RCS.Cogo.Wpf.Views.JeaValidationWindow(
+            _currentProject.Id.ToString(),
+            onProceedExport: () => RunJeaExport());
+        validationWin.Owner = System.Windows.Application.Current.MainWindow;
+        var result = validationWin.ShowDialog();
+
+        // If user clicked "Proceed" the callback already ran; skip if cancelled
+    }
+
+    private void RunJeaExport()
+    {
+        if (_currentProject == null) return;
         // Step 1: locate the blank JEA template
         var templateDlg = new Microsoft.Win32.OpenFileDialog
         {
