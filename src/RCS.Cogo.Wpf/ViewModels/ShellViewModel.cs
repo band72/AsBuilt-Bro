@@ -4596,10 +4596,53 @@ public class ShellViewModel : ViewModelBase
                         {
                             _context.Log($"[WARN] Could not rehydrate figures: {figEx.Message}");
                         }
-                        
-                        _context.Log($"[AUDIT] Opened Project: {dialog.FileName}");
-                        RefreshData();
+
+                        _context.Log($"[AUDIT] Opened Project (loading alignments...)");
+                        // ← Dispatcher.Invoke closes here ────────────────────────────────
                     });
+
+                    // ── P1: Rehydrate Alignments & Profiles ───────────────────────────
+                    // Must run in outer async scope (not inside Dispatcher.Invoke) so that
+                    // 'await _engine.ExecuteAsync(...)' compiles correctly (CS4034).
+                    var projIdOuter = _currentProject?.Id.ToString() ?? "";
+                    try
+                    {
+                        using var algnDb = new RCS.Data.AppDbContext();
+                        var algnFigs = algnDb.Set<RCS.Data.Entities.Figure>()
+                            .Where(f => f.ProjectId == projIdOuter &&
+                                       (f.Layer == "Horizontal_Align" || f.Layer == "Vertical_Align"))
+                            .OrderBy(f => f.Layer)   // HA before VA — alignments must exist before profiles
+                            .ToList();
+
+                        int rehydratedAlgns = 0;
+                        foreach (var af in algnFigs)
+                        {
+                            if (string.IsNullOrWhiteSpace(af.ScriptContent)) continue;
+                            var algnLines = af.ScriptContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                            foreach (var aln in algnLines)
+                            {
+                                var t = aln.Trim();
+                                if (string.IsNullOrWhiteSpace(t)) continue;
+                                var cmd = t.Split(' ')[0].ToUpperInvariant();
+                                if (cmd == "ALGN" || cmd == "PROF" || cmd == "VPI")
+                                {
+                                    try { await _engine.ExecuteAsync(t, _context); } catch { }
+                                }
+                            }
+                            rehydratedAlgns++;
+                        }
+                        if (rehydratedAlgns > 0)
+                            _context.Log($"[AUDIT] Rehydrated {rehydratedAlgns} alignment/profile script(s).");
+                    }
+                    catch (Exception algnEx)
+                    {
+                        _context.Log($"[WARN] Could not rehydrate alignments: {algnEx.Message}");
+                    }
+
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => RefreshData());
+
+
+
                 }
                 catch (Exception ex)
                 {

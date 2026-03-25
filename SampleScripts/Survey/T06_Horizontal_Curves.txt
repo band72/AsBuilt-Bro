@@ -1,0 +1,74 @@
+// ============================================================
+// T06 — HORIZONTAL CURVES (ALGN CURVE)
+// BoundaryQC COGO Script Tutorials — Survey Series
+// ============================================================
+//
+// This tutorial demonstrates building a horizontal alignment
+// that contains a TANGENT-CURVE-TANGENT (TCT) sequence.
+//
+// Geometry layout:
+//   PT 1 → PT 2  = straight tangent (due North)
+//   CURVE PC=2 RP=3 PT=4  = 150-ft radius right curve
+//   PT 4 → PT 5  = exit tangent (heading NE 45°)
+//
+// Commands covered:
+//   PT  NEZ  ALGN BEG  ALGN TANGENT  ALGN CURVE  ALGN END
+//   PROF BEG  VPI  PROF END  STATION  SAVE-HALN  SAVE-PFL
+// ============================================================
+
+CLEAR
+
+// ── Step 1: Control Points ──────────────────────────────────
+// Place 5 control points manually
+
+PT 1  10000.00  10000.00  95.50  IP_BEGIN
+PT 2  10300.00  10000.00  94.80  PC_CURVE
+PT 3  10300.00  10150.00   0.00  RP_CENTER    // Radius point (center of arc)
+PT 4  10450.00  10150.00  94.20  PT_CURVE
+PT 5  10700.00  10400.00  93.50  IP_END
+
+// ── Step 2: Horizontal Alignment TCT ──────────────────────
+// Tangent → Curve (R=150) → Tangent
+
+ALGN BEG CURVE_RD 0+00
+ALGN TANGENT 1 2          // Entry tangent:  pt1 → pt2 (due North 300 ft)
+ALGN CURVE   2 3 4        // Horizontal curve: PC=2, RP(center)=3, PT=4
+ALGN TANGENT 4 5          // Exit tangent:   pt4 → pt5 (NE bearing)
+ALGN END
+
+// ── Step 3: Vertical Profile ───────────────────────────────
+// EG (existing ground) profile
+
+PROF BEG CURVE_RD EG
+VPI 0+00  95.50
+VPI 3+00  94.80
+VPI 7+00  93.50
+PROF END
+
+// FG (finished grade) with a 200-ft parabolic VC at the crest
+
+PROF BEG CURVE_RD FG
+VPI 0+00  95.20  0        // Grade break (no VC)
+VPI 2+00  94.90  200      // 200-ft parabolic crest curve
+VPI 6+00  93.20  0        // Grade break (no VC)
+PROF END
+
+// ── Step 4: Query stations ─────────────────────────────────
+STATION CURVE_RD 0+00
+STATION CURVE_RD 1+50
+STATION CURVE_RD 3+00
+STATION CURVE_RD 4+50
+STATION CURVE_RD 6+00
+
+// ── Step 5: Station table (0 to 6+00 @ 50-ft intervals) ───
+STATION CURVE_RD LIST 0+00 6+00 50
+
+// ── Step 6: Project a COGO point → station + offset ────────
+STATION CURVE_RD PT 1
+STATION CURVE_RD PT 5
+
+// ── Notes ──────────────────────────────────────────────────
+// After running this script:
+//   1. Open Alignments → Edit Alignment  to see the plan + profile panels
+//   2. Run "Save Horizontal Alignment" in the Alignments menu
+//   3. Run T07 for a full road design with cross sections

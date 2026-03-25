@@ -1,5 +1,5 @@
 #define MyAppName "RCS AS-BUILT PRO"
-#define MyAppVersion "1.5"
+#define MyAppVersion "1.6"
 #define MyAppPublisher "BANKS & BANKS CONSULTING"
 #define MyAppExeName "RCS.Cogo.Wpf.exe"
 #define MyAppAssocName MyAppName + " Project"
@@ -35,7 +35,8 @@ Source: "src\RCS.Cogo.Wpf\bin\Release\net8.0-windows\win-x64\publish\*"; DestDir
 
 ; Additional necessary assets
 Source: "SymbolsLibrary\*"; DestDir: "{app}\SymbolsLibrary"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "docs\*"; DestDir: "{app}\docs"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "docs\*";           DestDir: "{app}\docs";          Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "SampleScripts\*"; DestDir: "{app}\SampleScripts"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue

@@ -17,8 +17,8 @@ namespace RCS.Cogo.Wpf.Views
         private AppDbContext _context;
         private string _projectId;
         private List<Figure> _allFigures = new();
-        private Action _onClosedCallback;
-        public FiguresWindow(string projectId, Action onClosedCallback = null)
+        private Action? _onClosedCallback;
+        public FiguresWindow(string projectId, Action? onClosedCallback = null)
         {
             InitializeComponent();
             _projectId = projectId;
@@ -197,10 +197,13 @@ namespace RCS.Cogo.Wpf.Views
                 {
                     try
                     {
-                        // Use raw SQL string replacement directly to ensure SQLite binds without parameter mapping errors
-                        string fid = figure.Id.Replace("'", "''"); // escape just in case
-                        _context.Database.ExecuteSqlRaw($"DELETE FROM FigureVertices WHERE FigureId = '{fid}'");
-                        _context.Database.ExecuteSqlRaw($"DELETE FROM Figures WHERE Id = '{fid}'");
+                        // Use EF Core parameterised queries (FormattableString) to satisfy EF1002
+                        string fid = figure.Id;
+                        _context.Database.ExecuteSql(
+                            $"DELETE FROM FigureVertices WHERE FigureId = {fid}");
+                        _context.Database.ExecuteSql(
+                            $"DELETE FROM Figures WHERE Id = {fid}");
+
 
                         try
                         {

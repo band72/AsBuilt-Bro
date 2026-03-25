@@ -1,0 +1,136 @@
+// ============================================================
+// T07 — FULL ROAD DESIGN: ALIGNMENT + PROFILE + CROSS SECTIONS
+// BoundaryQC COGO Script Tutorials — Survey Series
+// ============================================================
+//
+// End-to-end highway design workflow:
+//   1. Define control points
+//   2. Build a 3-tangent horizontal alignment (900 ft total)
+//   3. Build EG and FG vertical profiles with parabolic VCs
+//   4. Query stations for design coordinates
+//   5. Compute cross sections with ground shots → cut/fill report
+//   6. Open Alignments → Cross Sections... to visualize the XS viewer
+//
+// Road template: 24-ft total width (12L + 12R), 2:1 foreslopes
+// ============================================================
+
+CLEAR
+
+// ══════════════════════════════════════════════════════════════
+// STEP 1 — CONTROL POINTS (Northing, Easting, Elevation)
+// ══════════════════════════════════════════════════════════════
+
+PT 1  10000.00  10000.00  96.00  BEG_CTRL
+PT 2  10300.00  10000.00  95.20  PI_1
+PT 3  10300.00  10400.00  94.10  PI_2
+PT 4  10600.00  10600.00  93.00  PI_3
+PT 5  10900.00  10600.00  92.50  END_CTRL
+
+// ══════════════════════════════════════════════════════════════
+// STEP 2 — HORIZONTAL ALIGNMENT (3 tangent segments)
+// ══════════════════════════════════════════════════════════════
+
+ALGN BEG MAIN_RD 0+00
+ALGN TANGENT 1 2          // Leg 1: S→N  Sta 0+00 to 3+00  (300 ft)
+ALGN TANGENT 2 3          // Leg 2: W→E  Sta 3+00 to 7+00  (400 ft)
+ALGN TANGENT 3 4          // Leg 3: SW→NE Sta 7+00 to 9+00 (200 ft, approx)
+ALGN END
+
+// ══════════════════════════════════════════════════════════════
+// STEP 3 — VERTICAL PROFILES
+// ══════════════════════════════════════════════════════════════
+
+// EG: Existing Ground (straight grade interpolation)
+PROF BEG MAIN_RD EG
+VPI 0+00  96.00
+VPI 3+00  95.20
+VPI 7+00  94.10
+VPI 9+00  93.00
+PROF END
+
+// FG: Finished Grade with two parabolic vertical curves
+PROF BEG MAIN_RD FG
+VPI 0+00  95.50  0        // Start (no VC)
+VPI 3+00  94.50  200      // 200-ft parabolic SAG at Sta 3+00
+VPI 6+00  93.20  100      // 100-ft parabolic CREST at Sta 6+00
+VPI 9+00  92.50  0        // End (no VC)
+PROF END
+
+// ══════════════════════════════════════════════════════════════
+// STEP 4 — STATION QUERIES
+// ══════════════════════════════════════════════════════════════
+
+STATION MAIN_RD 0+00
+STATION MAIN_RD 1+50
+STATION MAIN_RD 3+00          // SAG VC midpoint
+STATION MAIN_RD 4+50
+STATION MAIN_RD 6+00          // CREST VC midpoint
+STATION MAIN_RD 7+50
+STATION MAIN_RD 9+00
+
+// Full station coordinate table at 100-ft intervals
+STATION MAIN_RD LIST 0+00 9+00 100
+
+// ══════════════════════════════════════════════════════════════
+// STEP 5 — CROSS SECTIONS
+//
+// Workflow:
+//   XS BEG <algnName>
+//   XS TEMPLATE WIDTH <L> <R> SLOPE <L:1> <R:1>
+//   XS SHOT <station> <offset> <groundElev>   (one per ground point)
+//   XS COMPUTE <interval_ft>
+//   XS END
+//
+// Ground shots provided at 3 cross-section stations.
+// Remaining stations are interpolated by StationingEngine.
+// ══════════════════════════════════════════════════════════════
+
+XS BEG MAIN_RD
+XS TEMPLATE WIDTH 12 12 SLOPE 2.0 2.0
+
+// Ground shots at Sta 0+00
+XS SHOT 0+00  -30  96.80
+XS SHOT 0+00  -15  96.40
+XS SHOT 0+00    0  96.00
+XS SHOT 0+00  +15  95.60
+XS SHOT 0+00  +30  95.20
+
+// Ground shots at Sta 4+50
+XS SHOT 4+50  -30  94.80
+XS SHOT 4+50  -15  94.50
+XS SHOT 4+50    0  94.20
+XS SHOT 4+50  +15  93.90
+XS SHOT 4+50  +30  93.60
+
+// Ground shots at Sta 9+00
+XS SHOT 9+00  -30  93.40
+XS SHOT 9+00  -15  93.10
+XS SHOT 9+00    0  93.00
+XS SHOT 9+00  +15  92.85
+XS SHOT 9+00  +30  92.70
+
+// Compute cross sections at 150-ft intervals
+XS COMPUTE 150
+XS END
+
+// ══════════════════════════════════════════════════════════════
+// STEP 6 — REVIEW & SAVE
+// ══════════════════════════════════════════════════════════════
+//
+// After running this script:
+//
+//   1. Inspect the CUT/FILL SUMMARY REPORT in the output log
+//   2. Open  Alignments → Edit Alignment
+//      → Profile panel (bottom) shows EG (blue dashed) and FG (yellow)
+//      → Grade % labels appear between VPIs
+//      → Click "⟳ Refresh Profile" if needed after loading
+//
+//   3. Open  Alignments → Cross Sections...
+//      → Use ◄ ▶ or the station dropdown to navigate sections
+//      → Red shading = CUT,  Green shading = FILL
+//      → Export CSV for quantities,  Export DXF for CAD sheets
+//
+//   4. Use SAVE-HALN / SAVE-PFL buttons (or Alignments menu) to
+//      persist the alignment so it reloads automatically with the project
+//
+// ══════════════════════════════════════════════════════════════

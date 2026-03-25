@@ -72,8 +72,8 @@ public class ProjectDetailsViewModel : System.ComponentModel.INotifyPropertyChan
 {
     private Project _model;
 
-    public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-    protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
     {
         PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
     }
@@ -85,10 +85,10 @@ public class ProjectDetailsViewModel : System.ComponentModel.INotifyPropertyChan
         set { _saveLocation = value; OnPropertyChanged(); } 
     }
 
-    public string ProjectName { get; set; }
-    public string AvailNo { get; set; }
-    public string Utility { get; set; }
-    public string Units { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
+    public string AvailNo    { get; set; } = string.Empty;
+    public string Utility    { get; set; } = string.Empty;
+    public string Units      { get; set; } = string.Empty;
     public int Revision { get; set; }
     public ProjectSettings Settings { get; set; } // Reference directly for now
 
