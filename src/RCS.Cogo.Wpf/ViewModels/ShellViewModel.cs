@@ -4696,8 +4696,12 @@ public class ShellViewModel : ViewModelBase
                                 var sorted = new System.Collections.Generic.List<double>(segDists);
                                 sorted.Sort();
                                 double medianDist = sorted[sorted.Count / 2];
-                                // Floor median at 10ft so single-point figures don't divide by ~0
                                 double crosslinkCutoff = Math.Max(medianDist * 5.0, 200.0);
+
+                                // ── Diagnostic dump for crosslink tuning ──
+                                _context.Log($"[FIG-DIAG] '{dbFig.Name}' pts={orderedIds.Count} median={medianDist:F0}ft cutoff={crosslinkCutoff:F0}ft");
+                                for (int i = 0; i < orderedIds.Count - 1; i++)
+                                    _context.Log($"  seg {orderedIds[i]}→{orderedIds[i+1]}: {segDists[i]:F0}ft{(segDists[i] > crosslinkCutoff ? " *** CROSSLINK ***" : "")}");
 
                                 string baseName = dbFig.Name;
                                 int segIdx = 1;

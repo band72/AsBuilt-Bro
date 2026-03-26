@@ -1211,11 +1211,11 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid Width="30" Height="30" RenderTransformOrigin="0.5,0.5">
+                            <Grid Width="3" Height="3" RenderTransformOrigin="0.5,0.5">
                                 <Grid.RenderTransform>
-                                    <TranslateTransform X="-15" Y="-15"/>
+                                    <TranslateTransform X="-1.5" Y="-1.5"/>
                                 </Grid.RenderTransform>
-                                <Ellipse Stroke="#FFFF00" StrokeThickness="3" Width="30" Height="30">
+                                <Ellipse Stroke="#FFFF00" StrokeThickness="0.3" Width="3" Height="3">
                                     <Ellipse.Triggers>
                                         <EventTrigger RoutedEvent="Loaded">
                                             <BeginStoryboard>
@@ -1226,7 +1226,7 @@
                                         </EventTrigger>
                                     </Ellipse.Triggers>
                                 </Ellipse>
-                                <Ellipse Fill="#FFFF00" Opacity="0.3" Width="30" Height="30"/>
+                                <Ellipse Fill="#FFFF00" Opacity="0.3" Width="3" Height="3"/>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
