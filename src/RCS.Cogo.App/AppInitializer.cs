@@ -28,6 +28,7 @@ public static class AppInitializer
         registry.Register(new BegCommand());
         registry.Register(new ContCommand());
         registry.Register(new EndCommand());
+        registry.Register(new SegCommand());   // SEG: break figure, auto-start next segment
         registry.Register(new MapCheckCommand());
         registry.Register(new SaveCommand());
         registry.Register(new LoadCommand(registry));
