@@ -24,13 +24,11 @@ public class ContCommand : ICommand
 
         string pointId = args[1];
         
-        // Verify point exists?
+        // Add point to figure. If the point hasn't been computed yet, log a warning
+        // but still register it — the renderer null-checks each point at draw time.
         var pt = context.GetPoint(pointId);
         if (pt == null)
-        {
-            context.Log($"Error: Point {pointId} does not exist.");
-            return Task.CompletedTask;
-        }
+            context.Log($"[WARN] CONT: Point {pointId} not yet computed — will resolve when point is shot.");
 
         context.CurrentFigure.PointIds.Add(pointId);
         context.Log($"Point {pointId} added to Figure {context.CurrentFigure.Name}.");
