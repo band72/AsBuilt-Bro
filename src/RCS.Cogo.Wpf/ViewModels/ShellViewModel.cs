@@ -4245,7 +4245,7 @@ public class ShellViewModel : ViewModelBase
                     }
                     var rSorted = new System.Collections.Generic.List<double>(rDists); rSorted.Sort();
                     double rMedian = rSorted[rSorted.Count / 2];
-                    double rCutoff = Math.Max(rMedian * 3.0, 150.0);
+                    double rCutoff = Math.Max(rMedian * 2.0, 110.0);
 
                     bool hasCrosslink = false;
                     for (int i = 0; i < rDists.Count; i++)
@@ -4696,7 +4696,7 @@ public class ShellViewModel : ViewModelBase
                                 var sorted = new System.Collections.Generic.List<double>(segDists);
                                 sorted.Sort();
                                 double medianDist = sorted[sorted.Count / 2];
-                                double crosslinkCutoff = Math.Max(medianDist * 3.0, 150.0);
+                                double crosslinkCutoff = Math.Max(medianDist * 2.0, 110.0);
 
                                 string baseName = dbFig.Name;
                                 int segIdx = 1;
