@@ -95,6 +95,10 @@ public partial class JeaValidationWindow : Window
 
     private void ApplyFilter()
     {
+        if (IssueGrid == null || CountLabel == null || SheetFilter == null || 
+            ShowErrors == null || ShowWarnings == null || ShowInfo == null) 
+            return;
+
         bool showErr  = ShowErrors.IsChecked   == true;
         bool showWarn = ShowWarnings.IsChecked == true;
         bool showInfo = ShowInfo.IsChecked     == true;
