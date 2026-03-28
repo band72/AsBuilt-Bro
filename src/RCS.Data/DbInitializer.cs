@@ -31,13 +31,15 @@ public static class DbInitializer
             }
             // Cogo Codes
             try { context.Database.ExecuteSqlRaw("ALTER TABLE \"CogoCodes\" ADD COLUMN \"Block\" TEXT NULL;"); } catch { }
+            try { context.Database.ExecuteSqlRaw("ALTER TABLE \"CogoCodes\" ADD COLUMN \"BlockScale\" REAL NOT NULL DEFAULT 1.0;"); } catch { }
             context.Database.ExecuteSqlRaw(@"
                 CREATE TABLE IF NOT EXISTS ""CogoCodes"" (
                     ""Id"" INTEGER NOT NULL CONSTRAINT ""PK_CogoCodes"" PRIMARY KEY AUTOINCREMENT,
                     ""LocalCode"" TEXT NOT NULL,
                     ""SystemCode"" TEXT NULL,
                     ""Description"" TEXT NULL,
-                    ""Block"" TEXT NULL
+                    ""Block"" TEXT NULL,
+                    ""BlockScale"" REAL NOT NULL DEFAULT 1.0
                 );
             ");
 

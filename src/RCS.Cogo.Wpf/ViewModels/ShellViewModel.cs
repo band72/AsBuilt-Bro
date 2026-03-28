@@ -22,6 +22,17 @@ using GeoWpf = RCS.Geo.Wpf.ViewModels;
 
 namespace RCS.Cogo.Wpf.ViewModels;
 
+/// <summary>One entry in the Recent Files (MRU) list.</summary>
+public class RecentFileEntry
+{
+    public string FilePath    { get; set; } = string.Empty;
+    public string ProjectName { get; set; } = string.Empty;
+    public DateTime LastOpened { get; set; } = DateTime.Now;
+    /// <summary>Display label shown in the Recent Files menu.</summary>
+    public string DisplayName =>
+        string.IsNullOrWhiteSpace(ProjectName) ? System.IO.Path.GetFileName(FilePath) : ProjectName;
+}
+
 public class PointViewModel : ViewModelBase
 {
     private string _id;
@@ -218,9 +229,119 @@ public class ShellViewModel : ViewModelBase
             {
                 OnPropertyChanged(nameof(HasActiveProject));
                 _ = LoadInstalledAssetsAsync();
+                UpdateWindowTitle();
             }
         }
     }
+
+    // ── Window Title ─────────────────────────────────────────────────────────
+    private string _windowTitle = "RCS COGO Enterprise";
+    public string WindowTitle
+    {
+        get => _windowTitle;
+        private set => SetField(ref _windowTitle, value);
+    }
+
+    private bool _isDirty;
+    public bool IsDirty
+    {
+        get => _isDirty;
+        private set { if (SetField(ref _isDirty, value)) UpdateWindowTitle(); }
+    }
+
+    private void SetDirty() => IsDirty = true;
+
+    private void UpdateWindowTitle()
+    {
+        string name = string.IsNullOrWhiteSpace(_currentProject?.ProjectName)
+            ? "Untitled Project"
+            : _currentProject!.ProjectName;
+
+        string file = string.IsNullOrWhiteSpace(_currentDbPath)
+            ? "(unsaved)"
+            : System.IO.Path.GetFileName(_currentDbPath);
+
+        string dirty = _isDirty ? " *" : "";
+        WindowTitle = $"{name}  [{file}]{dirty}  —  RCS COGO Enterprise";
+    }
+
+    // ── Recent Files (MRU) ───────────────────────────────────────────────────
+    private const int MaxRecentFiles = 10;
+    private static readonly string RecentFilesPath =
+        System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "RCS.Cogo.Enterprise", "recentfiles.json");
+
+    public System.Collections.ObjectModel.ObservableCollection<RecentFileEntry> RecentFiles { get; }
+        = new();
+
+    public System.Windows.Input.ICommand OpenRecentFileCommand { get; private set; } = new RelayCommand(_ => { });
+
+    private void LoadRecentFiles()
+    {
+        try
+        {
+            if (!System.IO.File.Exists(RecentFilesPath)) return;
+            var json = System.IO.File.ReadAllText(RecentFilesPath);
+            var list = System.Text.Json.JsonSerializer.Deserialize<System.Collections.Generic.List<RecentFileEntry>>(json);
+            if (list == null) return;
+            foreach (var e in list.Where(e => System.IO.File.Exists(e.FilePath)))
+                RecentFiles.Add(e);
+        }
+        catch { /* non-fatal */ }
+    }
+
+    private void PushRecentFile(string filePath, string projectName)
+    {
+        // Remove any existing entry for this path
+        var existing = RecentFiles.FirstOrDefault(r =>
+            r.FilePath.Equals(filePath, StringComparison.OrdinalIgnoreCase));
+        if (existing != null) RecentFiles.Remove(existing);
+
+        // Insert at top
+        RecentFiles.Insert(0, new RecentFileEntry
+        {
+            FilePath    = filePath,
+            ProjectName = projectName,
+            LastOpened  = DateTime.Now
+        });
+
+        // Trim to max
+        while (RecentFiles.Count > MaxRecentFiles)
+            RecentFiles.RemoveAt(RecentFiles.Count - 1);
+
+        SaveRecentFiles();
+    }
+
+    private void SaveRecentFiles()
+    {
+        try
+        {
+            var dir = System.IO.Path.GetDirectoryName(RecentFilesPath)!;
+            if (!System.IO.Directory.Exists(dir)) System.IO.Directory.CreateDirectory(dir);
+            var json = System.Text.Json.JsonSerializer.Serialize(RecentFiles.ToList(),
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            System.IO.File.WriteAllText(RecentFilesPath, json);
+        }
+        catch { /* non-fatal */ }
+    }
+
+    private void OpenRecentFile(object? param)
+    {
+        if (param is not RecentFileEntry entry) return;
+        if (!System.IO.File.Exists(entry.FilePath))
+        {
+            System.Windows.MessageBox.Show(
+                $"The file no longer exists:\n{entry.FilePath}\n\nIt will be removed from the recent list.",
+                "File Not Found", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            RecentFiles.Remove(entry);
+            SaveRecentFiles();
+            return;
+        }
+        if (!ConfirmDiscardChanges()) return;
+        LoadProjectFromPath(entry.FilePath);
+    }
+
 
     private async void FindCrossings()
     {
@@ -399,6 +520,22 @@ public class ShellViewModel : ViewModelBase
     {
         get => _jeaTemplatePath;
         set { _jeaTemplatePath = value ?? string.Empty; OnPropertyChanged(); }
+    }
+
+    private string _rcsBlocksPath = string.Empty;
+    /// <summary>User-overridable path to the RCS_Blocks .dwg library folder.
+    /// When empty, EditCogoCodeWindow auto-detects by walking up the directory tree.</summary>
+    public string RcsBlocksPath
+    {
+        get => _rcsBlocksPath;
+        set
+        {
+            _rcsBlocksPath = value ?? string.Empty;
+            OnPropertyChanged();
+            // Push the override into the shared static resolver immediately
+            if (!string.IsNullOrWhiteSpace(value) && System.IO.Directory.Exists(value))
+                RCS.Cogo.Wpf.Views.EditCogoCodeWindow.OverrideBlocksDirectory(value);
+        }
     }
 
     private string _jeaStatePlaneZone = "Florida East (EPSG:2236)";
@@ -651,7 +788,7 @@ public class ShellViewModel : ViewModelBase
                 var codes = db.CogoCodes.ToList();
                 foreach (var c in codes)
                 {
-                    CogoCodes.Add(new CogoCode(c.LocalCode, c.SystemCode, c.Description, c.Block ?? ""));
+                    CogoCodes.Add(new CogoCode(c.LocalCode, c.SystemCode, c.Description, c.Block ?? "", c.BlockScale));
                 }
                 
                 // Load Materials
@@ -681,6 +818,8 @@ public class ShellViewModel : ViewModelBase
             // ── JEA settings ────────────────────────────────────────────────
             JeaTemplatePath   = RCS.Services.GlobalSettingsService.GetSetting("JeaTemplatePath",   string.Empty);
             JeaStatePlaneZone = RCS.Services.GlobalSettingsService.GetSetting("JeaStatePlaneZone", "Florida East (EPSG:2236)");
+            // ── DXF Blocks Library ───────────────────────────────────────────
+            RcsBlocksPath = RCS.Services.GlobalSettingsService.GetSetting("RcsBlocksPath", string.Empty);
         }
         catch (Exception ex)
         {
@@ -773,7 +912,8 @@ public class ShellViewModel : ViewModelBase
         OpenSymbolManagerCommand = new RelayCommand(_ => OpenSymbolManager());
         SearchCodesCommand = new RelayCommand(_ => SearchCodes());
         EditCogoCodeCommand = new RelayCommand(_ => EditCogoCode());
-        SaveCodesCommand = new RelayCommand(_ => SaveCodes());
+        SaveCodesCommand        = new RelayCommand(_ => SaveCodes());
+        AutoMatchBlocksCommand  = new RelayCommand(_ => AutoMatchBlocks());
         
         ImportCatalogCommand = new RelayCommand(_ => ImportCatalog());
         AddMaterialToProjectCommand = new RelayCommand(_ => AddMaterialToProject());
@@ -787,12 +927,15 @@ public class ShellViewModel : ViewModelBase
         
         ImportPointsListCommand = new RelayCommand(_ => ImportPointsList());
 
-        NewProjectCommand = new RelayCommand(_ => NewProject());
-        EditProjectCommand = new RelayCommand(_ => EditProject());
-        SaveProjectCommand = new RelayCommand(_ => SaveProject());
+        NewProjectCommand    = new RelayCommand(_ => NewProject());
+        EditProjectCommand   = new RelayCommand(_ => EditProject());
+        SaveProjectCommand   = new RelayCommand(_ => SaveProject());
         SaveProjectAsCommand = new RelayCommand(_ => SaveProjectAs());
-        OpenProjectCommand = new RelayCommand(_ => OpenProject());
-        CloseProjectCommand = new RelayCommand(_ => CloseProject());
+        OpenProjectCommand   = new RelayCommand(_ => OpenProject());
+        CloseProjectCommand  = new RelayCommand(_ => CloseProject());
+        OpenRecentFileCommand = new RelayCommand(param => OpenRecentFile(param));
+        LoadRecentFiles();
+        UpdateWindowTitle();
         OpenReportSettingsCommand = new RelayCommand(_ => OpenReportSettings());
         
         CompactDbCommand = new RelayCommand(_ => CompactDatabase());
@@ -1540,6 +1683,7 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand ExportCodesCommand { get; }
     public System.Windows.Input.ICommand EditCogoCodeCommand { get; }
     public System.Windows.Input.ICommand SaveCodesCommand { get; }
+    public System.Windows.Input.ICommand AutoMatchBlocksCommand { get; }
 
     private void SaveCodes()
     {
@@ -1553,16 +1697,18 @@ public class ShellViewModel : ViewModelBase
                     var ent = existing.FirstOrDefault(e => e.LocalCode == c.LocalCode && e.SystemCode == c.SystemCode);
                     if (ent != null)
                     {
-                        ent.Block = c.Block;
+                        ent.Block      = c.Block;
+                        ent.BlockScale = c.BlockScale;
                     }
                     else
                     {
                         db.CogoCodes.Add(new RCS.Data.Entities.CogoCodeEntity
                         {
-                            LocalCode = c.LocalCode,
-                            SystemCode = c.SystemCode,
+                            LocalCode   = c.LocalCode,
+                            SystemCode  = c.SystemCode,
                             Description = c.Description,
-                            Block = c.Block
+                            Block       = c.Block,
+                            BlockScale  = c.BlockScale
                         });
                     }
                 }
@@ -1603,7 +1749,7 @@ public class ShellViewModel : ViewModelBase
                 var codes = db.CogoCodes.ToList();
                 foreach (var c in codes)
                 {
-                    CogoCodes.Add(new CogoCode(c.LocalCode, c.SystemCode, c.Description, c.Block ?? ""));
+                    CogoCodes.Add(new CogoCode(c.LocalCode, c.SystemCode, c.Description, c.Block ?? "", c.BlockScale));
                 }
             }
         }
@@ -1678,28 +1824,35 @@ public class ShellViewModel : ViewModelBase
                     {
                         if (string.IsNullOrWhiteSpace(line)) continue;
                         var parts = line.Split(',');
+                        // Skip header row (produced by ExportCodesCsv)
+                        if (parts.Length >= 1 && parts[0].Trim().Equals("LocalCode", StringComparison.OrdinalIgnoreCase)) continue;
                         
                         if (parts.Length >= 2) 
                         { 
                             string local = parts[0].Trim(); 
-                            string sys = parts[1].Trim(); 
+                            string sys = parts[1].Trim();
+                            string desc    = parts.Length >= 3 ? parts[2].Trim() : sys;
+                            string block   = parts.Length >= 4 ? parts[3].Trim() : "";
+                            double bscale  = 1.0;
+                            if (parts.Length >= 5) double.TryParse(parts[4].Trim(), out bscale);
+                            if (bscale <= 0) bscale = 1.0;
                             
                             var existing = existingEntities.FirstOrDefault(e => string.Equals(e.SystemCode, sys, StringComparison.OrdinalIgnoreCase));
                             if (existing != null)
                             {
-                                existing.LocalCode = local;
-                                existing.Block = parts.Length >= 4 ? parts[3].Trim() : existing.Block;
+                                existing.LocalCode  = local;
+                                existing.Block      = parts.Length >= 4 ? block : existing.Block;
+                                existing.BlockScale = parts.Length >= 5 ? bscale : existing.BlockScale;
                             }
                             else
                             {
-                                string desc = parts.Length >= 3 ? parts[2].Trim() : sys;
-                                string block = parts.Length >= 4 ? parts[3].Trim() : "";
                                 var newEntity = new RCS.Data.Entities.CogoCodeEntity 
                                 { 
-                                    LocalCode = local, 
+                                    LocalCode  = local, 
                                     SystemCode = sys, 
                                     Description = desc,
-                                    Block = block
+                                    Block      = block,
+                                    BlockScale = bscale
                                 };
                                 db.CogoCodes.Add(newEntity);
                                 existingEntities.Add(newEntity);
@@ -1712,7 +1865,7 @@ public class ShellViewModel : ViewModelBase
                     CogoCodes.Clear();
                     foreach (var e in db.CogoCodes.ToList())
                     {
-                        CogoCodes.Add(new CogoCode(e.LocalCode, e.SystemCode, e.Description, e.Block ?? ""));
+                        CogoCodes.Add(new CogoCode(e.LocalCode, e.SystemCode, e.Description, e.Block ?? "", e.BlockScale));
                     }
                 }
                 
@@ -1814,9 +1967,14 @@ public class ShellViewModel : ViewModelBase
             try
             {
                 var sb = new System.Text.StringBuilder();
-                foreach(var code in CogoCodes)
+                // Header — matches import column order: LocalCode, SystemCode, Description, Block, BlockScale
+                sb.AppendLine("LocalCode,SystemCode,Description,Block,BlockScale");
+                foreach (var code in CogoCodes)
                 {
-                    sb.AppendLine($"{code.LocalCode},{code.SystemCode},{code.Description},{code.Block}");
+                    // Wrap fields containing commas in quotes
+                    string desc  = code.Description.Contains(',') ? $"\"{code.Description}\"" : code.Description;
+                    string block = (code.Block ?? "").Contains(',') ? $"\"{code.Block}\"" : (code.Block ?? "");
+                    sb.AppendLine($"{code.LocalCode},{code.SystemCode},{desc},{block},{code.BlockScale:G}");
                 }
                 System.IO.File.WriteAllText(dialog.FileName, sb.ToString());
                 CommandLog.Add($"Exported {CogoCodes.Count} codes to {dialog.FileName}");
@@ -1826,6 +1984,86 @@ public class ShellViewModel : ViewModelBase
                  CommandLog.Add($"Error exporting codes: {ex.Message}");
             }
         }
+    }
+
+    // ── Bulk Auto-Match Blocks ────────────────────────────────────────────
+    private void AutoMatchBlocks()
+    {
+        // Load all available block names once
+        var blocksDir = RCS.Cogo.Wpf.Views.EditCogoCodeWindow.BlocksDirectory;
+        if (string.IsNullOrEmpty(blocksDir) || !System.IO.Directory.Exists(blocksDir))
+        {
+            System.Windows.MessageBox.Show(
+                $"RCS_Blocks directory not found.\nExpected at: {blocksDir}\n\nConfigure the path in Settings.",
+                "Blocks Library Missing", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            return;
+        }
+
+        var allBlocks = System.IO.Directory.GetFiles(blocksDir, "*.dwg")
+            .Select(f => System.IO.Path.GetFileNameWithoutExtension(f))
+            .OrderBy(n => n)
+            .ToList();
+
+        if (allBlocks.Count == 0)
+        {
+            System.Windows.MessageBox.Show("No .dwg files found in the RCS_Blocks directory.",
+                "Empty Library", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            return;
+        }
+
+        int matched = 0, skipped = 0;
+        using var db = new RCS.Data.AppDbContext();
+        var entities = db.CogoCodes.ToList();
+
+        foreach (var code in CogoCodes)
+        {
+            // Only fill in codes that are currently unassigned
+            if (!string.IsNullOrWhiteSpace(code.Block)) { skipped++; continue; }
+
+            string candidate = code.LocalCode.ToUpperInvariant();
+            string desc      = (code.Description ?? "").ToUpperInvariant();
+
+            // Tier 1 — exact match on LocalCode
+            string? match = allBlocks.FirstOrDefault(b =>
+                b.Equals(candidate, StringComparison.OrdinalIgnoreCase));
+
+            // Tier 2 — prefix match  (e.g. SSMH → SSMH.dwg, SSMH1.dwg)
+            if (match == null)
+                match = allBlocks.FirstOrDefault(b =>
+                    b.StartsWith(candidate, StringComparison.OrdinalIgnoreCase));
+
+            // Tier 3 — keyword scan from description
+            if (match == null)
+            {
+                var keywords = desc.Split(new[] { ' ', '-', '_', '/' },
+                    StringSplitOptions.RemoveEmptyEntries);
+                foreach (var kw in keywords)
+                {
+                    match = allBlocks.FirstOrDefault(b =>
+                        b.IndexOf(kw, StringComparison.OrdinalIgnoreCase) >= 0);
+                    if (match != null) break;
+                }
+            }
+
+            if (match == null) continue;
+
+            // Apply to in-memory model
+            code.Block = match;
+            matched++;
+
+            // Persist to DB
+            var entity = entities.FirstOrDefault(e =>
+                e.LocalCode == code.LocalCode && e.SystemCode == code.SystemCode);
+            if (entity != null)
+                entity.Block = match;
+        }
+
+        db.SaveChanges();
+
+        CommandLog.Add($"[Auto-Match] Matched {matched} codes from {allBlocks.Count} blocks. {skipped} already had blocks assigned.");
+        System.Windows.MessageBox.Show(
+            $"Auto-Match complete.\n\n✔ {matched} codes matched\n⏭ {skipped} codes already had a block assigned",
+            "Auto-Match Blocks", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
     }
 
     // --- Materials Section ---
@@ -3870,11 +4108,38 @@ public class ShellViewModel : ViewModelBase
                 var writer = new RCS.Cogo.Wpf.Services.ProfessionalDxfWriter();
                 writer.Begin();
                 
-                // Export Points
+                // Build a fast lookup: firstWord(description) → CogoCode
+                var codeMap = CogoCodes
+                    .Where(c => !string.IsNullOrWhiteSpace(c.LocalCode))
+                    .ToDictionary(c => c.LocalCode.ToUpperInvariant(), c => c,
+                                  StringComparer.OrdinalIgnoreCase);
+
+                // Export Points — with block symbol if a Block is assigned to the code
                 foreach (var p in _context.GetAllPoints())
                 {
-                    writer.AddPoint(p.Point, "POINTS");
-                    writer.AddText(p.Id, p.Point.Easting + 1, p.Point.Northing + 1, 0.5, "POINT_IDS");
+                    // Resolve the code from the first word of the description
+                    string firstWord = (p.Description ?? "").Split(' ', 2)[0].ToUpperInvariant();
+                    codeMap.TryGetValue(firstWord, out var matchedCode);
+
+                    bool hasBlock = matchedCode != null &&
+                                   !string.IsNullOrWhiteSpace(matchedCode.Block);
+
+                    if (hasBlock)
+                    {
+                        // DXF INSERT — the block name is the .dwg filename without extension
+                        string blockName = matchedCode!.Block;
+                        double scale     = matchedCode.BlockScale > 0 ? matchedCode.BlockScale : 1.0;
+                        string layer     = $"CODE_{matchedCode.LocalCode}";
+                        writer.InsertBlock(blockName, p.Point.Easting, p.Point.Northing, scale, layer);
+                    }
+                    else
+                    {
+                        // Fallback: plain DXF POINT entity
+                        writer.AddPoint(p.Point, "POINTS");
+                    }
+
+                    // Always write the point ID and description labels
+                    writer.AddText(p.Id,          p.Point.Easting + 1, p.Point.Northing + 1, 0.5, "POINT_IDS");
                     writer.AddText(p.Description, p.Point.Easting + 1, p.Point.Northing - 1, 0.4, "POINT_DESC");
                 }
                 
@@ -4401,30 +4666,55 @@ public class ShellViewModel : ViewModelBase
         });
     }
 
-    private void NewProject(bool skipEdit = false)
+    // ── Project Lifecycle ────────────────────────────────────────────────────
+
+    /// <summary>Returns true if we can safely discard the current project
+    /// (either it's clean, or the user chose to save/discard).</summary>
+    private bool ConfirmDiscardChanges()
     {
-        CurrentProject = new Project();
+        if (!IsDirty || CurrentProject == null) return true;
+
+        string name = string.IsNullOrWhiteSpace(CurrentProject.ProjectName)
+            ? "Untitled Project" : CurrentProject.ProjectName;
+
+        var result = System.Windows.MessageBox.Show(
+            $"Save changes to '{name}' before continuing?",
+            "Unsaved Changes",
+            System.Windows.MessageBoxButton.YesNoCancel,
+            System.Windows.MessageBoxImage.Warning);
+
+        if (result == System.Windows.MessageBoxResult.Cancel) return false;
+        if (result == System.Windows.MessageBoxResult.Yes)  SaveProject();
+        return true;
+    }
+
+    private void ResetProjectState()
+    {
+        CurrentProject  = new Project();
+        _currentDbPath  = string.Empty;
+        IsDirty         = false;
         _context.ClearState();
-        
-        // Reset Piping Backend
-        _pipeNetwork = new RCS.Piping.Core.Models.PipeNetwork();
+        _pipeNetwork    = new RCS.Piping.Core.Models.PipeNetwork();
         _pipelineRunner = new RCS.Piping.Core.Runner.PipelineRunner(_context, _pipeNetwork);
-        
-        // Reset UI Collections
         PipeRuns.Clear();
         Structures.Clear();
         StructureGraphics.Clear();
         Points.Clear();
         Figures.Clear();
-        
         RefreshData();
+    }
+
+    private void NewProject(bool skipEdit = false)
+    {
+        if (!ConfirmDiscardChanges()) return;
+
+        ResetProjectState();
         _context.Log("[AUDIT] Created New Project");
-        
-        // Force User to Enter Details unless skipping
+
         if (!skipEdit)
-        {
             EditProject();
-        }
+
+        IsDirty = false; // brand-new project is not dirty until user makes changes
     }
 
     private void EditProject()
@@ -4482,27 +4772,32 @@ public class ShellViewModel : ViewModelBase
     private void SaveProject()
     {
         if (string.IsNullOrWhiteSpace(_currentDbPath))
-        {
             SaveProjectAs();
-        }
         else
-        {
             SaveProjectInternal(_currentDbPath);
-        }
     }
 
     private void SaveProjectAs()
     {
+        string safeName = string.IsNullOrWhiteSpace(CurrentProject?.ProjectName)
+            ? "Untitled"
+            : string.Concat(CurrentProject.ProjectName.Split(System.IO.Path.GetInvalidFileNameChars()));
+
+        string initialDir = !string.IsNullOrWhiteSpace(_currentDbPath)
+            ? System.IO.Path.GetDirectoryName(_currentDbPath) ?? string.Empty
+            : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
-            Filter = "RCS Project (*.db)|*.db|All Files (*.*)|*.*",
-            FileName = $"{CurrentProject.ProjectName.Replace(" ", "_")}.db"
+            Title            = "Save RCS Project As",
+            Filter           = "RCS Project (*.db)|*.db|All Files (*.*)|*.*",
+            DefaultExt       = ".db",
+            FileName         = $"{safeName.Replace(' ', '_')}.db",
+            InitialDirectory = initialDir
         };
 
         if (dialog.ShowDialog() == true)
-        {
             SaveProjectInternal(dialog.FileName);
-        }
     }
 
     private void SaveProjectInternal(string filePath)
@@ -4581,225 +4876,209 @@ public class ShellViewModel : ViewModelBase
 
     private string _currentDbPath = string.Empty; // Store path for maintenance operations
 
+    /// <summary>Open-project logic shared by OpenProject() and OpenRecentFile().</summary>
+    private void LoadProjectFromPath(string filePath)
+    {
+        var loader = new RCS.Cogo.Wpf.Views.LoadingWindow($"Loading {System.IO.Path.GetFileName(filePath)}…", async () =>
+        {
+            try
+            {
+                // 1. Reset state AFTER confirming — we already confirmed in the caller
+                System.Windows.Application.Current.Dispatcher.Invoke(() => ResetProjectState());
+
+                var service       = new LiteDbProjectService();
+                var loadedProject = await Task.Run(() => service.LoadProject(filePath));
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    CurrentProject = loadedProject;
+                    _currentDbPath = filePath;
+                    IsDirty        = false;
+                    PushRecentFile(filePath, loadedProject.ProjectName);
+
+                    // Repopulate Context
+                    if (CurrentProject.Points != null)
+                        foreach (var p in CurrentProject.Points)
+                            _context.AddPoint(p.Id, new Point3D(p.Northing, p.Easting, p.Elevation), p.Description);
+
+                    // Repopulate Piping
+                    PipeRuns.Clear();
+                    Structures.Clear();
+
+                    if (CurrentProject.PipeRuns != null)
+                        foreach (var run in CurrentProject.PipeRuns) { _pipeNetwork.AddRun(run); PipeRuns.Add(run); }
+
+                    if (CurrentProject.Structures != null)
+                        foreach (var s in CurrentProject.Structures) { _pipeNetwork.AddStructure(s); Structures.Add(s); }
+
+                    if (CurrentProject.Materials != null)
+                    { ProjectMaterials.Clear(); foreach (var m in CurrentProject.Materials) ProjectMaterials.Add(m); }
+
+                    // Rehydrate figures from SQLite
+                    var projIdStr = _currentProject?.Id.ToString() ?? "";
+                    try
+                    {
+                        using var figDb = new RCS.Data.AppDbContext();
+                        var dbFigures = figDb.Set<RCS.Data.Entities.Figure>()
+                            .Include("Vertices.Point")
+                            .Where(f => f.ProjectId == projIdStr)
+                            .ToList();
+
+                        foreach (var dbFig in dbFigures)
+                        {
+                            if (dbFig.Vertices == null || dbFig.Vertices.Count == 0) continue;
+
+                            var orderedIds = new System.Collections.Generic.List<string>();
+                            bool anyMissing = false;
+                            foreach (var v in dbFig.Vertices.OrderBy(v => v.OrderIndex))
+                            {
+                                var rawPid = v.PointId;
+                                var prefix = projIdStr + "_";
+                                if (!string.IsNullOrEmpty(prefix) && rawPid.StartsWith(prefix))
+                                    rawPid = rawPid.Substring(prefix.Length);
+
+                                if (!_context.PointExists(rawPid))
+                                {
+                                    if (v.Point != null)
+                                        _context.AddPoint(rawPid, new Point3D(v.Point.Northing, v.Point.Easting, v.Point.Elevation), "");
+                                    else { anyMissing = true; break; }
+                                }
+                                orderedIds.Add(rawPid);
+                            }
+                            if (anyMissing || orderedIds.Count < 2) continue;
+
+                            // Adaptive crosslink split
+                            var segDists = new System.Collections.Generic.List<double>();
+                            for (int i = 0; i < orderedIds.Count - 1; i++)
+                            {
+                                var pA = _context.GetPoint(orderedIds[i]);
+                                var pB = _context.GetPoint(orderedIds[i + 1]);
+                                segDists.Add((pA != null && pB != null)
+                                    ? Math.Sqrt(Math.Pow(pB.Easting - pA.Easting, 2) + Math.Pow(pB.Northing - pA.Northing, 2))
+                                    : 0);
+                            }
+                            var sorted2 = new System.Collections.Generic.List<double>(segDists); sorted2.Sort();
+                            double medianDist = sorted2[sorted2.Count / 2];
+                            double crosslinkCutoff = Math.Max(medianDist * 2.0, 110.0);
+
+                            string baseName = dbFig.Name;
+                            int segIdx = 1;
+                            var currentSegIds = new System.Collections.Generic.List<string> { orderedIds[0] };
+
+                            for (int i = 0; i < orderedIds.Count - 1; i++)
+                            {
+                                double dist = segDists[i];
+                                if (dist > crosslinkCutoff)
+                                {
+                                    if (currentSegIds.Count > 1)
+                                    {
+                                        string segName = segIdx == 1 ? baseName : $"{baseName}_{segIdx}";
+                                        var seg = new RCS.Cogo.App.State.Figure(segName);
+                                        foreach (var id in currentSegIds) seg.PointIds.Add(id);
+                                        _context.AddFigure(seg);
+                                        _context.Log($"[LOAD] Split '{baseName}' → '{segName}' ({currentSegIds.Count} pts). Outlier seg: {dist:F0} ft.");
+                                    }
+                                    segIdx++;
+                                    currentSegIds = new System.Collections.Generic.List<string>();
+                                }
+                                currentSegIds.Add(orderedIds[i + 1]);
+                            }
+                            if (currentSegIds.Count > 1)
+                            {
+                                string segName = segIdx == 1 ? baseName : $"{baseName}_{segIdx}";
+                                var seg = new RCS.Cogo.App.State.Figure(segName);
+                                foreach (var id in currentSegIds) seg.PointIds.Add(id);
+                                _context.AddFigure(seg);
+                            }
+                        }
+                        _context.Log($"[AUDIT] Rehydrated {_context.GetAllFigures().Count()} figures from database.");
+                    }
+                    catch (Exception figEx) { _context.Log($"[WARN] Could not rehydrate figures: {figEx.Message}"); }
+
+                    _context.Log("[AUDIT] Opened Project (loading alignments...)");
+                }); // end Dispatcher.Invoke
+
+                // Rehydrate Alignments & Profiles (must run in async scope, not inside Dispatcher.Invoke)
+                var projIdOuter = _currentProject?.Id.ToString() ?? "";
+                try
+                {
+                    using var algnDb = new RCS.Data.AppDbContext();
+                    var algnFigs = algnDb.Set<RCS.Data.Entities.Figure>()
+                        .Where(f => f.ProjectId == projIdOuter &&
+                                   (f.Layer == "Horizontal_Align" || f.Layer == "Vertical_Align"))
+                        .OrderBy(f => f.Layer)
+                        .ToList();
+
+                    int rehydratedAlgns = 0;
+                    foreach (var af in algnFigs)
+                    {
+                        if (string.IsNullOrWhiteSpace(af.ScriptContent)) continue;
+                        var algnLines = af.ScriptContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+                        var pointCmds = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                            { "PT", "PNT", "NE", "NEZ", "ST" };
+                        foreach (var aln in algnLines)
+                        {
+                            var t = aln.Trim();
+                            if (string.IsNullOrWhiteSpace(t) || t.StartsWith("//")) continue;
+                            var cmd = t.Split(' ')[0].ToUpperInvariant();
+                            if (pointCmds.Contains(cmd)) try { await _engine.ExecuteAsync(t, _context); } catch { }
+                        }
+                        foreach (var aln in algnLines)
+                        {
+                            var t = aln.Trim();
+                            if (string.IsNullOrWhiteSpace(t) || t.StartsWith("//")) continue;
+                            var cmd = t.Split(' ')[0].ToUpperInvariant();
+                            if (cmd == "ALGN" || cmd == "PROF" || cmd == "VPI")
+                                try { await _engine.ExecuteAsync(t, _context); } catch { }
+                        }
+                        rehydratedAlgns++;
+                    }
+                    if (rehydratedAlgns > 0)
+                        _context.Log($"[AUDIT] Rehydrated {rehydratedAlgns} alignment/profile script(s).");
+                }
+                catch (Exception algnEx) { _context.Log($"[WARN] Could not rehydrate alignments: {algnEx.Message}"); }
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() => RefreshData());
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _context.Log($"[AUDIT] Error Opening Project: {ex.Message}");
+                    System.Windows.MessageBox.Show($"Error Opening Project: {ex.Message}");
+                });
+            }
+        });
+
+        loader.ShowDialog();
+    }
+
     private void OpenProject()
     {
+        if (!ConfirmDiscardChanges()) return;
+
+        string initialDir = !string.IsNullOrWhiteSpace(_currentDbPath)
+            ? System.IO.Path.GetDirectoryName(_currentDbPath) ?? string.Empty
+            : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
-            Filter = "RCS Project (*.db)|*.db|All Files (*.*)|*.*",
+            Title            = "Open RCS Project",
+            Filter           = "RCS Project (*.db)|*.db|All Files (*.*)|*.*",
+            InitialDirectory = initialDir
         };
 
         if (dialog.ShowDialog() == true)
-        {
-            var loader = new RCS.Cogo.Wpf.Views.LoadingWindow("Loading Project...", async () =>
-            {
-                try
-                {
-                    System.Windows.Application.Current.Dispatcher.Invoke(() => NewProject(true)); // Reset State first (skip edit dialog)
-                    
-                    var service = new LiteDbProjectService();
-                    var loadedProject = await Task.Run(() => service.LoadProject(dialog.FileName));
-                    
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        CurrentProject = loadedProject;
-                        _currentDbPath = dialog.FileName;
-
-                        // Repopulate Context
-                        if (CurrentProject.Points != null)
-                        {
-                            foreach(var p in CurrentProject.Points)
-                            {
-                                _context.AddPoint(p.Id, new Point3D(p.Northing, p.Easting, p.Elevation), p.Description);
-                            }
-                        }
-                        
-                        // Repopulate Piping
-                        PipeRuns.Clear();
-                        Structures.Clear();
-
-                        if (CurrentProject.PipeRuns != null)
-                        {
-                            foreach(var run in CurrentProject.PipeRuns) 
-                            {
-                                _pipeNetwork.AddRun(run);
-                                PipeRuns.Add(run);
-                            }
-                        }
-                        
-                        if (CurrentProject.Structures != null)
-                        {
-                            foreach(var s in CurrentProject.Structures) 
-                            {
-                                _pipeNetwork.AddStructure(s);
-                                Structures.Add(s);
-                            }
-                        }
-                        
-                        if (CurrentProject.Materials != null)
-                        {
-                            ProjectMaterials.Clear();
-                            foreach(var m in CurrentProject.Materials) ProjectMaterials.Add(m);
-                        }
-
-                        // *** KEY FIX: Rehydrate figures from SQLite into the in-memory context ***
-                        // IMPORTANT: Do NOT use InstalledAssets.FigureAssets here — it loads via a 
-                        // fire-and-forget async method and may still be empty at this point.
-                        // Instead query SQLite directly with a fresh context.
-                        var projIdStr = _currentProject?.Id.ToString() ?? "";
-                        try
-                        {
-                            using var figDb = new RCS.Data.AppDbContext();
-                            var dbFigures = figDb.Set<RCS.Data.Entities.Figure>()
-                                .Include("Vertices.Point")
-                                .Where(f => f.ProjectId == projIdStr)
-                                .ToList();
-
-                            foreach (var dbFig in dbFigures)
-                            {
-                                if (dbFig.Vertices == null || dbFig.Vertices.Count == 0) continue;
-
-                                // Build the ordered point-id list first
-                                var orderedIds = new System.Collections.Generic.List<string>();
-                                bool anyMissing = false;
-                                foreach (var v in dbFig.Vertices.OrderBy(v => v.OrderIndex))
-                                {
-                                    var rawPid = v.PointId;
-                                    var prefix = projIdStr + "_";
-                                    if (!string.IsNullOrEmpty(prefix) && rawPid.StartsWith(prefix))
-                                        rawPid = rawPid.Substring(prefix.Length);
-
-                                    if (!_context.PointExists(rawPid))
-                                    {
-                                        if (v.Point != null)
-                                            _context.AddPoint(rawPid, new Point3D(v.Point.Northing, v.Point.Easting, v.Point.Elevation), "");
-                                        else
-                                        { anyMissing = true; break; }
-                                    }
-                                    orderedIds.Add(rawPid);
-                                }
-                                if (anyMissing || orderedIds.Count < 2) continue;
-
-                                // ── Adaptive crosslink split ─────────────────────────────
-                                // Compute all segment distances, take the MEDIAN, then split
-                                // at any segment > 5× median. This catches 311→317 (short
-                                // numeric jump but physically an outlier) without needing
-                                // magic fixed thresholds.
-                                var segDists = new System.Collections.Generic.List<double>();
-                                for (int i = 0; i < orderedIds.Count - 1; i++)
-                                {
-                                    var pA = _context.GetPoint(orderedIds[i]);
-                                    var pB = _context.GetPoint(orderedIds[i + 1]);
-                                    segDists.Add((pA != null && pB != null)
-                                        ? Math.Sqrt(Math.Pow(pB.Easting - pA.Easting, 2) + Math.Pow(pB.Northing - pA.Northing, 2))
-                                        : 0);
-                                }
-                                var sorted = new System.Collections.Generic.List<double>(segDists);
-                                sorted.Sort();
-                                double medianDist = sorted[sorted.Count / 2];
-                                double crosslinkCutoff = Math.Max(medianDist * 2.0, 110.0);
-
-                                string baseName = dbFig.Name;
-                                int segIdx = 1;
-                                var currentSegIds = new System.Collections.Generic.List<string> { orderedIds[0] };
-
-                                for (int i = 0; i < orderedIds.Count - 1; i++)
-                                {
-                                    double dist = segDists[i];
-                                    bool isCrosslink = dist > crosslinkCutoff;
-
-                                    if (isCrosslink)
-                                    {
-                                        // Flush current segment
-                                        if (currentSegIds.Count > 1)
-                                        {
-                                            string segName = segIdx == 1 ? baseName : $"{baseName}_{segIdx}";
-                                            var seg = new RCS.Cogo.App.State.Figure(segName);
-                                            foreach (var id in currentSegIds) seg.PointIds.Add(id);
-                                            _context.AddFigure(seg);
-                                            _context.Log($"[LOAD] Split '{baseName}' → '{segName}' ({currentSegIds.Count} pts). Outlier seg: {dist:F0} ft (cutoff {crosslinkCutoff:F0} ft).");
-                                        }
-                                        segIdx++;
-                                        currentSegIds = new System.Collections.Generic.List<string>();
-                                    }
-                                    currentSegIds.Add(orderedIds[i + 1]);
-                                }
-                                // Flush final segment
-                                if (currentSegIds.Count > 1)
-                                {
-                                    string segName = segIdx == 1 ? baseName : $"{baseName}_{segIdx}";
-                                    var seg = new RCS.Cogo.App.State.Figure(segName);
-                                    foreach (var id in currentSegIds) seg.PointIds.Add(id);
-                                    _context.AddFigure(seg);
-                                }
-                            }
-                            _context.Log($"[AUDIT] Rehydrated {_context.GetAllFigures().Count()} figures from database.");
-                        }
-                        catch (Exception figEx)
-                        {
-                            _context.Log($"[WARN] Could not rehydrate figures: {figEx.Message}");
-                        }
-
-                        _context.Log($"[AUDIT] Opened Project (loading alignments...)");
-                        // ← Dispatcher.Invoke closes here ────────────────────────────────
-                    });
-
-                    // ── P1: Rehydrate Alignments & Profiles ───────────────────────────
-                    // Must run in outer async scope (not inside Dispatcher.Invoke) so that
-                    // 'await _engine.ExecuteAsync(...)' compiles correctly (CS4034).
-                    var projIdOuter = _currentProject?.Id.ToString() ?? "";
-                    try
-                    {
-                        using var algnDb = new RCS.Data.AppDbContext();
-                        var algnFigs = algnDb.Set<RCS.Data.Entities.Figure>()
-                            .Where(f => f.ProjectId == projIdOuter &&
-                                       (f.Layer == "Horizontal_Align" || f.Layer == "Vertical_Align"))
-                            .OrderBy(f => f.Layer)   // HA before VA — alignments must exist before profiles
-                            .ToList();
-
-                        int rehydratedAlgns = 0;
-                        foreach (var af in algnFigs)
-                        {
-                            if (string.IsNullOrWhiteSpace(af.ScriptContent)) continue;
-                            var algnLines = af.ScriptContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                            foreach (var aln in algnLines)
-                            {
-                                var t = aln.Trim();
-                                if (string.IsNullOrWhiteSpace(t)) continue;
-                                var cmd = t.Split(' ')[0].ToUpperInvariant();
-                                if (cmd == "ALGN" || cmd == "PROF" || cmd == "VPI")
-                                {
-                                    try { await _engine.ExecuteAsync(t, _context); } catch { }
-                                }
-                            }
-                            rehydratedAlgns++;
-                        }
-                        if (rehydratedAlgns > 0)
-                            _context.Log($"[AUDIT] Rehydrated {rehydratedAlgns} alignment/profile script(s).");
-                    }
-                    catch (Exception algnEx)
-                    {
-                        _context.Log($"[WARN] Could not rehydrate alignments: {algnEx.Message}");
-                    }
-
-                    System.Windows.Application.Current.Dispatcher.Invoke(() => RefreshData());
-
-
-
-                }
-                catch (Exception ex)
-                {
-                    System.Windows.Application.Current.Dispatcher.Invoke(() => 
-                    {
-                         _context.Log($"[AUDIT] Error Opening Project: {ex.Message}");
-                         System.Windows.MessageBox.Show($"Error Opening Project: {ex.Message}");
-                    });
-                }
-            });
-            
-            loader.ShowDialog();
-        }
+            LoadProjectFromPath(dialog.FileName);
     }
 
+    private void CloseProject()
+    {
+        if (!ConfirmDiscardChanges()) return;
+        ResetProjectState();
+        _context.Log("[AUDIT] Closed Project");
+    }
     // --- Database Maintenance ---
     public System.Windows.Input.ICommand CompactDbCommand { get; }
     public System.Windows.Input.ICommand VerifyDbCommand { get; }
@@ -5115,11 +5394,6 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    private void CloseProject()
-    {
-        NewProject(true); // Effectively closes by resetting and skips edit dialog
-        _context.Log("[AUDIT] Closed Project");
-    }
 
     private void ImportPointsList()
     {

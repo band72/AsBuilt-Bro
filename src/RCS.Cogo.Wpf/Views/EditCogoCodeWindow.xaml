@@ -1,50 +1,97 @@
 <Window x:Class="RCS.Cogo.Wpf.Views.EditCogoCodeWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Edit Cogo Code" Height="380" Width="400"
-        WindowStartupLocation="CenterOwner" 
+        Title="Edit Cogo Code" Height="460" Width="440"
+        WindowStartupLocation="CenterOwner"
         Background="#1E1E1E" Foreground="White">
     <Grid Margin="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- Title -->
-            <RowDefinition Height="Auto"/> <!-- Local Code -->
-            <RowDefinition Height="Auto"/> <!-- System Code -->
-            <RowDefinition Height="Auto"/> <!-- Description -->
-            <RowDefinition Height="Auto"/> <!-- Block -->
-            <RowDefinition Height="Auto"/> <!-- Symbol Preview -->
+            <RowDefinition Height="Auto"/>  <!-- Title -->
+            <RowDefinition Height="Auto"/>  <!-- Local Code -->
+            <RowDefinition Height="Auto"/>  <!-- System Code -->
+            <RowDefinition Height="Auto"/>  <!-- Description -->
+            <RowDefinition Height="Auto"/>  <!-- Block -->
+            <RowDefinition Height="Auto"/>  <!-- Block Scale -->
+            <RowDefinition Height="Auto"/>  <!-- Symbol Preview -->
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/> <!-- Buttons -->
+            <RowDefinition Height="Auto"/>  <!-- Buttons -->
         </Grid.RowDefinitions>
-        
+
         <TextBlock Grid.Row="0" Text="Edit Cogo Code" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
-        
+
         <!-- Local Code -->
-        <TextBlock Grid.Row="1" Text="Local Code:" Margin="0,0,0,5" Foreground="White" />
-        <TextBox x:Name="txtLocalCode" Grid.Row="1" Margin="90,0,0,15" Padding="5" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3F3F46" />
+        <TextBlock Grid.Row="1" Text="Local Code:" Margin="0,0,0,5" Foreground="White"/>
+        <TextBox x:Name="txtLocalCode" Grid.Row="1" Margin="100,0,0,15" Padding="5"
+                 Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3F3F46"/>
 
-        <!-- System Code -->
-        <TextBlock Grid.Row="2" Text="System Code:" Margin="0,0,0,5" Foreground="Gray" ToolTip="System Codes are Read-Only"/>
-        <TextBox x:Name="txtSystemCode" Grid.Row="2" Margin="90,0,0,15" Padding="5" IsReadOnly="True" Background="#1E1E1E" Foreground="Gray" BorderThickness="1" BorderBrush="#3F3F46" ToolTip="System Codes are Read-Only"/>
+        <!-- System Code (read-only) -->
+        <TextBlock Grid.Row="2" Text="System Code:" Margin="0,0,0,5" Foreground="Gray"
+                   ToolTip="System Codes are Read-Only"/>
+        <TextBox x:Name="txtSystemCode" Grid.Row="2" Margin="100,0,0,15" Padding="5"
+                 IsReadOnly="True" Background="#1E1E1E" Foreground="Gray"
+                 BorderThickness="1" BorderBrush="#3F3F46" ToolTip="System Codes are Read-Only"/>
 
-        <!-- Description -->
-        <TextBlock Grid.Row="3" Text="Description:" Margin="0,0,0,5" Foreground="Gray" ToolTip="Descriptions are Read-Only"/>
-        <TextBox x:Name="txtDescription" Grid.Row="3" Margin="90,0,0,15" Padding="5" IsReadOnly="True" Background="#1E1E1E" Foreground="Gray" BorderThickness="1" BorderBrush="#3F3F46" ToolTip="Descriptions are Read-Only"/>
+        <!-- Description (read-only) -->
+        <TextBlock Grid.Row="3" Text="Description:" Margin="0,0,0,5" Foreground="Gray"
+                   ToolTip="Descriptions are Read-Only"/>
+        <TextBox x:Name="txtDescription" Grid.Row="3" Margin="100,0,0,15" Padding="5"
+                 IsReadOnly="True" Background="#1E1E1E" Foreground="Gray"
+                 BorderThickness="1" BorderBrush="#3F3F46" ToolTip="Descriptions are Read-Only"/>
 
-        <!-- Block -->
-        <TextBlock Grid.Row="4" Text="Block:" Margin="0,0,0,5" Foreground="White" />
-        <TextBox x:Name="txtBlock" Grid.Row="4" Margin="90,0,0,15" Padding="5" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3F3F46" />
+        <!-- Block — searchable ComboBox populated from RCS_Blocks *.dwg -->
+        <TextBlock Grid.Row="4" Text="DXF Block:" Margin="0,0,0,5" Foreground="White"
+                   ToolTip="Select the DWG block to INSERT for this code when exporting to DXF.&#x0a;Sourced from the RCS_Blocks library."/>
+        <Grid Grid.Row="4" Margin="100,0,0,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <!-- Auto-complete ComboBox -->
+            <ComboBox x:Name="cmbBlock" Grid.Column="0"
+                      IsEditable="True" IsTextSearchEnabled="True"
+                      StaysOpenOnEdit="True"
+                      TextSearch.TextPath="."
+                      Background="#2D2D30" Foreground="White"
+                      BorderBrush="#3F3F46" Padding="4"
+                      TextBoxBase.TextChanged="OnBlockTextChanged"/>
+            <Button Grid.Column="1" Content="⟳" Width="28" Margin="4,0,0,0"
+                    Background="#2D2D30" Foreground="#56CCF2" BorderBrush="#3F3F46"
+                    ToolTip="Click to apply smart match: picks the closest block name from the library for this description."
+                    Click="OnAutoMatchBlock"/>
+        </Grid>
+
+        <!-- Block Scale -->
+        <TextBlock Grid.Row="5" Text="Block Scale:" Margin="0,0,0,5" Foreground="White"
+                   ToolTip="DXF INSERT scale factor (X=Y=Z). 1.0 = full size.&#x0a;Use 0.5 to insert at half size, 2.0 for double, etc."/>
+        <Grid Grid.Row="5" Margin="100,0,0,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="txtBlockScale" Grid.Column="0" Padding="5" Text="1.0"
+                     Background="#2D2D30" Foreground="White"
+                     BorderThickness="1" BorderBrush="#3F3F46"/>
+            <TextBlock Grid.Column="1" Text="  (1.0 = full size)" Foreground="Gray"
+                       VerticalAlignment="Center" FontStyle="Italic"/>
+        </Grid>
 
         <!-- Preview Image -->
-        <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,10,0,0">
+        <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="0,12,0,0">
             <TextBlock Text="Symbol Preview:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="Gray"/>
-            <Image x:Name="imgPreview" Width="30" Height="30" Stretch="Uniform" />
+            <Image x:Name="imgPreview" Width="34" Height="34" Stretch="Uniform"/>
+            <TextBlock x:Name="lblBlockMatch" VerticalAlignment="Center" Margin="12,0,0,0"
+                       Foreground="#56CCF2" FontSize="11"/>
         </StackPanel>
 
         <!-- Buttons -->
-        <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-            <Button Content="Save" Width="80" Padding="5" Margin="0,0,10,0" Background="#007ACC" Foreground="White" BorderThickness="0" Click="btnSave_Click"/>
-            <Button Content="Delete" Width="80" Padding="5" Margin="0,0,10,0" Background="#A1260D" Foreground="White" BorderThickness="0" Click="btnDelete_Click"/>
-            <Button Content="Close" Width="80" Padding="5" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3F3F46" Click="btnClose_Click"/>
+        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Content="Save"   Width="80" Padding="5" Margin="0,0,10,0"
+                    Background="#007ACC" Foreground="White" BorderThickness="0" Click="btnSave_Click"/>
+            <Button Content="Delete" Width="80" Padding="5" Margin="0,0,10,0"
+                    Background="#A1260D" Foreground="White" BorderThickness="0" Click="btnDelete_Click"/>
+            <Button Content="Close"  Width="80" Padding="5"
+                    Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3F3F46"
+                    Click="btnClose_Click"/>
         </StackPanel>
     </Grid>
 </Window>

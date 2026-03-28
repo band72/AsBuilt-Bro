@@ -226,11 +226,10 @@ namespace RCS.Cogo.Wpf.Views
 
         private static void WriteSectionEntities(StreamWriter w, CrossSection xs, double ox, double oy)
         {
-            // Scale: 1 DXF unit = 1 ft.  Map offset→X, elevation→Y relative to FG CL.
-            // CL is at (ox, oy+0); elevation delta from FGElev.
+            // Scale: 1 DXF unit = 1 ft.  Map offset→X, elevation delta→Y from FGElev.
             double fgElev = xs.FGElevation;
 
-            // ── EG Polyline (blue: colour 5) ──────────────────────────────
+            // ── EG Polyline (blue: colour 5) ──────────────────────────────────
             var shots = xs.Shots.OrderBy(s => s.Offset).ToList();
             if (shots.Count >= 2)
             {
@@ -250,23 +249,98 @@ namespace RCS.Cogo.Wpf.Views
                 w.WriteLine("SEQEND");
             }
 
-            // ── FG Template (yellow: colour 2) ────────────────────────────
-            // Left slope point → left edge → CL → right edge → right slope point
-            double lEdge   = -xs.TemplateWidthLeft;
-            double rEdge   =  xs.TemplateWidthRight;
-            double lDayOff = lEdge * 2.0;   // simplified daylight
-            double rDayOff = rEdge * 2.0;
-            double lDayElev = xs.GetGroundElevAt(lDayOff) ?? fgElev;
-            double rDayElev = xs.GetGroundElevAt(rDayOff) ?? fgElev;
+            // ── Resolve actual daylight points ─────────────────────────────────
+            double lEdge = -xs.TemplateWidthLeft;
+            double rEdge =  xs.TemplateWidthRight;
 
+            var ldp = xs.GetDaylightPoint(rightSide: false);
+            var rdp = xs.GetDaylightPoint(rightSide: true);
+
+            double lDayOff  = ldp?.Offset    ?? lEdge * 2.5;
+            double lDayElev = ldp?.Elevation  ?? (xs.GetGroundElevAt(lDayOff) ?? fgElev);
+            double rDayOff  = rdp?.Offset    ?? rEdge * 2.5;
+            double rDayElev = rdp?.Elevation  ?? (xs.GetGroundElevAt(rDayOff) ?? fgElev);
+
+            // ── FG Template (yellow: colour 2) ────────────────────────────────
             WritePolylineFG(w, ox, oy, fgElev, lDayOff, lDayElev, lEdge, 0, rEdge, rDayOff, rDayElev);
 
-            // ── CL tick ──────────────────────────────────────────────────
-            WriteDxfLine(w, "XS_CL", 3, ox, oy - 1, ox, oy + 1);   // colour 3 = green
+            // ── CUT zone outline (red: colour 1) ─────────────────────────────
+            // CL-relative cut area: paved surface sits above EG → shade below FG
+            if (xs.CutFill < -0.01 && shots.Count >= 2)
+            {
+                w.WriteLine("  0\nPOLYLINE\n  8\nXS_CUT\n 62\n     1\n 66\n     1");
+                w.WriteLine(" 10\n0.0\n 20\n0.0\n 30\n0.0");
+                // FG edge left → CL → FG edge right
+                void VC(double offX, double elevY) =>
+                    w.WriteLine($"  0\nVERTEX\n  8\nXS_CUT\n 10\n{(ox + offX):F4}\n 20\n{(oy + elevY - fgElev):F4}\n  0");
+                VC(lEdge, fgElev);
+                VC(0,     fgElev);
+                VC(rEdge, fgElev);
+                // trace EG shots back left (in reverse)
+                foreach (var shot in shots.AsEnumerable().Reverse()
+                             .Where(s => s.Offset >= lEdge && s.Offset <= rEdge))
+                    VC(shot.Offset, shot.EGElevation);
+                w.WriteLine("SEQEND");
+            }
 
-            // ── Station label ─────────────────────────────────────────────
-            WriteDxfText(w, "XS_LABEL", 7, ox - 20, oy + 5, 2.0,
-                $"STA: {xs.StationLabel}  FG:{fgElev:F2}  EG:{xs.EGElevationCL:F2}  {(xs.CutFill < -0.01 ? "CUT" : xs.CutFill > 0.01 ? "FILL" : "GRADE")}:{Math.Abs(xs.CutFill):F2}");
+            // ── FILL zone outline (green: colour 3) ───────────────────────────
+            if (xs.CutFill > 0.01 && shots.Count >= 2)
+            {
+                w.WriteLine("  0\nPOLYLINE\n  8\nXS_FILL\n 62\n     3\n 66\n     1");
+                w.WriteLine(" 10\n0.0\n 20\n0.0\n 30\n0.0");
+                void VF(double offX, double elevY) =>
+                    w.WriteLine($"  0\nVERTEX\n  8\nXS_FILL\n 10\n{(ox + offX):F4}\n 20\n{(oy + elevY - fgElev):F4}\n  0");
+                VF(lEdge, fgElev);
+                VF(0,     fgElev);
+                VF(rEdge, fgElev);
+                foreach (var shot in shots.AsEnumerable().Reverse()
+                             .Where(s => s.Offset >= lEdge && s.Offset <= rEdge))
+                    VF(shot.Offset, shot.EGElevation);
+                w.WriteLine("SEQEND");
+            }
+
+            // ── CL tick ───────────────────────────────────────────────────────
+            WriteDxfLine(w, "XS_CL", 3, ox, oy - 1.5, ox, oy + 1.5);
+
+            // ── Horizontal datum line (offset axis) ───────────────────────────
+            double axisExtent = Math.Max(Math.Abs(lDayOff), Math.Abs(rDayOff)) + 5;
+            WriteDxfLine(w, "XS_GRID", 8, ox - axisExtent, oy, ox + axisExtent, oy);
+
+            // ── Offset tick marks every 10 ft ─────────────────────────────────
+            for (double off = -Math.Floor(axisExtent / 10) * 10; off <= axisExtent; off += 10)
+            {
+                WriteDxfLine(w, "XS_GRID", 8, ox + off, oy - 0.5, ox + off, oy + 0.5);
+                WriteDxfText(w, "XS_GRID", 8, ox + off - 2, oy - 2.5, 1.0, $"{(int)off}");
+            }
+
+            // ── Title block border ────────────────────────────────────────────
+            double tbX1 = ox - axisExtent;
+            double tbX2 = ox + axisExtent;
+            double tbY1 = oy - 8;
+            double tbY2 = oy + Math.Abs(lDayElev - fgElev > 0 ? lDayElev - fgElev : 5) + 10;
+
+            // outer frame
+            WriteDxfLine(w, "XS_BORDER", 7, tbX1, tbY1, tbX2, tbY1);
+            WriteDxfLine(w, "XS_BORDER", 7, tbX2, tbY1, tbX2, tbY2);
+            WriteDxfLine(w, "XS_BORDER", 7, tbX2, tbY2, tbX1, tbY2);
+            WriteDxfLine(w, "XS_BORDER", 7, tbX1, tbY2, tbX1, tbY1);
+            // title separator line
+            WriteDxfLine(w, "XS_BORDER", 7, tbX1, tbY1 + 7, tbX2, tbY1 + 7);
+
+            // ── Title block text ──────────────────────────────────────────────
+            string cfStatus = xs.CutFill < -0.01 ? $"CUT {Math.Abs(xs.CutFill):F2} ft"
+                            : xs.CutFill >  0.01 ? $"FILL {xs.CutFill:F2} ft"
+                            : "AT GRADE";
+
+            WriteDxfText(w, "XS_LABEL", 7, tbX1 + 1, tbY1 + 5.0, 2.5,
+                $"STA: {xs.StationLabel}");
+
+            WriteDxfText(w, "XS_LABEL", 7, tbX1 + 1, tbY1 + 2.5, 1.8,
+                $"FG: {fgElev:F3}  EG: {xs.EGElevationCL:F3}  {cfStatus}");
+
+            WriteDxfText(w, "XS_LABEL", 7, tbX1 + 1, tbY1 + 0.8, 1.4,
+                $"Tmpl: {xs.TemplateWidthLeft:F0}L + {xs.TemplateWidthRight:F0}R ft  " +
+                $"Slopes {xs.ForeslopeLeft:F1}:1 L / {xs.ForeslopeRight:F1}:1 R");
         }
 
         private static void WritePolylineFG(StreamWriter w, double ox, double oy, double fgElev,

@@ -61,11 +61,145 @@ namespace RCS.Cogo.Wpf.Views
         private void OnProfileCanvasSizeChanged(object sender, SizeChangedEventArgs e)
         {
             DrawProfile();
+            DrawAlignmentOverlay();
         }
 
         private void OnRefreshProfile(object sender, RoutedEventArgs e)
         {
             DrawProfile();
+            DrawAlignmentOverlay();
+        }
+
+        // ── Plan-view alignment overlay ─────────────────────────────────────
+        /// <summary>
+        /// Draws all in-memory alignments onto the plan-view <see cref="ViewportCanvas"/>
+        /// as world-coordinate polylines with station ticks and name labels.
+        /// The items share the same MatrixTransform applied to the figures layer,
+        /// so they pan/zoom automatically.
+        /// </summary>
+        private void DrawAlignmentOverlay()
+        {
+            // Remove previously drawn alignment children (tagged with the overlay tag)
+            var toRemove = ViewportCanvas.Children
+                .OfType<UIElement>()
+                .Where(el =>
+                {
+                    if (el is Polyline pl) return pl.Tag is string s && s == "AlignOverlay";
+                    if (el is Line ln)    return ln.Tag is string s2 && s2 == "AlignOverlay";
+                    if (el is TextBlock tb) return tb.Tag is string s3 && s3 == "AlignOverlay";
+                    return false;
+                })
+                .ToList();
+            foreach (var el in toRemove) ViewportCanvas.Children.Remove(el);
+
+            var vm = DataContext as ShellViewModel;
+            if (vm == null) return;
+            var ctx = vm.GetContext();
+            if (ctx == null) return;
+
+            var alignments = ctx.GetAllAlignments().ToList();
+            if (alignments.Count == 0) return;
+
+            // Color cycle for multiple alignments
+            var colors = new[]
+            {
+                Color.FromRgb(86, 204, 242),   // cyan
+                Color.FromRgb(255, 180, 50),   // amber
+                Color.FromRgb(120, 220, 130),  // green
+                Color.FromRgb(220, 100, 220),  // magenta
+            };
+
+            int colorIdx = 0;
+            foreach (var algn in alignments)
+            {
+                if (algn.Elements.Count == 0) { colorIdx++; continue; }
+
+                var clr = colors[colorIdx % colors.Length];
+                var brush = new SolidColorBrush(clr);
+                colorIdx++;
+
+                // ── CL Polyline (sampled every 5 ft or 50 points, whichever is finer) ──
+                double totalLen = algn.Elements.Sum(e => e.Length);
+                int steps = Math.Max(50, (int)(totalLen / 5));
+                double startSta = algn.Elements.First().StartStation;
+                double endSta   = algn.Elements.Last().EndStation;
+
+                var pts = new PointCollection();
+                for (int i = 0; i <= steps; i++)
+                {
+                    double sta  = startSta + (i / (double)steps) * (endSta - startSta);
+                    var   coord = algn.GetCoordinateAt(sta);
+                    if (coord != null)
+                        pts.Add(new Point(coord.Easting, coord.Northing));
+                }
+
+                if (pts.Count >= 2)
+                {
+                    var pl = new Polyline
+                    {
+                        Points          = pts,
+                        Stroke          = brush,
+                        StrokeThickness = 0.4,        // world-unit thickness — transforms with zoom
+                        StrokeDashArray = new DoubleCollection { 6, 2 },
+                        Tag             = "AlignOverlay"
+                    };
+                    ViewportCanvas.Children.Add(pl);
+                }
+
+                // ── Station tick marks ─────────────────────────────────────
+                double tickInterval = totalLen > 1000 ? 100 : totalLen > 200 ? 50 : 25;
+                for (double sta = startSta; sta <= endSta + 0.01; sta += tickInterval)
+                {
+                    var clCoord = algn.GetCoordinateAt(sta);
+                    if (clCoord == null) continue;
+
+                    // Perpendicular offset ±2 world units for the tick
+                    double tickLen = Math.Max(2.0, totalLen * 0.012);
+                    var leftPt  = algn.GetCoordinateAt(sta, -tickLen);
+                    var rightPt = algn.GetCoordinateAt(sta,  tickLen);
+                    if (leftPt == null || rightPt == null) continue;
+
+                    var tick = new Line
+                    {
+                        X1 = leftPt.Easting,  Y1 = leftPt.Northing,
+                        X2 = rightPt.Easting, Y2 = rightPt.Northing,
+                        Stroke          = brush,
+                        StrokeThickness = 0.3,
+                        Opacity         = 0.7,
+                        Tag             = "AlignOverlay"
+                    };
+                    ViewportCanvas.Children.Add(tick);
+
+                    // Station label (at the CL point — scales with the world transform)
+                    var lbl = new TextBlock
+                    {
+                        Text       = RCS.Alignments.Core.StationPoint.FormatStation(sta),
+                        FontSize   = Math.Max(1.0, totalLen * 0.008),
+                        Foreground = new SolidColorBrush(Color.FromArgb(180, clr.R, clr.G, clr.B)),
+                        Tag        = "AlignOverlay"
+                    };
+                    Canvas.SetLeft(lbl, clCoord.Easting + tickLen * 0.3);
+                    Canvas.SetTop(lbl,  clCoord.Northing);
+                    ViewportCanvas.Children.Add(lbl);
+                }
+
+                // ── Alignment name label at start ──────────────────────────
+                var startCoord = algn.GetCoordinateAt(startSta);
+                if (startCoord != null)
+                {
+                    var nameLbl = new TextBlock
+                    {
+                        Text       = algn.Name,
+                        FontSize   = Math.Max(1.5, totalLen * 0.012),
+                        FontWeight = FontWeights.SemiBold,
+                        Foreground = brush,
+                        Tag        = "AlignOverlay"
+                    };
+                    Canvas.SetLeft(nameLbl, startCoord.Easting);
+                    Canvas.SetTop(nameLbl,  startCoord.Northing);
+                    ViewportCanvas.Children.Add(nameLbl);
+                }
+            }
         }
 
         private void DrawProfile()

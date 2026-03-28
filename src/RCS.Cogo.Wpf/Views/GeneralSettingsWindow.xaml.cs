@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 
 namespace RCS.Cogo.Wpf.Views;
@@ -7,6 +8,7 @@ public partial class GeneralSettingsWindow : Window
     public GeneralSettingsWindow()
     {
         InitializeComponent();
+        Loaded += (_, __) => RefreshBlocksPathStatus();
     }
 
     private void Close_Click(object sender, RoutedEventArgs e)
@@ -24,6 +26,8 @@ public partial class GeneralSettingsWindow : Window
             // ── JEA settings ──────────────────────────────────────────────
             RCS.Services.GlobalSettingsService.SaveSetting("JeaTemplatePath",            vm.JeaTemplatePath);
             RCS.Services.GlobalSettingsService.SaveSetting("JeaStatePlaneZone",          vm.JeaStatePlaneZone);
+            // ── DXF Blocks Library ──────────────────────────────────────
+            RCS.Services.GlobalSettingsService.SaveSetting("RcsBlocksPath",              vm.RcsBlocksPath);
         }
         Close();
     }
@@ -38,4 +42,53 @@ public partial class GeneralSettingsWindow : Window
         if (dlg.ShowDialog() == true && DataContext is ViewModels.ShellViewModel vm)
             vm.JeaTemplatePath = dlg.FileName;
     }
+
+    private void BrowseBlocksPath_Click(object sender, RoutedEventArgs e)
+    {
+        // .NET 8 WPF native folder picker — no WinForms dependency needed
+        var dlg = new Microsoft.Win32.OpenFolderDialog
+        {
+            Title         = "Select the RCS_Blocks folder containing *.dwg block files",
+            Multiselect   = false,
+            InitialDirectory = (DataContext as ViewModels.ShellViewModel)?.RcsBlocksPath
+                              ?? string.Empty
+        };
+        if (dlg.ShowDialog() == true && DataContext is ViewModels.ShellViewModel vm)
+        {
+            vm.RcsBlocksPath = dlg.FolderName;
+            RefreshBlocksPathStatus();
+        }
+    }
+
+    private void RefreshBlocksPathStatus()
+    {
+        if (DataContext is not ViewModels.ShellViewModel vm) return;
+        string path = vm.RcsBlocksPath;
+
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            // Show where Auto-Detect will land
+            string autoPath = Views.EditCogoCodeWindow.BlocksDirectory;
+            BlocksPathStatus.Text = Directory.Exists(autoPath)
+                ? $"✓ Auto-detect: {autoPath}  ({CountDwg(autoPath)} blocks found)"
+                : $"⚠ Auto-detect failed. Override the path above.";
+            BlocksPathStatus.Foreground = Directory.Exists(autoPath)
+                ? System.Windows.Media.Brushes.LightGreen
+                : System.Windows.Media.Brushes.Orange;
+        }
+        else
+        {
+            bool exists = Directory.Exists(path);
+            int count   = exists ? CountDwg(path) : 0;
+            BlocksPathStatus.Text = exists
+                ? $"✓ {count} block file(s) found"
+                : "⛔ Directory not found — check the path";
+            BlocksPathStatus.Foreground = exists
+                ? System.Windows.Media.Brushes.LightGreen
+                : System.Windows.Media.Brushes.OrangeRed;
+        }
+    }
+
+    private static int CountDwg(string dir) =>
+        Directory.Exists(dir) ? Directory.GetFiles(dir, "*.dwg").Length : 0;
 }

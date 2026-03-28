@@ -7,7 +7,7 @@
         xmlns:views="clr-namespace:RCS.Cogo.Wpf.Views"
         xmlns:geo="clr-namespace:RCS.Geo.Wpf.Views;assembly=RCS.Geo.Wpf"
         mc:Ignorable="d"
-        Title="RCS COGO Enterprise" Height="800" Width="1200"
+        Title="{Binding WindowTitle}" Height="800" Width="1200"
         Background="#1E1E1E" Foreground="#D4D4D4">
     
     <Window.Resources>
@@ -100,6 +100,15 @@
                 <MenuItem Header="Save Project" Command="{Binding SaveProjectCommand}"/>
                 <MenuItem Header="Save Project As..." Command="{Binding SaveProjectAsCommand}"/>
                 <MenuItem Header="Open Project..." Command="{Binding OpenProjectCommand}"/>
+                <MenuItem Header="Recent Files" ItemsSource="{Binding RecentFiles}">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Header" Value="{Binding DisplayName}" />
+                            <Setter Property="Command" Value="{Binding DataContext.OpenRecentFileCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                            <Setter Property="CommandParameter" Value="{Binding}" />
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
                 <MenuItem Header="Close Project" Command="{Binding CloseProjectCommand}"/>
                 <Separator/>
                 <MenuItem Header="Save Piping Network..." Command="{Binding SavePipingCommand}"/>
@@ -861,6 +870,9 @@
                                 <Button Content="Export CSV" Command="{Binding ExportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
                                 <Button Content="Clear DB" Command="{Binding ClearCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" FontWeight="Bold" ToolTip="Deletes ALL codes from the Master Database" BorderThickness="1" BorderBrush="White"/>
                                 <Button Content="Symbol Manager..." Command="{Binding OpenSymbolManagerCommand}" Padding="10,5" Margin="0,0,10,0" Background="#007ACC" Foreground="White" FontWeight="Bold" BorderThickness="0" ToolTip="Open the graphical Symbol Manager"/>
+                                <Button Content="⚡ Auto-Match Blocks" Command="{Binding AutoMatchBlocksCommand}" Padding="10,5" Margin="0,0,10,0"
+                                        Background="#1A3A1A" Foreground="#44E08B" FontWeight="Bold" BorderThickness="1" BorderBrush="#266040"
+                                        ToolTip="Automatically matches each unassigned code to the best-fit block in the RCS_Blocks library (exact → prefix → keyword)."/>
                                 <Button Content="S" Command="{Binding SaveCodesCommand}" Padding="10,5" Background="#28A745" Foreground="White" FontWeight="Bold" ToolTip="Save Grid to Database"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
@@ -884,7 +896,8 @@
                                 <DataGridTextColumn Header="Local Code" Binding="{Binding LocalCode}" Width="*"/>
                                 <DataGridTextColumn Header="System Code" Binding="{Binding SystemCode}" Width="*" IsReadOnly="True" Foreground="#A9A9A9"/>
                                 <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="2*" IsReadOnly="True" Foreground="#A9A9A9"/>
-                                <DataGridTextColumn Header="Block" Binding="{Binding Block}" Width="*"/>
+                                <DataGridTextColumn Header="Block (DWG)" Binding="{Binding Block}" Width="1.5*"/>
+                                <DataGridTextColumn Header="Scale" Binding="{Binding BlockScale, StringFormat='{}{0:G}'}" Width="60" IsReadOnly="True"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>

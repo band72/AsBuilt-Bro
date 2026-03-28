@@ -7,6 +7,9 @@ public class CogoCode
     public string Description { get; set; } = string.Empty;
     public string Block { get; set; } = string.Empty;
 
+    /// <summary>DXF INSERT scale factor (X=Y=Z). Default 1.0 = no scaling.</summary>
+    public double BlockScale { get; set; } = 1.0;
+
     public string SymbolImagePath
     {
         get
@@ -146,11 +149,12 @@ public class CogoCode
 
     public CogoCode() { }
 
-    public CogoCode(string local, string system, string desc, string block = "")
+    public CogoCode(string local, string system, string desc, string block = "", double blockScale = 1.0)
     {
         LocalCode = local;
         SystemCode = system;
         Description = desc;
         Block = block;
+        BlockScale = blockScale;
     }
 }
