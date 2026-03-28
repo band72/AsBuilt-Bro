@@ -207,6 +207,15 @@
                 <MenuItem Header="📖 User Manual" Command="{Binding OpenManualCommand}"/>
                 <MenuItem Header="Survey Commands" Command="{Binding OpenSurveyCommandsCommand}"/>
                 <MenuItem Header="Pipe Commands" Command="{Binding OpenPipeCommandsCommand}"/>
+                <MenuItem Header="🎓 Survey Tutorials" FontWeight="SemiBold" Foreground="#44E08B">
+                    <MenuItem Header="T01: Coordinates and Inverse" Command="{Binding OpenTutorial01Command}"/>
+                    <MenuItem Header="T02: Traverse" Command="{Binding OpenTutorial02Command}"/>
+                    <MenuItem Header="T03: Rotation" Command="{Binding OpenTutorial03Command}"/>
+                    <MenuItem Header="T04: Translation" Command="{Binding OpenTutorial04Command}"/>
+                    <MenuItem Header="T05: Alignment, Profile &amp; Cross Section" Command="{Binding OpenTutorial05Command}"/>
+                    <MenuItem Header="T06: Horizontal Curves" Command="{Binding OpenTutorial06Command}"/>
+                    <MenuItem Header="T07: Full Road Design" Command="{Binding OpenTutorial07Command}"/>
+                </MenuItem>
                 <Separator/>
                 <MenuItem Header="Azimuth Script" Command="{Binding OpenExampleCogoCommand}"/>
                 <MenuItem Header="Bearing Script" Command="{Binding OpenExampleBearingCommand}"/>

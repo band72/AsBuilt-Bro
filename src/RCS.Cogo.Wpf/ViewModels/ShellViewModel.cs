@@ -961,6 +961,14 @@ public class ShellViewModel : ViewModelBase
         OpenExampleMixCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Mix_Script_Example.txt"));
         OpenExampleFiguresCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Cogo_Figures_Example.txt"));
         OpenExampleAngleCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Angle_Script_Example.txt"));
+
+        OpenTutorial01Command = new RelayCommand(_ => OpenDocument("SampleScripts\\Survey\\T01_Coordinates_and_Inverse.txt"));
+        OpenTutorial02Command = new RelayCommand(_ => OpenDocument("SampleScripts\\Survey\\T02_Traverse.txt"));
+        OpenTutorial03Command = new RelayCommand(_ => OpenDocument("SampleScripts\\Survey\\T03_Rotation.txt"));
+        OpenTutorial04Command = new RelayCommand(_ => OpenDocument("SampleScripts\\Survey\\T04_Translation.txt"));
+        OpenTutorial05Command = new RelayCommand(_ => OpenDocument("SampleScripts\\Survey\\T05_Alignment_Profile_CrossSection.txt"));
+        OpenTutorial06Command = new RelayCommand(_ => OpenDocument("SampleScripts\\Survey\\T06_Horizontal_Curves.txt"));
+        OpenTutorial07Command = new RelayCommand(_ => OpenDocument("SampleScripts\\Survey\\T07_Full_Road_Design.txt"));
         
         OpenExampleGasCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Gas_Script_Example.txt"));
         OpenExampleElectricCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Electric_Script_Example.txt"));
@@ -1136,6 +1144,14 @@ public class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand OpenExampleMixCommand { get; }
     public System.Windows.Input.ICommand OpenExampleFiguresCommand { get; }
     public System.Windows.Input.ICommand OpenExampleAngleCommand { get; }
+
+    public System.Windows.Input.ICommand OpenTutorial01Command { get; }
+    public System.Windows.Input.ICommand OpenTutorial02Command { get; }
+    public System.Windows.Input.ICommand OpenTutorial03Command { get; }
+    public System.Windows.Input.ICommand OpenTutorial04Command { get; }
+    public System.Windows.Input.ICommand OpenTutorial05Command { get; }
+    public System.Windows.Input.ICommand OpenTutorial06Command { get; }
+    public System.Windows.Input.ICommand OpenTutorial07Command { get; }
     
     public System.Windows.Input.ICommand OpenExampleGasCommand { get; }
     public System.Windows.Input.ICommand OpenExampleElectricCommand { get; }
