@@ -33,6 +33,15 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+
+    <!-- Release identity -->
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <AssemblyTitle>RCS COGO Enterprise</AssemblyTitle>
+    <Company>Banks &amp; Banks Consulting</Company>
+    <Copyright>© 2025 Banks &amp; Banks Consulting. All rights reserved.</Copyright>
+    <Description>Advanced Survey and Utility Data Platform</Description>
   </PropertyGroup>
 
 </Project>

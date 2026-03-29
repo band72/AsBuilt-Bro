@@ -38,7 +38,9 @@
                                                     </Grid.ColumnDefinitions>
                                                     <CheckBox Grid.Column="0" IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Margin="0,0,10,0"/>
                                                     <TextBlock Grid.Column="1" Text="{Binding FieldName}" Foreground="LightBlue" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="2" Text="{Binding RuleDescription}" Background="#3E3E42" Foreground="White" BorderThickness="0" Padding="2"/>
+                                                    <TextBox Grid.Column="2" Text="{Binding RuleDescription, Mode=OneWay}" IsReadOnly="True"
+                                                             Background="#3E3E42" Foreground="White" BorderThickness="0" Padding="2"
+                                                             ToolTip="{Binding RuleDescription}"/>
                                                 </Grid>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>

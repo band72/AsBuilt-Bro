@@ -58,7 +58,7 @@ namespace RCS.Cogo.Wpf.Views
                 // Usually Name determines discipline natively
                 string nameLayer = (fig.Name ?? "").ToUpperInvariant();
 
-                string disc = null;
+                string? disc = null;
                 foreach (var d in selectedDisciplines)
                 {
                     if (nameLayer.Contains(d))

@@ -1,5 +1,5 @@
-#define MyAppName "RCS AS-BUILT PRO"
-#define MyAppVersion "1.6"
+#define MyAppName "RCS COGO Enterprise"
+#define MyAppVersion "2.0"
 #define MyAppPublisher "BANKS & BANKS CONSULTING"
 #define MyAppExeName "RCS.Cogo.Wpf.exe"
 #define MyAppAssocName MyAppName + " Project"

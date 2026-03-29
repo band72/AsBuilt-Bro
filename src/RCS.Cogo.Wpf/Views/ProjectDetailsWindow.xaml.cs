@@ -78,7 +78,7 @@ public class ProjectDetailsViewModel : System.ComponentModel.INotifyPropertyChan
         PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
     }
 
-    private string _saveLocation;
+    private string _saveLocation = string.Empty;
     public string SaveLocation 
     { 
         get => _saveLocation; 

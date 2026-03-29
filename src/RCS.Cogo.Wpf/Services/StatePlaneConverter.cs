@@ -20,7 +20,7 @@ public static class StatePlaneConverter
     // GRS80 / WGS84 ellipsoid
     private const double A  = 6378137.0;              // semi-major axis (m)
     private const double F  = 1.0 / 298.257222101;    // flattening
-    private static readonly double B  = A * (1 - F);  // semi-minor axis
+    // semi-minor axis b = A*(1-F) ≈ 6 356 752.314 m — not needed directly by TM formulas
     private static readonly double E2 = 2 * F - F * F; // eccentricity²
     private static readonly double E  = Math.Sqrt(E2);
 
