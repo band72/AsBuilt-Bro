@@ -203,6 +203,34 @@
                 <MenuItem Header="All Assets TXT" Command="{Binding ReportAllAssetsTxtCommand}"/>
                 <MenuItem Header="All Assets XLS" Command="{Binding ReportAllAssetsXlsCommand}"/>
             </MenuItem>
+            <MenuItem Header="_Tables">
+                <MenuItem Header="🗂 Force Main Fittings..."
+                          Command="{Binding OpenTablesCommand}" CommandParameter="0"
+                          ToolTip="Force Main Fitting Location Table → export to DXF"/>
+                <MenuItem Header="🗂 Sanitary Manholes..."
+                          Command="{Binding OpenTablesCommand}" CommandParameter="1"
+                          ToolTip="Sanitary Manholes → export to DXF"/>
+                <MenuItem Header="🗂 Water Main Fittings..."
+                          Command="{Binding OpenTablesCommand}" CommandParameter="2"
+                          ToolTip="Water Main Fitting Location Table → export to DXF"/>
+                <MenuItem Header="🗂 Water Valve Detail..."
+                          Command="{Binding OpenTablesCommand}" CommandParameter="3"
+                          ToolTip="Water Valve Detail Table → export to DXF"/>
+                <MenuItem Header="🗂 Hydrant Table..."
+                          Command="{Binding OpenTablesCommand}" CommandParameter="4"
+                          ToolTip="Hydrant Table → export to DXF"/>
+                <MenuItem Header="🗂 Water Services..."
+                          Command="{Binding OpenTablesCommand}" CommandParameter="5"
+                          ToolTip="Water Services Table → export to DXF"/>
+                <MenuItem Header="🗂 Locate Wire Boxes..."
+                          Command="{Binding OpenTablesCommand}" CommandParameter="6"
+                          ToolTip="Locate Wire Box Table → export to DXF"/>
+                <Separator/>
+                <MenuItem Header="📐 All Tables (all tabs)..."
+                          Command="{Binding OpenTablesCommand}" CommandParameter="-1"
+                          FontWeight="SemiBold" Foreground="#00BCD4"
+                          ToolTip="Open all 7 tables in one window"/>
+            </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="📖 User Manual" Command="{Binding OpenManualCommand}"/>
                 <MenuItem Header="Survey Commands" Command="{Binding OpenSurveyCommandsCommand}"/>

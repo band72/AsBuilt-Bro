@@ -116,3 +116,25 @@ With dual-engine capabilities, scripts can contain both COGO mapping parameters 
 
 ### Command Environment Best Practices
 Always group your logic flows comprehensively! Standardize by initiating your baseline bounds (`NE`), building your Station networks (`STN/BS/TRAV`), drawing your visual output models (`FIG`), checking mathematical tolerances (`CLOSURE`), and cleaning up diagnostics (`LIST / ECHO`).
+
+---
+
+## 8. Recent Modernization Features (Version 2.0+)
+
+The Version 2.0 update introduces heavy modernization tailored to streamline utility reporting and compliance natively inside the software:
+
+### 8.1 Project Details Window
+**Access:** Main Menu `File` -> `Project Details...`
+**Function:** Locks in standard JEA AS-BUILT reporting metadata such as *Engineer of Record (EOR)*, *Project Title*, and *Dates*. This persists to the SQLite backbone to ensure all exports auto-populate correct headers.
+
+### 8.2 Live installed Asset Tables & DXF Output
+**Access:** Main Menu -> `Tables`
+**Function:** A new dark-themed dashboard providing an immediate spreadsheet interface into the database for 7 critical utility classes (Force Mains, Sanitary Manholes, Water Fittings, Valves, Hydrants, Services, and Locate Boxes).
+**Export:** Easily generate compliant JEA template field tables. Navigating to any tab and selecting **"📐 Export Tab → DXF"** will draw native AutoCAD `LINE` and `TEXT` entities to produce a strict, styled ACI magenta and cyan deliverable ready for formal plans.
+
+### 8.3 Points Along Pipe (PAP)
+**Access:** Main Menu -> `Data` -> `Points Along Pipe`
+**Function:** Operates on active pressure mains or gravity networks mapping the pipeline alignments mathematically and extracting inverted vertices exactly on 50 FT stationed intervals automatically. 
+
+### 8.4 Automated Civil 3D Batch Plotting
+The plugin features robust batch plotting integrations (when running the accompanying native Civil 3D extension module). It reads window selections to slice up complex geometric plans into pristine multi-page PDF documents unconditionally centered on standard 0.25-inch margins.

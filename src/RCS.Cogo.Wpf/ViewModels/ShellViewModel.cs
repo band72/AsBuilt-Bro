@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Linq;
@@ -688,6 +688,7 @@ public partial class ShellViewModel : ViewModelBase
 
     public System.Windows.Input.ICommand FindCrossingsCommand { get; }
     public System.Windows.Input.ICommand OpenPapCommand { get; }
+    public System.Windows.Input.ICommand OpenTablesCommand { get; }
     public System.Windows.Input.ICommand SubmitCommand { get; }
     public System.Windows.Input.ICommand ImportBatchCommand { get; }
     public System.Windows.Input.ICommand RunBatchCommand { get; }
@@ -919,6 +920,19 @@ public partial class ShellViewModel : ViewModelBase
         SyncToAssetsCommand = new RelayCommand(_ => SyncAssets());
         FindCrossingsCommand = new RelayCommand(_ => FindCrossings());
         OpenPapCommand = new RelayCommand(_ => new Views.PointsAlongPipeWindow(this) { Owner = App.Current.MainWindow }.ShowDialog());
+
+        OpenTablesCommand = new RelayCommand(param =>
+        {
+            if (!EnsureActiveProject()) return;
+            int.TryParse(param?.ToString(), out int tabIndex);
+            int tab = tabIndex < 0 ? 0 : tabIndex;
+            var win = new Views.InstalledAssetsTablesWindow(CurrentProject.Id.ToString(), tab)
+            {
+                Owner = System.Windows.Application.Current.MainWindow
+            };
+            win.TxtProjectLabel.Text = $"Project: {CurrentProject.ProjectName}  |  ID: {CurrentProject.Id}";
+            win.Show();
+        });
 
 
         
