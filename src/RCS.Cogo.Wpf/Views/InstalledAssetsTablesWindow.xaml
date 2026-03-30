@@ -36,7 +36,7 @@
             <Setter Property="CanUserAddRows" Value="False"/>
             <Setter Property="CanUserDeleteRows" Value="False"/>
             <Setter Property="IsReadOnly" Value="True"/>
-            <Setter Property="SelectionMode" Value="Full"/>
+            <Setter Property="SelectionUnit" Value="FullRow"/>
             <Setter Property="RowHeight" Value="22"/>
             <Setter Property="HeadersVisibility" Value="Column"/>
         </Style>
