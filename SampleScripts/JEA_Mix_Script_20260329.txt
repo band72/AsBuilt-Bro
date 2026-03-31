@@ -1,0 +1,36 @@
+// ==========================================
+// JEA AS-BUILT REVERSE ENGINEERED MIX SCRIPT
+// ==========================================
+
+// 1. Establish Structural Node Points
+ST bfp-1 0.0000 0.0000 0.00 " JEA IN"
+ST wlb-1 0.0000 0.0000 0.00 " JEA IN"
+ST wlb-2 0.0000 0.0000 0.00 " JEA IN"
+ST wlb-3 0.0000 0.0000 0.00 " JEA IN"
+ST wlb-4 0.0000 0.0000 0.00 " JEA IN"
+ST wlr-1 0.0000 0.0000 0.00 " JEA IN"
+ST wlr-2 0.0000 0.0000 0.00 " JEA IN"
+ST wlr-3 0.0000 0.0000 0.00 " JEA IN"
+ST wlr-4 0.0000 0.0000 0.00 " JEA IN"
+ST wls-1 0.0000 0.0000 0.00 " JEA IN"
+ST wls-2 0.0000 0.0000 0.00 " JEA IN"
+ST wlt-1 0.0000 0.0000 0.00 " JEA IN"
+ST wlt-2 0.0000 0.0000 0.00 " JEA IN"
+ST wlt-3 0.0000 0.0000 0.00 " JEA IN"
+
+// 2. Map Dynamic Transmission Lines
+PRUN START bfp-1 wlb-1 JEA 0.00 0.00
+PRUN START wlb-1 wlb-2 JEA 0.00 0.00
+PRUN START wlb-2 wlb-3 JEA 0.00 0.00
+PRUN START wlb-3 wlb-4 JEA 0.00 0.00
+PRUN START wlb-4 wlr-1 JEA 0.00 0.00
+PRUN START wlr-1 wlr-2 JEA 0.00 0.00
+PRUN START wlr-2 wlr-3 JEA 0.00 0.00
+PRUN START wlr-3 wlr-4 JEA 0.00 0.00
+PRUN START wlr-4 wls-1 JEA 0.00 0.00
+PRUN START wls-1 wls-2 JEA 0.00 0.00
+PRUN START wls-2 wlt-1 JEA 0.00 0.00
+PRUN START wlt-1 wlt-2 JEA 0.00 0.00
+PRUN START wlt-2 wlt-3 JEA 0.00 0.00
+
+ECHO "Mixed-Mode JEA Network Import Complete"

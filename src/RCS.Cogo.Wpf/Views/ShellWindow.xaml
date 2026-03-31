@@ -91,6 +91,8 @@
                 <Separator/>
                 <MenuItem Header="_Export">
                     <MenuItem Header="Create Upload Package..." Command="{Binding CreateUploadPackageCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="JEA As-Built Cogo Mix Script (.txt)..." Command="{Binding ExportJeaMixScriptCommand}"/>
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="_Project">
@@ -1197,10 +1199,20 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid Width="28" Height="28">
+                            <Grid Width="28" Height="28"
+                                  MouseLeftButtonDown="StructureSymbol_Click"
+                                  Cursor="Hand"
+                                  Tag="{Binding}">
                                 <Grid.RenderTransform>
                                     <TranslateTransform X="-14" Y="-14"/>
                                 </Grid.RenderTransform>
+                                <!-- Selection highlight ring -->
+                                <Ellipse Width="34" Height="34" Canvas.Left="-17" Canvas.Top="-17"
+                                         Stroke="#FFD700" StrokeThickness="2"
+                                         Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                         IsHitTestVisible="False" Opacity="0.85">
+                                    <Ellipse.Effect><BlurEffect Radius="4"/></Ellipse.Effect>
+                                </Ellipse>
                                 <ContentControl Content="{Binding}">
                                     <ContentControl.Style>
                                         <Style TargetType="ContentControl">
@@ -1241,6 +1253,23 @@
                                         </Style>
                                     </ContentControl.Style>
                                 </ContentControl>
+                                <!-- Asset ID Label below symbol -->
+                                <TextBlock Text="{Binding Label}"
+                                           Visibility="{Binding DataContext.ShowAssetLabels, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                           FontSize="9" FontWeight="SemiBold"
+                                           Foreground="#FFE082"
+                                           Background="#88000000"
+                                           Padding="1,0"
+                                           Canvas.Left="16" Canvas.Top="14"
+                                           IsHitTestVisible="False">
+                                    <TextBlock.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleY="-1"
+                                                ScaleX="{Binding DataContext.MarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                            <TranslateTransform X="14" Y="-14"/>
+                                        </TransformGroup>
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -1287,6 +1316,73 @@
                 <Rectangle x:Name="ZoomRect" Stroke="LightBlue" StrokeThickness="1" Fill="#33ADD8E6" 
                            HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed" IsHitTestVisible="False"/>
 
+                <!-- ── Asset Inspector Popup ─────────────────────────────────────
+                     Appears bottom-right when user clicks a symbol on the canvas. -->
+                <Border HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                        Margin="0,0,12,12" Width="280" MaxHeight="450"
+                        Background="#EE0D1117" BorderBrush="#4472C4" BorderThickness="1.5"
+                        CornerRadius="6" Padding="12" Panel.ZIndex="50"
+                        Visibility="{Binding InspectorVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" BlurRadius="14" Opacity="0.7" ShadowDepth="3"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <!-- Header row -->
+                        <DockPanel Margin="0,0,0,8">
+                            <Button DockPanel.Dock="Right" Content="✕" Width="22" Height="22"
+                                    Command="{Binding ClearInspectorCommand}"
+                                    Background="Transparent" Foreground="#888888"
+                                    BorderThickness="0" FontWeight="Bold" Cursor="Hand"/>
+                            <TextBlock Text="{Binding SelectedStructure.Label}"
+                                       Foreground="#4FC3F7" FontWeight="Bold" FontSize="14"
+                                       VerticalAlignment="Center"/>
+                        </DockPanel>
+                        <TextBlock Text="{Binding SelectedStructure.Type}"
+                                   Foreground="#888888" FontSize="10" Margin="0,0,0,6"/>
+                        <Rectangle Height="1" Fill="#334472C4" Margin="0,0,0,8"/>
+                        <!-- Attribute key/value list -->
+                        <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding SelectedStructure.AssetData}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="110"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Key}"
+                                                       Foreground="#666666" FontSize="10" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                                                     Foreground="#DEDEDE" Background="#11FFFFFF" BorderBrush="#33FFFFFF" 
+                                                     BorderThickness="1" Padding="2" FontSize="10" FontWeight="SemiBold" 
+                                                     TextWrapping="Wrap" IsReadOnly="{Binding IsReadOnly}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                        <!-- Footer export button -->
+                        <Rectangle Height="1" Fill="#334472C4" Margin="0,10,0,8"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="5"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Content="💾 Save DB"
+                                    Command="{Binding SaveInspectorCommand}"
+                                    Padding="5" Background="#0D2038" Foreground="#4FC3F7"
+                                    BorderBrush="#4472C4" BorderThickness="1" FontWeight="Bold"/>
+
+                            <Button Grid.Column="2" Content="⬇ DXF"
+                                    Command="{Binding ExportDxfCommand}"
+                                    Padding="5" Background="#0D2038" Foreground="#4FC3F7"
+                                    BorderBrush="#4472C4" BorderThickness="1" FontWeight="Bold"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+
                 <!-- Zoom State Text Overlay -->
                 <TextBlock Text="{Binding CurrentViewScale, StringFormat='Zoom Scale: {0:F4}x'}" 
                            Foreground="#88FFFFFF" FontSize="12" Margin="10"
@@ -1294,6 +1390,8 @@
                 
                 <!-- Zoom Toolbar -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+                    <ToggleButton IsChecked="{Binding ShowAssetLabels}" Content="L" Width="30" Height="30" Margin="0,0,5,0"
+                            Background="#333333" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Toggle Asset Labels"/>
                     <Button Command="{Binding FindCrossingsCommand}" Content="X" Width="30" Height="30" Margin="0,0,5,0"
                             Background="#8A2BE2" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Find Overlapping Crossings"/>
                     <Button Command="{Binding ZoomWindowCommand}" Content="WIN" Width="40" Height="30" Margin="0,0,5,0"

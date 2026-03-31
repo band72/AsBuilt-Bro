@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Linq;
@@ -458,10 +458,17 @@ public partial class ShellViewModel
         {
             var pStart = _context.GetPoint(run.FromPointId);
             var pEnd = _context.GetPoint(run.ToPointId);
-            double n1 = pStart?.Northing ?? 0;
-            double e1 = pStart?.Easting ?? 0;
-            double n2 = pEnd?.Northing ?? 0;
-            double e2 = pEnd?.Easting ?? 0;
+
+            if (pStart == null || pEnd == null)
+            {
+                _context.Log($"[WARN] SyncToAssets: Skipping run {run.Id} — point(s) not in context (From='{run.FromPointId}', To='{run.ToPointId}'). Run script first.");
+                continue;
+            }
+
+            double n1 = pStart.Northing;
+            double e1 = pStart.Easting;
+            double n2 = pEnd.Northing;
+            double e2 = pEnd.Easting;
 
             string type = (run.Type ?? "").ToUpper();
             string key = $"Run-{run.Id}"; 
@@ -632,7 +639,12 @@ public partial class ShellViewModel
         foreach (var s in result.Structures)
         {
             var p = _context.GetPoint(s.PointId);
-            double n = p?.Northing ?? 0; double e = p?.Easting ?? 0; double z = p?.Elevation ?? 0;
+            if (p == null)
+            {
+                _context.Log($"[WARN] SyncToAssets: Skipping structure at point '{s.PointId}' — not found in COGO context. Ensure points are defined before syncing.");
+                continue;
+            }
+            double n = p.Northing; double e = p.Easting; double z = p.Elevation;
             
             string desc = allPts.TryGetValue(s.PointId, out var pData) ? pData.Description : "";
             string t = $"{s.Type} {desc}".Trim().ToUpper();

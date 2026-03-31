@@ -132,6 +132,13 @@ public partial class InstalledAssetsTablesWindow : Window
         InitializeComponent();
         MainTabs.SelectedIndex = initialTab;
 
+        // Show the project ID we're querying for diagnostic purposes
+        Loaded += (_, _2) =>
+        {
+            if (FindName("TxtProjectLabel") is System.Windows.Controls.TextBlock lbl)
+                lbl.Text = $"Project ID: {_projectId}";
+        };
+
         _tables = new TableDef[]
         {
             new("FORCE MAIN FITTING LOCATION TABLE",
@@ -311,6 +318,28 @@ public partial class InstalledAssetsTablesWindow : Window
         try
         {
             using var db = new AppDbContext();
+
+            // ── DIAGNOSTIC: raw totals across ALL projects ─────────────────
+            int totalWF  = db.WaterFittings.Count();
+            int totalMH  = db.Manholes.Count();
+            int totalWV  = db.WaterValves.Count();
+            int totalWH  = db.WaterHydrants.Count();
+            int totalWM  = db.WaterMeters.Count();
+            int totalWWF = db.WWFittings.Count();
+
+            // Get all distinct project IDs that have data
+            var distinctProjIds = db.WaterFittings.Select(x => x.ProjectId)
+                .Union(db.WaterValves.Select(x => x.ProjectId))
+                .Union(db.Manholes.Select(x => x.ProjectId))
+                .Union(db.WaterHydrants.Select(x => x.ProjectId))
+                .Distinct().ToList();
+
+            string diagMsg = $"[DIAG] Querying ProjectId='{_projectId}' | " +
+                             $"DB totals (all projects): WaterFittings={totalWF}, Manholes={totalMH}, " +
+                             $"WaterValves={totalWV}, Hydrants={totalWH}, Meters={totalWM}, WWFittings={totalWWF} | " +
+                             $"Project IDs in DB: [{string.Join(", ", distinctProjIds.Take(5).Select(p => $"'{p}'"))}]";
+            TxtStatus.Text = diagMsg;
+            // ──────────────────────────────────────────────────────────────
 
             // ── Force Main Fittings (WWFittings) ──────────────────────
             var ff = db.WWFittings.Where(x => x.ProjectId == _projectId)

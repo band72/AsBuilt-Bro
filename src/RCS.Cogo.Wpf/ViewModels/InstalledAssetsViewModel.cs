@@ -20,6 +20,21 @@ public class InstalledAssetsViewModel : ViewModelBase
         AssetSelected?.Invoke(this, asset);
     }
     
+    public async System.Threading.Tasks.Task SaveAssetAsync(InstalledAsset asset)
+    {
+        try
+        {
+            _dbContext.Update(asset);
+            await _dbContext.SaveChangesAsync();
+            LogAction?.Invoke($"[DB] Successfully updated asset {asset.PartKey ?? asset.Id}");
+        }
+        catch (System.Exception ex)
+        {
+            LogAction?.Invoke($"[DB] Failed to save asset: {ex.Message}");
+        }
+    }
+
+    
     // Pipe Crossing Service
     private readonly InstalledAssetService<PipeCrossing> _pipeCrossingService;
 

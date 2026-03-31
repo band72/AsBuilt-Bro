@@ -157,12 +157,13 @@ public class ProfessionalDxfWriter
         _sb.AppendLine(p.Elevation.ToString("F4"));
     }
     
-    public void AddLine(double x1, double y1, double x2, double y2, string layer)
+    public void AddLine(double x1, double y1, double x2, double y2, string layer, int color = 256)
     {
         _sb.AppendLine("0");
         _sb.AppendLine("LINE");
         _sb.AppendLine("8");
         _sb.AppendLine(SanitizeLayer(layer));
+        if (color != 256) { _sb.AppendLine("62"); _sb.AppendLine(color.ToString()); }
         _sb.AppendLine("10");
         _sb.AppendLine(x1.ToString("F4"));
         _sb.AppendLine("20");
@@ -171,6 +172,14 @@ public class ProfessionalDxfWriter
         _sb.AppendLine(x2.ToString("F4"));
         _sb.AppendLine("21");
         _sb.AppendLine(y2.ToString("F4"));
+    }
+
+    /// <summary>Writes a connected multi-segment polyline for pipe runs.</summary>
+    public void AddPolyline(IList<(double X, double Y)> pts, string layer, int color = 256)
+    {
+        if (pts == null || pts.Count < 2) return;
+        for (int i = 0; i < pts.Count - 1; i++)
+            AddLine(pts[i].X, pts[i].Y, pts[i+1].X, pts[i+1].Y, layer, color);
     }
     
     public void AddCircle(double x, double y, double r, string layer)
@@ -187,12 +196,13 @@ public class ProfessionalDxfWriter
         _sb.AppendLine(r.ToString("F4"));
     }
     
-    public void AddText(string text, double x, double y, double height, string layer, string align = "LEFT", double rotationDegrees = 0)
+    public void AddText(string text, double x, double y, double height, string layer, string align = "LEFT", double rotationDegrees = 0, int color = 256)
     {
         _sb.AppendLine("0");
         _sb.AppendLine("TEXT");
         _sb.AppendLine("8");
         _sb.AppendLine(SanitizeLayer(layer));
+        if (color != 256) { _sb.AppendLine("62"); _sb.AppendLine(color.ToString()); }
         _sb.AppendLine("10");
         _sb.AppendLine(x.ToString("F4"));
         _sb.AppendLine("20");
@@ -200,35 +210,32 @@ public class ProfessionalDxfWriter
         _sb.AppendLine("40");
         _sb.AppendLine(height.ToString("F4"));
         _sb.AppendLine("1");
-        // DXF TEXT shouldn't contain newlines, replace \n with space
         _sb.AppendLine(text.Replace("\n", "  ").Replace("\r", ""));
-        
         if (Math.Abs(rotationDegrees) > 0.001)
         {
             _sb.AppendLine("50");
             _sb.AppendLine(rotationDegrees.ToString("F4"));
         }
-        
-        // Additional align logic if needed
     }
     
-    public void InsertBlock(string blockName, double x, double y, double scale, string layer)
+    public void InsertBlock(string blockName, double x, double y, double scale, string layer, int color = 256)
     {
         _sb.AppendLine("0");
         _sb.AppendLine("INSERT");
         _sb.AppendLine("8");
         _sb.AppendLine(SanitizeLayer(layer));
+        if (color != 256) { _sb.AppendLine("62"); _sb.AppendLine(color.ToString()); }
         _sb.AppendLine("2");
         _sb.AppendLine(blockName);
         _sb.AppendLine("10");
         _sb.AppendLine(x.ToString("F4"));
         _sb.AppendLine("20");
         _sb.AppendLine(y.ToString("F4"));
-        _sb.AppendLine("41"); // X Scale
+        _sb.AppendLine("41");
         _sb.AppendLine(scale.ToString("F4"));
-        _sb.AppendLine("42"); // Y Scale
+        _sb.AppendLine("42");
         _sb.AppendLine(scale.ToString("F4"));
-        _sb.AppendLine("43"); // Z Scale
+        _sb.AppendLine("43");
         _sb.AppendLine(scale.ToString("F4"));
     }
 

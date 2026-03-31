@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Linq;
@@ -391,7 +391,12 @@ public partial class ShellViewModel
                 }
                 catch (Exception algnEx) { _context.Log($"[WARN] Could not rehydrate alignments: {algnEx.Message}"); }
 
-                System.Windows.Application.Current.Dispatcher.Invoke(() => RefreshData());
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    RefreshData();
+                    // Reload asset tables so previously imported JEA data appears in the viewer
+                    _ = LoadInstalledAssetsAsync();
+                });
             }
             catch (Exception ex)
             {
@@ -556,6 +561,7 @@ public partial class ShellViewModel
     // ── JEA As-Built Template Export + Validation ────────────────────────
     public System.Windows.Input.ICommand ExportJeaTemplateCommand { get; }
     public System.Windows.Input.ICommand ValidateJeaCommand       { get; }
+    public System.Windows.Input.ICommand ExportJeaMixScriptCommand { get; }
 
     private void OpenJeaValidation()
     {
@@ -570,6 +576,96 @@ public partial class ShellViewModel
             _currentProject.Id.ToString());
         win.Owner = System.Windows.Application.Current.MainWindow;
         win.ShowDialog();
+    }
+
+    private void ExportJeaMixScript()
+    {
+        if (_currentProject == null)
+        {
+            System.Windows.MessageBox.Show("Please open a project first.",
+                "No Project", System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
+            return;
+        }
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = "Export JEA As-Built Cogo Mix Script",
+            Filter = "Text File (*.txt)|*.txt",
+            FileName = "JEA_Mix_Script_" + DateTime.Now.ToString("yyyyMMdd") + ".txt"
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            try
+            {
+                using var db = new RCS.Data.AppDbContext();
+                var projectIdStr = _currentProject.Id.ToString();
+                
+                var waterFittings = db.WaterFittings.Where(x => x.ProjectId == projectIdStr).OrderBy(x => x.PartKey).ToList();
+                var manholes = db.Manholes.Where(x => x.ProjectId == projectIdStr).OrderBy(x => x.PartKey).ToList();
+                
+                var sb = new System.Text.StringBuilder();
+                sb.AppendLine("// ==========================================");
+                sb.AppendLine("// JEA AS-BUILT REVERSE ENGINEERED MIX SCRIPT");
+                sb.AppendLine("// ==========================================");
+                sb.AppendLine();
+                sb.AppendLine("// 1. Establish Structural Node Points");
+                
+                foreach(var mh in manholes)
+                {
+                    var id = string.IsNullOrWhiteSpace(mh.PartKey) ? mh.Id.Substring(0, 5) : mh.PartKey;
+                    var elev = mh.RimElevation ?? 0.0;
+                    var n = mh.Northing ?? 0.0;
+                    var e = mh.Easting ?? 0.0;
+                    sb.AppendLine($"ST {id.Replace(" ", "-")} {n:F4} {e:F4} {elev:F2} \"{mh.Subtype} {mh.Size} IN\"");
+                }
+
+                foreach(var wf in waterFittings)
+                {
+                    var id = string.IsNullOrWhiteSpace(wf.PartKey) ? wf.Id.Substring(0, 5) : wf.PartKey;
+                    var elev = wf.TopElevation ?? 0.0;
+                    var n = wf.Northing ?? 0.0;
+                    var e = wf.Easting ?? 0.0;
+                    sb.AppendLine($"ST {id.Replace(" ", "-")} {n:F4} {e:F4} {elev:F2} \"{wf.Subtype} {wf.Size} IN\"");
+                }
+
+                sb.AppendLine();
+                sb.AppendLine("// 2. Map Dynamic Transmission Lines");
+                int added = 0;
+                string prevPoint = "";
+                double prevElev = 0.0;
+                
+                foreach(var wf in waterFittings)
+                {
+                    var pt = string.IsNullOrWhiteSpace(wf.PartKey) ? wf.Id.Substring(0, 5) : wf.PartKey;
+                    var el = wf.TopElevation ?? 0.0;
+                    if (added > 0 && !string.IsNullOrEmpty(prevPoint))
+                    {
+                         string sz = string.IsNullOrWhiteSpace(wf.Size) ? "8" : wf.Size;
+                         sb.AppendLine($"PRUN START {prevPoint.Replace(" ", "-")} {pt.Replace(" ", "-")} {sz} {prevElev:F2} {el:F2}");
+                    }
+                    prevPoint = pt;
+                    prevElev = el;
+                    added++;
+                }
+
+                sb.AppendLine();
+                sb.AppendLine("ECHO \"Mixed-Mode JEA Network Import Complete\"");
+                
+                System.IO.File.WriteAllText(dialog.FileName, sb.ToString());
+                _context.Log($"[AUDIT] Exported JEA Mix Script to: {dialog.FileName}");
+                
+                System.Windows.MessageBox.Show("Script exported successfully!\nYou can copy and paste this file directly into the piping scripts window.", "Export Complete", 
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            }
+            catch(Exception ex)
+            {
+                _context.Log($"[AUDIT] Mix Script Export Error: {ex.Message}");
+                System.Windows.MessageBox.Show($"Failed to export script: {ex.Message}", "Error", 
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+        }
     }
 
     private void ExportJeaTemplate()
@@ -723,11 +819,22 @@ public partial class ShellViewModel
 
                 RefreshData(true);
 
-                System.Windows.MessageBox.Show(
-                    $"Import complete!\n\n{result.Summary()}\n\nData is now available in the project.",
+                // Reload the InstalledAssets ViewModel so the tables viewer reflects the new data.
+                // Without this, the viewer collections stay empty even though the DB is populated.
+                _ = LoadInstalledAssetsAsync();
+
+                var openViewer = System.Windows.MessageBox.Show(
+                    $"Import complete!\n\n{result.Summary()}\n\nOpen the JEA Asset Tables viewer now?",
                     "JEA Import Complete",
-                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxButton.YesNo,
                     System.Windows.MessageBoxImage.Information);
+
+                if (openViewer == System.Windows.MessageBoxResult.Yes)
+                {
+                    var tablesWin = new RCS.Cogo.Wpf.Views.InstalledAssetsTablesWindow(_currentProject.Id.ToString());
+                    tablesWin.Owner = System.Windows.Application.Current.MainWindow;
+                    tablesWin.Show();
+                }
             }
             else
             {

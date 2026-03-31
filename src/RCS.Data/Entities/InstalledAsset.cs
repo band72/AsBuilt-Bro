@@ -53,6 +53,12 @@ public abstract class InstalledAsset
     public string? UpstreamPointId { get; set; }
     public string? DownstreamPointId { get; set; }
 
+    // Pipe segment endpoints (for water/reclaimed/pressure pipes that have GPS start+end)
+    public double? StartNorthing { get; set; }
+    public double? StartEasting { get; set; }
+    public double? EndNorthing { get; set; }
+    public double? EndEasting { get; set; }
+
     // Valves
     public string? ValveType { get; set; }
     public string? OpenDirection { get; set; }

@@ -80,7 +80,7 @@ public partial class ShellWindow : Window
     private void ZoomExtents()
     {
         var vm = DataContext as ShellViewModel;
-        if (vm == null || (vm.Points.Count == 0 && vm.Figures.Count == 0)) return;
+        if (vm == null || (vm.Points.Count == 0 && vm.Figures.Count == 0 && vm.StructureGraphics.Count == 0)) return;
         
         double minX = double.MaxValue, maxX = double.MinValue;
         double minY = double.MaxValue, maxY = double.MinValue;
@@ -104,6 +104,15 @@ public partial class ShellWindow : Window
                  if (pt.Y < minY) minY = pt.Y;
                  if (pt.Y > maxY) maxY = pt.Y;
             }
+        }
+
+        // Include JEA Structure Graphics (manholes, valves, hydrants, fittings, etc.)
+        foreach (var s in vm.StructureGraphics)
+        {
+            if (s.Easting < minX) minX = s.Easting;
+            if (s.Easting > maxX) maxX = s.Easting;
+            if (s.Northing < minY) minY = s.Northing;
+            if (s.Northing > maxY) maxY = s.Northing;
         }
         
         if (minX == double.MaxValue) return;
@@ -426,5 +435,16 @@ public partial class ShellWindow : Window
         txtPipingScript.Text = header + currentText;
         txtPipingScript.Focus();
         txtPipingScript.CaretIndex = header.Length;
+    }
+
+    // ── Symbol click-to-inspect ───────────────────────────────────────────────
+    private void StructureSymbol_Click(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is System.Windows.FrameworkElement fe &&
+            fe.Tag is StructureViewModel sym)
+        {
+            sym.SelectCommand?.Execute(null);
+            e.Handled = true;
+        }
     }
 }

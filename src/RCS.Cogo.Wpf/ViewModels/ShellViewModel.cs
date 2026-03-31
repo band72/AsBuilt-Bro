@@ -219,6 +219,23 @@ public partial class ShellViewModel : ViewModelBase
     public ObservableCollection<StructureViewModel> StructureGraphics { get; } = new();
     public ObservableCollection<StructureViewModel> HighlightedAssets { get; } = new();
 
+    // ── Asset Inspector ───────────────────────────────────────────────────────
+    private StructureViewModel? _selectedStructure;
+    public StructureViewModel? SelectedStructure
+    {
+        get => _selectedStructure;
+        set
+        {
+            if (_selectedStructure != null) _selectedStructure.IsSelected = false;
+            SetField(ref _selectedStructure, value);
+            if (_selectedStructure != null) _selectedStructure.IsSelected = true;
+            OnPropertyChanged(nameof(InspectorVisible));
+        }
+    }
+    public bool InspectorVisible => _selectedStructure != null;
+    public System.Windows.Input.ICommand ClearInspectorCommand => new RelayCommand(_ => { SelectedStructure = null; });
+
+
     private Project _currentProject = new Project();
     public Project CurrentProject
     {
@@ -677,6 +694,18 @@ public partial class ShellViewModel : ViewModelBase
         set => SetField(ref _showFigureLabels, value);
     }
 
+    // ── Item 6: Asset ID label toggle ─────────────────────────────────────────
+    private bool _showAssetLabels = true;
+    public bool ShowAssetLabels
+    {
+        get => _showAssetLabels;
+        set => SetField(ref _showAssetLabels, value);
+    }
+
+    // ── Commands (Items 4 & 7) ──────────────────────────────────────────
+    public System.Windows.Input.ICommand ExportJeaCogoScriptCommand { get; private set; } = new RelayCommand(_ => {});
+    public System.Windows.Input.ICommand SaveInspectorCommand        { get; private set; } = new RelayCommand(_ => {});
+
     private bool _isRunningScript;
     public bool IsRunningScript
     {
@@ -768,17 +797,18 @@ public partial class ShellViewModel : ViewModelBase
                      var proj = CurrentProject;
                      if (proj == null) return;
                      
-                     #pragma warning disable CS8602
-                     // Explicit point mapping for LiteDb
-                     proj.Points = _context.GetAllPoints().Select(p => new RCS.Cogo.App.Models.PointEntry 
-                     {
-                         Id = p.Id ?? "",
-                         Northing = p.Point?.Northing ?? 0.0,
-                         Easting = p.Point?.Easting ?? 0.0,
-                         Elevation = p.Point?.Elevation ?? 0.0,
-                         Description = p.Description ?? ""
-                     }).ToList();
-                     #pragma warning restore CS8602
+                     // Explicit point mapping for LiteDb — skip any entries with a null Point3D
+                     // (null Point3D would silently produce 0,0,0 coordinates in the DB)
+                     proj.Points = _context.GetAllPoints()
+                         .Where(p => p.Point != null)
+                         .Select(p => new RCS.Cogo.App.Models.PointEntry 
+                         {
+                             Id = p.Id ?? "",
+                             Northing = p.Point!.Northing,
+                             Easting = p.Point!.Easting,
+                             Elevation = p.Point!.Elevation,
+                             Description = p.Description ?? ""
+                         }).ToList();
 
                      // Ensure SQLite is completely synced at the moment of Save as well
                      try
@@ -903,6 +933,9 @@ public partial class ShellViewModel : ViewModelBase
             }
         });
         ExportDxfCommand = new RelayCommand(_ => ExportDxf());
+        ExportJeaCogoScriptCommand = new RelayCommand(_ => ExportJeaCogoScript());
+        SaveInspectorCommand = new RelayCommand(async _ => await SaveInspectorAsync());
+
         ImportDxfCommand = new RelayCommand(_ => ImportDxfLinework());
         ExportBomCommand = new RelayCommand(_ => ExportBom());
         ExportEpanetCommand = new RelayCommand(_ => ExportEpanet());
@@ -1007,6 +1040,7 @@ public partial class ShellViewModel : ViewModelBase
         ExportDbCsvCommand               = new RelayCommand(_ => ExportDatabaseCsv());
         ExportInstalledAssetsCommand     = new RelayCommand(_ => ExportInstalledAssets());
         ExportJeaTemplateCommand         = new RelayCommand(_ => ExportJeaTemplate());
+        ExportJeaMixScriptCommand        = new RelayCommand(_ => ExportJeaMixScript());
         ValidateJeaCommand               = new RelayCommand(_ => OpenJeaValidation());
         ImportJeaTemplateCommand         = new RelayCommand(_ => ImportJeaFromTemplate());
 
@@ -1085,12 +1119,15 @@ public partial class ShellViewModel : ViewModelBase
     {
         if (_currentProject != null)
         {
-             // Use ID from current project. If generic "0000" fallback.
              string pNum = "0000"; 
-             // Try to extract number from name if possible or just use Name
              if (!string.IsNullOrEmpty(_currentProject.ProjectName)) pNum = _currentProject.ProjectName;
              
              await InstalledAssets.LoadProjectAsync(_currentProject.Id.ToString(), pNum);
+
+             // Re-render canvas now that JEA asset collections are populated.
+             // RefreshData ran before this async load completed, so the canvas had empty
+             // InstalledAssets collections. This second pass paints the actual symbols.
+             RefreshData(true);  // zoom-to-extents so JEA symbols come into view
         }
     }
 
@@ -2400,6 +2437,44 @@ public partial class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand AnalyzePipingScriptCommand { get; }
     public System.Windows.Input.ICommand OpenAiChatCommand { get; }
 
+    // ── Item 7: Save Data directly to SQLite ─────────────────────────────────
+    private async Task SaveInspectorAsync()
+    {
+        if (SelectedStructure?.UnderlyingAsset == null) return;
+        var asset = SelectedStructure.UnderlyingAsset;
+
+        foreach (var field in SelectedStructure.AssetData)
+        {
+            if (field.IsReadOnly) continue;
+            string v = field.Value?.Trim() ?? "";
+
+            switch (field.Key)
+            {
+                case "Discipline":     asset.Discipline = v; break;
+                case "Subtype":        asset.Subtype = v; break;
+                case "Facility Owner": asset.FacilityOwner = v; break;
+                case "Size":           asset.Size = v; break;
+                case "Material":       asset.Material = v; break;
+                case "Manufacturer":   asset.Manufacturer = v; break;
+                case "Valve Type":     asset.ValveType = string.IsNullOrEmpty(v) ? null : v; break;
+                case "Open Direction": asset.OpenDirection = string.IsNullOrEmpty(v) ? null : v; break;
+                case "Turns To Open":  if (double.TryParse(v, out double to)) asset.TurnsToOpen = to; break;
+                case "Manhole Type":   asset.ManholeType = string.IsNullOrEmpty(v) ? null : v; break;
+                case "Rim Elev.":      if (double.TryParse(v, out double re)) asset.RimElevation = re; break;
+                case "Lowest Invert":  if (double.TryParse(v, out double lie)) asset.LowestInvertElevation = lie; break;
+                case "Lining Material":asset.LiningMaterial = string.IsNullOrEmpty(v) ? null : v; break;
+                case "RFID / Barcode": asset.RfidBarcode = string.IsNullOrEmpty(v) ? null : v; break;
+                case "Grade Elev.":    if (double.TryParse(v, out double ge)) asset.GradeElevation = ge; break;
+                case "Depth":          if (double.TryParse(v, out double d)) asset.Depth = d; break;
+            }
+        }
+
+        if (InstalledAssets != null)
+        {
+             await InstalledAssets.SaveAssetAsync(asset);
+        }
+    }
+
 }
 
 
@@ -2452,12 +2527,34 @@ public class StructureViewModel : ViewModelBase
     public string SymbolType { get; }
     public System.Windows.Media.Brush Fill { get; }
 
-    public StructureViewModel(string id, Point3D p, string type)
+    // ── Label & Inspect ───────────────────────────────────────────────────────
+    /// <summary>Short label shown next to the symbol on canvas (e.g. "MH-001")</summary>
+    public string Label { get; }
+    /// <summary>Full attribute set displayed in the inspector popup.</summary>
+    public System.Collections.ObjectModel.ObservableCollection<InspectorField> AssetData { get; }
+    public RCS.Data.Entities.InstalledAsset? UnderlyingAsset { get; }
+
+    private bool _isSelected;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set { _isSelected = value; OnPropertyChanged(); }
+    }
+
+    public System.Windows.Input.ICommand SelectCommand { get; set; } = new RelayCommand(_ => {});
+
+    public StructureViewModel(string id, Point3D p, string type,
+        string? label = null,
+        System.Collections.Generic.IEnumerable<InspectorField>? assetData = null,
+        RCS.Data.Entities.InstalledAsset? underlyingAsset = null)
     {
         Id = id;
         Northing = p.Northing;
         Easting = p.Easting;
         Type = type;
+        Label = label ?? id;
+        AssetData = new System.Collections.ObjectModel.ObservableCollection<InspectorField>(assetData ?? Array.Empty<InspectorField>());
+        UnderlyingAsset = underlyingAsset;
         
         string t = type.ToUpper();
         var tokens = t.Split(new[] { ' ', '-' }, StringSplitOptions.RemoveEmptyEntries);
@@ -2485,3 +2582,19 @@ public class StructureViewModel : ViewModelBase
         else Fill = System.Windows.Media.Brushes.White; // Default 
     }
 }
+
+public class InspectorField : ViewModelBase
+{
+    public string Key { get; }
+    private string _value;
+    public string Value { get => _value; set { _value = value; OnPropertyChanged(); } }
+    public bool IsReadOnly { get; }
+
+    public InspectorField(string key, string value, bool isReadOnly = false)
+    {
+        Key = key;
+        _value = value ?? "";
+        IsReadOnly = isReadOnly;
+    }
+}
+

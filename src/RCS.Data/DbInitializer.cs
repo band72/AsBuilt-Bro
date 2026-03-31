@@ -188,30 +188,301 @@ public static class DbInitializer
                  context.SaveChanges();
              }
 
-             // Force creation of newly added tables (e.g. WaterPipes, WWValves, etc.) 
-             // since EnsureCreated() skips them if DB file already exists.
-             var createScript = context.Database.GenerateCreateScript();
-             var sqlCommands = createScript.Split(';', StringSplitOptions.RemoveEmptyEntries);
-             
-             foreach (var sqlCmd in sqlCommands)
+             // ── Explicit table creation for all JEA entity tables ─────────────────────
+             // EnsureCreated() skips tables when the DB file already exists.
+             // GenerateCreateScript() + ExecuteSqlRaw fails silently with EF FK DDL.
+             // This explicit approach guarantees every table exists.
+             var jeaTables = new[]
              {
-                 if (string.IsNullOrWhiteSpace(sqlCmd)) continue;
-                 
-                 // Optionally convert "CREATE TABLE" -> "CREATE TABLE IF NOT EXISTS" for peace of mind in SQLite
-                 var safeCmd = sqlCmd;
-                 safeCmd = safeCmd.Replace("CREATE TABLE \"", "CREATE TABLE IF NOT EXISTS \"");
-                 safeCmd = safeCmd.Replace("CREATE UNIQUE INDEX \"", "CREATE UNIQUE INDEX IF NOT EXISTS \"");
-                 safeCmd = safeCmd.Replace("CREATE INDEX \"", "CREATE INDEX IF NOT EXISTS \"");
+                 // InstalledAsset base columns shared by all
+                 @"CREATE TABLE IF NOT EXISTS ""WaterPipes"" (
+                     ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                     ""ProjectId"" TEXT NULL,
+                     ""PartKey"" TEXT NULL,
+                     ""Discriminator"" TEXT NULL,
+                     ""Discipline"" TEXT NULL,
+                     ""FeatureType"" TEXT NULL,
+                     ""Subtype"" TEXT NULL,
+                     ""FacilityOwner"" TEXT NULL,
+                     ""Size"" TEXT NULL,
+                     ""PipeClass"" TEXT NULL,
+                     ""Manufacturer"" TEXT NULL,
+                     ""Material"" TEXT NULL,
+                     ""LiningManufacturer"" TEXT NULL,
+                     ""LiningMaterial"" TEXT NULL,
+                     ""Length"" REAL NULL,
+                     ""IsVisible"" INTEGER NOT NULL DEFAULT 1
+                 )",
+                 @"CREATE TABLE IF NOT EXISTS ""WaterPoints"" (
+                     ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                     ""ProjectId"" TEXT NULL,
+                     ""PartKey"" TEXT NULL,
+                     ""Discriminator"" TEXT NULL,
+                     ""Discipline"" TEXT NULL,
+                     ""FeatureType"" TEXT NULL,
+                     ""Subtype"" TEXT NULL,
+                     ""FacilityOwner"" TEXT NULL,
+                     ""Size"" TEXT NULL,
+                     ""PipeRole"" TEXT NULL,
+                     ""PipeClass"" TEXT NULL,
+                     ""Manufacturer"" TEXT NULL,
+                     ""Material"" TEXT NULL,
+                     ""LiningManufacturer"" TEXT NULL,
+                     ""LiningMaterial"" TEXT NULL,
+                     ""Orientation"" TEXT NULL,
+                     ""GradeElevation"" REAL NULL,
+                     ""TopElevation"" REAL NULL,
+                     ""Cover"" REAL NULL,
+                     ""Easting"" REAL NULL,
+                     ""Northing"" REAL NULL,
+                     ""Latitude"" REAL NULL,
+                     ""Longitude"" REAL NULL,
+                     ""IsVisible"" INTEGER NOT NULL DEFAULT 1
+                 )",
+                 @"CREATE TABLE IF NOT EXISTS ""WaterFittings"" (
+                     ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                     ""ProjectId"" TEXT NULL,
+                     ""PartKey"" TEXT NULL,
+                     ""Discriminator"" TEXT NULL,
+                     ""Discipline"" TEXT NULL,
+                     ""FeatureType"" TEXT NULL,
+                     ""Subtype"" TEXT NULL,
+                     ""FacilityOwner"" TEXT NULL,
+                     ""Size"" TEXT NULL,
+                     ""SizeSecondary"" TEXT NULL,
+                     ""Manufacturer"" TEXT NULL,
+                     ""Material"" TEXT NULL,
+                     ""LiningManufacturer"" TEXT NULL,
+                     ""LiningMaterial"" TEXT NULL,
+                     ""TopElevation"" REAL NULL,
+                     ""GradeElevation"" REAL NULL,
+                     ""Depth"" REAL NULL,
+                     ""Easting"" REAL NULL,
+                     ""Northing"" REAL NULL,
+                     ""Latitude"" REAL NULL,
+                     ""Longitude"" REAL NULL,
+                     ""IsVisible"" INTEGER NOT NULL DEFAULT 1
+                 )",
+                 @"CREATE TABLE IF NOT EXISTS ""WaterValves"" (
+                     ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                     ""ProjectId"" TEXT NULL,
+                     ""PartKey"" TEXT NULL,
+                     ""Discriminator"" TEXT NULL,
+                     ""Discipline"" TEXT NULL,
+                     ""FeatureType"" TEXT NULL,
+                     ""Subtype"" TEXT NULL,
+                     ""ValveType"" TEXT NULL,
+                     ""FacilityOwner"" TEXT NULL,
+                     ""Size"" TEXT NULL,
+                     ""Orientation"" TEXT NULL,
+                     ""OpenDirection"" TEXT NULL,
+                     ""TurnsToOpen"" REAL NULL,
+                     ""NutElevation"" REAL NULL,
+                     ""GradeElevation"" REAL NULL,
+                     ""DepthToNut"" REAL NULL,
+                     ""Manufacturer"" TEXT NULL,
+                     ""Easting"" REAL NULL,
+                     ""Northing"" REAL NULL,
+                     ""Latitude"" REAL NULL,
+                     ""Longitude"" REAL NULL,
+                     ""IsVisible"" INTEGER NOT NULL DEFAULT 1
+                 )",
+                 @"CREATE TABLE IF NOT EXISTS ""WaterMeters"" (
+                     ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                     ""ProjectId"" TEXT NULL,
+                     ""PartKey"" TEXT NULL,
+                     ""Discriminator"" TEXT NULL,
+                     ""Discipline"" TEXT NULL,
+                     ""FeatureType"" TEXT NULL,
+                     ""Subtype"" TEXT NULL,
+                     ""FacilityOwner"" TEXT NULL,
+                     ""Size"" TEXT NULL,
+                     ""Orientation"" TEXT NULL,
+                     ""Manufacturer"" TEXT NULL,
+                     ""Material"" TEXT NULL,
+                     ""Easting"" REAL NULL,
+                     ""Northing"" REAL NULL,
+                     ""Latitude"" REAL NULL,
+                     ""Longitude"" REAL NULL,
+                     ""IsVisible"" INTEGER NOT NULL DEFAULT 1
+                 )",
+                 @"CREATE TABLE IF NOT EXISTS ""WWGravityPipes"" (
+                     ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                     ""ProjectId"" TEXT NULL,
+                     ""PartKey"" TEXT NULL,
+                     ""Discriminator"" TEXT NULL,
+                     ""Discipline"" TEXT NULL,
+                     ""FeatureType"" TEXT NULL,
+                     ""Subtype"" TEXT NULL,
+                     ""FacilityOwner"" TEXT NULL,
+                     ""Size"" TEXT NULL,
+                     ""PipeClass"" TEXT NULL,
+                     ""Manufacturer"" TEXT NULL,
+                     ""Material"" TEXT NULL,
+                     ""LiningManufacturer"" TEXT NULL,
+                     ""LiningMaterial"" TEXT NULL,
+                     ""Length"" REAL NULL,
+                     ""DownstreamInvert"" REAL NULL,
+                     ""DownstreamGrade"" REAL NULL,
+                     ""UpstreamInvert"" REAL NULL,
+                     ""UpstreamGrade"" REAL NULL,
+                     ""Slope"" REAL NULL,
+                     ""IsVisible"" INTEGER NOT NULL DEFAULT 1
+                 )",
+                 @"CREATE TABLE IF NOT EXISTS ""WWPressurePipes"" (
+                     ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                     ""ProjectId"" TEXT NULL,
+                     ""PartKey"" TEXT NULL,
+                     ""Discriminator"" TEXT NULL,
+                     ""Discipline"" TEXT NULL,
+                     ""FeatureType"" TEXT NULL,
+                     ""Subtype"" TEXT NULL,
+                     ""FacilityOwner"" TEXT NULL,
+                     ""Size"" TEXT NULL,
+                     ""PipeClass"" TEXT NULL,
+                     ""Manufacturer"" TEXT NULL,
+                     ""Material"" TEXT NULL,
+                     ""LiningManufacturer"" TEXT NULL,
+                     ""LiningMaterial"" TEXT NULL,
+                     ""Length"" REAL NULL,
+                     ""IsVisible"" INTEGER NOT NULL DEFAULT 1
+                 )",
+                 @"CREATE TABLE IF NOT EXISTS ""WWPoints"" (
+                     ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                     ""ProjectId"" TEXT NULL,
+                     ""PartKey"" TEXT NULL,
+                     ""Discriminator"" TEXT NULL,
+                     ""Discipline"" TEXT NULL,
+                     ""FeatureType"" TEXT NULL,
+                     ""Subtype"" TEXT NULL,
+                     ""FacilityOwner"" TEXT NULL,
+                     ""Size"" TEXT NULL,
+                     ""PipeRole"" TEXT NULL,
+                     ""PipeClass"" TEXT NULL,
+                     ""Manufacturer"" TEXT NULL,
+                     ""Material"" TEXT NULL,
+                     ""LiningManufacturer"" TEXT NULL,
+                     ""LiningMaterial"" TEXT NULL,
+                     ""Orientation"" TEXT NULL,
+                     ""GradeElevation"" REAL NULL,
+                     ""TopElevation"" REAL NULL,
+                     ""Cover"" REAL NULL,
+                     ""Easting"" REAL NULL,
+                     ""Northing"" REAL NULL,
+                     ""Latitude"" REAL NULL,
+                     ""Longitude"" REAL NULL,
+                     ""IsVisible"" INTEGER NOT NULL DEFAULT 1
+                 )",
+                 @"CREATE TABLE IF NOT EXISTS ""WWFittings"" (
+                     ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                     ""ProjectId"" TEXT NULL,
+                     ""PartKey"" TEXT NULL,
+                     ""Discriminator"" TEXT NULL,
+                     ""Discipline"" TEXT NULL,
+                     ""FeatureType"" TEXT NULL,
+                     ""Subtype"" TEXT NULL,
+                     ""FacilityOwner"" TEXT NULL,
+                     ""Size"" TEXT NULL,
+                     ""SizeSecondary"" TEXT NULL,
+                     ""Manufacturer"" TEXT NULL,
+                     ""Material"" TEXT NULL,
+                     ""LiningManufacturer"" TEXT NULL,
+                     ""LiningMaterial"" TEXT NULL,
+                     ""TopElevation"" REAL NULL,
+                     ""GradeElevation"" REAL NULL,
+                     ""Depth"" REAL NULL,
+                     ""Easting"" REAL NULL,
+                     ""Northing"" REAL NULL,
+                     ""Latitude"" REAL NULL,
+                     ""Longitude"" REAL NULL,
+                     ""IsVisible"" INTEGER NOT NULL DEFAULT 1
+                 )",
+                 @"CREATE TABLE IF NOT EXISTS ""Manholes"" (
+                     ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                     ""ProjectId"" TEXT NULL,
+                     ""PartKey"" TEXT NULL,
+                     ""Discriminator"" TEXT NULL,
+                     ""Discipline"" TEXT NULL,
+                     ""FeatureType"" TEXT NULL,
+                     ""Subtype"" TEXT NULL,
+                     ""FacilityOwner"" TEXT NULL,
+                     ""ManholeType"" TEXT NULL,
+                     ""DropType"" TEXT NULL,
+                     ""Manufacturer"" TEXT NULL,
+                     ""Size"" TEXT NULL,
+                     ""Material"" TEXT NULL,
+                     ""LiningMaterial"" TEXT NULL,
+                     ""LiningManufacturer"" TEXT NULL,
+                     ""RimElevation"" REAL NULL,
+                     ""InvertElevationsWithDirections"" TEXT NULL,
+                     ""LowestInvertElevation"" REAL NULL,
+                     ""ExteriorJointTapeType"" TEXT NULL,
+                     ""ExteriorJointTapeManufacturer"" TEXT NULL,
+                     ""Easting"" REAL NULL,
+                     ""Northing"" REAL NULL,
+                     ""Latitude"" REAL NULL,
+                     ""Longitude"" REAL NULL,
+                     ""RfidBarcode"" TEXT NULL,
+                     ""IsVisible"" INTEGER NOT NULL DEFAULT 1
+                 )",
+                 @"CREATE TABLE IF NOT EXISTS ""WWServicePoints"" (
+                     ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                     ""ProjectId"" TEXT NULL,
+                     ""PartKey"" TEXT NULL,
+                     ""Discriminator"" TEXT NULL,
+                     ""Discipline"" TEXT NULL,
+                     ""FeatureType"" TEXT NULL,
+                     ""Subtype"" TEXT NULL,
+                     ""GradeElevation"" REAL NULL,
+                     ""TopElevation"" REAL NULL,
+                     ""Cover"" REAL NULL,
+                     ""Easting"" REAL NULL,
+                     ""Northing"" REAL NULL,
+                     ""Latitude"" REAL NULL,
+                     ""Longitude"" REAL NULL,
+                     ""IsVisible"" INTEGER NOT NULL DEFAULT 1
+                 )",
+                 @"CREATE TABLE IF NOT EXISTS ""WWValves"" (
+                     ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                     ""ProjectId"" TEXT NULL,
+                     ""PartKey"" TEXT NULL,
+                     ""Discriminator"" TEXT NULL,
+                     ""Discipline"" TEXT NULL,
+                     ""FeatureType"" TEXT NULL,
+                     ""Subtype"" TEXT NULL,
+                     ""ValveType"" TEXT NULL,
+                     ""FacilityOwner"" TEXT NULL,
+                     ""Size"" TEXT NULL,
+                     ""Orientation"" TEXT NULL,
+                     ""OpenDirection"" TEXT NULL,
+                     ""TurnsToOpen"" REAL NULL,
+                     ""NutElevation"" REAL NULL,
+                     ""GradeElevation"" REAL NULL,
+                     ""DepthToNut"" REAL NULL,
+                     ""Manufacturer"" TEXT NULL,
+                     ""Easting"" REAL NULL,
+                     ""Northing"" REAL NULL,
+                     ""Latitude"" REAL NULL,
+                     ""Longitude"" REAL NULL,
+                     ""IsVisible"" INTEGER NOT NULL DEFAULT 1
+                 )",
+             };
 
-                 try
-                 {
-                     context.Database.ExecuteSqlRaw(safeCmd);
-                 }
-                 catch
-                 {
-                     // Typically fails if a column constraint already exists, just ignore.
-                 }
+             foreach (var ddl in jeaTables)
+             {
+                 try { context.Database.ExecuteSqlRaw(ddl); }
+                 catch (Exception ex2) { System.Diagnostics.Debug.WriteLine($"Table create error: {ex2.Message}"); }
              }
+
+             // Create indexes for fast project-based lookups
+             var jeaTableNames = new[] { "WaterPipes","WaterPoints","WaterFittings","WaterValves","WaterMeters",
+                 "WWGravityPipes","WWPressurePipes","WWPoints","WWFittings","Manholes","WWServicePoints","WWValves" };
+             foreach (var t in jeaTableNames)
+             {
+                 try { context.Database.ExecuteSqlRaw($"CREATE INDEX IF NOT EXISTS \"IX_{t}_ProjectId\" ON \"{t}\" (\"ProjectId\")"); }
+                 catch { }
+             }
+
 
              // Seed Asset Subtypes Dynamically
              if (!context.AssetSubtypes.Any(s => s.Category == "Chilled Pipe Class"))
@@ -290,7 +561,7 @@ public static class DbInitializer
                          try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{tableName}\" ADD COLUMN \"{col}\" REAL NULL;"); } catch { }
                      }
                      try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{tableName}\" ADD COLUMN \"Quantity\" INTEGER NULL;"); } catch { }
-                     try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{tableName}\" ADD COLUMN \"IsVisible\" INTEGER NOT NULL DEFAULT 1;"); } catch (Exception e) { System.Console.WriteLine($"DB INIT FAIL {tableName}: {e.Message}"); }
+                     try { context.Database.ExecuteSqlRaw($"ALTER TABLE \"{tableName}\" ADD COLUMN \"IsVisible\" INTEGER NOT NULL DEFAULT 1;"); } catch { }
                  }
              }
         }

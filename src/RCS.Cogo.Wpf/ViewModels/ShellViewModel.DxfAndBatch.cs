@@ -336,20 +336,76 @@ public partial class ShellViewModel
                     }
                 }
                 
-                // Export Structures
-                foreach(var s in StructureGraphics)
+                // ── Discipline color map (ACI codes) ────────────────────────────────────
+                // 1=Red 2=Yellow 3=Green 4=Cyan 5=Blue 6=Magenta 30=Orange 256=ByLayer
+                static int DisciplineColor(string typeTag)
+                {
+                    string t = typeTag.ToUpper();
+                    if (t.StartsWith("WW") || t.Contains("SEW") || t.Contains("SAN")) return 3;  // Green
+                    if (t.StartsWith("W ") || t.StartsWith("W_") || t == "W" || t.Contains("WATER")) return 5; // Blue
+                    if (t.StartsWith("R ") || t.StartsWith("R_") || t == "R" || t.Contains("RECLAIM")) return 6; // Magenta
+                    if (t.StartsWith("ST") || t.Contains("STORM") || t.Contains("DRAIN")) return 4; // Cyan
+                    if (t.StartsWith("E") || t.Contains("ELEC") || t.Contains("POLE")) return 1;  // Red
+                    if (t.StartsWith("G") || t.Contains("GAS")) return 30; // Orange
+                    if (t.Contains("CHIL")) return 141; // Light Blue
+                    return 256; // ByLayer (default)
+                }
+
+                // Export Structures — block + colored label per discipline
+                foreach (var s in StructureGraphics)
                 {
                     string block = "MANHOLE";
                     string t = (s.Type ?? "").ToUpper();
-                    
-                    if (t.Contains("VALVE") || t.EndsWith("V") || t == "WV" || t == "WWV" || t == "STV" || t == "EV" || t == "GV" || t == "RV") block = "VALVE";
-                    else if (t.Contains("HYDRANT") || t.EndsWith("H") || t == "HYD") block = "HYDRANT";
-                    else if (t.Contains("METER") || t == "WMET" || t == "EMET" || t == "GMET" || t == "RMET") block = "METER"; 
-                    else if (t.Contains("POLE") || t == "EPOLE") block = "POLE";
-                    else if (t.Contains("BOX") || t.Contains("VAULT") || t == "EBOX") block = "BOX";
-                    else if (t.Contains("FITTING") || t.EndsWith("F") || t == "WF" || t == "WWF" || t == "STF" || t == "EF" || t == "GF") block = "FITTING";
-                    
-                    writer.InsertBlock(block, s.Easting, s.Northing, 1.0, $"STRUCT_{s.Type}");
+                    int dColor = DisciplineColor(s.Type ?? "");
+
+                    if (t.Contains("VALVE") || t.EndsWith("V") || t == "WV" || t == "WWV") block = "VALVE";
+                    else if (t.Contains("HYDRANT") || t.EndsWith("H") || t == "HYD")        block = "HYDRANT";
+                    else if (t.Contains("METER") || t.Contains("MET"))                       block = "METER";
+                    else if (t.Contains("POLE"))                                              block = "POLE";
+                    else if (t.Contains("BOX") || t.Contains("VAULT"))                       block = "BOX";
+                    else if (t.Contains("FITTING") || t.EndsWith("F"))                       block = "FITTING";
+
+                    string structLayer = $"STRUCT_{(s.Type ?? "DEFAULT").ToUpper().Replace(" ", "_")}";
+                    writer.InsertBlock(block, s.Easting, s.Northing, 1.0, structLayer, dColor);
+                    writer.AddText(s.Label, s.Easting + 1.5, s.Northing + 3.0, 1.2,
+                                   structLayer + "_LBL", "LEFT", 0, dColor);
+                }
+
+                // Export water & reclaimed pipe backbone (start→end GPS)
+                if (InstalledAssets != null)
+                {
+                    void ExportPipes<T>(System.Collections.ObjectModel.ObservableCollection<T> pipes, string layerPrefix, int col)
+                        where T : RCS.Data.Entities.InstalledAsset
+                    {
+                        foreach (var pipe in pipes)
+                        {
+                            double sn = pipe.StartNorthing ?? 0, se = pipe.StartEasting ?? 0;
+                            double en = pipe.EndNorthing   ?? 0, ee = pipe.EndEasting   ?? 0;
+                            if (Math.Abs(sn) < 0.001 && Math.Abs(se) < 0.001) continue;
+                            if (Math.Abs(en) < 0.001 && Math.Abs(ee) < 0.001) continue;
+                            string pipeLayer = $"{layerPrefix}_{pipe.Size ?? ""}_PIPE";
+                            writer.AddLine(se, sn, ee, en, pipeLayer, col);
+                            // Midpoint label
+                            writer.AddText(
+                                $"{pipe.Size} {pipe.Material} {pipe.PartKey}",
+                                (se + ee) / 2, (sn + en) / 2, 1.0, pipeLayer + "_LBL", "LEFT", 0, col);
+                        }
+                    }
+                    ExportPipes(InstalledAssets.WaterPipes,     "W",  5);
+                    ExportPipes(InstalledAssets.ReclaimedPipes, "R",  6);
+                    ExportPipes(InstalledAssets.WWPressurePipes,"WW", 3);
+
+                    // Sewer gravity (manhole-to-manhole)
+                    var mhIdx = InstalledAssets.Manholes
+                        .Where(m => m.PartKey != null && m.Northing.HasValue && m.Easting.HasValue)
+                        .ToDictionary(m => m.PartKey!, m => m);
+                    foreach (var pipe in InstalledAssets.WWGravityPipes)
+                    {
+                        if (!mhIdx.TryGetValue(pipe.UpstreamPointId ?? "", out var up)) continue;
+                        if (!mhIdx.TryGetValue(pipe.DownstreamPointId ?? "", out var dn)) continue;
+                        writer.AddLine(up.Easting!.Value, up.Northing!.Value,
+                                       dn.Easting!.Value, dn.Northing!.Value, "WW_GRAVITY_PIPE", 3);
+                    }
                 }
 
                 writer.End();
@@ -362,6 +418,90 @@ public partial class ShellViewModel
                  _context.Log($"[AUDIT] Error exporting DXF: {ex.Message}");
                  System.Windows.MessageBox.Show($"Error exporting DXF: {ex.Message}");
             }
+        }
+    }
+
+    // ── Item 4: JEA As-Built COGO Script Export ───────────────────────────────
+    private void ExportJeaCogoScript()
+    {
+        if (InstalledAssets == null || StructureGraphics.Count == 0)
+        {
+            System.Windows.MessageBox.Show("No JEA assets on canvas to export. Please import first.");
+            return;
+        }
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Filter = "COGO Script (*.txt)|*.txt|All Files (*.*)|*.*",
+            DefaultExt = ".txt",
+            FileName = $"JEA_AsBuilt_COGO_{DateTime.Now:yyyyMMdd}"
+        };
+        if (dialog.ShowDialog() != true) return;
+        try
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"// JEA As-Built COGO Script  —  Exported {DateTime.Now:yyyy-MM-dd HH:mm}");
+            sb.AppendLine($"// Project: {CurrentProject?.ProjectName ?? "(none)"}");
+            sb.AppendLine($"// CRS: State Plane Florida East (FIPS 0901) / NAD83, US Survey Feet");
+            sb.AppendLine($"// Format: n[Northing] e[Easting] [TYPE] [ID]");
+            sb.AppendLine();
+
+            // Group by discipline
+            var groups = StructureGraphics
+                .GroupBy(s => s.SymbolType)
+                .OrderBy(g => g.Key);
+
+            foreach (var grp in groups)
+            {
+                sb.AppendLine($"// ── {grp.Key.ToUpper()} ─────────────────────────────────────");
+                foreach (var s in grp.OrderBy(x => x.Label))
+                {
+                    // Resolve full feature type for COGO tag
+                    string cogoType = s.Type.ToUpper().Replace(" ", "_");
+                    sb.AppendLine($"n{s.Northing:F4} e{s.Easting:F4} {cogoType} {s.Label}");
+                }
+                sb.AppendLine();
+            }
+
+            // Pipe runs (sewer gravity)
+            if (InstalledAssets.WWGravityPipes.Any())
+            {
+                sb.AppendLine("// ── SEWER GRAVITY PIPES ─────────────────────────────────────");
+                var mhIdx = InstalledAssets.Manholes
+                    .Where(m => m.PartKey != null && m.Northing.HasValue && m.Easting.HasValue)
+                    .ToDictionary(m => m.PartKey!, m => m);
+                foreach (var pipe in InstalledAssets.WWGravityPipes)
+                {
+                    if (!mhIdx.TryGetValue(pipe.UpstreamPointId   ?? "", out var up)) continue;
+                    if (!mhIdx.TryGetValue(pipe.DownstreamPointId  ?? "", out var dn)) continue;
+                    sb.AppendLine($"// Pipe {pipe.PartKey}  {pipe.Size}\"  {pipe.Material}  Slope:{pipe.Slope:F4}%");
+                    sb.AppendLine($"n{up.Northing:F4} e{up.Easting:F4} WW_PIPE_START {pipe.PartKey}");
+                    sb.AppendLine($"n{dn.Northing:F4} e{dn.Easting:F4} WW_PIPE_END   {pipe.PartKey}");
+                }
+                sb.AppendLine();
+            }
+
+            // Water pipes with GPS endpoints
+            var waterPipesWithCoords = InstalledAssets.WaterPipes
+                .Where(p => p.StartNorthing.HasValue && p.StartEasting.HasValue).ToList();
+            if (waterPipesWithCoords.Any())
+            {
+                sb.AppendLine("// ── WATER DISTRIBUTION PIPES ───────────────────────────────");
+                foreach (var pipe in waterPipesWithCoords)
+                {
+                    sb.AppendLine($"// Pipe {pipe.PartKey}  {pipe.Size}\"  {pipe.Material}");
+                    sb.AppendLine($"n{pipe.StartNorthing:F4} e{pipe.StartEasting:F4} W_PIPE_START {pipe.PartKey}");
+                    sb.AppendLine($"n{pipe.EndNorthing:F4}   e{pipe.EndEasting:F4}   W_PIPE_END   {pipe.PartKey}");
+                }
+                sb.AppendLine();
+            }
+
+            File.WriteAllText(dialog.FileName, sb.ToString());
+            _context.Log($"[AUDIT] Exported JEA COGO Script to {dialog.FileName}");
+            System.Windows.MessageBox.Show($"COGO Script exported.\n{dialog.FileName}");
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show($"Export error: {ex.Message}");
         }
     }
 
@@ -817,6 +957,199 @@ public partial class ShellViewModel
 
             // Auto-Zoom Extents after refresh
             if (autoZoomExtents) ZoomExtentsRequested?.Invoke(this, EventArgs.Empty);
+
+            // These assets come from the JEA Excel import and live in the SQLite DB.
+            // They are not in the CogoContext, so we render them directly here.
+            if (InstalledAssets != null && _currentProject != null)
+            {
+                void RenderAssets<T>(System.Collections.ObjectModel.ObservableCollection<T> collection, string typeTag)
+                    where T : RCS.Data.Entities.InstalledAsset
+                {
+                    foreach (var asset in collection)
+                    {
+                        double n = asset.Northing ?? 0;
+                        double e = asset.Easting ?? 0;
+                        if (Math.Abs(n) < 0.001 && Math.Abs(e) < 0.001) continue; // skip 0,0
+                        var pt = new Point3D(n, e, asset.GradeElevation ?? 0);
+
+                        // Build the canvas label (short ID only)
+                        string canvasLabel = asset.PartKey ?? asset.Id.ToString();
+
+                        // Build full attribute dictionary for the click-to-inspect popup
+                        // Build full attribute collection for the click-to-inspect popup
+                        var data = new System.Collections.ObjectModel.ObservableCollection<InspectorField>
+                        {
+                            new InspectorField("ID / Part Key",  asset.PartKey ?? "(none)", isReadOnly: true),
+                            new InspectorField("Feature Type",   asset.FeatureType ?? typeTag, isReadOnly: true),
+                            new InspectorField("Discipline",     asset.Discipline ?? "-", isReadOnly: false),
+                            new InspectorField("Subtype",        asset.Subtype ?? "-", isReadOnly: false),
+                            new InspectorField("Facility Owner", asset.FacilityOwner ?? "-", isReadOnly: false),
+                            new InspectorField("Size",           asset.Size ?? "-", isReadOnly: false),
+                            new InspectorField("Material",       asset.Material ?? "-", isReadOnly: false),
+                            new InspectorField("Northing (Y)",   n.ToString("F2"), isReadOnly: true),
+                            new InspectorField("Easting (X)",    e.ToString("F2"), isReadOnly: true),
+                            new InspectorField("Latitude",       asset.Latitude.HasValue ? asset.Latitude.Value.ToString("F6") : "-", isReadOnly: true),
+                            new InspectorField("Longitude",      asset.Longitude.HasValue ? asset.Longitude.Value.ToString("F6") : "-", isReadOnly: true),
+                            new InspectorField("Grade Elev.",    asset.GradeElevation.HasValue ? asset.GradeElevation.Value.ToString("F2") : "-", isReadOnly: false),
+                            new InspectorField("Depth",          asset.Depth.HasValue ? asset.Depth.Value.ToString("F2") : "-", isReadOnly: false)
+                        };
+
+                        if (asset.Manufacturer != null) data.Add(new InspectorField("Manufacturer", asset.Manufacturer, isReadOnly: false));
+                        if (asset.ValveType != null)    data.Add(new InspectorField("Valve Type", asset.ValveType, isReadOnly: false));
+                        if (asset.OpenDirection != null) data.Add(new InspectorField("Open Direction", asset.OpenDirection, isReadOnly: false));
+                        if (asset.TurnsToOpen.HasValue) data.Add(new InspectorField("Turns To Open", asset.TurnsToOpen.Value.ToString("F1"), isReadOnly: false));
+                        if (asset.ManholeType != null)  data.Add(new InspectorField("Manhole Type", asset.ManholeType, isReadOnly: false));
+                        if (asset.RimElevation.HasValue) data.Add(new InspectorField("Rim Elev.", asset.RimElevation.Value.ToString("F2"), isReadOnly: false));
+                        if (asset.LowestInvertElevation.HasValue) data.Add(new InspectorField("Lowest Invert", asset.LowestInvertElevation.Value.ToString("F2"), isReadOnly: false));
+                        if (asset.LiningMaterial != null) data.Add(new InspectorField("Lining Material", asset.LiningMaterial, isReadOnly: false));
+                        if (asset.RfidBarcode != null) data.Add(new InspectorField("RFID / Barcode", asset.RfidBarcode, isReadOnly: false));
+
+                        var typeLabel = $"{typeTag} {canvasLabel}".Trim();
+                        var sym = new StructureViewModel(canvasLabel, pt, typeLabel, canvasLabel, data, asset);
+                        // Wire click-to-inspect
+                        sym.SelectCommand = new RelayCommand(_ => SelectedStructure = sym);
+                        StructureGraphics.Add(sym);
+                    }
+                }
+
+
+
+                // Water
+                RenderAssets(InstalledAssets.WaterHydrants,   "W HYDRANT");
+                RenderAssets(InstalledAssets.WaterValves,     "W VALVE");
+                RenderAssets(InstalledAssets.WaterFittings,   "WF");
+                RenderAssets(InstalledAssets.WaterMeters,     "WMET");
+                RenderAssets(InstalledAssets.WaterLocateBoxes,"W BOX");
+                RenderAssets(InstalledAssets.WaterPoints,     "W");
+
+                // Wastewater
+                RenderAssets(InstalledAssets.Manholes,        "WW MANHOLE");
+                RenderAssets(InstalledAssets.WWFittings,      "WWF");
+                RenderAssets(InstalledAssets.WWValves,        "WWV");
+                RenderAssets(InstalledAssets.WWPoints,        "WW");
+                RenderAssets(InstalledAssets.WWServicePoints, "WW");
+
+                // Reclaimed
+                RenderAssets(InstalledAssets.ReclaimedHydrants,"R HYDRANT");
+                RenderAssets(InstalledAssets.ReclaimedFittings,"R FITTING");
+                RenderAssets(InstalledAssets.ReclaimedValves,  "R VALVE");
+                RenderAssets(InstalledAssets.ReclaimedPoints,  "R");
+
+                // Crossings
+                foreach (var c in InstalledAssets.PipeCrossings)
+                {
+                    double n = c.Northing ?? 0; double e = c.Easting ?? 0;
+                    if (Math.Abs(n) < 0.001 && Math.Abs(e) < 0.001) continue;
+                    var pt = new Point3D(n, e, 0);
+                    StructureGraphics.Add(new StructureViewModel(
+                        c.CrossingNumber ?? c.Id.ToString(), pt, "CROSSING"));
+                }
+
+                // ── Sewer pipe linework: connect manholes via UpstreamPointId / DownstreamPointId ──
+                {
+                    // Build a lookup: manhole PartKey -> location
+                    var mhIndex = InstalledAssets.Manholes
+                        .Where(m => m.PartKey != null
+                                 && m.Northing.HasValue && m.Easting.HasValue
+                                 && (Math.Abs(m.Northing.Value) > 0.001 || Math.Abs(m.Easting.Value) > 0.001))
+                        .ToDictionary(m => m.PartKey!, m => m);
+
+                    foreach (var pipe in InstalledAssets.WWGravityPipes)
+                    {
+                        if (!mhIndex.TryGetValue(pipe.UpstreamPointId ?? "", out var up)) continue;
+                        if (!mhIndex.TryGetValue(pipe.DownstreamPointId ?? "", out var dn)) continue;
+                        var pts = new System.Collections.Generic.List<Point3D>
+                        {
+                            new Point3D(up.Northing!.Value, up.Easting!.Value, up.RimElevation ?? 0),
+                            new Point3D(dn.Northing!.Value, dn.Easting!.Value, dn.RimElevation ?? 0)
+                        };
+                        Figures.Add(new FigureViewModel(
+                            $"SewerPipe-{pipe.PartKey ?? pipe.Id}",
+                            pts,
+                            System.Windows.Media.Brushes.Lime));
+                    }
+
+                    foreach (var pipe in InstalledAssets.WWPressurePipes)
+                    {
+                        if (!mhIndex.TryGetValue(pipe.UpstreamPointId ?? "", out var up)) continue;
+                        if (!mhIndex.TryGetValue(pipe.DownstreamPointId ?? "", out var dn)) continue;
+                        var pts = new System.Collections.Generic.List<Point3D>
+                        {
+                            new Point3D(up.Northing!.Value, up.Easting!.Value, 0),
+                            new Point3D(dn.Northing!.Value, dn.Easting!.Value, 0)
+                        };
+                        Figures.Add(new FigureViewModel(
+                            $"WWPressure-{pipe.PartKey ?? pipe.Id}",
+                            pts,
+                            System.Windows.Media.Brushes.LimeGreen));
+                    }
+                }
+
+                // ── Water pipe linework: connect sequential WaterPoints along each pipe run ──
+                // WaterPoints have UpstreamPointId linking them to a pipe PartKey.
+                // Sort by PartKey prefix and connect in order of GPS position.
+                {
+                    // Connect water points along same pipe (grouped by UpstreamPointId = PipePartKey)
+                    var waterPointsByPipe = InstalledAssets.WaterPoints
+                        .Where(p => p.UpstreamPointId != null
+                                 && p.Northing.HasValue && p.Easting.HasValue
+                                 && (Math.Abs(p.Northing.Value) > 0.001 || Math.Abs(p.Easting.Value) > 0.001))
+                        .GroupBy(p => p.UpstreamPointId!);
+
+                    foreach (var grp in waterPointsByPipe)
+                    {
+                        var ordered = grp.OrderBy(p => p.PartKey).ToList();
+                        if (ordered.Count < 2) continue;
+                        var pts = ordered.Select(p =>
+                            new Point3D(p.Northing!.Value, p.Easting!.Value, p.GradeElevation ?? 0)).ToList();
+                        Figures.Add(new FigureViewModel(
+                            $"WaterRun-{grp.Key}",
+                            pts,
+                            System.Windows.Media.Brushes.DeepSkyBlue));
+                    }
+
+                    // Also connect WaterFittings + WaterValves to adjacent WaterHydrants
+                    // by drawing a tick line from each point asset to its nearest hydrant (within 200ft)
+                    var hydrantPts = InstalledAssets.WaterHydrants
+                        .Where(h => h.Northing.HasValue && h.Easting.HasValue
+                                 && (Math.Abs(h.Northing!.Value) > 0.001 || Math.Abs(h.Easting!.Value) > 0.001))
+                        .ToList();
+
+                    var waterAssets = new System.Collections.Generic.List<RCS.Data.Entities.InstalledAsset>();
+                    waterAssets.AddRange(InstalledAssets.WaterFittings.Cast<RCS.Data.Entities.InstalledAsset>());
+                    waterAssets.AddRange(InstalledAssets.WaterValves.Cast<RCS.Data.Entities.InstalledAsset>());
+                    waterAssets.AddRange(InstalledAssets.WaterMeters.Cast<RCS.Data.Entities.InstalledAsset>());
+
+                    foreach (var asset in waterAssets)
+                    {
+                        double an = asset.Northing ?? 0, ae = asset.Easting ?? 0;
+                        if (Math.Abs(an) < 0.001 && Math.Abs(ae) < 0.001) continue;
+
+                        // Find nearest hydrant within 500 survey feet
+                        var nearestHyd = hydrantPts
+                            .Select(h => new { h, dist = Math.Sqrt(Math.Pow((h.Northing!.Value-an),2)+Math.Pow((h.Easting!.Value-ae),2)) })
+                            .Where(x => x.dist < 500)
+                            .OrderBy(x => x.dist)
+                            .FirstOrDefault();
+
+                        if (nearestHyd != null)
+                        {
+                            var pts = new System.Collections.Generic.List<Point3D>
+                            {
+                                new Point3D(an, ae, 0),
+                                new Point3D(nearestHyd.h.Northing!.Value, nearestHyd.h.Easting!.Value, 0)
+                            };
+                            Figures.Add(new FigureViewModel(
+                                $"WaterSvc-{asset.PartKey ?? asset.Id}",
+                                pts,
+                                new System.Windows.Media.SolidColorBrush(
+                                    System.Windows.Media.Color.FromRgb(0,160,255))));
+                        }
+                    }
+                }
+            }
+
+
         });
     }
 
