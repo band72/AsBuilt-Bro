@@ -35,7 +35,7 @@
 3. Locate the compiled executable (`RCS.Cogo.Wpf.exe`).
 4. **Important**: Ensure the native `RcsSecurityModule.dll` is preserved in the root executable output directory. Missing this DLL will trigger a hardware verification failure upon launch.
 5. Launch `RCS.Cogo.Wpf.exe` to begin.
-6. Download link: https://drive.google.com/file/d/1fTB1summljMXpA8QTK675HM27le2JIO2/view?usp=drive_link
+6. Download link: [As-Built-Pro].https://drive.google.com/file/d/1fTB1summljMXpA8QTK675HM27le2JIO2/view?usp=drive_link.
 ### Usage Example
 
 RCS COGO Enterprise shines in its batch processing and scripting engine. You can use the **Cogo Script** tab within the application to rapidly layout survey points and create geometric figures:
