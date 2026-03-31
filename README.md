@@ -92,4 +92,19 @@ We welcome improvements, bug reports, and structural suggestions from developers
 
 ---
 
+## Proprietary License
+Copyright (c) 2026 Band72
+
+All rights reserved.
+
+This software, including source code, binaries, and associated files, is the proprietary property of the author.
+
+Permission is granted to download and use this software for personal, internal, or evaluation purposes only.
+
+Commercial use, including but not limited to selling, licensing, distributing, or incorporating this software into other products, is strictly prohibited without prior written permission from the author.
+
+No part of this software may be copied, modified, distributed, or sublicensed without explicit written consent.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+
 *Note: This application is optimized for enterprise map scaling. Always utilize the 'Compact Database' tool when dealing with massive datasets to reclaim file system space.*
