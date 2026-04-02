@@ -327,7 +327,9 @@ public static class JeaImportService
         catch (Exception ex)
         {
             result.Success      = false;
-            result.ErrorMessage = ex.Message;
+            string msg = ex.Message;
+            if (ex.InnerException != null) msg += " INNER: " + ex.InnerException.Message;
+            result.ErrorMessage = msg;
         }
 
         return result;

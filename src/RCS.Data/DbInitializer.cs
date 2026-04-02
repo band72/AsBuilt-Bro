@@ -541,6 +541,7 @@ public static class DbInitializer
              var realColumns = new[] {
                  "GradeElevation", "TopElevation", "Depth", "Cover", "Length", "DownstreamInvert", "DownstreamGrade",
                  "UpstreamInvert", "UpstreamGrade", "Slope", "Easting", "Northing", "Latitude", "Longitude",
+                 "StartNorthing", "StartEasting", "EndNorthing", "EndEasting",
                  "TurnsToOpen", "NutElevation", "DepthToNut", "RimElevation", "LowestInvertElevation",
                  "UpperPipeTopElevation", "UpperCover", "UpperPipeBottomElevation", "LowerPipeTopElevation", "LowerCover", "Separation"
              };

@@ -66,8 +66,8 @@ public static class JeaExportService
                 SetN(ws, r, 16, x.Longitude);
             });
 
-        // ── Water Pipe Run ──────────────────────────────────────────────
-        result.WaterPipes = FillSheet(pkg, "Water Pipe Run", 2,
+        // ── Water Pipe ──────────────────────────────────────────────
+        result.WaterPipes = FillSheet(pkg, "Water Pipe", 2,
             db.WaterPipes.Where(x => x.ProjectId == projectId).ToList(),
             (ws, r, x) =>
             {
@@ -197,8 +197,8 @@ public static class JeaExportService
                 SetN(ws, r, 6,  x.Longitude);
             });
 
-        // ── WW Gravity Pipe Run ─────────────────────────────────────────
-        result.WWGravityPipes = FillSheet(pkg, "WW Gravity Pipe Run", 2,
+        // ── WW Gravity Pipe Run / Sewer Pipe ──────────────────────────────
+        result.WWGravityPipes = FillSheet(pkg, "Sewer Pipe", 2,
             db.WWGravityPipes.Where(x => x.ProjectId == projectId).ToList(),
             (ws, r, x) =>
             {
@@ -261,8 +261,8 @@ public static class JeaExportService
                 SetN(ws, r, 18, x.Longitude);
             });
 
-        // ── WW Fitting ──────────────────────────────────────────────────
-        result.WWFittings = FillSheet(pkg, "WW Fitting", 2,
+        // ── WW Fitting / Sewer Fitting ──────────────────────────────────
+        result.WWFittings = FillSheet(pkg, "Sewer Fitting", 2,
             db.WWFittings.Where(x => x.ProjectId == projectId).ToList(),
             (ws, r, x) =>
             {
@@ -284,8 +284,8 @@ public static class JeaExportService
                 SetN(ws, r, 16, x.Longitude);
             });
 
-        // ── Manhole ─────────────────────────────────────────────────────
-        result.Manholes = FillSheet(pkg, "Manhole", 2,
+        // ── Sewer Manhole ───────────────────────────────────────────────
+        result.Manholes = FillSheet(pkg, "Sewer Manhole", 2,
             db.Manholes.Where(x => x.ProjectId == projectId).ToList(),
             (ws, r, x) =>
             {
@@ -309,8 +309,8 @@ public static class JeaExportService
                 Set(ws, r, 20, x.RfidBarcode);
             });
 
-        // ── WW Service Point & Meter ────────────────────────────────────
-        result.WWServicePoints = FillSheet(pkg, "WW Service Point & Meter", 2,
+        // ── WW Service Point & Meter / Sewer Meter ──────────────────────
+        result.WWServicePoints = FillSheet(pkg, "Sewer Meter", 2,
             db.WWServicePoints.Where(x => x.ProjectId == projectId).ToList(),
             (ws, r, x) =>
             {
@@ -325,8 +325,8 @@ public static class JeaExportService
                 SetN(ws, r, 9,  x.Longitude);
             });
 
-        // ── WW Valve ────────────────────────────────────────────────────
-        result.WWValves = FillSheet(pkg, "WW Valve", 2,
+        // ── WW Valve / Sewer Valve ──────────────────────────────────────
+        result.WWValves = FillSheet(pkg, "Sewer Valve", 2,
             db.WWValves.Where(x => x.ProjectId == projectId).ToList(),
             (ws, r, x) =>
             {
@@ -361,8 +361,8 @@ public static class JeaExportService
                 SetN(ws, r, 6,  x.Longitude);
             });
 
-        // ── Reclaimed Pipe Run ──────────────────────────────────────────
-        result.ReclaimedPipes = FillSheet(pkg, "Reclaimed Pipe Run", 2,
+        // ── Reclaimed Pipe Run / Reclaimed Pipe ─────────────────────────
+        result.ReclaimedPipes = FillSheet(pkg, "Reclaimed Pipe", 2,
             db.ReclaimedPipes.Where(x => x.ProjectId == projectId).ToList(),
             (ws, r, x) =>
             {
