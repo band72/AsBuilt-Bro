@@ -64,7 +64,24 @@ public partial class ShellViewModel
         _context.Log("[AUDIT] Created New Project");
 
         if (!skipEdit)
-            EditProject();
+        {
+            var window = new RCS.Cogo.Wpf.Views.ProjectDetailsWindow(CurrentProject);
+            if (window.ShowDialog() == true)
+            {
+                _context.Log($"[AUDIT] Updated Project Details: {CurrentProject.ProjectName}");
+                
+                // Automatically save the physical DB file into the generated SaveLocation in one step
+                if (!string.IsNullOrWhiteSpace(CurrentProject.SaveLocation))
+                {
+                    string safeName = string.IsNullOrWhiteSpace(CurrentProject.ProjectName)
+                        ? "Untitled_Project"
+                        : string.Concat(CurrentProject.ProjectName.Split(System.IO.Path.GetInvalidFileNameChars()));
+                        
+                    string fullDbPath = System.IO.Path.Combine(CurrentProject.SaveLocation, $"{safeName}.db");
+                    SaveProjectInternal(fullDbPath);
+                }
+            }
+        }
 
         IsDirty = false; // brand-new project is not dirty until user makes changes
     }

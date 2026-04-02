@@ -1,5 +1,5 @@
 $PublishDir = "src\RCS.Cogo.Wpf\bin\Release\net8.0-windows\win-x64\publish"
-$SetupScript = "src\RCS.Cogo.Wpf\bin\Release\net8.0-windows\SETUP.iss"
+$SetupScript = "Installer.iss"
 $InnoSetupCompiler = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
 
 Write-Host "Publishing the application..." -ForegroundColor Cyan

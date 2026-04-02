@@ -568,7 +568,13 @@ public static class DbInitializer
         }
         catch (Exception ex)
         {
-             // Log or rethrow? For now, we assume this is safe.
+             // Log directly to crash dump system rather than relying on WPF layer
+             try 
+             {
+                 var logDir = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "RCS_Crash_Dumps");
+                 System.IO.Directory.CreateDirectory(logDir);
+                 System.IO.File.AppendAllText(System.IO.Path.Combine(logDir, "crashlog.txt"), $"[{System.DateTime.UtcNow:O}] [DbInitializer] {ex.Message}\n{ex.StackTrace}\n");
+             } catch {}
              System.Diagnostics.Debug.WriteLine($"Error verifying schema: {ex.Message}");
         }
     }
