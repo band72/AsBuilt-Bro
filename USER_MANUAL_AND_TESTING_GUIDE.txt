@@ -652,10 +652,10 @@ project and persists in the SQLite database to facilitate formal JEA AS-BUILT re
 Access via the 'Tables' menu located in the Main Shell.
 This feature presents a multi-tab preview window that automatically parses installed 
 assets from the active Project ID. 
-- Included Tables: Force Main Fittings, Sanitary Manholes, Water Main Fittings, Water Valves, 
-  Hydrants, Water Services, and Locate Wire Boxes.
+- Included Tables: Pipe Crossings, Force Main Fittings, Sanitary Manholes, Water Main Fittings, 
+  Water Valves, Hydrants, Water Services, and Locate Wire Boxes.
 - Export to DXF: The primary action button "📐 Export Tab → DXF" constructs an AutoCAD-ready 
-  table (drawing actual LINE and TEXT entities in ACI magenta/cyan/white format) 
+  table (drawing actual MTEXT and INSERT CAD entities in ACI magenta/cyan/white format) 
   compliant with the JEA As-Built field table template.
 
 11.3 Points Along Pipe (PAP)
@@ -665,13 +665,24 @@ The 'Points Along Pipe' engine automatically extracts pipeline vertices and inse
 calculated 3D nodes (specifically, inverts) at designated intervals (e.g., 50 FT).
 - Use Case: Rapidly generating topographic tracking points for pressure mains and gravity 
   sewers, drastically reducing manual COGO computation time during long transmission design.
-- The interpolated nodes map dynamically to your selected coordinate system (e.g., State Plane).
+- Note: It automatically stores strict distance interval labels (e.g., STA 10+50.00) in the 
+  asset's FeatureType for effortless Civil 3D labeling extraction natively.
 
 11.4 Application Output
 --------------------------------------------------------------------------------
 Distribution uses Inno Setup (Installer.iss) to neatly package the WPF binaries,
 required native SQLite providers, and .json configuration templates into a single setup 
 wizard for end-users, shielding them from environment complexity.
+
+11.5 ePANET Export Integration (.inp)
+--------------------------------------------------------------------------------
+Access via 'Data > Export EPANET INP...'.
+This command translates active PipeRuns and tracking node geometries natively into a 
+full hydraulic connectivity network readable by EPA standards.
+- Auto-Validation: Prior to creating the INP file, the export validates whether pipes possess 
+  true Diameters (> 0) and whether dangling nodes or flat (0.00) elevations exist.
+- JEA Validation Grid integration automatically surfaces these critical EPANET failures visually 
+  for the engineer to rapidly QA before producing broken models.
 
 ================================================================================
 (End of Document)

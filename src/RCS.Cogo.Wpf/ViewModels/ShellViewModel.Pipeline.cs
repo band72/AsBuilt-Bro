@@ -151,6 +151,54 @@ public partial class ShellViewModel
 
     private void ExportEpanet()
     {
+        var errors = new System.Collections.Generic.List<RCS.Cogo.Wpf.Services.JeaIssue>();
+
+        foreach (var s in Structures)
+        {
+            var pt = _context.GetPoint(s.PointId);
+            if (pt == null || pt.Easting == 0 || pt.Northing == 0)
+            {
+                errors.Add(new RCS.Cogo.Wpf.Services.JeaIssue("Hydraulic Nodes", s.PointId, "Coordinates", "Structure is missing physical Northing/Easting coordinates. EPANET requires geospatial locations.", RCS.Cogo.Wpf.Services.JeaSeverity.Error));
+            }
+            else if (pt.Elevation == 0.0)
+            {
+                errors.Add(new RCS.Cogo.Wpf.Services.JeaIssue("Hydraulic Nodes", s.PointId, "Elevation", "Structure has 0.0 elevation. Hydraulic pressure modeling may be affected.", RCS.Cogo.Wpf.Services.JeaSeverity.Warning));
+            }
+        }
+
+        int pipeId = 1;
+        foreach (var r in PipeRuns)
+        {
+            string pTag = $"Pipe_{pipeId}";
+            if (r.Diameter <= 0)
+            {
+                errors.Add(new RCS.Cogo.Wpf.Services.JeaIssue("Hydraulic Pipes", pTag, "Diameter", $"Pipe diameter must be greater than 0 (Found: {r.Diameter}).", RCS.Cogo.Wpf.Services.JeaSeverity.Error));
+            }
+
+            var p1 = _context.GetPoint(r.FromPointId);
+            var p2 = _context.GetPoint(r.ToPointId);
+            if (p1 == null || p2 == null)
+            {
+                errors.Add(new RCS.Cogo.Wpf.Services.JeaIssue("Hydraulic Pipes", pTag, "Connections", "Pipe connects to dangling/missing nodes. EPANET cannot compute isolated pipes.", RCS.Cogo.Wpf.Services.JeaSeverity.Error));
+            }
+            pipeId++;
+        }
+
+        var report = new RCS.Cogo.Wpf.Services.JeaValidationReport(errors, CurrentProject.Id.ToString());
+        if (!report.IsValid)
+        {
+            var window = new RCS.Cogo.Wpf.Views.JeaValidationWindow(CurrentProject.Id.ToString(), RCS.Cogo.Wpf.Views.JeaValidationMode.Export, ExecuteEpanetExport);
+            window.LoadReport(report);
+            window.ShowDialog();
+            return;
+        }
+
+        // If valid, just execute it directly
+        ExecuteEpanetExport();
+    }
+
+    private void ExecuteEpanetExport()
+    {
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
             Filter = "EPANET INP File (*.inp)|*.inp|All Files (*.*)|*.*",

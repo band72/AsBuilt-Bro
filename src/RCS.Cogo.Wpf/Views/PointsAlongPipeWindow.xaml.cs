@@ -75,7 +75,8 @@ namespace RCS.Cogo.Wpf.Views
                 var polyPoints = fig.Points;
                 
                 // Add start point exactly
-                await AddPointAsset(disc, polyPoints[0].Y, polyPoints[0].X);
+                double totalStation = 0;
+                await AddPointAsset(disc, polyPoints[0].Y, polyPoints[0].X, totalStation);
                 generatedCount++;
 
                 for (int i = 0; i < polyPoints.Count - 1; i++)
@@ -99,7 +100,8 @@ namespace RCS.Cogo.Wpf.Views
                         double interpX = p1.X + dx * ratio;
                         double interpY = p1.Y + dy * ratio;
 
-                        await AddPointAsset(disc, interpY, interpX);
+                        totalStation += needed;
+                        await AddPointAsset(disc, interpY, interpX, totalStation);
                         generatedCount++;
 
                         walkDist = 0;
@@ -112,13 +114,14 @@ namespace RCS.Cogo.Wpf.Views
                         segmentLen = remainingSegment;
                     }
                     walkDist += remainingSegment;
+                    totalStation += remainingSegment;
                 }
 
                 // Append the final endpoint if it's not super close to the last walked point
                 if (walkDist > 1.0)
                 {
                     var lastPt = polyPoints[polyPoints.Count - 1];
-                    await AddPointAsset(disc, lastPt.Y, lastPt.X);
+                    await AddPointAsset(disc, lastPt.Y, lastPt.X, totalStation);
                     generatedCount++;
                 }
             }
@@ -128,33 +131,37 @@ namespace RCS.Cogo.Wpf.Views
             Close();
         }
         
-        private async Task AddPointAsset(string discipline, double northing, double easting)
+        private async Task AddPointAsset(string discipline, double northing, double easting, double stationDist)
         {
             var pId = _shellVm.CurrentProject.Id.ToString();
             string pk = "P-" + Guid.NewGuid().ToString().Substring(0, 5);
 
+            int staHundreds = (int)(stationDist / 100);
+            double staRemainder = stationDist % 100;
+            string staLabel = $"STA {staHundreds}+{staRemainder:00.00}";
+
             switch (discipline)
             {
                 case "WA":
-                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.WaterPoint { PartKey = pk, ProjectId = pId, Subtype = "Water Point Along Pipe", Discipline = "WA", Northing = northing, Easting = easting });
+                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.WaterPoint { PartKey = pk, ProjectId = pId, Subtype = "Water Point Along Pipe", FeatureType = staLabel, Discipline = "WA", Northing = northing, Easting = easting });
                     break;
                 case "WW":
-                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.WWPoint { PartKey = pk, ProjectId = pId, Subtype = "WW Point Along Pipe", Discipline = "WW", Northing = northing, Easting = easting });
+                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.WWPoint { PartKey = pk, ProjectId = pId, Subtype = "WW Point Along Pipe", FeatureType = staLabel, Discipline = "WW", Northing = northing, Easting = easting });
                     break;
                 case "RC":
-                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.ReclaimedPoint { PartKey = pk, ProjectId = pId, Subtype = "RC Point Along Pipe", Discipline = "RC", Northing = northing, Easting = easting });
+                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.ReclaimedPoint { PartKey = pk, ProjectId = pId, Subtype = "RC Point Along Pipe", FeatureType = staLabel, Discipline = "RC", Northing = northing, Easting = easting });
                     break;
                 case "GS":
-                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.GPoint { PartKey = pk, ProjectId = pId, Subtype = "Gas Point Along Pipe", Discipline = "GS", Northing = northing, Easting = easting });
+                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.GPoint { PartKey = pk, ProjectId = pId, Subtype = "Gas Point Along Pipe", FeatureType = staLabel, Discipline = "GS", Northing = northing, Easting = easting });
                     break;
                 case "EL":
-                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.EPoint { PartKey = pk, ProjectId = pId, Subtype = "Electric Point Along Pipe", Discipline = "EL", Northing = northing, Easting = easting });
+                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.EPoint { PartKey = pk, ProjectId = pId, Subtype = "Electric Point Along Pipe", FeatureType = staLabel, Discipline = "EL", Northing = northing, Easting = easting });
                     break;
                 case "CH":
-                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.ChilledPoint { PartKey = pk, ProjectId = pId, Subtype = "Chilled Point Along Pipe", Discipline = "CH", Northing = northing, Easting = easting });
+                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.ChilledPoint { PartKey = pk, ProjectId = pId, Subtype = "Chilled Point Along Pipe", FeatureType = staLabel, Discipline = "CH", Northing = northing, Easting = easting });
                     break;
                 case "DR":
-                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.STPoint { PartKey = pk, ProjectId = pId, Subtype = "Storm Point Along Pipe", Discipline = "DR", Northing = northing, Easting = easting });
+                    await _assetsVm.AddItemAsync(new RCS.Data.Entities.STPoint { PartKey = pk, ProjectId = pId, Subtype = "Storm Point Along Pipe", FeatureType = staLabel, Discipline = "DR", Northing = northing, Easting = easting });
                     break;
             }
 
@@ -162,7 +169,7 @@ namespace RCS.Cogo.Wpf.Views
             _shellVm.StructureGraphics.Add(new StructureViewModel(
                 pk, 
                 new Point3D(northing, easting, 0), 
-                $"{discipline} Point"
+                $"{discipline} {staLabel}"
             ));
         }
     }

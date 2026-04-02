@@ -116,12 +116,26 @@ public partial class InstalledAssetsTablesWindow : Window
         new JeaTableDxfExporter.TableColumn("LONGITUDE",          1.00),
     };
 
+    private static readonly IReadOnlyList<JeaTableDxfExporter.TableColumn> ColsCrossing = new[]
+    {
+        new JeaTableDxfExporter.TableColumn("CROSSING\nNO.",           0.60),
+        new JeaTableDxfExporter.TableColumn("UPPER PIPE\nTYPE",        0.90),
+        new JeaTableDxfExporter.TableColumn("LOWER PIPE\nTYPE",        0.90),
+        new JeaTableDxfExporter.TableColumn("GRADE\nELEVATION",        0.70),
+        new JeaTableDxfExporter.TableColumn("UPPER\nTOP ELEV",         0.70),
+        new JeaTableDxfExporter.TableColumn("LOWER\nTOP ELEV",         0.70),
+        new JeaTableDxfExporter.TableColumn("SEPARATION\nDISTANCE",    0.80),
+        new JeaTableDxfExporter.TableColumn("NORTHING",                0.85),
+        new JeaTableDxfExporter.TableColumn("EASTING",                 0.85),
+    };
+
     // ── Table metadata ─────────────────────────────────────────────────
     private record TableDef(
         string Title,
         string DefaultFileName,
         IReadOnlyList<JeaTableDxfExporter.TableColumn> Columns,
-        Func<AppDbContext, IReadOnlyList<IReadOnlyList<string?>>> LoadRows);
+        string BlockName,
+        Func<AppDbContext, IReadOnlyList<JeaTableDxfExporter.TableRow>> LoadRows);
 
     private TableDef[] _tables = null!;
 
@@ -141,14 +155,36 @@ public partial class InstalledAssetsTablesWindow : Window
 
         _tables = new TableDef[]
         {
+            new("PIPE CROSSING TABLE",
+                "PipeCrossings_Table.dxf",
+                ColsCrossing,
+                "JEA_PIPE_CROSSING",
+                db => db.PipeCrossings
+                    .Where(x => x.ProjectId == _projectId)
+                    .OrderBy(x => x.CrossingNumber)
+                    .ToList()
+                    .Select((r, i) => new JeaTableDxfExporter.TableRow(new string?[]
+                    {
+                        r.CrossingNumber ?? (i+1).ToString(),
+                        r.UpperPipeType,
+                        r.LowerPipeType,
+                        Fmt(r.GradeElevation),
+                        Fmt(r.UpperPipeTopElevation),
+                        Fmt(r.LowerPipeTopElevation),
+                        Fmt(r.Separation),
+                        Fmt(r.Northing), Fmt(r.Easting)
+                    }, "JEA_PIPE_CROSSING", r.Northing, r.Easting))
+                    .ToList()),
+
             new("FORCE MAIN FITTING LOCATION TABLE",
                 "ForceFittings_Table.dxf",
                 ColsForceFitting,
+                "JEA_FM_FITTING",
                 db => db.WWFittings
                     .Where(x => x.ProjectId == _projectId)
                     .OrderBy(x => x.PartKey)
                     .ToList()
-                    .Select((r, i) => (IReadOnlyList<string?>)new[]
+                    .Select((r, i) => new JeaTableDxfExporter.TableRow(new string?[]
                     {
                         (i+1).ToString(), r.Subtype, r.FacilityOwner,
                         r.Size, r.SizeSecondary, r.FeatureType, r.Manufacturer,
@@ -156,17 +192,18 @@ public partial class InstalledAssetsTablesWindow : Window
                         Fmt(r.TopElevation), Fmt(r.GradeElevation), Fmt(r.Depth),
                         Fmt(r.Easting), Fmt(r.Northing),
                         Fmt6(r.Latitude), Fmt6(r.Longitude)
-                    })
+                    }, "JEA_FM_FITTING", r.Northing, r.Easting))
                     .ToList()),
 
             new("SANITARY MANHOLES",
                 "SanitaryManholes_Table.dxf",
                 ColsManholes,
+                "JEA_SAN_MANHOLE",
                 db => db.Manholes
                     .Where(x => x.ProjectId == _projectId)
                     .OrderBy(x => x.PartKey)
                     .ToList()
-                    .Select((r, i) => (IReadOnlyList<string?>)new[]
+                    .Select((r, i) => new JeaTableDxfExporter.TableRow(new string?[]
                     {
                         (i+1).ToString(), r.Subtype, r.FacilityOwner,
                         r.ManholeType, r.DropType, r.Manufacturer,
@@ -176,17 +213,18 @@ public partial class InstalledAssetsTablesWindow : Window
                         Fmt6(r.Latitude), Fmt6(r.Longitude),
                         JoinTape(r.ExteriorJointTapeType, r.ExteriorJointTapeManufacturer),
                         r.RfidBarcode
-                    })
+                    }, "JEA_SAN_MANHOLE", r.Northing, r.Easting))
                     .ToList()),
 
             new("WATER MAIN FITTING LOCATION TABLE",
                 "WaterFittings_Table.dxf",
                 ColsWaterFitting,
+                "JEA_WATER_FITTING",
                 db => db.WaterFittings
                     .Where(x => x.ProjectId == _projectId)
                     .OrderBy(x => x.PartKey)
                     .ToList()
-                    .Select((r, i) => (IReadOnlyList<string?>)new[]
+                    .Select((r, i) => new JeaTableDxfExporter.TableRow(new string?[]
                     {
                         (i+1).ToString(), r.Subtype, r.FacilityOwner,
                         r.Size, r.SizeSecondary, r.FeatureType, r.Manufacturer,
@@ -194,17 +232,18 @@ public partial class InstalledAssetsTablesWindow : Window
                         Fmt(r.TopElevation), Fmt(r.GradeElevation), Fmt(r.Depth),
                         Fmt(r.Easting), Fmt(r.Northing),
                         Fmt6(r.Latitude), Fmt6(r.Longitude)
-                    })
+                    }, "JEA_WATER_FITTING", r.Northing, r.Easting))
                     .ToList()),
 
             new("WATER VALVE DETAIL TABLE",
                 "WaterValves_Table.dxf",
                 ColsValves,
+                "JEA_WATER_VALVE",
                 db => db.WaterValves
                     .Where(x => x.ProjectId == _projectId)
                     .OrderBy(x => x.PartKey)
                     .ToList()
-                    .Select((r, i) => (IReadOnlyList<string?>)new[]
+                    .Select((r, i) => new JeaTableDxfExporter.TableRow(new string?[]
                     {
                         (i+1).ToString(), r.Subtype, r.FacilityOwner,
                         r.Size, r.OpenDirection,
@@ -213,53 +252,56 @@ public partial class InstalledAssetsTablesWindow : Window
                         r.Manufacturer,
                         Fmt(r.Northing), Fmt(r.Easting),
                         Fmt6(r.Latitude), Fmt6(r.Longitude)
-                    })
+                    }, "JEA_WATER_VALVE", r.Northing, r.Easting))
                     .ToList()),
 
             new("HYDRANT TABLE",
                 "Hydrants_Table.dxf",
                 ColsHydrants,
+                "JEA_HYDRANT",
                 db => db.WaterHydrants
                     .Where(x => x.ProjectId == _projectId)
                     .OrderBy(x => x.PartKey)
                     .ToList()
-                    .Select((r, i) => (IReadOnlyList<string?>)new[]
+                    .Select((r, i) => new JeaTableDxfExporter.TableRow(new string?[]
                     {
                         (i+1).ToString(), r.Subtype, r.FacilityOwner,
                         r.YearManufactured, r.Manufacturer,
                         Fmt(r.Easting), Fmt(r.Northing),
                         Fmt6(r.Latitude), Fmt6(r.Longitude)
-                    })
+                    }, "JEA_HYDRANT", r.Northing, r.Easting))
                     .ToList()),
 
             new("WATER SERVICES",
                 "WaterServices_Table.dxf",
                 ColsServices,
+                "JEA_WATER_SERVICE",
                 db => db.WaterMeters
                     .Where(x => x.ProjectId == _projectId)
                     .OrderBy(x => x.PartKey)
                     .ToList()
-                    .Select((r, i) => (IReadOnlyList<string?>)new[]
+                    .Select((r, i) => new JeaTableDxfExporter.TableRow(new string?[]
                     {
                         (i+1).ToString(), r.Subtype, r.FeatureType,
                         r.FacilityOwner, r.Manufacturer, r.Material,
                         Fmt(r.Northing), Fmt(r.Easting)
-                    })
+                    }, "JEA_WATER_SERVICE", r.Northing, r.Easting))
                     .ToList()),
 
             new("LOCATE WIRE BOX TABLE",
                 "LocateBoxes_Table.dxf",
                 ColsLocate,
+                "JEA_LOCATE_BOX",
                 db => db.WaterLocateBoxes
                     .Where(x => x.ProjectId == _projectId)
                     .OrderBy(x => x.PartKey)
                     .ToList()
-                    .Select((r, i) => (IReadOnlyList<string?>)new[]
+                    .Select((r, i) => new JeaTableDxfExporter.TableRow(new string?[]
                     {
                         (i+1).ToString(), r.Subtype,
                         Fmt(r.Northing), Fmt(r.Easting),
                         Fmt6(r.Latitude), Fmt6(r.Longitude)
-                    })
+                    }, "JEA_LOCATE_BOX", r.Northing, r.Easting))
                     .ToList()),
         };
     }

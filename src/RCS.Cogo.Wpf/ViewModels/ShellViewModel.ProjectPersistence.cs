@@ -682,7 +682,8 @@ public partial class ShellViewModel
         // calls back into the actual export logic
         var validationWin = new RCS.Cogo.Wpf.Views.JeaValidationWindow(
             _currentProject.Id.ToString(),
-            onProceedExport: () => RunJeaExport());
+            RCS.Cogo.Wpf.Views.JeaValidationMode.Export,
+            onProceedAction: () => RunJeaExport());
         validationWin.Owner = System.Windows.Application.Current.MainWindow;
         var result = validationWin.ShowDialog();
 
@@ -823,18 +824,17 @@ public partial class ShellViewModel
                 // Without this, the viewer collections stay empty even though the DB is populated.
                 _ = LoadInstalledAssetsAsync();
 
-                var openViewer = System.Windows.MessageBox.Show(
-                    $"Import complete!\n\n{result.Summary()}\n\nOpen the JEA Asset Tables viewer now?",
-                    "JEA Import Complete",
-                    System.Windows.MessageBoxButton.YesNo,
-                    System.Windows.MessageBoxImage.Information);
-
-                if (openViewer == System.Windows.MessageBoxResult.Yes)
-                {
-                    var tablesWin = new RCS.Cogo.Wpf.Views.InstalledAssetsTablesWindow(_currentProject.Id.ToString());
-                    tablesWin.Owner = System.Windows.Application.Current.MainWindow;
-                    tablesWin.Show();
-                }
+                var validationWin = new RCS.Cogo.Wpf.Views.JeaValidationWindow(
+                    _currentProject.Id.ToString(),
+                    RCS.Cogo.Wpf.Views.JeaValidationMode.Import,
+                    onProceedAction: () => 
+                    {
+                        var tablesWin = new RCS.Cogo.Wpf.Views.InstalledAssetsTablesWindow(_currentProject.Id.ToString());
+                        tablesWin.Owner = System.Windows.Application.Current.MainWindow;
+                        tablesWin.Show();
+                    });
+                validationWin.Owner = System.Windows.Application.Current.MainWindow;
+                validationWin.ShowDialog();
             }
             else
             {

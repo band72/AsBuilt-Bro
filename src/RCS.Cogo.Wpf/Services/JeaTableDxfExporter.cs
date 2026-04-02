@@ -36,6 +36,7 @@ public class JeaTableDxfExporter
     /// Defines a single column: its header label and pixel-unit width in DXF drawing units.
     /// </summary>
     public record TableColumn(string Header, double Width);
+    public record TableRow(IReadOnlyList<string?> Cells, string? BlockName, double? Northing, double? Easting);
 
     /// <summary>
     /// Render a single table and write it to <paramref name="outputPath"/>.
@@ -43,7 +44,7 @@ public class JeaTableDxfExporter
     public void Export(
         string title,
         IReadOnlyList<TableColumn> columns,
-        IReadOnlyList<IReadOnlyList<string?>> rows,
+        IReadOnlyList<TableRow> rows,
         string outputPath)
     {
         var sb = new StringBuilder();
@@ -88,23 +89,57 @@ public class JeaTableDxfExporter
         // 3. Data rows
         for (int r = 0; r < rows.Count; r++)
         {
-            IReadOnlyList<string?> row = rows[r];
-            DrawRowBorder(sb, x0, curY, tableWidth, ColHeight, ColorBorder);
-            cx = x0;
+            TableRow row = rows[r];
+
+            // Compute dynamic height based on max wrapped lines
+            int maxLines = 1;
+            var wrappedCells = new List<IReadOnlyList<string>>();
+            
             for (int c = 0; c < columns.Count; c++)
             {
-                string? val = c < row.Count ? row[c] : null;
-                if (!string.IsNullOrEmpty(val))
+                string? val = c < row.Cells.Count ? row.Cells[c] : null;
+                var lines = WrapText(val, columns[c].Width - MarginX * 2, TxtData);
+                if (lines.Count > maxLines) maxLines = lines.Count;
+                wrappedCells.Add(lines);
+            }
+
+            double dynamicRowHeight = Math.Max(ColHeight, (maxLines * (TxtData * 1.5)) + (MarginX * 2));
+
+            DrawRowBorder(sb, x0, curY, tableWidth, dynamicRowHeight, ColorBorder);
+            cx = x0;
+
+            for (int c = 0; c < columns.Count; c++)
+            {
+                var lines = wrappedCells[c];
+                double lineY = curY - MarginX;
+
+                if (lines.Count == 1) // center vertically if 1 line
                 {
-                    // Left-align data within cell
-                    DrawText(sb, cx + MarginX, curY - ColHeight / 2,
-                             val, TxtData, ColorWhite, "SIMPLEX", hAlign: 0);
+                    DrawText(sb, cx + MarginX, curY - (dynamicRowHeight / 2),
+                             lines[0], TxtData, ColorWhite, "SIMPLEX", hAlign: 0);
                 }
-                DrawLine(sb, cx, curY, cx, curY - ColHeight, ColorBorder);
+                else
+                {
+                    foreach (var lineText in lines)
+                    {
+                        DrawText(sb, cx + MarginX, lineY - TxtData,
+                                 lineText, TxtData, ColorWhite, "SIMPLEX", hAlign: 0);
+                        lineY -= (TxtData * 1.5);
+                    }
+                }
+
+                DrawLine(sb, cx, curY, cx, curY - dynamicRowHeight, ColorBorder);
                 cx += columns[c].Width;
             }
-            DrawLine(sb, cx, curY, cx, curY - ColHeight, ColorBorder);
-            curY -= ColHeight;
+
+            DrawLine(sb, cx, curY, cx, curY - dynamicRowHeight, ColorBorder);
+            curY -= dynamicRowHeight;
+
+            // Automatically place an INSERT block at real-world coordinates if data is present
+            if (!string.IsNullOrEmpty(row.BlockName) && row.Easting.HasValue && row.Northing.HasValue)
+            {
+                DrawBlockInsert(sb, row.BlockName, row.Easting.Value, row.Northing.Value);
+            }
         }
 
         // Bottom closing line (already drawn by last row bottom)
@@ -115,6 +150,45 @@ public class JeaTableDxfExporter
     // ─────────────────────────────────────────────────────────────
     //  DXF primitive helpers
     // ─────────────────────────────────────────────────────────────
+
+    private static IReadOnlyList<string> WrapText(string? text, double maxColWidth, double textHeight)
+    {
+        if (string.IsNullOrEmpty(text)) return Array.Empty<string>();
+        string safe = text.Replace("\r\n", " ").Replace("\n", " ").Replace("&#10;", " ");
+        
+        // Rough chars per line heuristic. Simplex chars are approx textHeight * 0.8 wide.
+        int maxChars = (int)(maxColWidth / (textHeight * 0.8));
+        if (maxChars < 1) maxChars = 1;
+
+        var words = safe.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var lines = new List<string>();
+        string curLine = "";
+        
+        foreach (var w in words)
+        {
+            if (curLine.Length + w.Length + 1 <= maxChars)
+            {
+                curLine += (curLine == "" ? "" : " ") + w;
+            }
+            else
+            {
+                if (curLine != "") lines.Add(curLine);
+                curLine = w;
+            }
+        }
+        if (curLine != "") lines.Add(curLine);
+        return lines;
+    }
+
+    private static void DrawBlockInsert(StringBuilder sb, string blockName, double x, double y)
+    {
+        sb.AppendLine("0\nINSERT");
+        sb.AppendLine("8\nMODEL_BLOCKS");
+        sb.AppendLine($"2\n{blockName}");
+        sb.AppendLine($"10\n{x:F4}");
+        sb.AppendLine($"20\n{y:F4}");
+        sb.AppendLine("30\n0.0");
+    }
 
     private static void DrawLine(StringBuilder sb,
         double x1, double y1, double x2, double y2, int color)
@@ -232,6 +306,7 @@ public class JeaTableDxfExporter
         AppendLayer(sb, "TABLE_TITLE",  ColorCyan);
         AppendLayer(sb, "TABLE_HEADER", ColorCyan);
         AppendLayer(sb, "TABLE_DATA",   ColorWhite);
+        AppendLayer(sb, "MODEL_BLOCKS", ColorWhite);
         sb.AppendLine("0\nENDTAB");
 
         // --- STYLE (text styles) ---

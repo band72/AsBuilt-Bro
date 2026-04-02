@@ -36,24 +36,72 @@ public class JeaIssueRow
     };
 }
 
+public enum JeaValidationMode
+{
+    Export,
+    Import,
+    Standalone
+}
+
 public partial class JeaValidationWindow : Window
 {
     private JeaValidationReport? _report;
     private List<JeaIssueRow>    _allRows   = new();
     private readonly string      _projectId;
-    private Action?              _onProceedExport;
+    private Action?              _onProceedAction;
+    private JeaValidationMode    _mode;
 
-    public JeaValidationWindow(string projectId, Action? onProceedExport = null)
+    public JeaValidationWindow(string projectId, JeaValidationMode mode = JeaValidationMode.Standalone, Action? onProceedAction = null)
     {
         InitializeComponent();
         _projectId       = projectId;
-        _onProceedExport = onProceedExport;
+        _onProceedAction = onProceedAction;
+        _mode            = mode;
+
+        if (_mode == JeaValidationMode.Import)
+        {
+            Title = "JEA As-Built Post-Import Validation Review";
+            StatusLabel.Text = "✔ Data Imported to Sandbox";
+            ExportJeaBtn.Content = "✔  Dismiss & Open Data Viewer";
+        }
+        else if (_mode == JeaValidationMode.Export)
+        {
+            Title = "JEA As-Built Pre-Export Validation";
+            StatusLabel.Text = "✔ Ready for JEA Export";
+            ExportJeaBtn.Content = "✔  Looks Good — Export JEA Now";
+        }
+        else
+        {
+            Title = "JEA Database Validation";
+            StatusLabel.Text = "✔ Project Data Validation";
+            ExportJeaBtn.Content = "✔  Close Window";
+        }
 
         SheetFilter.Items.Add("(All Sheets)");
         SheetFilter.SelectedIndex = 0;
     }
 
     // ── Run Validation ─────────────────────────────────────────────────
+    public void LoadReport(JeaValidationReport report)
+    {
+        _report = report;
+        _allRows = _report.Issues.Select(JeaIssueRow.From).ToList();
+
+        // Rebuild sheet filter
+        SheetFilter.Items.Clear();
+        SheetFilter.Items.Add("(All Sheets)");
+        foreach (var s in _allRows.Select(r => r.Sheet).Distinct().OrderBy(x => x))
+            SheetFilter.Items.Add(s);
+        SheetFilter.SelectedIndex = 0;
+
+        UpdateBadges();
+        ApplyFilter();
+        UpdateStatus();
+
+        ExportBtn.IsEnabled    = true;
+        ExportJeaBtn.IsEnabled = _report.IsValid || _report.WarningCount > 0;
+    }
+
     private void OnValidate(object sender, RoutedEventArgs e)
     {
         RunBtn.IsEnabled = false;
@@ -61,22 +109,8 @@ public partial class JeaValidationWindow : Window
 
         try
         {
-            _report = JeaValidationService.Validate(_projectId);
-            _allRows = _report.Issues.Select(JeaIssueRow.From).ToList();
-
-            // Rebuild sheet filter
-            SheetFilter.Items.Clear();
-            SheetFilter.Items.Add("(All Sheets)");
-            foreach (var s in _allRows.Select(r => r.Sheet).Distinct().OrderBy(x => x))
-                SheetFilter.Items.Add(s);
-            SheetFilter.SelectedIndex = 0;
-
-            UpdateBadges();
-            ApplyFilter();
-            UpdateStatus();
-
-            ExportBtn.IsEnabled    = true;
-            ExportJeaBtn.IsEnabled = _report.IsValid || _report.WarningCount > 0;
+            var report = JeaValidationService.Validate(_projectId);
+            LoadReport(report);
         }
         catch (Exception ex)
         {
@@ -128,25 +162,28 @@ public partial class JeaValidationWindow : Window
     {
         if (_report == null) return;
 
+        string actionNoun = _mode == JeaValidationMode.Export ? "export" : "continue";
+        string readyMsg = _mode == JeaValidationMode.Export ? "ready to export" : "ready to proceed";
+
         if (_report.IsValid && _report.WarningCount == 0)
         {
-            StatusLabel.Text      = "✔ All checks passed — ready to export!";
+            StatusLabel.Text      = $"✔ All checks passed — {readyMsg}!";
             StatusLabel.Foreground = System.Windows.Media.Brushes.LightGreen;
             SummaryLabel.Text     = "No issues found. Your data meets all JEA Validation Rules.";
         }
         else if (_report.ErrorCount > 0)
         {
-            StatusLabel.Text      = $"⛔ {_report.ErrorCount} error{(_report.ErrorCount == 1 ? "" : "s")} must be fixed before export.";
+            StatusLabel.Text      = $"⛔ {_report.ErrorCount} error{(_report.ErrorCount == 1 ? "" : "s")} must be fixed before {actionNoun}.";
             StatusLabel.Foreground = new System.Windows.Media.SolidColorBrush(
                 System.Windows.Media.Color.FromRgb(255, 82, 82));
             SummaryLabel.Text = $"{_report.WarningCount} additional warnings. Address errors first.";
         }
         else
         {
-            StatusLabel.Text      = $"⚠ {_report.WarningCount} warning{(_report.WarningCount == 1 ? "" : "s")} — export may proceed.";
+            StatusLabel.Text      = $"⚠ {_report.WarningCount} warning{(_report.WarningCount == 1 ? "" : "s")} — {actionNoun} may proceed.";
             StatusLabel.Foreground = new System.Windows.Media.SolidColorBrush(
                 System.Windows.Media.Color.FromRgb(255, 210, 50));
-            SummaryLabel.Text = "Review warnings before submitting to JEA. Export is allowed.";
+            SummaryLabel.Text = $"Review warnings before preparing for JEA submittal. {(_mode == JeaValidationMode.Export ? "Export" : "Action")} is allowed.";
         }
     }
 
@@ -203,11 +240,11 @@ public partial class JeaValidationWindow : Window
     private static string Q(string s) =>
         s.Contains(',') || s.Contains('"') ? $"\"{s.Replace("\"", "\"\"")}\"" : s;
 
-    // ── Proceed to Export JEA ────────────────────────────────────────────
+    // ── Proceed Action ───────────────────────────────────────────────────
     private void OnProceedExport(object sender, RoutedEventArgs e)
     {
         DialogResult = true;
-        _onProceedExport?.Invoke();
+        _onProceedAction?.Invoke();
         Close();
     }
 }
