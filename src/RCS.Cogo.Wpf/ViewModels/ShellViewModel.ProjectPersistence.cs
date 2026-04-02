@@ -235,6 +235,9 @@ public partial class ShellViewModel
             }
 
             _context.Log($"[AUDIT] Saved project to {filePath} (LiteDB and EF Core DB)");
+            
+            IsDirty = false;
+            UpdateWindowTitle();
         }
         catch(Exception ex)
         {
