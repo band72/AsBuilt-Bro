@@ -143,6 +143,10 @@
                               Command="{Binding ImportJeaTemplateCommand}"
                               FontWeight="SemiBold" Foreground="#44E08B"
                               ToolTip="Read a filled JEA As-Built Excel file and import records into the current project"/>
+                    <MenuItem Header="🚀 New Project from Segment1A Excel (.xlsx)..."
+                              Command="{Binding ImportS1AProjectCommand}"
+                              FontWeight="Bold" Foreground="#FFD700"
+                              ToolTip="Creates the 70498-S1A project and imports all Segment1A tables in one step"/>
                 </MenuItem>
                 <MenuItem Header="_Export">
                     <!-- ═══ JEA As-Built Deliverable ═════════════════════ -->

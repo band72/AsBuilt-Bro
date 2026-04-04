@@ -1043,6 +1043,7 @@ public partial class ShellViewModel : ViewModelBase
         ExportJeaMixScriptCommand        = new RelayCommand(_ => ExportJeaMixScript());
         ValidateJeaCommand               = new RelayCommand(_ => OpenJeaValidation());
         ImportJeaTemplateCommand         = new RelayCommand(_ => ImportJeaFromTemplate());
+        ImportS1AProjectCommand          = new RelayCommand(_ => ImportS1AProjectFromExcel());
 
         CloseCommand = new RelayCommand(_ => System.Windows.Application.Current.Shutdown());
         AboutCommand = new RelayCommand(_ =>

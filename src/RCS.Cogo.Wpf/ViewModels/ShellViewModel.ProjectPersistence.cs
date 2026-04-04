@@ -798,6 +798,7 @@ public partial class ShellViewModel
 
     // ── JEA Excel Import ──────────────────────────────────────────────────────
     public System.Windows.Input.ICommand ImportJeaTemplateCommand { get; }
+    public System.Windows.Input.ICommand ImportS1AProjectCommand { get; }
 
     private void ImportJeaFromTemplate()
     {
@@ -873,6 +874,100 @@ public partial class ShellViewModel
         }
     }
 
+
+    /// <summary>
+    /// Creates a new project named "70498-S1A" and immediately imports all tables
+    /// from Segment1A_All_Tables_Database_Ready.xlsx into the system database.
+    /// The .db file is saved next to the Excel workbook.
+    /// </summary>
+    private void ImportS1AProjectFromExcel()
+    {
+        // 1. Let user confirm or browse for the S1A Excel file
+        var dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Title  = "Select Segment1A_All_Tables_Database_Ready.xlsx",
+            Filter = "Excel Workbook|*.xlsx",
+            FileName = "Segment1A_All_Tables_Database_Ready.xlsx",
+            InitialDirectory = System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads")
+        };
+        if (dlg.ShowDialog() != true) return;
+
+        string xlsxPath = dlg.FileName;
+        string folder   = System.IO.Path.GetDirectoryName(xlsxPath) ?? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        string dbPath   = System.IO.Path.Combine(folder, "70498-S1A.db");
+
+        // 2. Create / reset a fresh project
+        if (!ConfirmDiscardChanges()) return;
+        ResetProjectState();
+
+        CurrentProject.ProjectName  = "70498-S1A";
+        CurrentProject.AvailNo      = "70498";
+        CurrentProject.Utility      = "Water";
+        CurrentProject.Units        = "USFT";
+        CurrentProject.SaveLocation = folder;
+
+        // 3. Persist the project .db
+        System.IO.Directory.CreateDirectory(folder);
+        SaveProjectInternal(dbPath);
+        _context.Log($"[S1A] New project '70498-S1A' created at: {dbPath}");
+
+        // 4. Import all S1A tables into the global system database
+        try
+        {
+            _context.Log($"[S1A] Importing Segment1A tables from: {xlsxPath}");
+            var result = RCS.Cogo.Wpf.Services.JeaImportService.Import(
+                xlsxPath, CurrentProject.Id.ToString());
+
+            if (result.Success)
+            {
+                _context.Log("╔══════════════════════════════════════════════");
+                _context.Log("║  Segment 1A Import Summary");
+                _context.Log("╠══════════════════════════════════════════════");
+                foreach (var s in result.Sheets.Where(sh => sh.Imported > 0 || sh.Warnings.Count > 0))
+                {
+                    _context.Log($"║  {s.SheetName,-38}: {s.Imported,4} rows  ({s.Skipped} skipped)");
+                    foreach (var w in s.Warnings.Take(3))
+                        _context.Log($"║     ⚠ {w}");
+                }
+                _context.Log("╠══════════════════════════════════════════════");
+                _context.Log($"║  TOTAL IMPORTED : {result.TotalImported,4}");
+                _context.Log($"║  TOTAL SKIPPED  : {result.TotalSkipped,4}");
+                _context.Log("╚══════════════════════════════════════════════");
+
+                RefreshData(true);
+                _ = LoadInstalledAssetsAsync();
+
+                System.Windows.MessageBox.Show(
+                    $"Project '70498-S1A' created and imported successfully!\n\n" +
+                    $"Records imported : {result.TotalImported}\n" +
+                    $"Records skipped  : {result.TotalSkipped}\n\n" +
+                    $"Database saved to:\n{dbPath}\n\n" +
+                    $"Use File → Import JEA Template to re-import at any time.",
+                    "S1A Import Complete",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Information);
+            }
+            else
+            {
+                _context.Log($"[S1A] Import failed: {result.ErrorMessage}");
+                System.Windows.MessageBox.Show(
+                    $"Import failed:\n{result.ErrorMessage}",
+                    "Import Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            _context.Log($"[S1A] Import exception: {ex.Message}");
+            System.Windows.MessageBox.Show(
+                $"Import failed:\n{ex.Message}",
+                "Import Error",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Error);
+        }
+    }
 
     private void ImportPointsList()
     {
