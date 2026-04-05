@@ -60,18 +60,31 @@ public partial class ShellWindow : Window
 
     private void ViewportGrid_PreviewMouseMove(object sender, MouseEventArgs e)
     {
-        if (!_isZoomDragging) return;
+        if (_isDragging)
+        {
+            var currentPos = e.GetPosition(this);
+            var delta = currentPos - _lastMousePosition;
+            
+            var matrix = WorldTransform.Matrix;
+            matrix.Translate(delta.X, delta.Y);
+            WorldTransform.Matrix = matrix;
+            
+            _lastMousePosition = currentPos;
+            e.Handled = true; // Consuming the event while dragging
+        }
+        else if (_isZoomDragging)
+        {
+            var pos    = e.GetPosition(ViewportGrid);
+            var x      = System.Math.Min(pos.X, _zoomStartPoint.X);
+            var y      = System.Math.Min(pos.Y, _zoomStartPoint.Y);
+            var width  = System.Math.Abs(pos.X - _zoomStartPoint.X);
+            var height = System.Math.Abs(pos.Y - _zoomStartPoint.Y);
 
-        var pos    = e.GetPosition(ViewportGrid);
-        var x      = System.Math.Min(pos.X, _zoomStartPoint.X);
-        var y      = System.Math.Min(pos.Y, _zoomStartPoint.Y);
-        var width  = System.Math.Abs(pos.X - _zoomStartPoint.X);
-        var height = System.Math.Abs(pos.Y - _zoomStartPoint.Y);
-
-        ZoomRect.Margin = new Thickness(x, y, 0, 0);
-        ZoomRect.Width  = width;
-        ZoomRect.Height = height;
-        e.Handled = true;
+            ZoomRect.Margin = new Thickness(x, y, 0, 0);
+            ZoomRect.Width  = width;
+            ZoomRect.Height = height;
+            e.Handled = true;
+        }
     }
 
     private void ViewportGrid_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -362,33 +375,7 @@ public partial class ShellWindow : Window
         e.Handled = true;
     }
 
-    private void OnMouseMove(object sender, MouseEventArgs e)
-    {
-        if (_isDragging)
-        {
-            var currentPos = e.GetPosition(this);
-            var delta = currentPos - _lastMousePosition;
-            
-            var matrix = WorldTransform.Matrix;
-            matrix.Translate(delta.X, delta.Y);
-            WorldTransform.Matrix = matrix;
-            
-            _lastMousePosition = currentPos;
-            e.Handled = true; // Consuming the event while dragging
-        }
-        else if (_isZoomDragging)
-        {
-            var pos = e.GetPosition((UIElement)sender);
-            var x = System.Math.Min(pos.X, _zoomStartPoint.X);
-            var y = System.Math.Min(pos.Y, _zoomStartPoint.Y);
-            var width = System.Math.Abs(pos.X - _zoomStartPoint.X);
-            var height = System.Math.Abs(pos.Y - _zoomStartPoint.Y);
-            
-            ZoomRect.Margin = new Thickness(x, y, 0, 0);
-            ZoomRect.Width = width;
-            ZoomRect.Height = height;
-        }
-    }
+
 
 
 
