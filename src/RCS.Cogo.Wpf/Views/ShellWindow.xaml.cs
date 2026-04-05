@@ -232,13 +232,21 @@ public partial class ShellWindow : Window
         double minX = double.MaxValue, maxX = double.MinValue;
         double minY = double.MaxValue, maxY = double.MinValue;
         
+        bool IsValidCoord(double v) => !double.IsNaN(v) && !double.IsInfinity(v) && System.Math.Abs(v) < 1e9;
+
         // Include Points
         foreach (var p in vm.Points)
         {
-            if (p.Easting < minX) minX = p.Easting;
-            if (p.Easting > maxX) maxX = p.Easting;
-            if (p.Northing < minY) minY = p.Northing;
-            if (p.Northing > maxY) maxY = p.Northing;
+            if (IsValidCoord(p.Easting))
+            {
+                if (p.Easting < minX) minX = p.Easting;
+                if (p.Easting > maxX) maxX = p.Easting;
+            }
+            if (IsValidCoord(p.Northing))
+            {
+                if (p.Northing < minY) minY = p.Northing;
+                if (p.Northing > maxY) maxY = p.Northing;
+            }
         }
         
         // Include Figures
@@ -246,20 +254,32 @@ public partial class ShellWindow : Window
         {
             foreach (var pt in f.Points)
             {
-                 if (pt.X < minX) minX = pt.X;
-                 if (pt.X > maxX) maxX = pt.X;
-                 if (pt.Y < minY) minY = pt.Y;
-                 if (pt.Y > maxY) maxY = pt.Y;
+                if (IsValidCoord(pt.X))
+                {
+                    if (pt.X < minX) minX = pt.X;
+                    if (pt.X > maxX) maxX = pt.X;
+                }
+                if (IsValidCoord(pt.Y))
+                {
+                    if (pt.Y < minY) minY = pt.Y;
+                    if (pt.Y > maxY) maxY = pt.Y;
+                }
             }
         }
 
         // Include JEA Structure Graphics (manholes, valves, hydrants, fittings, etc.)
         foreach (var s in vm.StructureGraphics)
         {
-            if (s.Easting < minX) minX = s.Easting;
-            if (s.Easting > maxX) maxX = s.Easting;
-            if (s.Northing < minY) minY = s.Northing;
-            if (s.Northing > maxY) maxY = s.Northing;
+            if (IsValidCoord(s.Easting))
+            {
+                if (s.Easting < minX) minX = s.Easting;
+                if (s.Easting > maxX) maxX = s.Easting;
+            }
+            if (IsValidCoord(s.Northing))
+            {
+                if (s.Northing < minY) minY = s.Northing;
+                if (s.Northing > maxY) maxY = s.Northing;
+            }
         }
         
         if (minX == double.MaxValue) return;
