@@ -22,7 +22,7 @@ public partial class ShellWindow : Window
         vm.ZoomExtentsRequested  += (s, e) => ZoomExtents();
         vm.ZoomInRequested        += (s, e) => ZoomIn();
         vm.ZoomOutRequested       += (s, e) => ZoomOut();
-        vm.ZoomWindowRequested    += (s, e) => ActivateZoomOverlay();
+        vm.ZoomWindowRequested    += (s, e) => ActivateZoomWindow();
         vm.ZoomToPointRequested   += (s, target) => ZoomToPoint(target);
 
         // Initialize Default View
@@ -32,16 +32,20 @@ public partial class ShellWindow : Window
         WorldTransform.Matrix = matrix;
     }
 
-    // ── Zoom Overlay (activated by WIN button) ────────────────────────────────
-    private void ActivateZoomOverlay()
+    // ── Zoom Window (activated by WIN button) ────────────────────────────────
+    private void ActivateZoomWindow()
     {
-        ZoomOverlay.Visibility = Visibility.Visible;
-        Mouse.OverrideCursor   = Cursors.Cross;
+        _isZoomWindowMode = true;
+        _isZoomDragging   = false;
+        Mouse.OverrideCursor = Cursors.Cross;
+        Log("[ZOOM] WIN mode activated");
     }
 
-    private void ZoomOverlay_MouseDown(object sender, MouseButtonEventArgs e)
+    private void ViewportGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
-        _zoomStartPoint = e.GetPosition(ZoomOverlay);
+        if (!_isZoomWindowMode) return;
+
+        _zoomStartPoint = e.GetPosition(ViewportGrid);
         _isZoomDragging = true;
 
         ZoomRect.Margin     = new Thickness(_zoomStartPoint.X, _zoomStartPoint.Y, 0, 0);
@@ -49,15 +53,16 @@ public partial class ShellWindow : Window
         ZoomRect.Height     = 0;
         ZoomRect.Visibility = Visibility.Visible;
 
-        ZoomOverlay.CaptureMouse();
+        ViewportGrid.CaptureMouse();
         e.Handled = true;
+        Log($"[ZOOM] Mouse down at {_zoomStartPoint}");
     }
 
-    private void ZoomOverlay_MouseMove(object sender, MouseEventArgs e)
+    private void ViewportGrid_PreviewMouseMove(object sender, MouseEventArgs e)
     {
         if (!_isZoomDragging) return;
 
-        var pos    = e.GetPosition(ZoomOverlay);
+        var pos    = e.GetPosition(ViewportGrid);
         var x      = System.Math.Min(pos.X, _zoomStartPoint.X);
         var y      = System.Math.Min(pos.Y, _zoomStartPoint.Y);
         var width  = System.Math.Abs(pos.X - _zoomStartPoint.X);
@@ -69,25 +74,25 @@ public partial class ShellWindow : Window
         e.Handled = true;
     }
 
-    private void ZoomOverlay_MouseUp(object sender, MouseButtonEventArgs e)
+    private void ViewportGrid_PreviewMouseUp(object sender, MouseButtonEventArgs e)
     {
         if (!_isZoomDragging) return;
 
         _isZoomDragging = false;
+        
+        var endPoint = e.GetPosition(ViewportGrid);
 
-        // CRITICAL: Get mouse position BEFORE collapsing the overlay!
-        // WPF elements lose valid coordinate bounds once collapsed.
-        var endPoint = e.GetPosition(ZoomOverlay);
-
-        ZoomOverlay.ReleaseMouseCapture();
-        ZoomOverlay.Visibility  = Visibility.Collapsed;
+        ViewportGrid.ReleaseMouseCapture();
         ZoomRect.Visibility     = Visibility.Collapsed;
+        
+        // Only exit WIN mode once the zoom completes successfully or is aborted
+        _isZoomWindowMode       = false;
         Mouse.OverrideCursor    = null;
 
         double dx = System.Math.Abs(endPoint.X - _zoomStartPoint.X);
         double dy = System.Math.Abs(endPoint.Y - _zoomStartPoint.Y);
 
-        Log($"[ZOOM] drag ended at ({endPoint.X:F1},{endPoint.Y:F1}), dx={dx:F1}, dy={dy:F1}");
+        Log($"[ZOOM] Mouse up at {endPoint}, dx={dx:F1}, dy={dy:F1}");
 
         if (dx > 5 && dy > 5)
             ApplyZoomWindow(_zoomStartPoint, endPoint);
@@ -113,7 +118,7 @@ public partial class ShellWindow : Window
         double worldW = maxX - minX;
         double worldH = maxY - minY;
         
-        Log($"[ZOOM] world rect ({minX:F1},{minY:F1}) → ({maxX:F1},{maxY:F1})  size={worldW:F2}x{worldH:F2}");
+        Log($"[ZOOM] world bounds ({minX:F1},{minY:F1}) → ({maxX:F1},{maxY:F1})  size={worldW:F2}x{worldH:F2}");
 
         if (worldW < 1e-9 || worldH < 1e-9) 
         {
@@ -136,7 +141,7 @@ public partial class ShellWindow : Window
         double midX  = (minX + maxX) / 2.0;
         double midY  = (minY + maxY) / 2.0;
 
-        // Set matrix elements directly — Translate() after Scale() would scale the offsets
+        // Set matrix elements directly
         var m = new Matrix(
             scale,
             0,
@@ -146,7 +151,7 @@ public partial class ShellWindow : Window
             vpH / 2.0 + midY * scale);
             
         WorldTransform.Matrix = m;
-        Log($"[ZOOM] applied scale={scale:F4}  mid=({midX:F1},{midY:F1})  OffsetX={m.OffsetX:F1} OffsetY={m.OffsetY:F1}");
+        Log($"[ZOOM] applied scale={scale:F4} mid=({midX:F1},{midY:F1})");
 
         if (DataContext is ShellViewModel vm)
             vm.CurrentViewScale = scale;
@@ -157,6 +162,12 @@ public partial class ShellWindow : Window
     {
         if (DataContext is ShellViewModel vm)
             vm.CommandLog.Add(msg);
+            
+        try
+        {
+            System.IO.File.AppendAllText("zoomlog.txt", $"{System.DateTime.Now:HH:mm:ss.fff} {msg}\n");
+        }
+        catch { }
     }
 
     private void ZoomIn()

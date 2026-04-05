@@ -1079,7 +1079,10 @@
                   Background="Transparent"
                   MouseWheel="OnMouseWheel" 
                   MouseRightButtonDown="OnMouseRightButtonDown" 
-                  MouseRightButtonUp="OnMouseRightButtonUp">
+                  MouseRightButtonUp="OnMouseRightButtonUp"
+                  PreviewMouseLeftButtonDown="ViewportGrid_PreviewMouseDown"
+                  PreviewMouseMove="ViewportGrid_PreviewMouseMove"
+                  PreviewMouseLeftButtonUp="ViewportGrid_PreviewMouseUp">
                 <!-- Canvas -->
                 <Canvas x:Name="ViewportCanvas">
                     <Canvas.RenderTransform>
@@ -1538,17 +1541,6 @@
                         </Grid>
                     </StackPanel>
                 </Border>
-
-                <!-- Transparent overlay that captures ALL mouse input during zoom-window mode.
-                     Sits above every canvas item (ZIndex 999). Hidden when not in use. -->
-                <Canvas x:Name="ZoomOverlay"
-                        Background="Transparent"
-                        Panel.ZIndex="999"
-                        Visibility="Collapsed"
-                        MouseLeftButtonDown="ZoomOverlay_MouseDown"
-                        MouseLeftButtonUp="ZoomOverlay_MouseUp"
-                        MouseMove="ZoomOverlay_MouseMove"/>
-
             </Grid>
         </Border>
 
