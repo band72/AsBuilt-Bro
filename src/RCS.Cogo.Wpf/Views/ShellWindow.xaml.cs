@@ -19,41 +19,120 @@ public partial class ShellWindow : Window
         var vm = new ShellViewModel();
         DataContext = vm;
         
-        vm.ZoomExtentsRequested += (s, e) => ZoomExtents();
-        vm.ZoomInRequested += (s, e) => ZoomIn();
-        vm.ZoomOutRequested += (s, e) => ZoomOut();
-        vm.ZoomWindowRequested += (s, e) => {
-            _isZoomWindowMode = true;
-            Mouse.OverrideCursor = Cursors.Cross;
-        };
-        vm.ZoomToPointRequested += (s, target) => ZoomToPoint(target);
+        vm.ZoomExtentsRequested  += (s, e) => ZoomExtents();
+        vm.ZoomInRequested        += (s, e) => ZoomIn();
+        vm.ZoomOutRequested       += (s, e) => ZoomOut();
+        vm.ZoomWindowRequested    += (s, e) => ActivateZoomOverlay();
+        vm.ZoomToPointRequested   += (s, target) => ZoomToPoint(target);
 
-        // Register left-button & move handlers with handledEventsToo=true so they
-        // fire even when child elements (symbols, overlays) have marked the event Handled.
-        // This is required for the zoom-window rubber-band selection to work over the canvas.
-        ViewportGrid.AddHandler(MouseLeftButtonDownEvent,
-            new MouseButtonEventHandler(OnMouseLeftButtonDown), handledEventsToo: true);
-        ViewportGrid.AddHandler(MouseLeftButtonUpEvent,
-            new MouseButtonEventHandler(OnMouseLeftButtonUp),   handledEventsToo: true);
-        ViewportGrid.AddHandler(MouseMoveEvent,
-            new MouseEventHandler(OnMouseMove), handledEventsToo: true);
-
-        // Initialize Default View (Center 5000,5000, Scale 1, Y flipped)
-        // Matrix: M11=Scale, M22=-Scale, OffsetX, OffsetY
-        // Initial setup to see coordinate 0,0 at bottom left?
+        // Initialize Default View
         var matrix = new Matrix();
-        matrix.Scale(1, -1); // Flip Y
-        // Translate to map 5000,5000 to center of screen (approx 600, 400)
-        // Screen X = (World X * M11) + OffsetX => 600 = 5000 * 1 + OffsetX => OffsetX = -4400
-        // Screen Y = (World Y * M22) + OffsetY => 400 = 5000 * -1 + OffsetY => OffsetY = 5400
-        matrix.Translate(-4400, 5400); 
+        matrix.Scale(1, -1);
+        matrix.Translate(-4400, 5400);
         WorldTransform.Matrix = matrix;
+    }
+
+    // ── Zoom Overlay (activated by WIN button) ────────────────────────────────
+    private void ActivateZoomOverlay()
+    {
+        ZoomOverlay.Visibility = Visibility.Visible;
+        Mouse.OverrideCursor   = Cursors.Cross;
+    }
+
+    private void ZoomOverlay_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+        _zoomStartPoint = e.GetPosition(ZoomOverlay);
+        _isZoomDragging = true;
+
+        ZoomRect.Margin     = new Thickness(_zoomStartPoint.X, _zoomStartPoint.Y, 0, 0);
+        ZoomRect.Width      = 0;
+        ZoomRect.Height     = 0;
+        ZoomRect.Visibility = Visibility.Visible;
+
+        ZoomOverlay.CaptureMouse();
+        e.Handled = true;
+    }
+
+    private void ZoomOverlay_MouseMove(object sender, MouseEventArgs e)
+    {
+        if (!_isZoomDragging) return;
+
+        var pos    = e.GetPosition(ZoomOverlay);
+        var x      = System.Math.Min(pos.X, _zoomStartPoint.X);
+        var y      = System.Math.Min(pos.Y, _zoomStartPoint.Y);
+        var width  = System.Math.Abs(pos.X - _zoomStartPoint.X);
+        var height = System.Math.Abs(pos.Y - _zoomStartPoint.Y);
+
+        ZoomRect.Margin = new Thickness(x, y, 0, 0);
+        ZoomRect.Width  = width;
+        ZoomRect.Height = height;
+        e.Handled = true;
+    }
+
+    private void ZoomOverlay_MouseUp(object sender, MouseButtonEventArgs e)
+    {
+        if (!_isZoomDragging) return;
+
+        _isZoomDragging = false;
+        ZoomOverlay.ReleaseMouseCapture();
+        ZoomOverlay.Visibility  = Visibility.Collapsed;
+        ZoomRect.Visibility     = Visibility.Collapsed;
+        Mouse.OverrideCursor    = null;
+
+        var endPoint = e.GetPosition(ZoomOverlay);
+        double dx = System.Math.Abs(endPoint.X - _zoomStartPoint.X);
+        double dy = System.Math.Abs(endPoint.Y - _zoomStartPoint.Y);
+
+        if (dx > 5 && dy > 5)
+            ApplyZoomWindow(_zoomStartPoint, endPoint);
+
+        e.Handled = true;
+    }
+
+    private void ApplyZoomWindow(Point screenStart, Point screenEnd)
+    {
+        // Screen → World
+        Matrix s2w;
+        try   { s2w = WorldTransform.Matrix; s2w.Invert(); }
+        catch { return; }
+
+        var w0 = s2w.Transform(screenStart);
+        var w1 = s2w.Transform(screenEnd);
+
+        double minX = System.Math.Min(w0.X, w1.X);
+        double maxX = System.Math.Max(w0.X, w1.X);
+        double minY = System.Math.Min(w0.Y, w1.Y);
+        double maxY = System.Math.Max(w0.Y, w1.Y);
+
+        double worldW = maxX - minX;
+        double worldH = maxY - minY;
+        if (worldW < 1e-9 || worldH < 1e-9) return;
+
+        double vpW = ViewportGrid.ActualWidth;
+        double vpH = ViewportGrid.ActualHeight;
+        if (vpW <= 0 || vpH <= 0) return;
+
+        double scale = System.Math.Min(vpW / worldW, vpH / worldH);
+        double midX  = (minX + maxX) / 2.0;
+        double midY  = (minY + maxY) / 2.0;
+
+        // Set matrix elements directly — Translate() after Scale() would scale the offsets
+        WorldTransform.Matrix = new Matrix(
+            scale,
+            0,
+            0,
+            -scale,
+            vpW / 2.0 - midX * scale,
+            vpH / 2.0 + midY * scale);
+
+        if (DataContext is ShellViewModel vm)
+            vm.CurrentViewScale = scale;
     }
 
     private void ZoomIn()
     {
         var matrix = WorldTransform.Matrix;
-        var center = new Point(ViewportCanvas.ActualWidth / 2, ViewportCanvas.ActualHeight / 2);
+        var center = new Point(ViewportGrid.ActualWidth / 2, ViewportGrid.ActualHeight / 2);
         matrix.ScaleAt(1.05, 1.05, center.X, center.Y);
         WorldTransform.Matrix = matrix;
         if (DataContext is ShellViewModel vm) vm.CurrentViewScale = matrix.M11;
@@ -228,117 +307,7 @@ public partial class ShellWindow : Window
         }
     }
 
-    private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        if (!_isZoomWindowMode) return;
 
-        _isZoomDragging  = true;
-        _zoomStartPoint  = e.GetPosition(ViewportGrid); // explicit, not sender
-
-        ZoomRect.Margin     = new Thickness(_zoomStartPoint.X, _zoomStartPoint.Y, 0, 0);
-        ZoomRect.Width      = 0;
-        ZoomRect.Height     = 0;
-        ZoomRect.Visibility = Visibility.Visible;
-
-        ViewportGrid.CaptureMouse(); // explicit capture
-        e.Handled = true;
-
-        Log($"[ZOOM] drag started at ({_zoomStartPoint.X:F1},{_zoomStartPoint.Y:F1})");
-    }
-
-    private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-    {
-        if (!_isZoomDragging) return;
-
-        _isZoomDragging  = false;
-        _isZoomWindowMode = false;
-        Mouse.OverrideCursor = null;
-        ZoomRect.Visibility = Visibility.Collapsed;
-        ViewportGrid.ReleaseMouseCapture(); // explicit release
-
-        var endPoint = e.GetPosition(ViewportGrid); // explicit
-        Log($"[ZOOM] drag ended at ({endPoint.X:F1},{endPoint.Y:F1})");
-
-        double dx = System.Math.Abs(endPoint.X - _zoomStartPoint.X);
-        double dy = System.Math.Abs(endPoint.Y - _zoomStartPoint.Y);
-        if (dx <= 5 || dy <= 5)
-        {
-            Log($"[ZOOM] skipped — drag too small ({dx:F1} x {dy:F1})");
-            e.Handled = true;
-            return;
-        }
-
-        // Screen → World using inverted current transform
-        Matrix screenToWorld;
-        try
-        {
-            screenToWorld = WorldTransform.Matrix;
-            Log($"[ZOOM] matrix M11={screenToWorld.M11:F4} M22={screenToWorld.M22:F4} Ox={screenToWorld.OffsetX:F1} Oy={screenToWorld.OffsetY:F1}");
-            screenToWorld.Invert();
-        }
-        catch (Exception ex)
-        {
-            Log($"[ZOOM] Invert failed: {ex.Message}");
-            e.Handled = true;
-            return;
-        }
-
-        var worldStart = screenToWorld.Transform(_zoomStartPoint);
-        var worldEnd   = screenToWorld.Transform(endPoint);
-
-        double minX = System.Math.Min(worldStart.X, worldEnd.X);
-        double maxX = System.Math.Max(worldStart.X, worldEnd.X);
-        double minY = System.Math.Min(worldStart.Y, worldEnd.Y);
-        double maxY = System.Math.Max(worldStart.Y, worldEnd.Y);
-
-        double worldW = maxX - minX;
-        double worldH = maxY - minY;
-        Log($"[ZOOM] world rect ({minX:F1},{minY:F1}) → ({maxX:F1},{maxY:F1})  size={worldW:F2}x{worldH:F2}");
-
-        if (worldW < 1e-9 || worldH < 1e-9)
-        {
-            Log("[ZOOM] skipped — degenerate world rect");
-            e.Handled = true;
-            return;
-        }
-
-        double vpW = ViewportGrid.ActualWidth;
-        double vpH = ViewportGrid.ActualHeight;
-        Log($"[ZOOM] viewport size {vpW:F1} x {vpH:F1}");
-
-        if (vpW <= 0 || vpH <= 0)
-        {
-            Log("[ZOOM] skipped — zero viewport size");
-            e.Handled = true;
-            return;
-        }
-
-        double scale = System.Math.Min(vpW / worldW, vpH / worldH);
-        double midX  = (minX + maxX) / 2.0;
-        double midY  = (minY + maxY) / 2.0;
-
-        // Assign 6 matrix elements directly — Translate() would scale offsets by M11/M22
-        var m = new Matrix(
-            scale,
-            0,
-            0,
-            -scale,
-            vpW / 2.0 - midX * scale,
-            vpH / 2.0 + midY * scale);
-
-        WorldTransform.Matrix = m;
-        Log($"[ZOOM] applied scale={scale:F4}  mid=({midX:F1},{midY:F1})  OffsetX={m.OffsetX:F1} OffsetY={m.OffsetY:F1}");
-
-        if (DataContext is ShellViewModel vm) vm.CurrentViewScale = scale;
-        e.Handled = true;
-    }
-
-    // Helper — writes to the ViewModel output log (visible in the app)
-    private void Log(string msg)
-    {
-        if (DataContext is ShellViewModel vm)
-            vm.CommandLog.Add(msg);
-    }
 
     private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
