@@ -468,10 +468,18 @@ public static class JeaImportService
         }
         catch (Exception ex)
         {
-            result.Success      = false;
-            string msg = ex.Message;
-            if (ex.InnerException != null) msg += " INNER: " + ex.InnerException.Message;
-            result.ErrorMessage = msg;
+            result.Success = false;
+            // Walk the full exception chain to surface the real DB error
+            var sb = new System.Text.StringBuilder();
+            var current = ex;
+            int depth = 0;
+            while (current != null && depth < 6)
+            {
+                sb.AppendLine($"[L{depth}] {current.GetType().Name}: {current.Message}");
+                current = current.InnerException;
+                depth++;
+            }
+            result.ErrorMessage = sb.ToString();
         }
 
         return result;
