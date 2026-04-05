@@ -142,11 +142,11 @@ public partial class ShellWindow : Window
         width = maxX - minX;
         height = maxY - minY;
 
-        // Viewport Size
-        double vpWidth = ViewportCanvas.ActualWidth;
-        double vpHeight = ViewportCanvas.ActualHeight;
+        // Use ViewportGrid — ViewportCanvas has no layout size (it's transformed/infinite)
+        double vpWidth  = ViewportGrid.ActualWidth;
+        double vpHeight = ViewportGrid.ActualHeight;
         
-        if (vpWidth == 0 || vpHeight == 0) return;
+        if (vpWidth <= 0 || vpHeight <= 0) return;
         
         // Calculate Scale
         double scaleX = vpWidth / width;
@@ -161,17 +161,20 @@ public partial class ShellWindow : Window
         // Screen X = (World X - midX) * scale + vpWidth/2
         // Screen Y = (World Y - midY) * -scale + vpHeight/2  (Flip Y)
         
-        var matrix = new Matrix();
-        matrix.Scale(scale, -scale);
-        matrix.Translate(vpWidth/2.0 - midX * scale, vpHeight/2.0 - midY * -scale);
-        
-        WorldTransform.Matrix = matrix;
+        // Build matrix directly — Translate() after Scale() multiplies offsets by M11/M22
+        WorldTransform.Matrix = new Matrix(
+            scale,
+            0,
+            0,
+            -scale,                       // Y-flip
+            vpWidth  / 2.0 - midX * scale,
+            vpHeight / 2.0 + midY * scale); // +midY because M22 = -scale
         vm.CurrentViewScale = scale;
     }
 
     private void OnMouseWheel(object sender, MouseWheelEventArgs e)
     {
-        var pos = e.GetPosition(ViewportCanvas);
+        var pos = e.GetPosition(ViewportGrid);
         var matrix = WorldTransform.Matrix;
         
         // Very smooth steps for mouse wheel per user request
@@ -252,46 +255,60 @@ public partial class ShellWindow : Window
             ((UIElement)sender).ReleaseMouseCapture();
 
             var endPoint = e.GetPosition((UIElement)sender);
-            
-            // Convert rect to World constraints and calculate new matrix
-            if (System.Math.Abs(endPoint.X - _zoomStartPoint.X) > 5 && System.Math.Abs(endPoint.Y - _zoomStartPoint.Y) > 5)
+
+            // Need a minimum drag size to constitute a real zoom window
+            if (System.Math.Abs(endPoint.X - _zoomStartPoint.X) > 5 &&
+                System.Math.Abs(endPoint.Y - _zoomStartPoint.Y) > 5)
             {
-                var matrix = WorldTransform.Matrix;
+                // Convert screen rect corners → world coordinates using inverted transform
+                Matrix screenToWorld;
+                try
+                {
+                    screenToWorld = WorldTransform.Matrix;
+                    screenToWorld.Invert();
+                }
+                catch
+                {
+                    e.Handled = true;
+                    return; // Matrix is degenerate — skip zoom
+                }
 
-                // Guard: if the matrix is singular (no scale applied yet), skip the zoom
-                if (!matrix.HasInverse) { e.Handled = true; return; }
+                var worldStart = screenToWorld.Transform(_zoomStartPoint);
+                var worldEnd   = screenToWorld.Transform(endPoint);
 
-                matrix.Invert();
-                var worldStart = matrix.Transform(_zoomStartPoint);
-                var worldEnd = matrix.Transform(endPoint);
-                
                 double minX = System.Math.Min(worldStart.X, worldEnd.X);
                 double maxX = System.Math.Max(worldStart.X, worldEnd.X);
                 double minY = System.Math.Min(worldStart.Y, worldEnd.Y);
                 double maxY = System.Math.Max(worldStart.Y, worldEnd.Y);
-                
-                double width = maxX - minX;
-                double height = maxY - minY;
-                
-                // Viewport boundary scaling logic analogous to zoom extents 
-                double vpWidth = ViewportCanvas.ActualWidth;
-                double vpHeight = ViewportCanvas.ActualHeight;
-                if (vpWidth > 0 && vpHeight > 0)
-                {
-                    double scaleX = vpWidth / width;
-                    double scaleY = vpHeight / height;
-                    double scale = System.Math.Min(scaleX, scaleY);
-                    
-                    double midX = (minX + maxX) / 2.0;
-                    double midY = (minY + maxY) / 2.0;
 
-                    var newMatrix = new Matrix();
-                    newMatrix.Scale(scale, -scale);
-                    newMatrix.Translate(vpWidth/2.0 - midX * scale, vpHeight/2.0 - midY * -scale);
-                    WorldTransform.Matrix = newMatrix;
-                    
-                    if (DataContext is ShellViewModel vm) vm.CurrentViewScale = scale;
-                }
+                double worldW = maxX - minX;
+                double worldH = maxY - minY;
+                if (worldW < 1e-9 || worldH < 1e-9) { e.Handled = true; return; }
+
+                // Use the Grid size — ViewportCanvas.ActualWidth/Height is 0 (no layout bounds)
+                double vpW = ViewportGrid.ActualWidth;
+                double vpH = ViewportGrid.ActualHeight;
+                if (vpW <= 0 || vpH <= 0) { e.Handled = true; return; }
+
+                double scale = System.Math.Min(vpW / worldW, vpH / worldH);
+
+                double midX = (minX + maxX) / 2.0;
+                double midY = (minY + maxY) / 2.0;
+
+                // Build the new world transform explicitly so offsets are set correctly.
+                // Do NOT use Matrix.Translate() after Scale() — it incorrectly multiplies
+                // the offset by M11/M22.  Assign the 6 elements directly instead.
+                var m = new Matrix(
+                    scale,                        // M11
+                    0,                            // M12
+                    0,                            // M21
+                    -scale,                       // M22  (Y-flip)
+                    vpW / 2.0 - midX * scale,     // OffsetX
+                    vpH / 2.0 + midY * scale);    // OffsetY  ( + because M22 = -scale )
+
+                WorldTransform.Matrix = m;
+
+                if (DataContext is ShellViewModel vm) vm.CurrentViewScale = scale;
             }
             e.Handled = true;
         }
