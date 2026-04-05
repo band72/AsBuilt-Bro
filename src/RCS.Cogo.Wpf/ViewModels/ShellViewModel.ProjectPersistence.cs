@@ -416,6 +416,15 @@ public partial class ShellViewModel
                     RefreshData();
                     // Reload asset tables so previously imported JEA data appears in the viewer
                     _ = LoadInstalledAssetsAsync();
+                    
+                    if (CurrentProject?.SavedViewMatrix != null && CurrentProject.SavedViewMatrix.Length == 6)
+                    {
+                        ViewRestoreRequested?.Invoke(this, CurrentProject.SavedViewMatrix);
+                    }
+                    else
+                    {
+                        ZoomExtentsRequested?.Invoke(this, EventArgs.Empty);
+                    }
                 });
             }
             catch (Exception ex)

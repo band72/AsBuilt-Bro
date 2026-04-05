@@ -24,12 +24,30 @@ public partial class ShellWindow : Window
         vm.ZoomOutRequested       += (s, e) => ZoomOut();
         vm.ZoomWindowRequested    += (s, e) => ActivateZoomWindow();
         vm.ZoomToPointRequested   += (s, target) => ZoomToPoint(target);
+        vm.ViewRestoreRequested   += (s, matrixArray) => RestoreView(matrixArray);
 
         // Initialize Default View
         var matrix = new Matrix();
         matrix.Scale(1, -1);
         matrix.Translate(-4400, 5400);
         WorldTransform.Matrix = matrix;
+        WorldTransform.Matrix = matrix;
+    }
+
+    private void RestoreView(double[] m)
+    {
+        if (m == null || m.Length != 6) return;
+        WorldTransform.Matrix = new Matrix(m[0], m[1], m[2], m[3], m[4], m[5]);
+        if (DataContext is ShellViewModel vm) vm.CurrentViewScale = m[0];
+    }
+
+    private void SaveCurrentView()
+    {
+        if (DataContext is ShellViewModel vm && vm.CurrentProject != null)
+        {
+            var m = WorldTransform.Matrix;
+            vm.CurrentProject.SavedViewMatrix = new double[] { m.M11, m.M12, m.M21, m.M22, m.OffsetX, m.OffsetY };
+        }
     }
 
     // ── Zoom Window (activated by WIN button) ────────────────────────────────
@@ -71,6 +89,7 @@ public partial class ShellWindow : Window
             
             _lastMousePosition = currentPos;
             e.Handled = true; // Consuming the event while dragging
+            SaveCurrentView();
         }
         else if (_isZoomDragging)
         {
@@ -185,6 +204,8 @@ public partial class ShellWindow : Window
 
         if (DataContext is ShellViewModel vm)
             vm.CurrentViewScale = scale;
+            
+        SaveCurrentView();
     }
 
     // Helper — writes to the ViewModel output log (visible in the app)
@@ -207,6 +228,7 @@ public partial class ShellWindow : Window
         matrix.ScaleAt(1.05, 1.05, center.X, center.Y);
         WorldTransform.Matrix = matrix;
         if (DataContext is ShellViewModel vm) vm.CurrentViewScale = matrix.M11;
+        SaveCurrentView();
     }
 
     private void ZoomOut()
@@ -216,6 +238,7 @@ public partial class ShellWindow : Window
         matrix.ScaleAt(1.0 / 1.05, 1.0 / 1.05, center.X, center.Y);
         WorldTransform.Matrix = matrix;
         if (DataContext is ShellViewModel vm) vm.CurrentViewScale = matrix.M11;
+        SaveCurrentView();
     }
 
     private void ZoomToPoint(Point target)
@@ -235,6 +258,7 @@ public partial class ShellWindow : Window
         
         WorldTransform.Matrix = matrix;
         if (DataContext is ShellViewModel vm) vm.CurrentViewScale = targetScale;
+        SaveCurrentView();
     }
 
     private void ZoomExtents()
@@ -345,6 +369,7 @@ public partial class ShellWindow : Window
         Log($"[ZOOM EXTENTS] vpW={vpWidth:F1}, vpH={vpHeight:F1}, width={width:F1}, height={height:F1}, scale={scale:F4}, M11={matrixToApply.M11:F4}, M22={matrixToApply.M22:F4}");
         
         vm.CurrentViewScale = scale;
+        SaveCurrentView();
     }
 
     private void OnMouseWheel(object sender, MouseWheelEventArgs e)
@@ -358,6 +383,7 @@ public partial class ShellWindow : Window
         matrix.ScaleAt(scale, scale, pos.X, pos.Y);
         WorldTransform.Matrix = matrix;
         if (DataContext is ShellViewModel vm) vm.CurrentViewScale = matrix.M11;
+        SaveCurrentView();
     }
 
     private void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e)

@@ -26,6 +26,9 @@ public sealed class Project
     public string Units { get; set; } = "USFT";
     public int Revision { get; set; } = 1;
     public ProjectionSettings Projection { get; set; } = new();
+    
+    // Viewport camera matrix: [M11, M12, M21, M22, OffsetX, OffsetY]
+    public double[] SavedViewMatrix { get; set; } = System.Array.Empty<double>();
 
     // Data lists for serialization
     public System.Collections.Generic.List<PointEntry> Points { get; set; } = new();

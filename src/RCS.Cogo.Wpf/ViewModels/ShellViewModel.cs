@@ -734,6 +734,7 @@ public partial class ShellViewModel : ViewModelBase
     public event EventHandler? ZoomInRequested;
     public event EventHandler? ZoomOutRequested;
     public event EventHandler<System.Windows.Point>? ZoomToPointRequested;
+    public event EventHandler<double[]>? ViewRestoreRequested;
 
     public ShellViewModel()
     {
