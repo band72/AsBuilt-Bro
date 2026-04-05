@@ -74,14 +74,20 @@ public partial class ShellWindow : Window
         if (!_isZoomDragging) return;
 
         _isZoomDragging = false;
+
+        // CRITICAL: Get mouse position BEFORE collapsing the overlay!
+        // WPF elements lose valid coordinate bounds once collapsed.
+        var endPoint = e.GetPosition(ZoomOverlay);
+
         ZoomOverlay.ReleaseMouseCapture();
         ZoomOverlay.Visibility  = Visibility.Collapsed;
         ZoomRect.Visibility     = Visibility.Collapsed;
         Mouse.OverrideCursor    = null;
 
-        var endPoint = e.GetPosition(ZoomOverlay);
         double dx = System.Math.Abs(endPoint.X - _zoomStartPoint.X);
         double dy = System.Math.Abs(endPoint.Y - _zoomStartPoint.Y);
+
+        Log($"[ZOOM] drag ended at ({endPoint.X:F1},{endPoint.Y:F1}), dx={dx:F1}, dy={dy:F1}");
 
         if (dx > 5 && dy > 5)
             ApplyZoomWindow(_zoomStartPoint, endPoint);
@@ -94,7 +100,7 @@ public partial class ShellWindow : Window
         // Screen → World
         Matrix s2w;
         try   { s2w = WorldTransform.Matrix; s2w.Invert(); }
-        catch { return; }
+        catch (Exception ex) { Log($"[ZOOM] Invert failed: {ex.Message}"); return; }
 
         var w0 = s2w.Transform(screenStart);
         var w1 = s2w.Transform(screenEnd);
@@ -106,27 +112,51 @@ public partial class ShellWindow : Window
 
         double worldW = maxX - minX;
         double worldH = maxY - minY;
-        if (worldW < 1e-9 || worldH < 1e-9) return;
+        
+        Log($"[ZOOM] world rect ({minX:F1},{minY:F1}) → ({maxX:F1},{maxY:F1})  size={worldW:F2}x{worldH:F2}");
+
+        if (worldW < 1e-9 || worldH < 1e-9) 
+        {
+            Log("[ZOOM] skipped — degenerate world rect");
+            return;
+        }
 
         double vpW = ViewportGrid.ActualWidth;
         double vpH = ViewportGrid.ActualHeight;
-        if (vpW <= 0 || vpH <= 0) return;
+        
+        Log($"[ZOOM] viewport size {vpW:F1} x {vpH:F1}");
+        
+        if (vpW <= 0 || vpH <= 0)
+        {
+            Log("[ZOOM] skipped — zero viewport size");
+            return;
+        }
 
         double scale = System.Math.Min(vpW / worldW, vpH / worldH);
         double midX  = (minX + maxX) / 2.0;
         double midY  = (minY + maxY) / 2.0;
 
         // Set matrix elements directly — Translate() after Scale() would scale the offsets
-        WorldTransform.Matrix = new Matrix(
+        var m = new Matrix(
             scale,
             0,
             0,
             -scale,
             vpW / 2.0 - midX * scale,
             vpH / 2.0 + midY * scale);
+            
+        WorldTransform.Matrix = m;
+        Log($"[ZOOM] applied scale={scale:F4}  mid=({midX:F1},{midY:F1})  OffsetX={m.OffsetX:F1} OffsetY={m.OffsetY:F1}");
 
         if (DataContext is ShellViewModel vm)
             vm.CurrentViewScale = scale;
+    }
+
+    // Helper — writes to the ViewModel output log (visible in the app)
+    private void Log(string msg)
+    {
+        if (DataContext is ShellViewModel vm)
+            vm.CommandLog.Add(msg);
     }
 
     private void ZoomIn()
