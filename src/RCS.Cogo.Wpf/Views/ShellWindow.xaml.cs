@@ -247,6 +247,10 @@ public partial class ShellWindow : Window
             if (System.Math.Abs(endPoint.X - _zoomStartPoint.X) > 5 && System.Math.Abs(endPoint.Y - _zoomStartPoint.Y) > 5)
             {
                 var matrix = WorldTransform.Matrix;
+
+                // Guard: if the matrix is singular (no scale applied yet), skip the zoom
+                if (!matrix.HasInverse) { e.Handled = true; return; }
+
                 matrix.Invert();
                 var worldStart = matrix.Transform(_zoomStartPoint);
                 var worldEnd = matrix.Transform(endPoint);
