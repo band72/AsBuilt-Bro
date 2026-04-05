@@ -258,6 +258,48 @@
                 <MenuItem Header="Cogo Figures" Command="{Binding OpenExampleFiguresCommand}"/>
                 <MenuItem Header="Angle Script" Command="{Binding OpenExampleAngleCommand}"/>
                 <Separator/>
+                <MenuItem Header="🗃 Civil 3D Table Extraction" FontWeight="SemiBold" Foreground="#FF9800">
+                    <MenuItem.ToolTip>
+                        <ToolTip>
+                            <StackPanel MaxWidth="420">
+                                <TextBlock Text="Civil 3D → Excel Extraction Workflow" FontWeight="Bold" FontSize="13" Margin="0,0,0,6"/>
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,8"
+                                    Text="Extracts data from Civil 3D Point Tables (Water Fittings, Valves, Wire Boxes, Top-of-Pipe) and imports them into the JEA As-Built template."/>
+
+                                <TextBlock Text="STEP 1 — Run LISP inside Civil 3D:" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,4"/>
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,2" Text="1. In Civil 3D, type APPLOAD → load export_tables.lsp"/>
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,2" Text="2. Type DUMPTABLE → press Enter"/>
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,2" Text="3. Select the exploded *U block references → press Enter"/>
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,8" Text="4. Output CSV saved to: C:\Temp\table_dump.txt  (repeat for each table)"/>
+
+                                <TextBlock Text="STEP 2 — Convert dumps to Excel:" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,4"/>
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,2" Text="Run export_acad_tables.py to convert all 4 dump files into individual .xlsx files with columns remapped to JEA template column order."/>
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,8" Foreground="#AAAAAA"
+                                    Text="python export_acad_tables.py"/>
+
+                                <TextBlock Text="STEP 3 — Import into this app:" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,4"/>
+                                <TextBlock TextWrapping="Wrap"
+                                    Text="Use Data → Import → 🚀 New Project from Segment1A Excel (.xlsx)... to load all tables in one step."/>
+
+                                <TextBlock TextWrapping="Wrap" Margin="0,8,0,0" Foreground="#AAAAAA" FontStyle="Italic"
+                                    Text="Files: export_tables.lsp  |  export_acad_tables.py  (repo root)"/>
+                            </StackPanel>
+                        </ToolTip>
+                    </MenuItem.ToolTip>
+                    <MenuItem Header="📋 Step 1: Load DUMPTABLE into Civil 3D"
+                              IsEnabled="False" Foreground="#AAAAAA"
+                              ToolTip="In Civil 3D: APPLOAD → export_tables.lsp → type DUMPTABLE → select table blocks → Enter"/>
+                    <MenuItem Header="⚙ Step 2: Convert Dumps to Excel (export_acad_tables.py)"
+                              IsEnabled="False" Foreground="#AAAAAA"
+                              ToolTip="Run: python export_acad_tables.py  —  reads C:\...\table-ssmc\table_dump*.txt and writes 4 xlsx files"/>
+                    <MenuItem Header="📥 Step 3: Import via Data → Import → Segment1A Excel"
+                              IsEnabled="False" Foreground="#AAAAAA"
+                              ToolTip="Use the 🚀 New Project from Segment1A Excel command to load all 4 tables into the project database"/>
+                    <Separator/>
+                    <MenuItem Header="📁 Open Extraction Scripts Folder" Command="{Binding OpenExtractionScriptsFolderCommand}"
+                              ToolTip="Opens the repo root folder containing export_tables.lsp and export_acad_tables.py"/>
+                </MenuItem>
+                <Separator/>
                 <MenuItem Header="Test C++ Security Integration" Command="{Binding TestNativeSecurityCommand}"/>
                 <MenuItem Header="Licensing Agent Chat" Command="{Binding OpenLicensingAgentCommand}"/>
                 <Separator/>

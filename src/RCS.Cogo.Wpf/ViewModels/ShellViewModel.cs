@@ -1093,6 +1093,22 @@ public partial class ShellViewModel : ViewModelBase
 
         TestNativeSecurityCommand = new RelayCommand(_ => ExecuteTestNativeSecurity());
         OpenLicensingAgentCommand = new RelayCommand(_ => OpenLicensingAgentWindow());
+        OpenExtractionScriptsFolderCommand = new RelayCommand(_ =>
+        {
+            // Walk up to .sln root the same way OpenDocument does
+            var baseDir = new System.IO.DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            while (baseDir != null &&
+                   !System.IO.File.Exists(System.IO.Path.Combine(baseDir.FullName, "RCS.Cogo.Enterprise.Modern.sln")))
+            {
+                baseDir = baseDir.Parent;
+            }
+            string root = baseDir?.FullName ?? AppDomain.CurrentDomain.BaseDirectory;
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = root,
+                UseShellExecute = true
+            });
+        });
         
         InstalledAssets = new InstalledAssetsViewModel();
         InstalledAssets.LogAction = (msg) => CommandLog.Add(msg);
@@ -1280,6 +1296,9 @@ public partial class ShellViewModel : ViewModelBase
     // Security
     public System.Windows.Input.ICommand TestNativeSecurityCommand { get; }
     public System.Windows.Input.ICommand OpenLicensingAgentCommand { get; }
+
+    // Civil 3D Extraction Tools
+    public System.Windows.Input.ICommand OpenExtractionScriptsFolderCommand { get; }
 
     public System.Windows.Input.ICommand OpenAlignmentWindowCommand { get; }
     public System.Windows.Input.ICommand OpenAlignmentSettingsCommand { get; }
