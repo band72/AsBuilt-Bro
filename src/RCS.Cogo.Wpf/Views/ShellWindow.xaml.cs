@@ -230,88 +230,114 @@ public partial class ShellWindow : Window
 
     private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        if (_isZoomWindowMode)
-        {
-            _isZoomDragging = true;
-            _zoomStartPoint = e.GetPosition((UIElement)sender);
-            
-            ZoomRect.Margin = new Thickness(_zoomStartPoint.X, _zoomStartPoint.Y, 0, 0);
-            ZoomRect.Width = 0;
-            ZoomRect.Height = 0;
-            ZoomRect.Visibility = Visibility.Visible;
-            ((UIElement)sender).CaptureMouse();
-            e.Handled = true;
-        }
+        if (!_isZoomWindowMode) return;
+
+        _isZoomDragging  = true;
+        _zoomStartPoint  = e.GetPosition(ViewportGrid); // explicit, not sender
+
+        ZoomRect.Margin     = new Thickness(_zoomStartPoint.X, _zoomStartPoint.Y, 0, 0);
+        ZoomRect.Width      = 0;
+        ZoomRect.Height     = 0;
+        ZoomRect.Visibility = Visibility.Visible;
+
+        ViewportGrid.CaptureMouse(); // explicit capture
+        e.Handled = true;
+
+        Log($"[ZOOM] drag started at ({_zoomStartPoint.X:F1},{_zoomStartPoint.Y:F1})");
     }
 
     private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
-        if (_isZoomDragging)
+        if (!_isZoomDragging) return;
+
+        _isZoomDragging  = false;
+        _isZoomWindowMode = false;
+        Mouse.OverrideCursor = null;
+        ZoomRect.Visibility = Visibility.Collapsed;
+        ViewportGrid.ReleaseMouseCapture(); // explicit release
+
+        var endPoint = e.GetPosition(ViewportGrid); // explicit
+        Log($"[ZOOM] drag ended at ({endPoint.X:F1},{endPoint.Y:F1})");
+
+        double dx = System.Math.Abs(endPoint.X - _zoomStartPoint.X);
+        double dy = System.Math.Abs(endPoint.Y - _zoomStartPoint.Y);
+        if (dx <= 5 || dy <= 5)
         {
-            _isZoomDragging = false;
-            _isZoomWindowMode = false;
-            Mouse.OverrideCursor = null;
-            ZoomRect.Visibility = Visibility.Collapsed;
-            ((UIElement)sender).ReleaseMouseCapture();
-
-            var endPoint = e.GetPosition((UIElement)sender);
-
-            // Need a minimum drag size to constitute a real zoom window
-            if (System.Math.Abs(endPoint.X - _zoomStartPoint.X) > 5 &&
-                System.Math.Abs(endPoint.Y - _zoomStartPoint.Y) > 5)
-            {
-                // Convert screen rect corners → world coordinates using inverted transform
-                Matrix screenToWorld;
-                try
-                {
-                    screenToWorld = WorldTransform.Matrix;
-                    screenToWorld.Invert();
-                }
-                catch
-                {
-                    e.Handled = true;
-                    return; // Matrix is degenerate — skip zoom
-                }
-
-                var worldStart = screenToWorld.Transform(_zoomStartPoint);
-                var worldEnd   = screenToWorld.Transform(endPoint);
-
-                double minX = System.Math.Min(worldStart.X, worldEnd.X);
-                double maxX = System.Math.Max(worldStart.X, worldEnd.X);
-                double minY = System.Math.Min(worldStart.Y, worldEnd.Y);
-                double maxY = System.Math.Max(worldStart.Y, worldEnd.Y);
-
-                double worldW = maxX - minX;
-                double worldH = maxY - minY;
-                if (worldW < 1e-9 || worldH < 1e-9) { e.Handled = true; return; }
-
-                // Use the Grid size — ViewportCanvas.ActualWidth/Height is 0 (no layout bounds)
-                double vpW = ViewportGrid.ActualWidth;
-                double vpH = ViewportGrid.ActualHeight;
-                if (vpW <= 0 || vpH <= 0) { e.Handled = true; return; }
-
-                double scale = System.Math.Min(vpW / worldW, vpH / worldH);
-
-                double midX = (minX + maxX) / 2.0;
-                double midY = (minY + maxY) / 2.0;
-
-                // Build the new world transform explicitly so offsets are set correctly.
-                // Do NOT use Matrix.Translate() after Scale() — it incorrectly multiplies
-                // the offset by M11/M22.  Assign the 6 elements directly instead.
-                var m = new Matrix(
-                    scale,                        // M11
-                    0,                            // M12
-                    0,                            // M21
-                    -scale,                       // M22  (Y-flip)
-                    vpW / 2.0 - midX * scale,     // OffsetX
-                    vpH / 2.0 + midY * scale);    // OffsetY  ( + because M22 = -scale )
-
-                WorldTransform.Matrix = m;
-
-                if (DataContext is ShellViewModel vm) vm.CurrentViewScale = scale;
-            }
+            Log($"[ZOOM] skipped — drag too small ({dx:F1} x {dy:F1})");
             e.Handled = true;
+            return;
         }
+
+        // Screen → World using inverted current transform
+        Matrix screenToWorld;
+        try
+        {
+            screenToWorld = WorldTransform.Matrix;
+            Log($"[ZOOM] matrix M11={screenToWorld.M11:F4} M22={screenToWorld.M22:F4} Ox={screenToWorld.OffsetX:F1} Oy={screenToWorld.OffsetY:F1}");
+            screenToWorld.Invert();
+        }
+        catch (Exception ex)
+        {
+            Log($"[ZOOM] Invert failed: {ex.Message}");
+            e.Handled = true;
+            return;
+        }
+
+        var worldStart = screenToWorld.Transform(_zoomStartPoint);
+        var worldEnd   = screenToWorld.Transform(endPoint);
+
+        double minX = System.Math.Min(worldStart.X, worldEnd.X);
+        double maxX = System.Math.Max(worldStart.X, worldEnd.X);
+        double minY = System.Math.Min(worldStart.Y, worldEnd.Y);
+        double maxY = System.Math.Max(worldStart.Y, worldEnd.Y);
+
+        double worldW = maxX - minX;
+        double worldH = maxY - minY;
+        Log($"[ZOOM] world rect ({minX:F1},{minY:F1}) → ({maxX:F1},{maxY:F1})  size={worldW:F2}x{worldH:F2}");
+
+        if (worldW < 1e-9 || worldH < 1e-9)
+        {
+            Log("[ZOOM] skipped — degenerate world rect");
+            e.Handled = true;
+            return;
+        }
+
+        double vpW = ViewportGrid.ActualWidth;
+        double vpH = ViewportGrid.ActualHeight;
+        Log($"[ZOOM] viewport size {vpW:F1} x {vpH:F1}");
+
+        if (vpW <= 0 || vpH <= 0)
+        {
+            Log("[ZOOM] skipped — zero viewport size");
+            e.Handled = true;
+            return;
+        }
+
+        double scale = System.Math.Min(vpW / worldW, vpH / worldH);
+        double midX  = (minX + maxX) / 2.0;
+        double midY  = (minY + maxY) / 2.0;
+
+        // Assign 6 matrix elements directly — Translate() would scale offsets by M11/M22
+        var m = new Matrix(
+            scale,
+            0,
+            0,
+            -scale,
+            vpW / 2.0 - midX * scale,
+            vpH / 2.0 + midY * scale);
+
+        WorldTransform.Matrix = m;
+        Log($"[ZOOM] applied scale={scale:F4}  mid=({midX:F1},{midY:F1})  OffsetX={m.OffsetX:F1} OffsetY={m.OffsetY:F1}");
+
+        if (DataContext is ShellViewModel vm) vm.CurrentViewScale = scale;
+        e.Handled = true;
+    }
+
+    // Helper — writes to the ViewModel output log (visible in the app)
+    private void Log(string msg)
+    {
+        if (DataContext is ShellViewModel vm)
+            vm.CommandLog.Add(msg);
     }
 
     private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
