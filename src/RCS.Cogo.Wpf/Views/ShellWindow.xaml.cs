@@ -27,7 +27,17 @@ public partial class ShellWindow : Window
             Mouse.OverrideCursor = Cursors.Cross;
         };
         vm.ZoomToPointRequested += (s, target) => ZoomToPoint(target);
-        
+
+        // Register left-button & move handlers with handledEventsToo=true so they
+        // fire even when child elements (symbols, overlays) have marked the event Handled.
+        // This is required for the zoom-window rubber-band selection to work over the canvas.
+        ViewportGrid.AddHandler(MouseLeftButtonDownEvent,
+            new MouseButtonEventHandler(OnMouseLeftButtonDown), handledEventsToo: true);
+        ViewportGrid.AddHandler(MouseLeftButtonUpEvent,
+            new MouseButtonEventHandler(OnMouseLeftButtonUp),   handledEventsToo: true);
+        ViewportGrid.AddHandler(MouseMoveEvent,
+            new MouseEventHandler(OnMouseMove), handledEventsToo: true);
+
         // Initialize Default View (Center 5000,5000, Scale 1, Y flipped)
         // Matrix: M11=Scale, M22=-Scale, OffsetX, OffsetY
         // Initial setup to see coordinate 0,0 at bottom left?

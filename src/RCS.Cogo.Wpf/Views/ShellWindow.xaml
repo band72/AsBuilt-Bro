@@ -1075,13 +1075,11 @@
 
         <!-- Center Pane: Graphics -->
         <Border Grid.Column="2" Grid.Row="0" Background="#000000" Margin="5,10" CornerRadius="5" ClipToBounds="True">
-            <Grid Background="Transparent"
+            <Grid x:Name="ViewportGrid"
+                  Background="Transparent"
                   MouseWheel="OnMouseWheel" 
                   MouseRightButtonDown="OnMouseRightButtonDown" 
-                  MouseRightButtonUp="OnMouseRightButtonUp" 
-                  MouseLeftButtonDown="OnMouseLeftButtonDown"
-                  MouseLeftButtonUp="OnMouseLeftButtonUp"
-                  MouseMove="OnMouseMove">
+                  MouseRightButtonUp="OnMouseRightButtonUp">
                 <!-- Canvas -->
                 <Canvas x:Name="ViewportCanvas">
                     <Canvas.RenderTransform>
