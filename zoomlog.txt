@@ -1,0 +1,4 @@
+21:34:50.994 [ZOOM] WIN mode activated
+21:34:51.813 [ZOOM] Mouse down at 34,315.37333333333333
+21:34:52.535 [ZOOM] Mouse up at 179.33333333333326,468.04, dx=145.3, dy=152.7
+21:34:52.536 [ZOOM] Invert failed: Transform is not invertible.

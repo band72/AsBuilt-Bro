@@ -104,7 +104,22 @@ public partial class ShellWindow : Window
     {
         // Screen → World
         Matrix s2w;
-        try   { s2w = WorldTransform.Matrix; s2w.Invert(); }
+        var currentMatrix = WorldTransform.Matrix;
+        
+        Log($"[ZOOM] Matrix before invert: M11={currentMatrix.M11:F4}, M12={currentMatrix.M12:F4}, M21={currentMatrix.M21:F4}, M22={currentMatrix.M22:F4}, Ox={currentMatrix.OffsetX:F1}, Oy={currentMatrix.OffsetY:F1}");
+        
+        if (!currentMatrix.HasInverse)
+        {
+            Log("[ZOOM] Matrix is singular! Resetting to default state.");
+            currentMatrix = new Matrix(1, 0, 0, -1, 0, 0); // fallback identity with Y-flip
+            WorldTransform.Matrix = currentMatrix;
+        }
+
+        try   
+        { 
+            s2w = currentMatrix;
+            s2w.Invert(); 
+        }
         catch (Exception ex) { Log($"[ZOOM] Invert failed: {ex.Message}"); return; }
 
         var w0 = s2w.Transform(screenStart);
@@ -138,6 +153,8 @@ public partial class ShellWindow : Window
         }
 
         double scale = System.Math.Min(vpW / worldW, vpH / worldH);
+        if (scale < 1e-6) scale = 1e-6; // Prevent singular matrix
+        
         double midX  = (minX + maxX) / 2.0;
         double midY  = (minY + maxY) / 2.0;
 
@@ -272,6 +289,7 @@ public partial class ShellWindow : Window
         double scaleX = vpWidth / width;
         double scaleY = vpHeight / height;
         double scale = Math.Min(scaleX, scaleY);
+        if (scale < 1e-6) scale = 1e-6; // Prevent singular matrix
         
         // Center
         double midX = (minX + maxX) / 2.0;
@@ -282,13 +300,17 @@ public partial class ShellWindow : Window
         // Screen Y = (World Y - midY) * -scale + vpHeight/2  (Flip Y)
         
         // Build matrix directly — Translate() after Scale() multiplies offsets by M11/M22
-        WorldTransform.Matrix = new Matrix(
+        var matrixToApply = new Matrix(
             scale,
             0,
             0,
             -scale,                       // Y-flip
             vpWidth  / 2.0 - midX * scale,
             vpHeight / 2.0 + midY * scale); // +midY because M22 = -scale
+            
+        WorldTransform.Matrix = matrixToApply;
+        Log($"[ZOOM EXTENTS] vpW={vpWidth:F1}, vpH={vpHeight:F1}, width={width:F1}, height={height:F1}, scale={scale:F4}, M11={matrixToApply.M11:F4}, M22={matrixToApply.M22:F4}");
+        
         vm.CurrentViewScale = scale;
     }
 
