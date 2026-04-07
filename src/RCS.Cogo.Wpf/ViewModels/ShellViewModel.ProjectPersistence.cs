@@ -591,6 +591,7 @@ public partial class ShellViewModel
     public System.Windows.Input.ICommand ExportJeaTemplateCommand { get; }
     public System.Windows.Input.ICommand ValidateJeaCommand       { get; }
     public System.Windows.Input.ICommand ExportJeaMixScriptCommand { get; }
+    public System.Windows.Input.ICommand GenerateJeaLineworkCommand { get; }
 
     private void OpenJeaValidation()
     {
@@ -607,6 +608,89 @@ public partial class ShellViewModel
         win.ShowDialog();
     }
 
+    private string BuildJeaMixScript(string projectIdStr)
+    {
+        using var db = new RCS.Data.AppDbContext();
+        var waterFittings = db.WaterFittings.Where(x => x.ProjectId == projectIdStr).OrderBy(x => x.PartKey).ToList();
+        var manholes = db.Manholes.Where(x => x.ProjectId == projectIdStr).OrderBy(x => x.PartKey).ToList();
+        
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("// ==========================================");
+        sb.AppendLine("// JEA AS-BUILT REVERSE ENGINEERED MIX SCRIPT");
+        sb.AppendLine("// ==========================================");
+        sb.AppendLine();
+        sb.AppendLine("// 1. Establish Structural Node Points");
+        
+        foreach(var mh in manholes)
+        {
+            var id = string.IsNullOrWhiteSpace(mh.PartKey) ? mh.Id.Substring(0, 5) : mh.PartKey;
+            var elev = mh.RimElevation ?? 0.0;
+            var n = mh.Northing ?? 0.0;
+            var e = mh.Easting ?? 0.0;
+            sb.AppendLine($"ST {id.Replace(" ", "-")} {n:F4} {e:F4} {elev:F2} \"{mh.Subtype} {mh.Size} IN\"");
+        }
+
+        foreach(var wf in waterFittings)
+        {
+            var id = string.IsNullOrWhiteSpace(wf.PartKey) ? wf.Id.Substring(0, 5) : wf.PartKey;
+            var elev = wf.TopElevation ?? 0.0;
+            var n = wf.Northing ?? 0.0;
+            var e = wf.Easting ?? 0.0;
+            sb.AppendLine($"ST {id.Replace(" ", "-")} {n:F4} {e:F4} {elev:F2} \"{wf.Subtype} {wf.Size} IN\"");
+        }
+
+        sb.AppendLine();
+        sb.AppendLine("// 2. Map Dynamic Transmission Lines");
+        int added = 0;
+        string prevPoint = "";
+        double prevElev = 0.0;
+        
+        foreach(var wf in waterFittings)
+        {
+            var pt = string.IsNullOrWhiteSpace(wf.PartKey) ? wf.Id.Substring(0, 5) : wf.PartKey;
+            var el = wf.TopElevation ?? 0.0;
+            if (added > 0 && !string.IsNullOrEmpty(prevPoint))
+            {
+                    string sz = string.IsNullOrWhiteSpace(wf.Size) ? "8" : wf.Size;
+                    sb.AppendLine($"PRUN START {prevPoint.Replace(" ", "-")} {pt.Replace(" ", "-")} {sz} {prevElev:F2} {el:F2}");
+            }
+            prevPoint = pt;
+            prevElev = el;
+            added++;
+        }
+
+        sb.AppendLine();
+        sb.AppendLine("ECHO \"Mixed-Mode JEA Network Import Complete\"");
+        return sb.ToString();
+    }
+
+    private void GenerateJeaLinework()
+    {
+        if (_currentProject == null) return;
+        try
+        {
+            var script = BuildJeaMixScript(_currentProject.Id.ToString());
+            
+            // Append to existing piping script or set it
+            if (string.IsNullOrWhiteSpace(PipingScript))
+                PipingScript = script;
+            else
+                PipingScript = PipingScript + "\r\n\r\n" + script;
+
+            _context.Log("[JEA] Automatically built Piping Mix Script from SQL DB. Compiling...");
+            
+            // Execute the script so linework appears immediately
+            RunPipingScript();
+            
+            // Bring focus to structures view
+            SelectedTabIndex = 2; // Typically 2 = piping tab, or view structures, depends on setup
+            ZoomExtentsRequested?.Invoke(this, EventArgs.Empty);
+        }
+        catch(Exception ex)
+        {
+            _context.Log($"[JEA] Auto-Generate Linework Error: {ex.Message}");
+        }
+    }
     private void ExportJeaMixScript()
     {
         if (_currentProject == null)
@@ -628,61 +712,8 @@ public partial class ShellViewModel
         {
             try
             {
-                using var db = new RCS.Data.AppDbContext();
-                var projectIdStr = _currentProject.Id.ToString();
-                
-                var waterFittings = db.WaterFittings.Where(x => x.ProjectId == projectIdStr).OrderBy(x => x.PartKey).ToList();
-                var manholes = db.Manholes.Where(x => x.ProjectId == projectIdStr).OrderBy(x => x.PartKey).ToList();
-                
-                var sb = new System.Text.StringBuilder();
-                sb.AppendLine("// ==========================================");
-                sb.AppendLine("// JEA AS-BUILT REVERSE ENGINEERED MIX SCRIPT");
-                sb.AppendLine("// ==========================================");
-                sb.AppendLine();
-                sb.AppendLine("// 1. Establish Structural Node Points");
-                
-                foreach(var mh in manholes)
-                {
-                    var id = string.IsNullOrWhiteSpace(mh.PartKey) ? mh.Id.Substring(0, 5) : mh.PartKey;
-                    var elev = mh.RimElevation ?? 0.0;
-                    var n = mh.Northing ?? 0.0;
-                    var e = mh.Easting ?? 0.0;
-                    sb.AppendLine($"ST {id.Replace(" ", "-")} {n:F4} {e:F4} {elev:F2} \"{mh.Subtype} {mh.Size} IN\"");
-                }
-
-                foreach(var wf in waterFittings)
-                {
-                    var id = string.IsNullOrWhiteSpace(wf.PartKey) ? wf.Id.Substring(0, 5) : wf.PartKey;
-                    var elev = wf.TopElevation ?? 0.0;
-                    var n = wf.Northing ?? 0.0;
-                    var e = wf.Easting ?? 0.0;
-                    sb.AppendLine($"ST {id.Replace(" ", "-")} {n:F4} {e:F4} {elev:F2} \"{wf.Subtype} {wf.Size} IN\"");
-                }
-
-                sb.AppendLine();
-                sb.AppendLine("// 2. Map Dynamic Transmission Lines");
-                int added = 0;
-                string prevPoint = "";
-                double prevElev = 0.0;
-                
-                foreach(var wf in waterFittings)
-                {
-                    var pt = string.IsNullOrWhiteSpace(wf.PartKey) ? wf.Id.Substring(0, 5) : wf.PartKey;
-                    var el = wf.TopElevation ?? 0.0;
-                    if (added > 0 && !string.IsNullOrEmpty(prevPoint))
-                    {
-                         string sz = string.IsNullOrWhiteSpace(wf.Size) ? "8" : wf.Size;
-                         sb.AppendLine($"PRUN START {prevPoint.Replace(" ", "-")} {pt.Replace(" ", "-")} {sz} {prevElev:F2} {el:F2}");
-                    }
-                    prevPoint = pt;
-                    prevElev = el;
-                    added++;
-                }
-
-                sb.AppendLine();
-                sb.AppendLine("ECHO \"Mixed-Mode JEA Network Import Complete\"");
-                
-                System.IO.File.WriteAllText(dialog.FileName, sb.ToString());
+                string script = BuildJeaMixScript(_currentProject.Id.ToString());
+                System.IO.File.WriteAllText(dialog.FileName, script);
                 _context.Log($"[AUDIT] Exported JEA Mix Script to: {dialog.FileName}");
                 
                 System.Windows.MessageBox.Show("Script exported successfully!\nYou can copy and paste this file directly into the piping scripts window.", "Export Complete", 

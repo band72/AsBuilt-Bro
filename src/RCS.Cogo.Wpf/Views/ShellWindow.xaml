@@ -143,6 +143,10 @@
                               Command="{Binding ImportJeaTemplateCommand}"
                               FontWeight="SemiBold" Foreground="#44E08B"
                               ToolTip="Read a filled JEA As-Built Excel file and import records into the current project"/>
+                    <MenuItem Header="🛠️ Generate 3D Piping Linework From JEA SQL Nodes..."
+                              Command="{Binding GenerateJeaLineworkCommand}"
+                              FontWeight="SemiBold" Foreground="#00E6FF"
+                              ToolTip="Automatically generates structural nodes and dynamic pipe runs based on the internal database."/>
                     <MenuItem Header="🚀 New Project from Segment1A Excel (.xlsx)..."
                               Command="{Binding ImportS1AProjectCommand}"
                               FontWeight="Bold" Foreground="#FFD700"

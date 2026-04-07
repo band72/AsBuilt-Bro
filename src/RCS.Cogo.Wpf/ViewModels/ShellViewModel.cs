@@ -1042,6 +1042,7 @@ public partial class ShellViewModel : ViewModelBase
         ExportInstalledAssetsCommand     = new RelayCommand(_ => ExportInstalledAssets());
         ExportJeaTemplateCommand         = new RelayCommand(_ => ExportJeaTemplate());
         ExportJeaMixScriptCommand        = new RelayCommand(_ => ExportJeaMixScript());
+        GenerateJeaLineworkCommand       = new RelayCommand(_ => GenerateJeaLinework());
         ValidateJeaCommand               = new RelayCommand(_ => OpenJeaValidation());
         ImportJeaTemplateCommand         = new RelayCommand(_ => ImportJeaFromTemplate());
         ImportS1AProjectCommand          = new RelayCommand(_ => ImportS1AProjectFromExcel());
