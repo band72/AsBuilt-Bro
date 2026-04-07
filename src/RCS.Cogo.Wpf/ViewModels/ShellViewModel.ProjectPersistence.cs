@@ -672,15 +672,15 @@ public partial class ShellViewModel
             var script = BuildJeaMixScript(_currentProject.Id.ToString());
             
             // Append to existing piping script or set it
-            if (string.IsNullOrWhiteSpace(PipingScript))
-                PipingScript = script;
+            if (string.IsNullOrWhiteSpace(PipingScriptText))
+                PipingScriptText = script;
             else
-                PipingScript = PipingScript + "\r\n\r\n" + script;
+                PipingScriptText = PipingScriptText + "\r\n\r\n" + script;
 
             _context.Log("[JEA] Automatically built Piping Mix Script from SQL DB. Compiling...");
             
             // Execute the script so linework appears immediately
-            RunPipingScript();
+            ProcessPipingScript();
             
             // Bring focus to structures view
             SelectedTabIndex = 2; // Typically 2 = piping tab, or view structures, depends on setup
