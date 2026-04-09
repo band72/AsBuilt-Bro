@@ -10,19 +10,7 @@
         WindowStartupLocation="CenterOwner" Background="#1E1E1E" Foreground="White">
         
     <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/RCS.Cogo.Wpf;component/Resources/Symbols.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-            <localViews:StringToResourceTemplateSelector x:Key="SymbolTemplateSelector" />
-            
-            <DataTemplate x:Key="ImageSymbolTemplateString">
-                <Image Source="{Binding}" Width="28" Height="28" Stretch="Uniform"/>
-            </DataTemplate>
-            <DataTemplate x:Key="ImageSymbolTemplateEntity">
-                <Image Source="{Binding Symbol}" Width="28" Height="28" Stretch="Uniform"/>
-            </DataTemplate>
-        </ResourceDictionary>
+        <localViews:StringToResourceTemplateSelector x:Key="SymbolTemplateSelector" />
     </Window.Resources>
 
     <Grid Margin="10">

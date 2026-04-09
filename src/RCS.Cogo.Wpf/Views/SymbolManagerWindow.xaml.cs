@@ -21,13 +21,13 @@ namespace RCS.Cogo.Wpf.Views
                 isEntity = true;
             }
 
-            if (!string.IsNullOrEmpty(templateKey) && container is FrameworkElement fe)
+            if (!string.IsNullOrEmpty(templateKey))
             {
                 if (templateKey.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) || templateKey.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
                 {
-                    return fe.TryFindResource(isEntity ? "ImageSymbolTemplateEntity" : "ImageSymbolTemplateString") as DataTemplate;
+                    return Application.Current.TryFindResource(isEntity ? "ImageSymbolTemplateEntity" : "ImageSymbolTemplateString") as DataTemplate;
                 }
-                return fe.TryFindResource(templateKey) as DataTemplate;
+                return Application.Current.TryFindResource(templateKey) as DataTemplate;
             }
             return base.SelectTemplate(item, container);
         }
