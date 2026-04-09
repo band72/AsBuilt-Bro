@@ -26,6 +26,8 @@ public partial class GeneralSettingsWindow : Window
             // ── JEA settings ──────────────────────────────────────────────
             RCS.Services.GlobalSettingsService.SaveSetting("JeaTemplatePath",            vm.JeaTemplatePath);
             RCS.Services.GlobalSettingsService.SaveSetting("JeaStatePlaneZone",          vm.JeaStatePlaneZone);
+            // ── Script Auto-Save ────────────────────────────────────────
+            RCS.Services.GlobalSettingsService.SaveSetting("CogoScriptDefaultSavePath",  vm.CogoScriptDefaultSavePath);
             // ── DXF Blocks Library ──────────────────────────────────────
             RCS.Services.GlobalSettingsService.SaveSetting("RcsBlocksPath",              vm.RcsBlocksPath);
         }
@@ -41,6 +43,20 @@ public partial class GeneralSettingsWindow : Window
         };
         if (dlg.ShowDialog() == true && DataContext is ViewModels.ShellViewModel vm)
             vm.JeaTemplatePath = dlg.FileName;
+    }
+
+    private void BrowseCogoScriptPath_Click(object sender, RoutedEventArgs e)
+    {
+        var dlg = new Microsoft.Win32.OpenFolderDialog
+        {
+            Title = "Select Default Cogo Script Save Folder",
+            Multiselect = false,
+            InitialDirectory = (DataContext as ViewModels.ShellViewModel)?.CogoScriptDefaultSavePath ?? string.Empty
+        };
+        if (dlg.ShowDialog() == true && DataContext is ViewModels.ShellViewModel vm)
+        {
+            vm.CogoScriptDefaultSavePath = dlg.FolderName;
+        }
     }
 
     private void BrowseBlocksPath_Click(object sender, RoutedEventArgs e)

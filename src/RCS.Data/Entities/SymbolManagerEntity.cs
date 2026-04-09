@@ -63,6 +63,16 @@ public class SymbolManagerEntity : INotifyPropertyChanged
         } 
     }
 
+    private string? _dxfBlock;
+
+    [Column("DxfBlock")]
+    public string? DxfBlock 
+    { 
+        get => _dxfBlock; 
+        set { _dxfBlock = value; OnPropertyChanged(); } 
+    }
+
+
     [NotMapped]
     public string Fill
     {

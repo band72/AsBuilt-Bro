@@ -11,7 +11,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>  <!-- DXF Blocks Library -->
+            <RowDefinition Height="Auto"/>  <!-- Cogo Marker -->
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -65,8 +67,31 @@
             </StackPanel>
         </GroupBox>
 
+        <!-- Script Auto-Save Path -->
+        <GroupBox Grid.Row="5" Header="Script Auto-Save Path" Foreground="#F2C94C"
+                  BorderBrush="#8A6E1E" Margin="0,0,0,15">
+            <StackPanel Margin="10">
+                <TextBlock Text="Default folder to save .cogo scripts when no project is loaded:" Foreground="#AABBCC" Margin="0,0,0,4" FontSize="11"
+                           ToolTip="The system will automatically create a timestamped folder inside this path."/>
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="CogoScriptSavePathBox"
+                             Text="{Binding CogoScriptDefaultSavePath, UpdateSourceTrigger=PropertyChanged}"
+                             Background="#252932" Foreground="White" BorderBrush="#8A6E1E"
+                             Padding="4,3" VerticalContentAlignment="Center"
+                             ToolTip="Full path to the default script save folder."/>
+                    <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0"
+                            Background="#3A2C1A" Foreground="#F2C94C" BorderBrush="#8A6E1E"
+                            Padding="10,3" Click="BrowseCogoScriptPath_Click"/>
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+
         <!-- DXF Blocks Library -->
-        <GroupBox Grid.Row="5" Header="DXF Blocks Library" Foreground="#44E08B"
+        <GroupBox Grid.Row="6" Header="DXF Blocks Library" Foreground="#44E08B"
                   BorderBrush="#266040" Margin="0,0,0,15">
             <StackPanel Margin="10">
                 <TextBlock Text="RCS_Blocks directory path:" Foreground="#AABBCC" Margin="0,0,0,4" FontSize="11"
@@ -91,7 +116,7 @@
         </GroupBox>
 
         <!-- Cogo Marker GroupBox -->
-        <GroupBox Grid.Row="6" Header="Cogo Marker" Foreground="White" BorderBrush="#555555" Margin="0,0,0,15">
+        <GroupBox Grid.Row="7" Header="Cogo Marker" Foreground="White" BorderBrush="#555555" Margin="0,0,0,15">
             <StackPanel Margin="10">
                 <Grid Margin="0,5">
                     <Grid.ColumnDefinitions>
@@ -137,7 +162,7 @@
         </GroupBox>
 
         <!-- Save button is basically Close -->
-        <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
             <Button Content="Close" Click="Close_Click" Padding="20,5" Background="#2D2D30" Foreground="White" BorderBrush="#3E3E42" BorderThickness="1"/>
         </StackPanel>
     </Grid>

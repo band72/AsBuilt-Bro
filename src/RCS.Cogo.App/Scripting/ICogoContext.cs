@@ -146,4 +146,9 @@ public interface ICogoContext
     /// Action to open the Help UI with all commands.
     /// </summary>
     System.Action<IEnumerable<ICommand>>? OpenHelpWindowAction { get; set; }
+
+    /// <summary>
+    /// Gets or sets the folder path of the currently active project.
+    /// </summary>
+    string? ProjectDirectory { get; set; }
 }

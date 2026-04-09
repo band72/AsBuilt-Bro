@@ -82,9 +82,11 @@ public static class DbInitializer
                     ""SystemCode"" TEXT NULL,
                     ""Symbol"" TEXT NULL,
                     ""Type"" TEXT NULL,
-                    ""Discipline"" TEXT NULL
+                    ""Discipline"" TEXT NULL,
+                    ""DxfBlock"" TEXT NULL
                 );
             ");
+            try { context.Database.ExecuteSqlRaw("ALTER TABLE \"SymbolManager\" ADD COLUMN \"DxfBlock\" TEXT NULL;"); } catch { }
              // Clean up old bugged default seed data (which conflicted with symbol file names)
              var buggedCodes = new[] { "JEAWV", "JEAWF", "JEAWH", "STM", "JEASTF", "MH", "WWF", "GASV", "GASF", "GMET", "EPOLE", "EMH", "EBOX", "EMETER" };
              var toRemove = context.CogoCodes.Where(c => buggedCodes.Contains(c.LocalCode)).ToList();

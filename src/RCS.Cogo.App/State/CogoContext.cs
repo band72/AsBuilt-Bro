@@ -57,6 +57,7 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
     public Action<string, string>? SaveProfileAlignmentAction { get; set; }
     public Action? SyncPointsAction { get; set; }
     public Action<IEnumerable<ICommand>>? OpenHelpWindowAction { get; set; }
+    public string? ProjectDirectory { get; set; }
 
     public void AddPoint(string pointId, Point3D point, string description = "")
     {

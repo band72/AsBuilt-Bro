@@ -90,7 +90,8 @@ public class SymbolManagerViewModel : INotifyPropertyChanged
             SystemCode = s.SystemCode,
             Symbol = s.Symbol,
             Type = s.Type,
-            Discipline = s.Discipline
+            Discipline = s.Discipline,
+            DxfBlock = s.DxfBlock
         }).ToList();
 
         db.SymbolManagers.AddRange(entities);
@@ -134,6 +135,7 @@ public class SymbolManagerViewModel : INotifyPropertyChanged
                         string symbol = (parts.Length >= 3) ? parts[2].Trim() : "";
                         string type = (parts.Length >= 4) ? parts[3].Trim() : "";
                         string discipline = (parts.Length >= 5) ? parts[4].Trim() : "";
+                        string dxfBlock = (parts.Length >= 6) ? parts[5].Trim() : "";
 
                         // If they are missing in the import, fall back gracefully to the existing configured memory state
                         if (existing != null)
@@ -141,6 +143,7 @@ public class SymbolManagerViewModel : INotifyPropertyChanged
                             if (string.IsNullOrEmpty(symbol)) symbol = existing.Symbol ?? "";
                             if (string.IsNullOrEmpty(type)) type = existing.Type ?? "";
                             if (string.IsNullOrEmpty(discipline)) discipline = existing.Discipline ?? "";
+                            if (string.IsNullOrEmpty(dxfBlock)) dxfBlock = existing.DxfBlock ?? "";
                         }
 
                         // Validate! If the data supplied in the CSV doesn't exist in our Combobox ItemsSources, null it.
@@ -155,7 +158,8 @@ public class SymbolManagerViewModel : INotifyPropertyChanged
                             SystemCode = systemCode,
                             Symbol = symbol,
                             Type = type,
-                            Discipline = discipline
+                            Discipline = discipline,
+                            DxfBlock = dxfBlock
                         });
                     }
                 }
@@ -183,7 +187,7 @@ public class SymbolManagerViewModel : INotifyPropertyChanged
                 var sb = new System.Text.StringBuilder();
                 foreach (var s in Symbols)
                 {
-                    sb.AppendLine($"{s.ClientCode},{s.SystemCode},{s.Symbol},{s.Type},{s.Discipline}");
+                    sb.AppendLine($"{s.ClientCode},{s.SystemCode},{s.Symbol},{s.Type},{s.Discipline},{s.DxfBlock}");
                 }
                 System.IO.File.WriteAllText(dialog.FileName, sb.ToString());
                 System.Windows.MessageBox.Show($"Exported {Symbols.Count} symbols to {dialog.FileName}", "Export Successful");

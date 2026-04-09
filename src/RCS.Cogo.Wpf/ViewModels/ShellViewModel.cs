@@ -245,6 +245,7 @@ public partial class ShellViewModel : ViewModelBase
             if (SetField(ref _currentProject, value))
             {
                 OnPropertyChanged(nameof(HasActiveProject));
+                if (_context != null) _context.ProjectDirectory = _currentProject?.SaveLocation;
                 _ = LoadInstalledAssetsAsync();
                 UpdateWindowTitle();
             }
@@ -588,6 +589,13 @@ public partial class ShellViewModel : ViewModelBase
         set { _jeaTemplatePath = value ?? string.Empty; OnPropertyChanged(); }
     }
 
+    private string _cogoScriptDefaultSavePath = string.Empty;
+    public string CogoScriptDefaultSavePath
+    {
+        get => _cogoScriptDefaultSavePath;
+        set { _cogoScriptDefaultSavePath = value ?? string.Empty; OnPropertyChanged(); }
+    }
+
     private string _rcsBlocksPath = string.Empty;
     /// <summary>User-overridable path to the RCS_Blocks .dwg library folder.
     /// When empty, EditCogoCodeWindow auto-detects by walking up the directory tree.</summary>
@@ -901,6 +909,9 @@ public partial class ShellViewModel : ViewModelBase
             JeaStatePlaneZone = RCS.Services.GlobalSettingsService.GetSetting("JeaStatePlaneZone", "Florida East (EPSG:2236)");
             // ── DXF Blocks Library ───────────────────────────────────────────
             RcsBlocksPath = RCS.Services.GlobalSettingsService.GetSetting("RcsBlocksPath", string.Empty);
+            
+            // ── Script Auto-Save Path ────────────────────────────────────────
+            CogoScriptDefaultSavePath = RCS.Services.GlobalSettingsService.GetSetting("CogoScriptDefaultSavePath", Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
         }
         catch (Exception ex)
         {
@@ -1048,6 +1059,7 @@ public partial class ShellViewModel : ViewModelBase
         ImportS1AProjectCommand          = new RelayCommand(_ => ImportS1AProjectFromExcel());
 
         CloseCommand = new RelayCommand(_ => System.Windows.Application.Current.Shutdown());
+        OpenErrorReportCommand = new RelayCommand(_ => new Views.ErrorReportWindow() { Owner = System.Windows.Application.Current.MainWindow }.ShowDialog());
         AboutCommand = new RelayCommand(_ =>
         {
             var ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
@@ -1311,6 +1323,7 @@ public partial class ShellViewModel : ViewModelBase
 
     public System.Windows.Input.ICommand CloseCommand { get; }
     public System.Windows.Input.ICommand AboutCommand { get; }
+    public System.Windows.Input.ICommand OpenErrorReportCommand { get; }
 
     private void OpenConvertImage()
     {

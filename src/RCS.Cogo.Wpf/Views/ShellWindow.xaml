@@ -326,6 +326,7 @@
                 <MenuItem Header="Gas Script V2" Command="{Binding OpenExampleGasV2Command}"/>
                 <MenuItem Header="Electric Script V2" Command="{Binding OpenExampleElectricV2Command}"/>
                 <Separator/>
+                <MenuItem Header="Report a Bug / Error..." Command="{Binding OpenErrorReportCommand}" Foreground="#FF6B6B" FontWeight="Bold"/>
                 <MenuItem Header="_About" Command="{Binding AboutCommand}"/>
             </MenuItem>
         </Menu>

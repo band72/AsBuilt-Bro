@@ -31,24 +31,52 @@ namespace RCS.Data.Migrations
                     b.ToTable("GlobalSettings");
                 });
 
+            modelBuilder.Entity("RCS.Data.Entities.AssetSubtypeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SubtypeName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AssetSubtypes");
+                });
+
             modelBuilder.Entity("RCS.Data.Entities.ChilledLocateBox", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DropType")
@@ -57,7 +85,10 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -72,16 +103,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -96,14 +142,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -124,28 +170,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -166,6 +233,9 @@ namespace RCS.Data.Migrations
 
                     b.Property<string>("Block")
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("BlockScale")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -189,19 +259,28 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DropType")
@@ -210,7 +289,10 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -225,16 +307,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -249,14 +346,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -277,28 +374,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -316,14 +434,17 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
+
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("DescriptionText")
                         .HasColumnType("TEXT");
@@ -331,8 +452,26 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Discipline")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("DropType")
                         .HasColumnType("TEXT");
+
+                    b.Property<double?>("Easting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
                         .HasColumnType("TEXT");
@@ -346,7 +485,7 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
@@ -355,14 +494,32 @@ namespace RCS.Data.Migrations
                     b.Property<bool>("IsClosed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Layer")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -378,14 +535,17 @@ namespace RCS.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("Northing")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -406,6 +566,9 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("ScriptContent")
                         .HasColumnType("TEXT");
 
@@ -415,22 +578,40 @@ namespace RCS.Data.Migrations
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -478,17 +659,17 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
                         .HasColumnType("TEXT");
@@ -498,13 +679,25 @@ namespace RCS.Data.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("DropType")
                         .HasColumnType("TEXT");
 
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -519,16 +712,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -543,14 +751,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -571,31 +779,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("TurnsToOpen")
+                        .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -617,19 +843,28 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DropType")
@@ -638,7 +873,10 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -653,16 +891,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -677,14 +930,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -705,28 +958,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -791,17 +1065,17 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
                         .HasColumnType("TEXT");
@@ -811,13 +1085,25 @@ namespace RCS.Data.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("DropType")
                         .HasColumnType("TEXT");
 
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -832,16 +1118,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -856,14 +1157,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -884,28 +1185,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -961,19 +1283,16 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
 
-                    b.Property<double?>("Diameter")
+                    b.Property<double?>("DepthToNut")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
@@ -984,13 +1303,25 @@ namespace RCS.Data.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("DropType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("EastingEnd")
+                    b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("EastingStart")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -1005,28 +1336,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("GradeElevationAtInvertEnd")
-                        .HasColumnType("REAL");
-
-                    b.Property<double?>("GradeElevationAtInvertStart")
-                        .HasColumnType("REAL");
-
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InvertEnd")
+                    b.Property<double?>("Latitude")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("InvertStart")
+                    b.Property<double?>("Length")
                         .HasColumnType("REAL");
 
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -1038,20 +1372,17 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Material")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("NorthingEnd")
+                    b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("NorthingStart")
+                    b.Property<double?>("NutElevation")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -1072,28 +1403,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -1115,11 +1467,8 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
@@ -1127,16 +1476,34 @@ namespace RCS.Data.Migrations
                     b.Property<string>("CrossingNumber")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DropType")
                         .HasColumnType("TEXT");
 
                     b.Property<double?>("Easting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -1151,20 +1518,26 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("FinishedGradeElevation")
-                        .HasColumnType("REAL");
-
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
                         .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
 
                     b.Property<double?>("LowerCover")
                         .HasColumnType("REAL");
@@ -1176,6 +1549,12 @@ namespace RCS.Data.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("LowerPipeType")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -1190,14 +1569,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -1218,6 +1597,9 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<double?>("Separation")
                         .HasColumnType("REAL");
 
@@ -1227,16 +1609,25 @@ namespace RCS.Data.Migrations
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
@@ -1257,7 +1648,16 @@ namespace RCS.Data.Migrations
                     b.Property<string>("UpperPipeType")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -1318,19 +1718,28 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DropType")
@@ -1339,7 +1748,10 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -1354,16 +1766,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -1378,14 +1805,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -1406,28 +1833,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -1445,19 +1893,28 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DropType")
@@ -1466,7 +1923,10 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -1481,16 +1941,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -1505,14 +1980,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -1533,28 +2008,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -1572,19 +2068,28 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DropType")
@@ -1593,7 +2098,10 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -1608,16 +2116,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -1632,14 +2155,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -1660,28 +2183,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -1699,17 +2243,17 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
                         .HasColumnType("TEXT");
@@ -1719,13 +2263,25 @@ namespace RCS.Data.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("DropType")
                         .HasColumnType("TEXT");
 
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -1740,16 +2296,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -1764,14 +2335,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -1792,28 +2363,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -1877,6 +2469,10 @@ namespace RCS.Data.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("Discipline");
 
+                    b.Property<string>("DxfBlock")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("DxfBlock");
+
                     b.Property<string>("Symbol")
                         .HasColumnType("TEXT")
                         .HasColumnName("Symbol");
@@ -1925,17 +2521,17 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
                         .HasColumnType("TEXT");
@@ -1945,13 +2541,25 @@ namespace RCS.Data.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("DropType")
                         .HasColumnType("TEXT");
 
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -1966,16 +2574,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -1990,9 +2613,6 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
-                        .HasColumnType("TEXT");
-
                     b.Property<double?>("NutElevation")
                         .HasColumnType("REAL");
 
@@ -2001,9 +2621,6 @@ namespace RCS.Data.Migrations
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -2024,34 +2641,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
                         .HasColumnType("REAL");
 
                     b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -2073,19 +2705,28 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DropType")
@@ -2094,7 +2735,10 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -2109,16 +2753,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -2133,14 +2792,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -2161,28 +2820,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -2200,19 +2880,28 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DropType")
@@ -2221,7 +2910,10 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -2236,16 +2928,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -2260,14 +2967,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -2288,28 +2995,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")
@@ -2327,19 +3055,28 @@ namespace RCS.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("AdjustedInvert")
+                    b.Property<double?>("Cover")
                         .HasColumnType("REAL");
-
-                    b.Property<string>("Confidence")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Depth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DepthToNut")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Discipline")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("DownstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("DownstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("DownstreamPointId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DropType")
@@ -2348,7 +3085,10 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Easting")
                         .HasColumnType("REAL");
 
-                    b.Property<double?>("Elevation")
+                    b.Property<double?>("EndEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("EndNorthing")
                         .HasColumnType("REAL");
 
                     b.Property<string>("ExteriorJointTapeManufacturer")
@@ -2363,16 +3103,31 @@ namespace RCS.Data.Migrations
                     b.Property<string>("FeatureType")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("InnerDiameter")
+                    b.Property<double?>("GradeElevation")
                         .HasColumnType("REAL");
 
                     b.Property<string>("InvertElevationsWithDirections")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Length")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("LiningManufacturer")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LiningMaterial")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("LowestInvertElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ManholeType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Manufacturer")
@@ -2387,14 +3142,14 @@ namespace RCS.Data.Migrations
                     b.Property<double?>("Northing")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Notes")
+                    b.Property<double?>("NutElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("OpenDirection")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Orientation")
                         .HasColumnType("TEXT");
-
-                    b.Property<double?>("OuterWallThicknessTop")
-                        .HasColumnType("REAL");
 
                     b.Property<string>("PartKey")
                         .HasColumnType("TEXT");
@@ -2415,28 +3170,49 @@ namespace RCS.Data.Migrations
                     b.Property<string>("RfidBarcode")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("RimElevation")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Size")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SizeSecondary")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
-                        .HasColumnType("TEXT");
+                    b.Property<double?>("Slope")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("SourceSheetRowIndex")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("StartEasting")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("StartNorthing")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Subtype")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("TopOutsideWallElev")
+                    b.Property<double?>("TopElevation")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("TurnsToOpen")
                         .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Warning")
+                    b.Property<double?>("UpstreamGrade")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("UpstreamInvert")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("UpstreamPointId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ValveType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YearManufactured")

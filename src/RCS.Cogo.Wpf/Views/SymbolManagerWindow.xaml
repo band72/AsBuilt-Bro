@@ -57,10 +57,7 @@
             </DataGrid.Resources>
             
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Client Code" Binding="{Binding ClientCode}" Width="*"/>
-                <DataGridTextColumn Header="System Code" Binding="{Binding SystemCode}" Width="*"/>
-                
-                <DataGridTemplateColumn Header="Symbol" Width="2*">
+                <DataGridTemplateColumn Header="Symbol" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="5,0" VerticalAlignment="Center">
@@ -90,6 +87,9 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Client Code" Binding="{Binding ClientCode}" Width="*"/>
+                <DataGridTextColumn Header="System Code" Binding="{Binding SystemCode}" Width="*"/>
                 
                 <DataGridComboBoxColumn Header="Type" 
                                         SelectedItemBinding="{Binding Type}" 
@@ -98,6 +98,8 @@
                 <DataGridComboBoxColumn Header="Discipline" 
                                         SelectedItemBinding="{Binding Discipline}" 
                                         ItemsSource="{Binding Source={x:Static local:SymbolManagerStaticSource.Disciplines}}" Width="*"/>
+                                        
+                <DataGridTextColumn Header="DXF Block" Binding="{Binding DxfBlock}" Width="1.5*"/>
             </DataGrid.Columns>
         </DataGrid>
         
