@@ -35,6 +35,7 @@ Source: "src\RCS.Cogo.Wpf\bin\Release\net8.0-windows\win-x64\publish\*"; DestDir
 
 ; Additional necessary assets
 Source: "SymbolsLibrary\*"; DestDir: "{app}\SymbolsLibrary"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "RCS_Blocks\*";     DestDir: "{app}\RCS_Blocks";     Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "docs\*";           DestDir: "{app}\docs";          Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "SampleScripts\*"; DestDir: "{app}\SampleScripts"; Flags: ignoreversion recursesubdirs createallsubdirs
 
