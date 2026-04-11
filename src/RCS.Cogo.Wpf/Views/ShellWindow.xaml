@@ -274,6 +274,10 @@
                     <MenuItem Header="📂 Load Oakwood Example Script into Editor"
                               Command="{Binding LoadOakwoodExampleCommand}"
                               ToolTip="Loads the JEA_Oakwood_WaterMain_70498-W1A.cogo script into the Script Editor.&#x0a;Run it to see a complete as-built project in action."/>
+                    <Separator/>
+                    <MenuItem Header="📥 Data Import Reference Guide"
+                              Command="{Binding OpenImportReferenceCommand}"
+                              ToolTip="All import formats explained: COGO script, PNEZD text file, JEA Excel template, Pipe CSV.&#x0a;Includes column layouts, examples, rules, and common error fixes."/>
                 </MenuItem>
                 <Separator/>
                 <MenuItem Header="📖 User Manual" Command="{Binding OpenManualCommand}"/>

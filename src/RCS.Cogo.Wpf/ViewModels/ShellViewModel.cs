@@ -1189,6 +1189,7 @@ public partial class ShellViewModel : ViewModelBase
         // JEA end-to-end example project
         OpenExampleWalkthroughCommand = new RelayCommand(_ => OpenDocument("docs\\EXAMPLE_PROJECT_WALKTHROUGH.md"));
         LoadOakwoodExampleCommand     = new RelayCommand(_ => OpenDocument("SampleScripts\\JEA_Oakwood_WaterMain_70498-W1A.cogo"));
+        OpenImportReferenceCommand    = new RelayCommand(_ => OpenDocument("docs\\DATA_IMPORT_REFERENCE.md"));
 
         OpenExampleGasCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Gas_Script_Example.txt"));
         OpenExampleElectricCommand = new RelayCommand(_ => OpenDocument("docs\\examples\\Electric_Script_Example.txt"));
@@ -1393,6 +1394,7 @@ public partial class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand OpenTutorial07Command { get; }
     public System.Windows.Input.ICommand OpenExampleWalkthroughCommand { get; }
     public System.Windows.Input.ICommand LoadOakwoodExampleCommand { get; }
+    public System.Windows.Input.ICommand OpenImportReferenceCommand { get; }
     
     public System.Windows.Input.ICommand OpenExampleGasCommand { get; }
     public System.Windows.Input.ICommand OpenExampleElectricCommand { get; }
