@@ -1,5 +1,6 @@
-using Microsoft.EntityFrameworkCore;
+#pragma warning disable EF1002
 
+using Microsoft.EntityFrameworkCore;
 namespace RCS.Data;
 
 public static class DbInitializer

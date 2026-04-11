@@ -5,7 +5,7 @@ namespace RCS.Alignments.Core;
 
 public class ArcElement : HorizontalElement
 {
-    public Point3D CenterPoint { get; set; }
+    public required Point3D CenterPoint { get; set; }
     public double Radius { get; set; }
     public double StartAzimuth { get; set; }
     public double EndAzimuth { get; set; }

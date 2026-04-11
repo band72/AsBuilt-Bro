@@ -5,8 +5,8 @@ namespace RCS.Alignments.Core;
 
 public class LineElement : HorizontalElement
 {
-    public Point3D StartPoint { get; set; }
-    public Point3D EndPoint { get; set; }
+    public required Point3D StartPoint { get; set; }
+    public required Point3D EndPoint { get; set; }
     
     public override double Length 
     {
