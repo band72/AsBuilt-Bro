@@ -1,0 +1,233 @@
+// =============================================================================
+//  COMPLETE JEA AS-BUILT EXAMPLE PROJECT
+//  Project:  Oakwood Subdivision — Phase 1 Water Main Extension
+//  AvailNo:  70498-W1A
+//  Utility:  Water (8" PVC C-900)
+//  Units:    US Survey Feet  |  CRS: FL State Plane East (NAD83)
+//  Engineer: R. Collins, PSM — License FL-7423
+//  Date:     April 11, 2026
+//
+//  Scope: 640 LF of 8" water main installed in Oakwood Drive ROW.
+//         One hot tap, two gate valves, one fire hydrant, four services.
+//         Boundary figure of disturbed ROW is verified with MAPCHECK.
+//
+//  Script Sections:
+//    §1  Control Points
+//    §2  Water Main Backbone (Pipe Points)
+//    §3  Appurtenances (Valve, Hydrant, Service Laterals)
+//    §4  Disturbed Area Boundary Figure
+//    §5  MAPCHECK — Closure & Area Report
+//    §6  Pipe Network (Pressure Main)
+//    §7  Point Renumber to JEA Numbering Convention
+//    §8  Export Commands
+// =============================================================================
+
+RESET
+ECHO "==================================================================="
+ECHO " JEA AS-BUILT  |  70498-W1A  |  Oakwood Subdivision  |  Phase 1"
+ECHO "==================================================================="
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §1  CONTROL POINTS
+//     Two NGS-published monuments used for project control.
+//     These are the "known" starting points anchored to the state plane grid.
+// ─────────────────────────────────────────────────────────────────────────────
+
+ECHO "--- §1: Establishing Control ---"
+
+NE 1  740100.000  974500.000  "MON-A  NGS PID AA1234  Brass Disk in Conc"
+NE 2  740100.000  975140.000  "MON-B  NGS PID AA5678  Brass Disk in Conc"
+
+// Occupy Monument A, orient to Monument B
+STN 1
+BS 2  0.0000
+
+ECHO "Control established. Occupying MON-A, backsighting MON-B."
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §2  WATER MAIN BACKBONE POINTS
+//     Points 100–108 define the centerline of the new 8" water main.
+//     Captured by field GPS/RTK, verified against as-built stationing.
+//     Shots proceed East along Oakwood Drive, then curve South on Oak Ct.
+// ─────────────────────────────────────────────────────────────────────────────
+
+ECHO "--- §2: Water Main Backbone ---"
+
+// Tie-in point — existing 8" main at Oakwood Dr & Pine Ave intersection
+NE 100  740132.450  974518.330  "W-TIE  8in HOTAP  EXIST MAIN  STA 0+00"
+
+// Mainline runs East along Oakwood Drive
+NE 101  740132.450  974618.420  "W-MAIN  8in PVC  STA 1+00.09"
+NE 102  740132.450  974718.510  "W-MAIN  8in PVC  STA 2+00.18"
+NE 103  740132.450  974818.600  "W-MAIN  8in PVC  STA 3+00.27"
+NE 104  740132.450  974918.690  "W-MAIN  8in PVC  STA 4+00.36"
+
+// Bend South into Oak Court — 45-degree elbow at PT 104
+NE 105  740082.450  974968.690  "W-MAIN  8in PVC  45-ELL  STA 4+50"
+NE 106  740032.450  974968.690  "W-MAIN  8in PVC  STA 5+00"
+NE 107  739982.450  974968.690  "W-MAIN  8in PVC  STA 5+50"
+
+// Deadend cap — end of new water main
+NE 108  739952.450  974968.690  "W-END  8in DEADEND CAP  STA 5+66.2"
+
+ECHO "Backbone: 9 water main points defined."
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §3  APPURTENANCES  (Valves, Hydrant, Service Laterals)
+//     JEA naming convention: W-GV = Gate Valve, W-HYD = Hydrant,
+//     W-SVC = Service Lateral, W-TIE = Tie-in / Hot Tap
+// ─────────────────────────────────────────────────────────────────────────────
+
+ECHO "--- §3: Valves, Hydrant, and Services ---"
+
+// Gate Valve at tie-in (isolation valve on new main)
+NE 200  740132.450  974528.330  "W-GV-01  8in GATE VALVE  STA 0+10"
+
+// Gate Valve at bend before Oak Court
+NE 201  740132.450  974908.690  "W-GV-02  8in GATE VALVE  STA 3+90"
+
+// Fire Hydrant — located off Oak Court, east side stub
+NE 210  740080.200  974950.100  "W-HYD-01  JEA STD HYDRANT  6in LATERAL"
+
+// Service Laterals — 1-inch copper services to private lots
+NE 300  740132.450  974660.000  "W-SVC-01  1in COPPER  LOT 1  STA 1+41.7"
+NE 301  740132.450  974720.000  "W-SVC-02  1in COPPER  LOT 2  STA 2+01.7"
+NE 302  740132.450  974792.000  "W-SVC-03  1in COPPER  LOT 3  STA 2+73.7"
+NE 303  740082.450  974968.690  "W-SVC-04  1in COPPER  LOT 4  STA 4+50"
+
+ECHO "Appurtenances: 2 gate valves, 1 hydrant, 4 service laterals."
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §4  DISTURBED AREA BOUNDARY FIGURE
+//     ROW limits of construction — used for permit closure verification.
+//     Represents the outer edge of excavation footprint (±12 ft each side).
+//     This polygon is what MAPCHECK will analyze for closure.
+// ─────────────────────────────────────────────────────────────────────────────
+
+ECHO "--- §4: ROW Disturbance Boundary Figure ---"
+
+// North side of Oakwood Drive (12 ft north of CL = N 740144.45)
+NE 400  740144.450  974518.330  "ROW-NW  CORNER  DISTURBANCE LIMIT"
+NE 401  740144.450  974968.690  "ROW-NE  CORNER"
+
+// East cap of Oak Court (12 ft east of CL = E 974980.69)
+NE 402  739952.450  974980.690  "ROW-SE  CORNER"
+
+// South side of Oak Court (12 ft south of CL = N 739940.45)
+NE 403  739940.450  974968.690  "ROW-SW  OAK CT"
+NE 404  739940.450  974968.690  "ROW-CORNER  OAK CT SOUTH"
+
+// West return — south side of Oakwood Drive at tie-in
+NE 405  740120.450  974518.330  "ROW-SW  CORNER  DISTURBANCE LIMIT"
+
+// Build the boundary figure  — must close back to pt 400
+BEG ROW_DISTURBANCE
+FIG 400
+FIG 401
+FIG 402
+FIG 403
+FIG 405
+FIG 400
+END
+
+ECHO "Boundary figure ROW_DISTURBANCE built."
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §5  MAPCHECK  —  Closure & Area Report
+//     This is the PRIMARY QC step. The report must show:
+//       • Closure Error  ≤ 0.05 ft     (JEA standard)
+//       • Precision      ≥ 1:5,000     (minimum acceptable)
+//       • Area in sq ft and acres
+//     Results are automatically persisted to the ROW_DISTURBANCE figure.
+// ─────────────────────────────────────────────────────────────────────────────
+
+ECHO "--- §5: MAPCHECK — Closure Verification ---"
+MAPCHECK ROW_DISTURBANCE
+
+ECHO ""
+ECHO "* If Closure Error is shown in RED above, check field data for"
+ECHO "  the flagged bearing/distance before generating the DXF."
+ECHO ""
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §6  PIPE NETWORK  (Pressure Main — renders pipe runs on canvas)
+//     PRUN maps the hydraulic connectivity between main points.
+//     JEA code W = Water.  Diameter 8in.  Material PVC.
+// ─────────────────────────────────────────────────────────────────────────────
+
+ECHO "--- §6: Water Main Pipe Network ---"
+
+cogo-engine-off
+pipe-engine-on
+
+// Backbone runs — 8" water main
+PRUN START  100  101  W  8.0  0.00
+PRUN START  101  102  W  8.0  0.00
+PRUN START  102  103  W  8.0  0.00
+PRUN START  103  104  W  8.0  0.00
+PRUN START  104  105  W  8.0  0.00
+PRUN START  105  106  W  8.0  0.00
+PRUN START  106  107  W  8.0  0.00
+PRUN START  107  108  W  8.0  0.00
+
+// Hydrant lateral — 6" from main at PT 105
+PRUN LATERAL  105  210  W  6.0  0.00
+
+// Service laterals — 1" from main to meter
+PRUN LATERAL  101  300  W  1.0  0.00
+PRUN LATERAL  102  301  W  1.0  0.00
+PRUN LATERAL  103  302  W  1.0  0.00
+PRUN LATERAL  105  303  W  1.0  0.00
+
+pipe-engine-off
+cogo-engine-on
+
+ECHO "Pipe network rendered on canvas."
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §7  RENUMBER TO JEA CONVENTION
+//     JEA deliverables require point IDs starting at 1001.
+//     Main backbone: 1001–1008
+//     Appurtenances: 2001–2010
+//     Boundary:      4001–4005
+// ─────────────────────────────────────────────────────────────────────────────
+
+ECHO "--- §7: Renumbering to JEA Convention ---"
+
+RENUMBER 100 108  1001   // Water main backbone → 1001–1009
+RENUMBER 200 201  2001   // Gate valves         → 2001–2002
+RENUMBER 210 210  2010   // Fire hydrant        → 2010
+RENUMBER 300 303  2020   // Service laterals    → 2020–2023
+RENUMBER 400 405  4001   // ROW boundary        → 4001–4006
+
+LIST PTS
+LIST FIGS
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §8  EXPORT COMMANDS
+//     These commands trigger the deliverable generation pipeline.
+//     Each produces a file in the project's SaveLocation directory.
+// ─────────────────────────────────────────────────────────────────────────────
+
+ECHO "--- §8: Generating Deliverables ---"
+
+ECHO "  → DXF: Use menu  File > Export > Full Project DXF"
+ECHO "         Output: [Project Folder]\[ProjectName].dxf"
+ECHO "         Includes: Survey points, figures, pipe network, closure tables"
+ECHO ""
+ECHO "  → CSV Points: Use menu  File > Export > COGO Points CSV"
+ECHO "         Output: [Project Folder]\COGO_Points.csv"
+ECHO "         Format: Point, Northing, Easting, Elevation, Description"
+ECHO ""
+ECHO "  → JEA COGO Script: Use menu  File > Export > JEA As-Built COGO Script"
+ECHO "         Output: [Project Folder]\JEA_AsBuilt_COGO_[Date].txt"
+ECHO ""
+ECHO "  → Validation: Use menu  Validation > JEA As-Built Validation"
+ECHO "         Reviews all assets for completeness and naming compliance."
+ECHO ""
+
+ECHO "==================================================================="
+ECHO " SCRIPT COMPLETE — Project 70498-W1A"
+ECHO " Review MAPCHECK output above before generating final DXF."
+ECHO " Precision must be ≥ 1:5000 to pass JEA acceptance criteria."
+ECHO "==================================================================="
