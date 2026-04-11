@@ -265,6 +265,17 @@
                           ToolTip="Open all 7 tables in one window"/>
             </MenuItem>
             <MenuItem Header="_Help">
+                <!-- ═══ EXAMPLE PROJECT — recommended first stop ═══ -->
+                <MenuItem Header="🚀 Example Project (Oakwood Water Main)" FontWeight="Bold" Foreground="#44E08B">
+                    <MenuItem Header="📋 Step-by-Step Walkthrough Guide"
+                              Command="{Binding OpenExampleWalkthroughCommand}"
+                              FontWeight="SemiBold"
+                              ToolTip="Opens the full end-to-end project walkthrough in your default text editor.&#x0a;Covers: project creation → MAPCHECK → DXF export → submission checklist."/>
+                    <MenuItem Header="📂 Load Oakwood Example Script into Editor"
+                              Command="{Binding LoadOakwoodExampleCommand}"
+                              ToolTip="Loads the JEA_Oakwood_WaterMain_70498-W1A.cogo script into the Script Editor.&#x0a;Run it to see a complete as-built project in action."/>
+                </MenuItem>
+                <Separator/>
                 <MenuItem Header="📖 User Manual" Command="{Binding OpenManualCommand}"/>
                 <MenuItem Header="Survey Commands" Command="{Binding OpenSurveyCommandsCommand}"/>
                 <MenuItem Header="Pipe Commands" Command="{Binding OpenPipeCommandsCommand}"/>
