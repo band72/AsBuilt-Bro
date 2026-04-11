@@ -14,9 +14,18 @@ public class CogoCode
     {
         get
         {
-            var baseDir = System.AppDomain.CurrentDomain.BaseDirectory;
-            var repoRoot = System.IO.Path.GetFullPath(System.IO.Path.Combine(baseDir, "..", "..", "..", "..", ".."));
-            var libraryPath = System.IO.Path.Combine(repoRoot, "SymbolsLibrary");
+            var baseDir = new System.IO.DirectoryInfo(System.AppDomain.CurrentDomain.BaseDirectory);
+            while (baseDir != null && baseDir.Name != "RCS.Cogo.Enterprise.Modern")
+            {
+                if (baseDir.GetDirectories("SymbolsLibrary").Length > 0)
+                {
+                    break;
+                }
+                baseDir = baseDir.Parent;
+            }
+            var libraryPath = baseDir != null 
+                ? System.IO.Path.Combine(baseDir.FullName, "SymbolsLibrary") 
+                : System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "SymbolsLibrary");
             
             var expectedPath = System.IO.Path.Combine(libraryPath, $"{LocalCode}_{SystemCode}.png");
             if (System.IO.File.Exists(expectedPath))

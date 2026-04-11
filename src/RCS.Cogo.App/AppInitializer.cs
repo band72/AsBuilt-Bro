@@ -51,6 +51,7 @@ public static class AppInitializer
         registry.Register(new SyncPtsCommand());
         registry.Register(new CopyPtCommand());
         registry.Register(new DelPtCommand());
+        registry.Register(new RenumberCommand()); // RENUMBER <StartPt> <EndPt> <NewStart>
         
         // Aliases
         registry.Register(new StartCommand());

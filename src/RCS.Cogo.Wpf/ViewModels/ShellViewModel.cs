@@ -215,6 +215,22 @@ public partial class ShellViewModel : ViewModelBase
     /// </summary>
     public System.ComponentModel.ICollectionView PointsView { get; }
 
+    // ── Points Quick-Filter ───────────────────────────────────────────────────
+    private string _pointsFilter = string.Empty;
+    /// <summary>
+    /// Bound to the Points-tab search TextBox. Filters the PointsView live by
+    /// point number (Id) or Description containing the typed text.
+    /// </summary>
+    public string PointsFilter
+    {
+        get => _pointsFilter;
+        set
+        {
+            if (SetField(ref _pointsFilter, value ?? string.Empty))
+                PointsView.Refresh();
+        }
+    }
+
     public ObservableCollection<FigureViewModel> Figures { get; } = new();
     public ObservableCollection<StructureViewModel> StructureGraphics { get; } = new();
     public ObservableCollection<StructureViewModel> HighlightedAssets { get; } = new();
@@ -589,6 +605,47 @@ public partial class ShellViewModel : ViewModelBase
         set { _jeaTemplatePath = value ?? string.Empty; OnPropertyChanged(); }
     }
 
+    // ── JEA Validation Badge ────────────────────────────────────────────────
+    private int _jeaValidationIssueCount;
+    /// <summary>
+    /// Total issue count (errors + warnings + info) from the last JEA validation
+    /// run. Shown as a badge on the Validate JEA menu item. 0 = never run / clear.
+    /// </summary>
+    public int JeaValidationIssueCount
+    {
+        get => _jeaValidationIssueCount;
+        set
+        {
+            if (SetField(ref _jeaValidationIssueCount, value))
+            {
+                OnPropertyChanged(nameof(JeaValidationBadgeText));
+                OnPropertyChanged(nameof(JeaValidationBadgeVisible));
+            }
+        }
+    }
+
+    private int _jeaValidationErrorCount;
+    /// <summary>Error-only subset of the last validation run.</summary>
+    public int JeaValidationErrorCount
+    {
+        get => _jeaValidationErrorCount;
+        set
+        {
+            if (SetField(ref _jeaValidationErrorCount, value))
+                OnPropertyChanged(nameof(JeaValidationBadgeText));
+        }
+    }
+
+    /// <summary>Human-readable badge label shown on the Validate menu item.</summary>
+    public string JeaValidationBadgeText =>
+        _jeaValidationIssueCount == 0 ? ""
+        : _jeaValidationErrorCount > 0
+            ? $"  ⛔ {_jeaValidationErrorCount} error{(_jeaValidationErrorCount == 1 ? "" : "s")}"
+            : $"  ⚠ {_jeaValidationIssueCount} issue{(_jeaValidationIssueCount == 1 ? "" : "s")}";
+
+    /// <summary>True when a validation has been run and found at least one issue.</summary>
+    public bool JeaValidationBadgeVisible => _jeaValidationIssueCount > 0;
+
     private string _cogoScriptDefaultSavePath = string.Empty;
     public string CogoScriptDefaultSavePath
     {
@@ -714,6 +771,33 @@ public partial class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand ExportJeaCogoScriptCommand { get; private set; } = new RelayCommand(_ => {});
     public System.Windows.Input.ICommand SaveInspectorCommand        { get; private set; } = new RelayCommand(_ => {});
 
+    /// <summary>Resets the Points tab quick-filter to show all points.</summary>
+    public System.Windows.Input.ICommand ClearPointsFilterCommand =>
+        new RelayCommand(_ => PointsFilter = string.Empty);
+
+    // ── Installed Assets Quick-Filter ─────────────────────────────────────────
+    private string _assetsFilter = string.Empty;
+    /// <summary>
+    /// Bound to the Installed Assets tab search TextBox. Filters the
+    /// InstalledAssetsView code-behind via the AssetsFilterChanged event.
+    /// </summary>
+    public string AssetsFilter
+    {
+        get => _assetsFilter;
+        set
+        {
+            if (SetField(ref _assetsFilter, value ?? string.Empty))
+                AssetsFilterChanged?.Invoke(this, _assetsFilter);
+        }
+    }
+
+    /// <summary>Raised when AssetsFilter changes; the View subscribes to apply filtering.</summary>
+    public event EventHandler<string>? AssetsFilterChanged;
+
+    /// <summary>Resets the Installed Assets tab quick-filter.</summary>
+    public System.Windows.Input.ICommand ClearAssetsFilterCommand =>
+        new RelayCommand(_ => AssetsFilter = string.Empty);
+
     private bool _isRunningScript;
     public bool IsRunningScript
     {
@@ -754,6 +838,14 @@ public partial class ShellViewModel : ViewModelBase
             new System.ComponentModel.SortDescription(
                 nameof(PointViewModel.NumericId),
                 System.ComponentModel.ListSortDirection.Ascending));
+        // Live filter: matches Point Number (Id) or Description
+        PointsView.Filter = o =>
+        {
+            if (o is not PointViewModel pt) return false;
+            if (string.IsNullOrWhiteSpace(_pointsFilter)) return true;
+            return (pt.Id?.Contains(_pointsFilter, StringComparison.OrdinalIgnoreCase) == true)
+                || (pt.Description?.Contains(_pointsFilter, StringComparison.OrdinalIgnoreCase) == true);
+        };
 
         var staticCrsRegistry = new StaticCrsRegistry();
         var projNetTransform = new ProjNetCoordinateTransformService(staticCrsRegistry);
@@ -808,16 +900,21 @@ public partial class ShellViewModel : ViewModelBase
                      
                      // Explicit point mapping for LiteDb — skip any entries with a null Point3D
                      // (null Point3D would silently produce 0,0,0 coordinates in the DB)
-                     proj.Points = _context.GetAllPoints()
+                     // The .Where(p => p.Point != null) guard above ensures p.Point is non-null
+                     // inside the Select, but the compiler cannot track nullability across lambdas.
+#pragma warning disable CS8602
+                     var mappedPoints = _context.GetAllPoints()
                          .Where(p => p.Point != null)
                          .Select(p => new RCS.Cogo.App.Models.PointEntry 
                          {
                              Id = p.Id ?? "",
-                             Northing = p.Point!.Northing,
-                             Easting = p.Point!.Easting,
-                             Elevation = p.Point!.Elevation,
+                             Northing = p.Point.Northing,
+                             Easting = p.Point.Easting,
+                             Elevation = p.Point.Elevation,
                              Description = p.Description ?? ""
                          }).ToList();
+#pragma warning restore CS8602
+                     proj.Points = mappedPoints;
 
                      // Ensure SQLite is completely synced at the moment of Save as well
                      try
@@ -2536,19 +2633,69 @@ public class FigureViewModel : ViewModelBase
     public System.Windows.Media.Brush Stroke { get; }
     public System.Collections.ObjectModel.ObservableCollection<FigureLabelViewModel> Labels { get; } = new();
 
-    public FigureViewModel(string name, System.Collections.Generic.IEnumerable<Point3D> points, System.Windows.Media.Brush? stroke = null, System.Collections.Generic.IEnumerable<RCS.Cogo.App.State.FigureLabel>? labels = null)
+    // ── QC Badge properties (populated by MAPCHECK command) ──────────────────
+    public RCS.Cogo.App.State.FigureQcStatus QcStatus { get; }
+    public double?  ClosureError   { get; }
+    public double?  Acres          { get; }
+    public double?  PrecisionRatio { get; }
+    public DateTime? LastQcRun     { get; }
+
+    /// <summary>
+    /// Single-character glyph for the QC badge: ✓ (passed), ✗ (failed), ? (unknown).
+    /// </summary>
+    public string QcGlyph => QcStatus switch
     {
-        Name = name;
+        RCS.Cogo.App.State.FigureQcStatus.Passed  => "✓",
+        RCS.Cogo.App.State.FigureQcStatus.Failed  => "✗",
+        _                                          => "?",
+    };
+
+    /// <summary>Tooltip text shown when hovering the QC badge in the Figures panel.</summary>
+    public string QcTooltip
+    {
+        get
+        {
+            if (QcStatus == RCS.Cogo.App.State.FigureQcStatus.Unknown)
+                return "MAPCHECK not yet run";
+
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"QC: {QcStatus}");
+            if (ClosureError.HasValue)
+                sb.AppendLine($"Closure: {ClosureError.Value:F4} ft");
+            if (Acres.HasValue)
+                sb.AppendLine($"Area: {Acres.Value:F4} ac");
+            if (PrecisionRatio.HasValue)
+                sb.AppendLine($"Precision: 1:{PrecisionRatio.Value:F0}");
+            if (LastQcRun.HasValue)
+                sb.Append($"Checked: {LastQcRun.Value.ToLocalTime():yyyy-MM-dd HH:mm}");
+            return sb.ToString().TrimEnd();
+        }
+    }
+
+    public FigureViewModel(string name,
+        System.Collections.Generic.IEnumerable<Point3D> points,
+        System.Windows.Media.Brush? stroke = null,
+        System.Collections.Generic.IEnumerable<RCS.Cogo.App.State.FigureLabel>? labels = null,
+        RCS.Cogo.App.State.Figure? sourceFigure = null)
+    {
+        Name   = name;
         Points = new System.Windows.Media.PointCollection();
         foreach (var p in points)
-        {
             Points.Add(new System.Windows.Point(p.Easting, p.Northing));
-        }
-        Stroke = stroke ?? System.Windows.Media.Brushes.Yellow; // Default to Yellow
+        Stroke = stroke ?? System.Windows.Media.Brushes.Yellow;
 
         if (labels != null)
+            foreach (var l in labels)
+                Labels.Add(new FigureLabelViewModel(l.Text, l.Easting, l.Northing, l.RotationDegrees));
+
+        // Bind QC data from the source Figure entity if provided
+        if (sourceFigure != null)
         {
-            foreach(var l in labels) Labels.Add(new FigureLabelViewModel(l.Text, l.Easting, l.Northing, l.RotationDegrees));
+            QcStatus      = sourceFigure.QcStatus;
+            ClosureError  = sourceFigure.ClosureError;
+            Acres         = sourceFigure.Acres;
+            PrecisionRatio= sourceFigure.PrecisionRatio;
+            LastQcRun     = sourceFigure.LastQcRun;
         }
     }
 }

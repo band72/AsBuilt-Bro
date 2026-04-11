@@ -6,10 +6,83 @@ namespace RCS.Cogo.Wpf.Views;
 
 public partial class InstalledAssetsView : UserControl
 {
+    private ShellViewModel? _shellVm;
+
     public InstalledAssetsView()
     {
         InitializeComponent();
+        // Hook up after the visual tree is fully loaded so GetWindow() works
+        Loaded += OnLoaded;
     }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        _shellVm = Window.GetWindow(this)?.DataContext as ShellViewModel;
+        if (_shellVm != null)
+            _shellVm.AssetsFilterChanged += OnAssetsFilterChanged;
+    }
+
+    // ── Filter box wiring: push text into ShellViewModel ─────────────────────
+    private void AssetsFilterBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        var shellVm = Window.GetWindow(this)?.DataContext as ShellViewModel;
+        if (shellVm != null)
+            shellVm.AssetsFilter = AssetsFilterBox.Text;
+    }
+
+    private void ClearAssetsFilter_Click(object sender, RoutedEventArgs e)
+    {
+        AssetsFilterBox.Text = string.Empty;
+        var shellVm = Window.GetWindow(this)?.DataContext as ShellViewModel;
+        if (shellVm != null)
+            shellVm.AssetsFilter = string.Empty;
+    }
+
+    protected override void OnVisualParentChanged(DependencyObject oldParent)
+    {
+        base.OnVisualParentChanged(oldParent);
+        // Unsubscribe if we're being removed from the tree
+        if (_shellVm != null && oldParent != null && Window.GetWindow(this) == null)
+        {
+            _shellVm.AssetsFilterChanged -= OnAssetsFilterChanged;
+            _shellVm = null;
+        }
+    }
+
+    /// <summary>
+    /// Collapses Expanders whose Header does not contain the current filter text.
+    /// An empty filter restores all Expanders.
+    /// </summary>
+    private void OnAssetsFilterChanged(object? sender, string filter)
+    {
+        foreach (var expander in FindVisualChildren<Expander>(this))
+        {
+            if (string.IsNullOrWhiteSpace(filter))
+            {
+                expander.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                string header = expander.Header?.ToString() ?? string.Empty;
+                expander.Visibility = header.Contains(filter, System.StringComparison.OrdinalIgnoreCase)
+                    ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+    }
+
+    private static System.Collections.Generic.IEnumerable<T> FindVisualChildren<T>(DependencyObject parent)
+        where T : DependencyObject
+    {
+        int count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent);
+        for (int i = 0; i < count; i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+            if (child is T t) yield return t;
+            foreach (var sub in FindVisualChildren<T>(child)) yield return sub;
+        }
+    }
+
+    // ── Existing event handlers (unchanged) ──────────────────────────────────
 
     private void DataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
     {
@@ -29,7 +102,7 @@ public partial class InstalledAssetsView : UserControl
             if (vm != null)
             {
                 var item = e.Row.Item;
-                Dispatcher.InvokeAsync(async () => 
+                Dispatcher.InvokeAsync(async () =>
                 {
                    try
                    {
@@ -80,5 +153,3 @@ public partial class InstalledAssetsView : UserControl
         }
     }
 }
-
-

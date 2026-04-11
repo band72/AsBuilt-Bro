@@ -228,21 +228,30 @@ LOG OFF";
                 return;
             }
 
-            // ── Branch B: normal text chat ──────────────────────────────────────
+            // ── Branch B: normal text chat — streaming response ─────────────────
             string input = InputBox.Text.Trim();
             if (string.IsNullOrEmpty(input)) return;
 
             AddUserMessage(input);
             InputBox.Text = "";
 
-            TypingIndicator.Visibility = Visibility.Visible;
-            string response = await GenerateAiResponseAsync(input, apiKey, selectedModel);
-            TypingIndicator.Visibility = Visibility.Collapsed;
+            // Add an empty placeholder bubble that will be filled token-by-token
+            var streamMsg = new ChatMessage
+            {
+                Text        = "",
+                Initial     = "AI",
+                AvatarColor = Brushes.BlueViolet,
+                BubbleColor = new SolidColorBrush(Color.FromRgb(45, 25, 75))
+            };
+            Messages.Add(streamMsg);
+            ScrollToBottom();
 
-            AddAgentMessage(response);
+            TypingIndicator.Visibility = Visibility.Visible;
+            await StreamAiResponseAsync(input, apiKey, selectedModel, streamMsg);
+            TypingIndicator.Visibility = Visibility.Collapsed;
         }
 
-        // ── Plat image extraction (item 5 engine) ───────────────────────────────
+        // ── Plat image extraction ───────────────────────────────────────────────
         private async Task<string> ExtractPlatCallsFromImageAsync(
             string imagePath, string apiKey, string model, string prompt)
         {
@@ -311,7 +320,7 @@ LOG OFF";
                         }
                     }
                 },
-                generationConfig = new { temperature = 0.1, maxOutputTokens = 4096 }
+                generationConfig = new { temperature = 0.1, maxOutputTokens = 8192 }
             };
 
             var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
@@ -330,17 +339,23 @@ LOG OFF";
                       .GetString() ?? string.Empty;
         }
 
-        // ── Standard text chat AI call ──────────────────────────────────────────
-        private async Task<string> GenerateAiResponseAsync(
-            string userInput, string apiKey, string modelName)
+        // ── Streaming AI chat (Gemini SSE / OpenAI non-stream fallback) ─────────
+        //
+        // For Gemini we use the ?alt=sse endpoint which returns Server-Sent Events.
+        // Each event line is "data: { ...json... }" containing a partial text chunk.
+        // We append each chunk to the live ChatMessage bubble on the UI thread so the
+        // user sees output character-by-character   — matching modern AI tool UX.
+        private async Task StreamAiResponseAsync(
+            string userInput, string apiKey, string modelName, ChatMessage target)
         {
             if (string.IsNullOrWhiteSpace(apiKey))
-                return $"[Simulated {modelName} Response]\nPlease enter an API Key to connect to the AI, then try again.";
-
-            try
             {
-                string systemPrompt =
-                    @"You are an expert Civil Engineering / Land Surveying AI assistant specialising in COGO and utility piping script generation.
+                target.Text = "⚠️ Please enter an API Key before sending a message.";
+                return;
+            }
+
+            string systemPrompt =
+                @"You are an expert Civil Engineering / Land Surveying AI assistant specialising in COGO and utility piping script generation.
 
 ### CRITICAL SYNTAX RULES
 **Block Headers**
@@ -365,38 +380,83 @@ Active script:
 
 User question: " + userInput;
 
-                using var http = new HttpClient();
+            try
+            {
+                using var http = new HttpClient { Timeout = TimeSpan.FromMinutes(3) };
 
+                // ── Gemini streaming path (SSE) ──────────────────────────────────
                 if (modelName.ToLower().Contains("gemini"))
                 {
+                    // streamGenerateContent?alt=sse emits newline-delimited SSE events.
+                    string url = $"https://generativelanguage.googleapis.com/v1beta/models/{modelName}" +
+                                 $":streamGenerateContent?alt=sse&key={apiKey}";
+
                     var payload = new
                     {
-                        contents = new[] { new { parts = new[] { new { text = systemPrompt } } } }
+                        contents = new[] { new { parts = new[] { new { text = systemPrompt } } } },
+                        generationConfig = new { temperature = 0.2, maxOutputTokens = 8192 }
                     };
-                    var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
-                    string url  = $"https://generativelanguage.googleapis.com/v1beta/models/{modelName}:generateContent?key={apiKey}";
-                    var result  = await http.PostAsync(url, content);
-                    string raw  = await result.Content.ReadAsStringAsync();
-
-                    if (result.IsSuccessStatusCode)
+                    var req = new HttpRequestMessage(HttpMethod.Post, url)
                     {
-                        using var doc = JsonDocument.Parse(raw);
-                        return doc.RootElement
-                                  .GetProperty("candidates")[0]
-                                  .GetProperty("content")
-                                  .GetProperty("parts")[0]
-                                  .GetProperty("text")
-                                  .GetString() ?? "No response text found.";
+                        Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
+                    };
+
+                    using var resp = await http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
+                    if (!resp.IsSuccessStatusCode)
+                    {
+                        string errBody = await resp.Content.ReadAsStringAsync();
+                        target.Text = $"Gemini stream error ({resp.StatusCode}): {errBody}";
+                        return;
                     }
-                    return $"Gemini API Error ({result.StatusCode}): {raw}";
+
+                    using var stream = await resp.Content.ReadAsStreamAsync();
+                    using var reader = new StreamReader(stream);
+
+                    var sb = new StringBuilder();
+                    while (!reader.EndOfStream)
+                    {
+                        string? line = await reader.ReadLineAsync();
+                        if (line == null) break;
+                        // SSE: payload lines are prefixed with "data: "
+                        if (!line.StartsWith("data: ")) continue;
+                        string json = line["data: ".Length..].Trim();
+                        if (json == "[DONE]") break;
+
+                        try
+                        {
+                            using var doc = JsonDocument.Parse(json);
+                            string? chunk = doc.RootElement
+                                .GetProperty("candidates")[0]
+                                .GetProperty("content")
+                                .GetProperty("parts")[0]
+                                .GetProperty("text")
+                                .GetString();
+                            if (chunk != null)
+                            {
+                                sb.Append(chunk);
+                                string snapshot = sb.ToString();
+                                // Push each chunk to the live bubble on the UI thread
+                                await Dispatcher.InvokeAsync(() =>
+                                {
+                                    target.Text = snapshot;
+                                    ScrollToBottom();
+                                });
+                            }
+                        }
+                        catch { /* skip malformed event chunks */ }
+                    }
+
+                    if (sb.Length == 0)
+                        target.Text = "(No response received from Gemini.)";
+                    return;
                 }
 
-                // OpenAI path
+                // ── OpenAI non-streaming fallback ────────────────────────────────
                 var oaiPayload = new
                 {
                     model    = modelName,
                     messages = new[] { new { role = "user", content = systemPrompt } },
-                    max_tokens  = 2048,
+                    max_tokens  = 4096,
                     temperature = 0.2
                 };
                 var oaiContent = new StringContent(JsonSerializer.Serialize(oaiPayload), Encoding.UTF8, "application/json");
@@ -405,18 +465,21 @@ User question: " + userInput;
                 string oaiRaw = await oaiResp.Content.ReadAsStringAsync();
 
                 if (!oaiResp.IsSuccessStatusCode)
-                    return $"OpenAI API Error ({oaiResp.StatusCode}): {oaiRaw}";
+                {
+                    target.Text = $"OpenAI API Error ({oaiResp.StatusCode}): {oaiRaw}";
+                    return;
+                }
 
                 using var oaiDoc = JsonDocument.Parse(oaiRaw);
-                return oaiDoc.RootElement
-                             .GetProperty("choices")[0]
-                             .GetProperty("message")
-                             .GetProperty("content")
-                             .GetString() ?? string.Empty;
+                target.Text = oaiDoc.RootElement
+                                 .GetProperty("choices")[0]
+                                 .GetProperty("message")
+                                 .GetProperty("content")
+                                 .GetString() ?? string.Empty;
             }
             catch (Exception ex)
             {
-                return $"Exception invoking AI: {ex.Message}";
+                target.Text = $"Exception invoking AI: {ex.Message}";
             }
         }
 

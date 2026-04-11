@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Linq;
@@ -262,13 +262,13 @@ public partial class ShellViewModel
                 var writer = new RCS.Cogo.Wpf.Services.ProfessionalDxfWriter();
                 writer.Begin();
                 
-                // Build a fast lookup: firstWord(description) → CogoCode
+                // Build a fast lookup: firstWord(description) â†’ CogoCode
                 var codeMap = CogoCodes
                     .Where(c => !string.IsNullOrWhiteSpace(c.LocalCode))
                     .ToDictionary(c => c.LocalCode.ToUpperInvariant(), c => c,
                                   StringComparer.OrdinalIgnoreCase);
 
-                // Export Points — with block symbol if a Block is assigned to the code
+                // Export Points â€” with block symbol if a Block is assigned to the code
                 foreach (var p in _context.GetAllPoints())
                 {
                     // Resolve the code from the first word of the description
@@ -280,7 +280,7 @@ public partial class ShellViewModel
 
                     if (hasBlock)
                     {
-                        // DXF INSERT — the block name is the .dwg filename without extension
+                        // DXF INSERT â€” the block name is the .dwg filename without extension
                         string blockName = matchedCode!.Block;
                         double scale     = matchedCode.BlockScale > 0 ? matchedCode.BlockScale : 1.0;
                         string layer     = $"CODE_{matchedCode.LocalCode}";
@@ -336,7 +336,7 @@ public partial class ShellViewModel
                     }
                 }
                 
-                // ── Discipline color map (ACI codes) ────────────────────────────────────
+                // â”€â”€ Discipline color map (ACI codes) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                 // 1=Red 2=Yellow 3=Green 4=Cyan 5=Blue 6=Magenta 30=Orange 256=ByLayer
                 static int DisciplineColor(string typeTag)
                 {
@@ -351,7 +351,7 @@ public partial class ShellViewModel
                     return 256; // ByLayer (default)
                 }
 
-                // Export Structures — block + colored label per discipline
+                // Export Structures â€” block + colored label per discipline
                 foreach (var s in StructureGraphics)
                 {
                     string block = "MANHOLE";
@@ -371,7 +371,7 @@ public partial class ShellViewModel
                                    structLayer + "_LBL", "LEFT", 0, dColor);
                 }
 
-                // Export water & reclaimed pipe backbone (start→end GPS)
+                // Export water & reclaimed pipe backbone (startâ†’end GPS)
                 if (InstalledAssets != null)
                 {
                     void ExportPipes<T>(System.Collections.ObjectModel.ObservableCollection<T> pipes, string layerPrefix, int col)
@@ -408,6 +408,9 @@ public partial class ShellViewModel
                     }
                 }
 
+                // â”€â”€ Figure Closure / Area Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                WriteFigureClosureTables(writer);
+
                 writer.End();
                 writer.Save(dialog.FileName);
                 _context.Log($"[AUDIT] Exported DXF to {dialog.FileName}");
@@ -421,7 +424,103 @@ public partial class ShellViewModel
         }
     }
 
-    // ── Item 4: JEA As-Built COGO Script Export ───────────────────────────────
+    // â”€â”€ Figure Closure/Area Table writer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Emits an AutoCAD-style closure report as DXF TEXT entities on layer
+    // FIGURE_CLOSURE_TABLE, stacked below the bottom edge of all figure geometry.
+    private void WriteFigureClosureTables(RCS.Cogo.Wpf.Services.ProfessionalDxfWriter writer)
+    {
+        const string layer   = "FIGURE_CLOSURE_TABLE";
+        const double rowH    = 2.5;    // line height in drawing units
+                const double colVal  = 20.0;   // column 2 offset (value)
+        const double textH   = 1.5;    // text height
+
+        // Find the south-most Y coordinate of all figures so we can place below them.
+        double minY = 0;
+        foreach (var fig in Figures)
+            foreach (var pt in fig.Points)
+                if (pt.Y < minY) minY = pt.Y;
+
+        double tableX = 0;                // left edge of table
+        double tableY = minY - 8.0;      // start 8 units below lowest figure point
+
+        int figIdx = 0;
+        foreach (var fig in Figures)
+        {
+            if (fig.Points.Count < 3) continue;
+
+            // Resolve Point3D list from in-memory context
+            var figState = _context.GetFigure(fig.Name);
+            if (figState == null) continue;
+
+            var pts = new System.Collections.Generic.List<RCS.Cogo.Core.Primitives.Point3D>();
+            foreach (var id in figState.PointIds)
+            {
+                var p = _context.GetPoint(id);
+                if (p != null) pts.Add(p);
+            }
+            if (pts.Count < 3) continue;
+
+            // Perimeter
+            double perim = 0;
+            for (int i = 0; i < pts.Count - 1; i++)
+                perim += RCS.Cogo.Core.Maths.GeometryEngine.Inverse(pts[i], pts[i + 1]).Distance;
+
+            // Closure (last â†’ first)
+            var last    = pts[pts.Count - 1];
+            var first   = pts[0];
+            var closure = RCS.Cogo.Core.Maths.GeometryEngine.Inverse(last, first);
+            if (closure.Distance > 0.01) perim += closure.Distance;
+
+            // Area (Shoelace)
+            double areaSum = 0;
+            for (int i = 0; i < pts.Count; i++)
+            {
+                var p1 = pts[i];
+                var p2 = pts[(i + 1) % pts.Count];
+                areaSum += (p1.Easting * p2.Northing) - (p2.Easting * p1.Northing);
+            }
+            double areaSqFt = Math.Abs(areaSum) * 0.5;
+            double acres    = areaSqFt / 43560.0;
+            double precision = closure.Distance > 1e-9 ? perim / closure.Distance : 0;
+
+            // Column offsets for this table block
+            double x0 = tableX + figIdx * 55.0;    // tile tables horizontally, 55 units apart
+            double y  = tableY;
+
+            // ACI color constants for the closure table:
+            // 2=Yellow (labels), 7=White/Black (values), 8=Dark Gray (rules)
+            // 3=Green (closed), 1=Red (misclosure)
+            const int colLabel = 2;
+            const int colValue = 7;
+            const int colRule  = 8;
+
+            // Horizontal separator rule above each block
+            writer.AddLine(x0, y + 1.0, x0 + 54.0, y + 1.0, layer, colRule);
+
+            void Row(string label, string value, int valueColor = colValue)
+            {
+                writer.AddText(label, x0,          y, textH, layer, "LEFT", 0, colLabel);
+                writer.AddText(value, x0 + colVal, y, textH, layer, "LEFT", 0, valueColor);
+                y -= rowH;
+            }
+
+            bool isClosed = closure.Distance <= 0.02;
+            string closureStatus = isClosed ? "CLOSED" : $"MISCLOSURE {closure.Distance:F4} ft";
+            int closureColor = isClosed ? 3 : 1;
+
+            Row($"=== {fig.Name} ===", "");
+            Row("Perimeter:",   $"{perim:F3} ft");
+            Row("Area:",        $"{areaSqFt:F2} sq ft  ({acres:F4} ac)");
+            Row("Closure:",     closureStatus, closureColor);
+            if (precision > 0)
+                Row("Precision:", $"1 : {precision:F0}");
+
+            figIdx++;
+        }
+    }
+
+
+    // â”€â”€ Item 4: JEA As-Built COGO Script Export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private void ExportJeaCogoScript()
     {
         if (InstalledAssets == null || StructureGraphics.Count == 0)
@@ -439,7 +538,7 @@ public partial class ShellViewModel
         try
         {
             var sb = new System.Text.StringBuilder();
-            sb.AppendLine($"// JEA As-Built COGO Script  —  Exported {DateTime.Now:yyyy-MM-dd HH:mm}");
+            sb.AppendLine($"// JEA As-Built COGO Script  â€”  Exported {DateTime.Now:yyyy-MM-dd HH:mm}");
             sb.AppendLine($"// Project: {CurrentProject?.ProjectName ?? "(none)"}");
             sb.AppendLine($"// CRS: State Plane Florida East (FIPS 0901) / NAD83, US Survey Feet");
             sb.AppendLine($"// Format: n[Northing] e[Easting] [TYPE] [ID]");
@@ -452,7 +551,7 @@ public partial class ShellViewModel
 
             foreach (var grp in groups)
             {
-                sb.AppendLine($"// ── {grp.Key.ToUpper()} ─────────────────────────────────────");
+                sb.AppendLine($"// â”€â”€ {grp.Key.ToUpper()} â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
                 foreach (var s in grp.OrderBy(x => x.Label))
                 {
                     // Resolve full feature type for COGO tag
@@ -465,7 +564,7 @@ public partial class ShellViewModel
             // Pipe runs (sewer gravity)
             if (InstalledAssets.WWGravityPipes.Any())
             {
-                sb.AppendLine("// ── SEWER GRAVITY PIPES ─────────────────────────────────────");
+                sb.AppendLine("// â”€â”€ SEWER GRAVITY PIPES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
                 var mhIdx = InstalledAssets.Manholes
                     .Where(m => m.PartKey != null && m.Northing.HasValue && m.Easting.HasValue)
                     .ToDictionary(m => m.PartKey!, m => m);
@@ -485,7 +584,7 @@ public partial class ShellViewModel
                 .Where(p => p.StartNorthing.HasValue && p.StartEasting.HasValue).ToList();
             if (waterPipesWithCoords.Any())
             {
-                sb.AppendLine("// ── WATER DISTRIBUTION PIPES ───────────────────────────────");
+                sb.AppendLine("// â”€â”€ WATER DISTRIBUTION PIPES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€");
                 foreach (var pipe in waterPipesWithCoords)
                 {
                     sb.AppendLine($"// Pipe {pipe.PartKey}  {pipe.Size}\"  {pipe.Material}");
@@ -582,58 +681,56 @@ public partial class ShellViewModel
         }
 
         IsRunningScript = true;
-        
-        // As requested: display progress bar for 1.5 seconds minimum
-        await Task.Delay(1500);
+        await Task.Delay(200); // Let the progress indicator paint before blocking work starts
 
         CommandLog.Add("--- Running Batch Script ---");
-        var lines = BatchScriptContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-        
+
         // Check for RESET directives at the top of the script
         bool shouldReset = true;
-        foreach (var line in lines)
+        foreach (var line in BatchScriptContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None))
         {
             string t = line.Trim().ToUpper();
             if (string.IsNullOrEmpty(t) || t.StartsWith("!") || t.StartsWith("//")) continue;
-            
-            if (t == "RESET-OFF") 
-            {
-                shouldReset = false;
-                break;
-            }
-            if (t == "RESET-ON")
-            {
-                shouldReset = true;
-                break;
-            }
-            // If the first real command is something else, stop looking and default to true
+            if (t == "RESET-OFF") { shouldReset = false; break; }
+            if (t == "RESET-ON")  { shouldReset = true;  break; }
             break;
         }
 
         if (shouldReset)
         {
-            // Reset state before running
-            await _engine.ExecuteAsync("CLEAR", _context);
+            await _engine.ExecuteAsync("CLEAR",   _context);
             await _engine.ExecuteAsync("DEL PTS", _context);
             await _engine.ExecuteAsync("DEL FIG", _context);
         }
-        int counter = 0;
-        foreach (var line in lines)
+
+        // â”€â”€ Structured batch execution with error tracking and INCLUDE support â”€â”€
+        await _engine.ExecuteBatchAsync(BatchScriptContent, _context);
+
+        // Surface errors to the ErrorReportWindow pre-populated with structured details
+        if (_engine.LastBatchErrors.Count > 0)
         {
-            string trimmed = line.Trim();
-            if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("/"))
-                continue;
-                
-            CommandLog.Add($"> {trimmed}");
-            await _engine.ExecuteAsync(trimmed, _context);
-            
-            counter++;
-            if (counter % 50 == 0) await Task.Delay(1); // Force WPF dispatcher to render progress bar and unblock UI
+            var errorSummary = string.Join(Environment.NewLine,
+                _engine.LastBatchErrors.Select(e => $"L{e.LineNumber:D4}  [{e.Command,-10}]  {e.Message}"));
+
+            System.Windows.Application.Current?.Dispatcher.Invoke(() =>
+            {
+                var reportWin = new RCS.Cogo.Wpf.Views.ErrorReportWindow
+                {
+                    Owner = System.Windows.Application.Current?.MainWindow
+                };
+                // Pre-populate the description field with the batch error list
+                if (reportWin.TxtDescription != null)
+                    reportWin.TxtDescription.Text = $"Batch Script Errors ({_engine.LastBatchErrors.Count}):\n\n{errorSummary}";
+                reportWin.Show();
+            });
         }
-        
+
         CommandLog.Add("--- Batch Complete ---");
         RefreshData();
-        
+
+        // â”€â”€ Auto-save the script to a timestamped folder â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        AutoSaveCogoScript(BatchScriptContent);
+
         IsRunningScript = false;
     }
 
@@ -793,7 +890,7 @@ public partial class ShellViewModel
                 
                 if (pts.Count > 1)
                 {
-                    // ── Adaptive crosslink detection (5× median segment length) ──
+                    // â”€â”€ Adaptive crosslink detection (5Ã— median segment length) â”€â”€
                     var figIds = fig.PointIds;
                     var rDists = new System.Collections.Generic.List<double>();
                     for (int i = 0; i < pts.Count - 1; i++)
@@ -814,7 +911,7 @@ public partial class ShellViewModel
                             hasCrosslink = true;
                             string fromId = i < figIds.Count ? figIds[i] : "?";
                             string toId   = (i + 1) < figIds.Count ? figIds[i + 1] : "?";
-                            _context.Log($"[⚠ CROSSLINK] Figure '{fig.Name}': pt {fromId}→{toId}, dist={rDists[i]:F0}ft (cutoff {rCutoff:F0}ft)");
+                            _context.Log($"[âš  CROSSLINK] Figure '{fig.Name}': pt {fromId}â†’{toId}, dist={rDists[i]:F0}ft (cutoff {rCutoff:F0}ft)");
                         }
                     }
                     fig.IsInvalidCrosslink = hasCrosslink;
@@ -828,7 +925,7 @@ public partial class ShellViewModel
                     else
                         stroke = System.Windows.Media.Brushes.Yellow;
 
-                    Figures.Add(new FigureViewModel(fig.Name, pts, stroke, fig.Labels));
+                    Figures.Add(new FigureViewModel(fig.Name, pts, stroke, fig.Labels, fig));
                 }
             }
             
@@ -1045,7 +1142,7 @@ public partial class ShellViewModel
                         c.CrossingNumber ?? c.Id.ToString(), pt, "CROSSING"));
                 }
 
-                // ── Sewer pipe linework: connect manholes via UpstreamPointId / DownstreamPointId ──
+                // â”€â”€ Sewer pipe linework: connect manholes via UpstreamPointId / DownstreamPointId â”€â”€
                 {
                     // Build a lookup: manhole PartKey -> location
                     var mhIndex = InstalledAssets.Manholes
@@ -1085,7 +1182,7 @@ public partial class ShellViewModel
                     }
                 }
 
-                // ── Water pipe linework: connect sequential WaterPoints along each pipe run ──
+                // â”€â”€ Water pipe linework: connect sequential WaterPoints along each pipe run â”€â”€
                 // WaterPoints have UpstreamPointId linking them to a pipe PartKey.
                 // Sort by PartKey prefix and connect in order of GPS position.
                 {
@@ -1153,8 +1250,39 @@ public partial class ShellViewModel
         });
     }
 
-    // ── Project Lifecycle ────────────────────────────────────────────────────
+    // â”€â”€ Project Lifecycle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /// <summary>Returns true if we can safely discard the current project
     /// (either it's clean, or the user chose to save/discard).</summary>
+
+    // -- #5: Cogo Script Auto-Save ----------------------------------------------
+    // Saves the batch script to a timestamped sub-folder on every successful run.
+    // Path:  [ProjectDir]\Scripts\MMDDYYYY.fff\CogoScript.cogo
+    // or     %AppData%\RCS.Cogo.Enterprise\Scripts\MMDDYYYY.fff\CogoScript.cogo
+    private void AutoSaveCogoScript(string scriptContent)
+    {
+        if (string.IsNullOrWhiteSpace(scriptContent)) return;
+        try
+        {
+            string baseDir = CurrentProject?.SaveLocation is string sl && !string.IsNullOrWhiteSpace(sl)
+                ? System.IO.Path.Combine(sl, "Scripts")
+                : System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "RCS.Cogo.Enterprise", "Scripts");
+
+            string timestamp = DateTime.Now.ToString("MMddyyyy") + "." +
+                               DateTime.Now.Millisecond.ToString("D3");
+            string saveDir   = System.IO.Path.Combine(baseDir, timestamp);
+            System.IO.Directory.CreateDirectory(saveDir);
+
+            string savePath = System.IO.Path.Combine(saveDir, "CogoScript.cogo");
+            System.IO.File.WriteAllText(savePath, scriptContent);
+            CommandLog.Add($"[AUTO-SAVE] Script saved => {savePath}");
+        }
+        catch (Exception ex)
+        {
+            CommandLog.Add($"[WARN] Auto-save failed: {ex.Message}");
+        }
+    }
 }
+

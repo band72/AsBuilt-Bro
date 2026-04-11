@@ -51,6 +51,14 @@ public partial class JeaValidationWindow : Window
     private Action?              _onProceedAction;
     private JeaValidationMode    _mode;
 
+    /// <summary>
+    /// Total number of issues (errors + warnings + info) found by the last
+    /// validation run. Zero before any run. Read by the caller after ShowDialog().
+    /// </summary>
+    public int TotalIssueCount => _report?.Issues.Count ?? 0;
+    public int ErrorCount      => _report?.ErrorCount   ?? 0;
+    public int WarningCount    => _report?.WarningCount ?? 0;
+
     public JeaValidationWindow(string projectId, JeaValidationMode mode = JeaValidationMode.Standalone, Action? onProceedAction = null)
     {
         InitializeComponent();

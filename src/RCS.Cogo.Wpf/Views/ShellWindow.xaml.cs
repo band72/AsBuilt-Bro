@@ -32,6 +32,61 @@ public partial class ShellWindow : Window
         matrix.Translate(-4400, 5400);
         WorldTransform.Matrix = matrix;
         WorldTransform.Matrix = matrix;
+
+        // ── Show the Welcome screen once the main window is ready ────────────
+        Loaded += OnFirstLoad;
+    }
+
+    private void OnFirstLoad(object sender, RoutedEventArgs e)
+    {
+        Loaded -= OnFirstLoad;   // fire once only
+        if (DataContext is not ShellViewModel vm) return;
+
+        var welcome = new WelcomeWindow(vm) { Owner = this };
+        if (welcome.ShowDialog() != true) return;
+
+        switch (welcome.SelectedAction)
+        {
+            case WelcomeWindow.WelcomeAction.New:
+                vm.NewProjectCommand?.Execute(null);
+                break;
+            case WelcomeWindow.WelcomeAction.Open:
+                vm.OpenProjectCommand?.Execute(null);
+                break;
+            case WelcomeWindow.WelcomeAction.ImportData:
+                vm.ImportBatchCommand?.Execute(null);
+                break;
+            case WelcomeWindow.WelcomeAction.OpenRecent:
+                if (welcome.SelectedRecentFile != null)
+                    vm.OpenRecentFileCommand?.Execute(welcome.SelectedRecentFile);
+                break;
+        }
+    }
+
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+        if (DataContext is ShellViewModel vm && vm.IsDirty)
+        {
+            var result = MessageBox.Show(
+                "You have unsaved changes. Do you want to save before closing?",
+                "Unsaved Changes",
+                MessageBoxButton.YesNoCancel,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                vm.SaveProjectCommand?.Execute(null);
+                // If still dirty after save (e.g. save cancelled), abort close
+                if (vm.IsDirty) { e.Cancel = true; return; }
+            }
+            else if (result == MessageBoxResult.Cancel)
+            {
+                e.Cancel = true;
+                return;
+            }
+            // No → fall through and allow close
+        }
+        base.OnClosing(e);
     }
 
     private void RestoreView(double[] m)

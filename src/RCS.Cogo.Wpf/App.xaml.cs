@@ -44,7 +44,7 @@ public partial class App : Application
         }
     }
 
-    private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+    private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
     {
         ErrorLogger.LogException(e.Exception, "TaskScheduler");
         e.SetObserved();

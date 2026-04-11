@@ -602,10 +602,38 @@ public partial class ShellViewModel
                 System.Windows.MessageBoxImage.Warning);
             return;
         }
+
+        string projectId = _currentProject.Id.ToString();
         var win = new RCS.Cogo.Wpf.Views.JeaValidationWindow(
-            _currentProject.Id.ToString());
-        win.Owner = System.Windows.Application.Current.MainWindow;
+            projectId,
+            RCS.Cogo.Wpf.Views.JeaValidationMode.Standalone)
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
+
+        // Auto-run so the user sees results immediately on open.
+        try
+        {
+            var report = RCS.Cogo.Wpf.Services.JeaValidationService.Validate(projectId);
+            win.LoadReport(report);
+            JeaValidationIssueCount = report.Issues.Count;
+            JeaValidationErrorCount = report.ErrorCount;
+        }
+        catch (Exception vex)
+        {
+            _context.Log($"[JEA] Pre-validation error: {vex.Message}");
+        }
+
         win.ShowDialog();
+
+        // Re-read in case user re-ran validation inside the window.
+        JeaValidationIssueCount = win.TotalIssueCount;
+        JeaValidationErrorCount = win.ErrorCount;
+
+        _context.Log(JeaValidationIssueCount == 0
+            ? "[JEA] Validation passed — no issues found."
+            : $"[JEA] Validation complete — {JeaValidationErrorCount} error(s), " +
+              $"{JeaValidationIssueCount - JeaValidationErrorCount} warning(s).");
     }
 
     private string BuildJeaMixScript(string projectIdStr)
@@ -691,6 +719,7 @@ public partial class ShellViewModel
             _context.Log($"[JEA] Auto-Generate Linework Error: {ex.Message}");
         }
     }
+
     private void ExportJeaMixScript()
     {
         if (_currentProject == null)

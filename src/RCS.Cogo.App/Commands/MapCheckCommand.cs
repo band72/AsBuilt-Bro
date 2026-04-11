@@ -210,7 +210,19 @@ public class MapCheckCommand : ICommand
             context.Log($"Precision: 1:{precision:F0}");
         else
             context.Log("Precision: Perfect Closure");
+
+        // ── Persist results to Figure for session-to-session QC badge ─────────
+        figure.QcStatus      = isClosed ? RCS.Cogo.App.State.FigureQcStatus.Passed
+                                        : RCS.Cogo.App.State.FigureQcStatus.Failed;
+        figure.ClosureError  = closure.Distance;
+        figure.ClosureBearing= closure.Azimuth.Degrees;
+        figure.AreaSqFt      = area;
+        figure.Acres         = acres;
+        figure.Perimeter     = perimeter;
+        figure.PrecisionRatio= precision > 1e-9 ? precision : null;
+        figure.LastQcRun     = DateTime.UtcNow;
             
         return Task.CompletedTask;
     }
 }
+

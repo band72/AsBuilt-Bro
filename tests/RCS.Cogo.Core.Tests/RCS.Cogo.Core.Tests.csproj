@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\RCS.Cogo.Core\RCS.Cogo.Core.csproj" />
+    <ProjectReference Include="..\..\src\RCS.Cogo.App\RCS.Cogo.App.csproj" />
   </ItemGroup>
 
 </Project>

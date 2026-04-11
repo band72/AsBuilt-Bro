@@ -138,3 +138,67 @@ The Version 2.0 update introduces heavy modernization tailored to streamline uti
 
 ### 8.4 Automated Civil 3D Batch Plotting
 The plugin features robust batch plotting integrations (when running the accompanying native Civil 3D extension module). It reads window selections to slice up complex geometric plans into pristine multi-page PDF documents unconditionally centered on standard 0.25-inch margins.
+
+---
+
+## 9. Version 2.2.0 Features
+
+### 9.1 AI Streaming Chat (SSE Pipeline)
+**Access:** `Tools` -> `AI Script Assistant`
+**Function:** The AI chat window now uses a Server-Sent Events (SSE) streaming connection, rendering each token as it arrives. A placeholder bubble appears immediately, eliminating perceived latency. Supports `.jpg` / `.png` attachments for automatic Plat-to-DXF extraction.
+
+### 9.2 MAPCHECK Persistence & QC Badges
+**Command:** `MAPCHECK <FigureName>`
+**Function:** Running MAPCHECK now permanently stores results on the Figure for the entire session:
+- **QC Status** — Passed / Failed / Unknown
+- **Closure Error** — distance in feet from last point back to Point of Beginning
+- **Area** — square feet and acres (Shoelace formula)
+- **Perimeter** — total boundary length in feet
+- **Precision Ratio** — 1:N conventional surveying measure
+- **Last Checked** — UTC timestamp
+
+**QC Badge on canvas:** checkmark (passed), red X (failed), gray ? (not yet run). Hover for full tooltip.
+
+### 9.3 RENUMBER Command
+**Syntax:** `RENUMBER <StartPt> <EndPt> <NewStart>`
+**Function:** Renumbers a contiguous range of point IDs. All Figure references are updated in place. A pre-flight collision check aborts the operation if any target ID already exists outside the rename range.
+
+**Examples:**
+`
+RENUMBER 1 50 1001       // renames pts 1-50 to 1001-1050
+RENUMBER 100 105 200     // renames pts 100-105 to 200-205
+`
+
+### 9.4 Script Auto-Save
+Every batch execution automatically saves a timestamped copy to `[ProjectDir]\Scripts\MMDDYYYY.fff\CogoScript.cogo`. Fallback is AppData when no project is active.
+
+### 9.5 DXF Closure Tables with Color Coding
+Every DXF export appends an AutoCAD-style closure/area table below figure geometry. Closure status renders in **Green** (closed) or **Red** (misclosure). Labels are Yellow (ACI 2).
+
+### 9.6 JEA Validation Live Badge
+**Access:** `Validation` menu -> `JEA As-Built Validation`
+Validation runs automatically on window open and pushes the total issue count and error count to the main toolbar badge in real time.
+
+---
+
+## 10. DXF Layer Color Reference (ACI Standard)
+
+| Layer | Discipline | ACI | Color |
+|---|---|---|---|
+| STRUCT_WW_* | Sanitary Sewer | 3 | Green |
+| STRUCT_W_* | Water | 5 | Blue |
+| STRUCT_R_* | Reclaimed Water | 6 | Magenta |
+| STRUCT_ST_* | Storm Drain | 4 | Cyan |
+| STRUCT_E_* | Electric | 1 | Red |
+| STRUCT_G_* | Gas | 30 | Orange |
+| STRUCT_CHIL_* | Chilled Water | 141 | Light Blue* |
+| XS_EG | Cross-Section EG | 5 | Blue |
+| XS_FG | Cross-Section FG | 2 | Yellow |
+| XS_CUT | Cross-Section Cut | 1 | Red |
+| XS_FILL | Cross-Section Fill | 3 | Green |
+| XS_GRID | Cross-Section Grid | 8 | Dark Gray |
+| XS_BORDER / XS_LABEL | Cross-Section Frame | 7 | White/Black |
+| FIGURE_CLOSURE_TABLE | Closure Report | 2/7/3/1 | Yellow/White/Green/Red |
+| FIGURES / POINTS | Survey Geometry | 256 | ByLayer |
+
+*ACI 141 may appear faint on white paper-space backgrounds.

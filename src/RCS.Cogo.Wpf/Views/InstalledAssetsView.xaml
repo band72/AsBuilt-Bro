@@ -9,12 +9,35 @@
     <Grid Background="#1E1E1E">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
-        <TextBlock Text="Installed Assets Data" FontWeight="Bold" Foreground="#D4D4D4" Margin="10" FontSize="16"/>
+        <TextBlock Text="Installed Assets Data" FontWeight="Bold" Foreground="#D4D4D4" Margin="10,10,10,4" FontSize="16"/>
+
+        <!-- ── Quick-Filter bar ────────────────────────────────────────────── -->
+        <Grid Grid.Row="1" Margin="10,0,10,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="AssetsFilterBox"
+                     Grid.Column="0"
+                     Background="#252526" Foreground="#D4D4D4"
+                     BorderBrush="#555" Padding="5,3"
+                     FontSize="12"
+                     TextChanged="AssetsFilterBox_TextChanged"
+                     ToolTip="Filter by section name (e.g. Water, Manhole, Valve)"/>
+            <Button Grid.Column="1"
+                    Content="✕" Width="28" Height="22"
+                    Margin="4,0,0,0"
+                    Background="#3E3E42" Foreground="#D4D4D4"
+                    BorderThickness="0" FontSize="11" Cursor="Hand"
+                    Click="ClearAssetsFilter_Click"
+                    ToolTip="Clear filter"/>
+        </Grid>
         
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
                 <StackPanel.Resources>
                     <Style TargetType="Expander">

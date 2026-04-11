@@ -154,10 +154,33 @@
                 </MenuItem>
                 <MenuItem Header="_Export">
                     <!-- ═══ JEA As-Built Deliverable ═════════════════════ -->
-                    <MenuItem Header="🔍 Validate JEA Data..."
-                              Command="{Binding ValidateJeaCommand}"
+                    <MenuItem Command="{Binding ValidateJeaCommand}"
                               FontWeight="SemiBold" Foreground="#FFD232"
-                              ToolTip="Check all project assets against JEA validation rules before export"/>
+                              ToolTip="Check all project assets against JEA validation rules before export">
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🔍 Validate JEA Data..."/>
+                                <!-- Live issue-count badge — visible only after a validation run -->
+                                <Border Background="#C0392B" CornerRadius="6"
+                                        Margin="8,0,0,0" Padding="5,1"
+                                        VerticalAlignment="Center">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding JeaValidationBadgeVisible}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock Text="{Binding JeaValidationBadgeText}"
+                                               Foreground="White" FontSize="11"
+                                               FontWeight="Bold"/>
+                                </Border>
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
                     <MenuItem Header="🏛 Export JEA As-Built Template (.xlsx)..."
                               Command="{Binding ExportJeaTemplateCommand}"
                               FontWeight="SemiBold" Foreground="#56CCF2"
@@ -406,25 +429,80 @@
                         </Grid.RowDefinitions>
                         
                         <!-- Toolbar -->
-                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                            <!-- New specific command for Points Import -->
-                            <Button Content="Import Text..." Command="{Binding ImportPointsListCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
-                            <!-- Assuming ImportBatch handles points or we need a specific ImportPoints command. 
-                                 The menu has ExportPointsTxtCommand. The Cogo Script tab imports scripts. 
-                                 I'll use existing commands if applicable or placeholders if not explicitly asked to create new import logic.
-                                 The user said "where the field points are imported, exported". 
-                                 I will use the menu commands binding for now as shortcuts. -->
-                            <!-- Actually, re-using ImportBatchCommand might be confusing if it expects scripts.
-                                 Let's look at the Menu. Menu has "Import -> Process Batch Script".
-                                 Wait, "Export Points (TXT)..." is bound to ExportPointsTxtCommand.
-                                 I should add buttons for Import/Export Points here if possible. 
-                                 For now, I'll add the visual buttons. -->
-                             <Button Content="Export TXT" Command="{Binding ExportPointsTxtCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
-                             <Button Content="Export XML" Command="{Binding ExportPointsXmlCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
-                             <Button Content="Save" Command="{Binding SavePointsCommand}" Padding="10,5" Margin="0,0,10,0" Background="#28A745" Foreground="White" FontWeight="Bold" ToolTip="Save Points to Database"/>
-                             <Button Content="Edit" Command="{Binding EditPointsCommand}" Padding="10,5" Margin="0,0,10,0" Background="#007ACC" Foreground="White" FontWeight="Bold" ToolTip="Edit Points Grid"/>
-                             <Button Content="Refresh" Command="{Binding RefreshPointsCommand}" Padding="10,5" Background="#1E1E1E" Foreground="White" BorderBrush="#3E3E42" BorderThickness="1" ToolTip="Validate points against local codes"/>
-                        </StackPanel>
+                        <Grid Grid.Row="0" Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Import -->
+                            <Button Grid.Column="0" Content="Import Text..."
+                                    Command="{Binding ImportPointsListCommand}"
+                                    Padding="10,5" Margin="0,0,8,0"
+                                    Background="#2D2D30" Foreground="White"/>
+                            <!-- Export TXT -->
+                            <Button Grid.Column="1" Content="Export TXT"
+                                    Command="{Binding ExportPointsTxtCommand}"
+                                    Padding="10,5" Margin="0,0,8,0"
+                                    Background="#2D2D30" Foreground="White"/>
+                            <!-- Export XML -->
+                            <Button Grid.Column="2" Content="Export XML"
+                                    Command="{Binding ExportPointsXmlCommand}"
+                                    Padding="10,5" Margin="0,0,8,0"
+                                    Background="#2D2D30" Foreground="White"/>
+                            <!-- Save -->
+                            <Button Grid.Column="3" Content="Save"
+                                    Command="{Binding SavePointsCommand}"
+                                    Padding="10,5" Margin="0,0,8,0"
+                                    Background="#28A745" Foreground="White" FontWeight="Bold"
+                                    ToolTip="Save Points to Database"/>
+                            <!-- Refresh -->
+                            <Button Grid.Column="4" Content="Refresh"
+                                    Command="{Binding RefreshPointsCommand}"
+                                    Padding="10,5" Margin="0,0,0,0"
+                                    Background="#1E1E1E" Foreground="White"
+                                    BorderBrush="#3E3E42" BorderThickness="1"
+                                    ToolTip="Validate points against local codes"/>
+
+                            <!-- ── Live Quick-Filter ─────────────────────────────── -->
+                            <Grid Grid.Column="6" Width="220" Margin="8,0,0,0" VerticalAlignment="Center">
+                                <TextBox x:Name="PointsFilterBox"
+                                         Text="{Binding PointsFilter, UpdateSourceTrigger=PropertyChanged}"
+                                         Padding="4,3" FontFamily="Segoe UI" FontSize="13"
+                                         ToolTip="Filter by Point# or Description"
+                                         Background="#252526" Foreground="#D4D4D4"
+                                         BorderBrush="#3E3E42" BorderThickness="1"/>
+                                <!-- Placeholder hint (visible only when empty) -->
+                                <TextBlock IsHitTestVisible="False" Text="🔍  Filter points..."
+                                           Foreground="#666666" FontSize="12"
+                                           VerticalAlignment="Center" Margin="8,0,0,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding PointsFilter}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+
+                            <!-- Clear filter button -->
+                            <Button Grid.Column="7" Content="✕"
+                                    Command="{Binding ClearPointsFilterCommand}"
+                                    Width="26" Margin="4,0,0,0"
+                                    Background="#3E3E42" Foreground="#AAAAAA"
+                                    BorderThickness="0" FontWeight="Bold"
+                                    ToolTip="Clear filter"/>
+                        </Grid>
 
                         <DataGrid Grid.Row="1" ItemsSource="{Binding PointsView}" AutoGenerateColumns="False"
                                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="True"
