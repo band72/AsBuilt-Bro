@@ -68,6 +68,18 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
         // Enforce numeric Point IDs? User allows non-numeric via suffixes (e.g. 100_L).
         _points[pointId] = (point, description);
     }
+
+    public bool RemovePoint(string pointId) => _points.Remove(pointId);
+
+    public bool RenamePoint(string oldId, string newId)
+    {
+        if (!_points.TryGetValue(oldId, out var data)) return false;
+        if (_points.ContainsKey(newId)) return false;
+        _points.Remove(oldId);
+        _points[newId] = data;
+        return true;
+    }
+
     
     public int GetNextPointId()
     {

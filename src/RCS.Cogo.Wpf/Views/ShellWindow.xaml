@@ -420,6 +420,8 @@
                                  <ColumnDefinition Width="Auto"/>
                                  <ColumnDefinition Width="Auto"/>
                                  <ColumnDefinition Width="Auto"/>
+                                 <ColumnDefinition Width="Auto"/>
+                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <!-- Import -->
@@ -457,7 +459,7 @@
                                          Text="{Binding PointsFilter, UpdateSourceTrigger=PropertyChanged}"
                                          Padding="4,3" FontFamily="Segoe UI" FontSize="13"
                                          ToolTip="Filter by Point# or Description"
-                                         Background="{StaticResource BrSurface}" Foreground="{StaticResource BrTextPrimary}"
+                                         Background="{StaticResource BrSurface}" Foreground="Transparent"
                                          BorderBrush="{StaticResource BrBorder}" BorderThickness="1"/>
                                 <!-- Placeholder hint (visible only when empty) -->
                                 <TextBlock IsHitTestVisible="False" Text="🔍  Filter points..."
@@ -502,8 +504,26 @@
                                     Background="#1A2535" Foreground="#98C379"
                                     BorderBrush="#3A6A3A" BorderThickness="1"/>
 
+                            <!-- ── Delete Selected ── -->
+                            <Button Grid.Column="10"
+                                    Content="&#x1F5D9; Del"
+                                    Command="{Binding DeleteSelectedPointsCommand}"
+                                    CommandParameter="{Binding SelectedItems, ElementName=PointsDataGrid}"
+                                    Padding="8,5" Margin="4,0,0,0"
+                                    ToolTip="Delete all selected points (Ctrl+A to select all)"
+                                    Background="#3A1010" Foreground="#E06C75"
+                                    BorderBrush="#6A2020" BorderThickness="1"/>
+                            <!-- ── Renumber ── -->
+                            <Button Grid.Column="11"
+                                    Content="&#x2116;"
+                                    Command="{Binding RenumberPointsCommand}"
+                                    Padding="8,5" Margin="4,0,0,0"
+                                    ToolTip="Renumber all points sequentially from a base number"
+                                    Background="#1A2535" Foreground="#C678DD"
+                                    BorderBrush="#3A2A55" BorderThickness="1"/>
+
                             <!-- ── GPS Columns toggle ── -->
-                            <ToggleButton Grid.Column="10"
+                            <ToggleButton Grid.Column="12"
                                           Content="&#x1F30D; GPS"
                                           IsChecked="{Binding ShowGpsColumnsInGrid}"
                                           Padding="8,5" Margin="4,0,0,0"
@@ -523,6 +543,8 @@
 
                         <DataGrid Grid.Row="2" ItemsSource="{Binding PointsView}" AutoGenerateColumns="False"
                                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="True"
+                                   SelectionMode="Extended" SelectionUnit="FullRow"
+                                   x:Name="PointsDataGrid"
                                   BorderThickness="1" BorderBrush="{StaticResource BrBorder}">
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn Header="Point Number" SortMemberPath="NumericId" Width="80" IsReadOnly="True">
@@ -1045,6 +1067,21 @@
                                      BorderThickness="0" TextAlignment="Right" Padding="5,5,5,5" 
                                      FontFamily="Consolas" VerticalScrollBarVisibility="Hidden"
                                      Visibility="Collapsed" MinWidth="30" Margin="0,0,2,0" />
+                            <!-- Syntax-highlighted ghost RichTextBox (behind the input TextBox) -->
+                            <RichTextBox x:Name="rtbPipingHighlighter" Grid.Column="1"
+                                         IsReadOnly="True" IsHitTestVisible="False"
+                                         FontFamily="Consolas" FontSize="14"
+                                         Padding="8,6" Panel.ZIndex="0"
+                                         Background="{StaticResource BrBg}"
+                                         BorderThickness="0"
+                                         VerticalScrollBarVisibility="Hidden"
+                                         HorizontalScrollBarVisibility="Hidden">
+                                <RichTextBox.Resources>
+                                    <!-- Suppress selection highlight on the ghost RTB -->
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Transparent"/>
+                                </RichTextBox.Resources>
+                            </RichTextBox>
                             <TextBox x:Name="txtPipingScript" Grid.Column="1" Text="{Binding PipingScriptText, UpdateSourceTrigger=PropertyChanged}"
                                      AcceptsReturn="True" AcceptsTab="True" FontFamily="Consolas" FontSize="14"
                                      VerticalScrollBarVisibility="Auto"
@@ -1247,7 +1284,8 @@
                   MouseRightButtonUp="OnMouseRightButtonUp"
                   PreviewMouseLeftButtonDown="ViewportGrid_PreviewMouseDown"
                   PreviewMouseMove="ViewportGrid_PreviewMouseMove"
-                  PreviewMouseLeftButtonUp="ViewportGrid_PreviewMouseUp">
+                  PreviewMouseLeftButtonUp="ViewportGrid_PreviewMouseUp"
+                  MouseMove="OnViewportMouseMove">
                 <!-- Canvas -->
                 <Canvas x:Name="ViewportCanvas">
                     <Canvas.RenderTransform>
@@ -1608,10 +1646,19 @@
                 </Border>
 
 
-                <!-- Zoom State Text Overlay -->
-                <TextBlock Text="{Binding CurrentViewScale, StringFormat='Zoom Scale: {0:F4}x'}" 
-                           Foreground="{StaticResource BrTextMuted}" FontSize="12" Margin="10"
-                           HorizontalAlignment="Left" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
+                <!-- Viewport Status Bar: Zoom Scale + World Coordinates -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                            IsHitTestVisible="False" Margin="10">
+                    <Border Background="#AA0D1117" CornerRadius="4" Padding="8,4">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding CurrentViewScale, StringFormat='Scale: {0:F4}x'}"
+                                       Foreground="#888EA8" FontSize="11" FontFamily="Consolas"/>
+                            <TextBlock Text="   " FontSize="11"/>
+                            <TextBlock Text="{Binding MouseWorldCoords}"
+                                       Foreground="#98C379" FontSize="11" FontFamily="Consolas"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
                 
                 <!-- Zoom Toolbar -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">

@@ -104,6 +104,12 @@ public interface ICogoContext
     /// Gets the next available numeric Point ID.
     /// </summary>
     int GetNextPointId();
+    /// <summary>Removes the point with the given ID from the project. Returns true if found and removed.</summary>
+    bool RemovePoint(string pointId);
+
+    /// <summary>Renames a point from oldId to newId. Returns true on success, false if oldId not found or newId already exists.</summary>
+    bool RenamePoint(string oldId, string newId);
+
 
     /// <summary>
     /// Logs a message to the output console.

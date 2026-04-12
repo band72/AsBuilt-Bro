@@ -24,6 +24,7 @@ public partial class ShellWindow : Window
     // ── Piping script real-time diagnostics ───────────────────────────────────
     private System.Windows.Threading.DispatcherTimer? _pipeSquiggleTimer;
     private System.Windows.Controls.Canvas?           _squiggleOverlay;
+    private bool _syntaxHighlighterAttached;
 
     public ShellWindow()
     {
@@ -56,8 +57,17 @@ public partial class ShellWindow : Window
         };
         _pipeSquiggleTimer.Tick += OnSquiggleTimerTick;
 
-        // Attach overlay canvas once the visual tree is built
-        Loaded += (_, __) => InitSquiggleOverlay();
+        // Attach overlay canvas and syntax highlighter once visual tree is built
+        Loaded += (_, __) =>
+        {
+            InitSquiggleOverlay();
+            if (!_syntaxHighlighterAttached)
+            {
+                CogoSyntaxHighlighter.Attach(rtbPipingHighlighter);
+                _syntaxHighlighterAttached = true;
+                SyncHighlighterText();
+            }
+        };
     }
 
     private void OnFirstLoad(object sender, RoutedEventArgs e)
@@ -218,7 +228,6 @@ public partial class ShellWindow : Window
             e.Handled = true;
             return;
         }
-
         if (!_isZoomDragging) return;
 
         _isZoomDragging = false;
@@ -483,6 +492,17 @@ public partial class ShellWindow : Window
         SaveCurrentView();
     }
 
+    // ── Live Coordinate Readout ─────────────────────────────────────────────
+    private void OnViewportMouseMove(object sender, MouseEventArgs e)
+    {
+        if (DataContext is not ShellViewModel vm) return;
+        var mx = WorldTransform.Matrix;
+        if (!mx.HasInverse) return;
+        var inv = mx; inv.Invert();
+        var wp = inv.Transform(e.GetPosition(ViewportGrid));
+        vm.MouseWorldCoords = $"N: {wp.Y:N3}  E: {wp.X:N3}";
+    }
+
     private void OnMouseWheel(object sender, MouseWheelEventArgs e)
     {
         var pos = e.GetPosition(ViewportGrid);
@@ -622,9 +642,21 @@ public partial class ShellWindow : Window
         if (txtPipingLineNumbers.Visibility == Visibility.Visible)
             UpdateLineNumbers();
 
-        // Restart debounce timer on every keystroke
+        SyncHighlighterText();
+
         _pipeSquiggleTimer?.Stop();
         _pipeSquiggleTimer?.Start();
+    }
+
+    private void SyncHighlighterText()
+    {
+        if (rtbPipingHighlighter == null) return;
+        var doc   = rtbPipingHighlighter.Document;
+        var range = new System.Windows.Documents.TextRange(doc.ContentStart, doc.ContentEnd);
+        string rtbText = range.Text.Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd();
+        string tbText  = txtPipingScript.Text.Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd();
+        if (rtbText == tbText) return;
+        range.Text = txtPipingScript.Text;
     }
 
     private void txtPipingScript_ScrollChanged(object sender, System.Windows.Controls.ScrollChangedEventArgs e)

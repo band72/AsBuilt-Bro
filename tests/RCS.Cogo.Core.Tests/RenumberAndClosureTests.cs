@@ -27,7 +27,16 @@ internal sealed class StubCogoContext : ICogoContext
     // ── Point management ─────────────────────────────────────────────────────
     public void  AddPoint(string id, Point3D pt, string desc = "") => _pts[id] = (pt, desc);
     public Point3D? GetPoint(string id) => _pts.TryGetValue(id, out var v) ? v.Pt : null;
-    public bool  DeletePoint(string id) => _pts.Remove(id);
+    public bool  RemovePoint(string id) => _pts.Remove(id);
+    public bool  DeletePoint(string id) => _pts.Remove(id);   // interface alias
+    public bool  RenamePoint(string oldId, string newId)
+    {
+        if (!_pts.TryGetValue(oldId, out var data)) return false;
+        if (_pts.ContainsKey(newId)) return false;
+        _pts.Remove(oldId);
+        _pts[newId] = data;
+        return true;
+    }
     public int   GetNextPointId() => _nextPtId++;
     public IEnumerable<(string Id, Point3D Point, string Description)> GetAllPoints()
         => _pts.Select(kv => (kv.Key, kv.Value.Pt, kv.Value.Desc));

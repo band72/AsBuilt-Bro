@@ -677,6 +677,24 @@ public partial class ShellViewModel : ViewModelBase
         set => SetField(ref _showGpsColumnsInGrid, value);
     }
 
+    // ── Live Coordinate Readout ──────────────────────────────────────────────
+    private string _mouseWorldCoords = "N: —  E: —";
+    /// <summary>World-space cursor coordinates shown in the viewport status bar.</summary>
+    public string MouseWorldCoords
+    {
+        get => _mouseWorldCoords;
+        set => SetField(ref _mouseWorldCoords, value);
+    }
+
+    // ── Bulk Point Operations ─────────────────────────────────────────────────
+    /// <summary>Deletes all currently selected rows in the Points DataGrid.</summary>
+    public System.Windows.Input.ICommand DeleteSelectedPointsCommand { get; private set; }
+        = new RelayCommand(_ => { }); // initialized in ctor
+
+    /// <summary>Renumbers all points sequentially from a user-specified base number.</summary>
+    public System.Windows.Input.ICommand RenumberPointsCommand { get; private set; }
+        = new RelayCommand(_ => { }); // initialized in ctor
+
     // ── Pan / Hand Tool ───────────────────────────────────────────────────────
     private bool _isPanModeActive;
     /// <summary>When true the viewport left-click drag pans instead of selecting.</summary>
@@ -1412,6 +1430,39 @@ public partial class ShellViewModel : ViewModelBase
 
         // ── GPS zone auto-detect command ─────────────────────────────────────────
         AnalyzeGpsZoneCommand = new RelayCommand(_ => AnalyzeGpsZone());
+
+        // ── Bulk point delete ──────────────────────────────────────────────────────
+        DeleteSelectedPointsCommand = new RelayCommand(param =>
+        {
+            if (param is not System.Collections.IList selected || selected.Count == 0) return;
+            var ids = selected.Cast<PointViewModel>().Select(p => p.Id).ToList();
+            int removed = 0;
+            foreach (var id in ids)
+                if (_context.RemovePoint(id)) removed++;
+            ResultLogText += $"Deleted {removed} point(s).{Environment.NewLine}";
+            OnPropertyChanged(nameof(Points));
+        });
+
+        // ── Sequential renumber ────────────────────────────────────────────────────
+        RenumberPointsCommand = new RelayCommand(_ =>
+        {
+            var dlg = new RCS.Cogo.Wpf.Views.RenumberDialog { Owner = System.Windows.Application.Current.MainWindow };
+            if (dlg.ShowDialog() != true) return;
+            int startNum = dlg.StartNumber;
+            var allPts = _context.GetAllPoints().OrderBy(p =>
+            {
+                return int.TryParse(p.Id, out int n) ? n : int.MaxValue;
+            }).ToList();
+            // Build renames: old → new
+            var renames = allPts.Select((p, i) => (OldId: p.Id, NewId: (startNum + i).ToString())).ToList();
+            // Apply only if all new IDs are distinct and dont conflict with unrenamed points
+            int done = 0;
+            foreach (var (oldId, newId) in renames)
+                if (_context.RenamePoint(oldId, newId)) done++;
+            ResultLogText += $"Renumbered {done}/{renames.Count} point(s) starting at {startNum}.{Environment.NewLine}";
+            OnPropertyChanged(nameof(Points));
+        });
+
 
 
         ZoomInCommand = new RelayCommand(_ => ZoomInRequested?.Invoke(this, EventArgs.Empty));
