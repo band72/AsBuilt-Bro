@@ -1694,9 +1694,9 @@
                             Background="#2A1A4A" BorderBrush="#9B59B6" FontSize="10"
                             ToolTip="Find Overlapping Crossings"/>
                     <Button Command="{Binding ZoomWindowCommand}"
-                            Content="WIN" Width="38" Margin="0,0,4,0"
-                            Background="#1A3A1A" BorderBrush="#27AE60" FontSize="11"
-                            ToolTip="Zoom Window — drag a rectangle"/>
+                            Content="&#x2B1A;" Width="38" Margin="0,0,4,0"
+                            Background="#1A3A1A" BorderBrush="#27AE60" FontSize="16"
+                            ToolTip="Zoom Window — drag a rectangle to zoom"/>
                     <Button Command="{Binding ZoomInCommand}"
                             Content="  +  " Width="36" Margin="0,0,4,0"
                             Background="#1A3A1A" BorderBrush="#27AE60" FontSize="16"
@@ -1706,8 +1706,8 @@
                             Background="#1A3A1A" BorderBrush="#27AE60" FontSize="16"
                             ToolTip="Zoom Out"/>
                     <Button Command="{Binding ZoomExtentsCommand}"
-                            Content="EXT" Width="38"
-                            Background="#1A3A1A" BorderBrush="#27AE60" FontSize="11"
+                            Content="&#x26F6;" Width="38"
+                            Background="#1A3A1A" BorderBrush="#27AE60" FontSize="16"
                             ToolTip="Zoom Extents — fit all geometry"/>
                 </StackPanel>
 
