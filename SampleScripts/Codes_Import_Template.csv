@@ -1,0 +1,54 @@
+LocalCode,SystemCode,Description,Block,BlockScale
+W,W,Water Pipe Run,,1
+WAT,JEAW,Water Point,JEAW,1
+WV,JEAWV,Water Valve,JEAWV,1
+WF,JEAWF,Water Fitting,JEAWF,1
+WAR,JEAAIR,Air Release Valve,JEAAIR,1
+WM,JEAWM,Water Manhole,JEAWM,1
+WMET,JEAWMET,Water Meter,JEAWMET,1
+WBFP,JEAWBFP,Water Back Flow Preventer,JEAWBFP,1
+WBO,JEAWBO,Water Blow Off,JEAWBO,1
+HYD,JEAHYD,Fire Hydrant,JEAHYD,1
+WW,WW,Waste Water Pipe Run,,1
+SEW,JEAWW,Waste Water Point,JEAWW,1
+WWV,JEAWWV,Waste Water Valve,JEAWWV,1
+WWF,JEAWWF,Waste Water Fitting,JEAWWF,1
+WWM,JEAWWM,Waste Water Manhole,JEAWWM,1
+ST,ST,Storm Pipe Run,,1
+D,D,Drainage Pipe Run,,1
+STORM,JEAST,Storm Point,JEAST,1
+DRAIN,JEAD,Drainage Point,JEAD,1
+STV,JEASTV,Storm Valve,JEASTV,1
+STF,JEASTF,Storm Fitting,JEASTF,1
+STM,JEASTM,Storm Manhole,JEASTM,1
+CBI,JEACBI,Catch Basin / Inlet,JEACBI,1
+DI,JEADI,Drop Inlet,JEADI,1
+HW,JEAHW,Headwall,JEAHW,1
+E,E,Electric Pipe Run,,1
+EL,E,Electric Pipe Run,,1
+ELEC,JEAE,Electric Point,JEAE,1
+EV,JEAEV,Electric Valve,JEAEV,1
+EF,JEAEF,Electric Fitting,JEAEF,1
+EM,JEAEM,Electric Vault / Manhole,JEAEM,1
+EMET,JEAEMET,Electric Meter,JEAEMET,1
+WPP,E-POLE,Wood Power Pole,E-POLE,1
+G,G,Gas Pipe Run,,1
+GAS,JEAG,Gas Point,JEAG,1
+GV,JEAGV,Gas Valve,JEAGV,1
+GF,JEAGF,Gas Fitting,JEAGF,1
+GM,JEAGM,Gas Vault,JEAGM,1
+GMET,JEAGMET,Gas Meter,JEAGMET,1
+R,R,Reclaimed Pipe Run,,1
+REC,JEAR,Reclaimed Point,JEAR,1
+RV,JEARV,Reclaimed Valve,JEARV,1
+RF,JEARF,Reclaimed Fitting,JEARF,1
+RM,JEARM,Reclaimed Vault,JEARM,1
+CH,CH,Chilled Water Pipe Run,,1
+CHIL,JEACH,Chilled Water Point,JEACH,1
+CHV,JEACHV,Chilled Water Valve,JEACHV,1
+CHF,JEACHF,Chilled Water Fitting,JEACHF,1
+CHM,JEACHM,Chilled Water Vault,JEACHM,1
+EPOLE,E-POLE,Electric Utility Pole,E-POLE,1
+EBOX,E-BOX,Electric Utility Box,E-BOX,1
+POLE,E-POLE,Utility Pole,E-POLE,1
+BOX,E-BOX,Utility Box,E-BOX,1

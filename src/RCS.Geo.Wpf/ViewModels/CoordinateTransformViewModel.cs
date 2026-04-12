@@ -49,15 +49,29 @@ public class CoordinateTransformViewModel : ViewModelBase
     public string OutputLatitude
     {
         get => _outputLatitude;
-        set => SetField(ref _outputLatitude, value);
+        set { SetField(ref _outputLatitude, value); OnPropertyChanged(nameof(OutputLatitudeDms)); }
     }
 
     private string _outputLongitude = "";
     public string OutputLongitude
     {
         get => _outputLongitude;
-        set => SetField(ref _outputLongitude, value);
+        set { SetField(ref _outputLongitude, value); OnPropertyChanged(nameof(OutputLongitudeDms)); }
     }
+
+    // ── DMS derived outputs ────────────────────────────────────────────────────
+    public string OutputLatitudeDms  => DecimalToDms(OutputLatitude,  isLat: true);
+    public string OutputLongitudeDms => DecimalToDms(OutputLongitude, isLat: false);
+
+    // ── Input validation badge ────────────────────────────────────────────────
+    private bool _inputIsValid;
+    public bool InputIsValid
+    {
+        get => _inputIsValid;
+        set => SetField(ref _inputIsValid, value);
+    }
+
+    public ICommand CopyToClipboardCommand { get; }
 
     private string _errorMessage = "";
     public string ErrorMessage
@@ -90,7 +104,8 @@ public class CoordinateTransformViewModel : ViewModelBase
             _selectedSourceCrs = AvailableCrs[0];
         }
 
-        ConvertCommand = new RelayCommand(ExecuteConvert);
+        ConvertCommand         = new RelayCommand(ExecuteConvert);
+        CopyToClipboardCommand = new RelayCommand(ExecuteCopy, () => InputIsValid);
     }
 
     private void ExecuteConvert()
@@ -143,10 +158,41 @@ public class CoordinateTransformViewModel : ViewModelBase
         catch (GeoTransformException ex)
         {
             ErrorMessage = $"Transformation error: {ex.Message}";
+            InputIsValid = false;
         }
         catch (Exception ex)
         {
             ErrorMessage = $"Error: {ex.Message}";
+            InputIsValid = false;
         }
+
+        // Mark valid if outputs are populated
+        InputIsValid = !string.IsNullOrEmpty(OutputLatitude) && string.IsNullOrEmpty(ErrorMessage);
+    }
+
+    private void ExecuteCopy()
+    {
+        if (!InputIsValid) return;
+        var text = $"Latitude:  {OutputLatitude} ({OutputLatitudeDms})\n" +
+                   $"Longitude: {OutputLongitude} ({OutputLongitudeDms})\n" +
+                   $"Zone: {SelectedSourceCrs?.DisplayName}";
+        System.Windows.Clipboard.SetText(text);
+    }
+
+    /// <summary>Converts a decimal degree string to DD°MM'SS.ss" N/S/E/W notation.</summary>
+    private static string DecimalToDms(string decimalDeg, bool isLat)
+    {
+        if (!double.TryParse(decimalDeg,
+            System.Globalization.NumberStyles.Float,
+            System.Globalization.CultureInfo.InvariantCulture, out double d))
+            return "";
+
+        char dir = isLat ? (d >= 0 ? 'N' : 'S') : (d >= 0 ? 'E' : 'W');
+        double abs = Math.Abs(d);
+        int deg    = (int)abs;
+        double rem = (abs - deg) * 60.0;
+        int min    = (int)rem;
+        double sec = (rem - min) * 60.0;
+        return $"{deg}°{min:D2}'{sec:F2}\" {dir}";
     }
 }

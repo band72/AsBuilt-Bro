@@ -1189,9 +1189,16 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <!-- Bound StrokeThickness so it scales correctly with the zoom factor instead of being too thin -->
-                            <Polyline Points="{Binding Points}" Stroke="{Binding Stroke}" StrokeLineJoin="Round"
-                                      StrokeThickness="{Binding DataContext.LineMarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                            <Canvas>
+                                <!-- Base pipe polyline — stroke thickness scales with zoom -->
+                                <Polyline Points="{Binding Points}" Stroke="{Binding Stroke}" StrokeLineJoin="Round"
+                                          StrokeThickness="{Binding DataContext.LineMarkerScale, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                <!-- Highlight overlay — cyan glow when run is selected in AsBuilt grid (thickness via HighlightThickness) -->
+                                <Polyline Points="{Binding Points}" StrokeLineJoin="Round"
+                                          Stroke="#00FFFF" Opacity="0.65" IsHitTestVisible="False"
+                                          StrokeThickness="{Binding HighlightThickness}"
+                                          Visibility="{Binding IsHighlighted, Converter={StaticResource BoolToVis}}"/>
+                            </Canvas>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

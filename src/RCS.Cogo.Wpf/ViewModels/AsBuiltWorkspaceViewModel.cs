@@ -195,6 +195,7 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
     public System.Windows.Input.ICommand NewJobCommand               { get; }
     public System.Windows.Input.ICommand ValidateNowCommand          { get; }
     public System.Windows.Input.ICommand BuildPackageCommand         { get; }
+    public System.Windows.Input.ICommand GenerateReportCommand       { get; }
     public System.Windows.Input.ICommand GoToNextStepCommand         { get; }
     public System.Windows.Input.ICommand GoToPrevStepCommand         { get; }
     public System.Windows.Input.ICommand ImportPointsListCommand     { get; }
@@ -208,6 +209,7 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
         NewJobCommand               = new AsBuiltRelayCommand(StartNewJob);
         ValidateNowCommand          = new AsBuiltAsyncRelayCommand(RunValidationAsync);
         BuildPackageCommand         = new AsBuiltAsyncRelayCommand(BuildPackageAsync, () => IsExportReady);
+        GenerateReportCommand       = new AsBuiltAsyncRelayCommand(GenerateReportAsync);
         GoToNextStepCommand         = new AsBuiltRelayCommand(GoToNextStep);
         GoToPrevStepCommand         = new AsBuiltRelayCommand(GoToPrevStep);
         ImportPointsListCommand     = new AsBuiltAsyncRelayCommand(() => ImportFileAsync(IntakeFileType.Pnezd));
@@ -366,6 +368,36 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
         RefreshDeliverableCards();
     }
 
+    private async Task GenerateReportAsync()
+    {
+        var dlg = new Microsoft.Win32.SaveFileDialog
+        {
+            Title      = "Save AS-BUILT SURVEY REPORT",
+            Filter     = "Text Report (*.txt)|*.txt|All Files (*.*)|*.*",
+            DefaultExt = ".txt",
+            FileName   = $"{Job.Identity.JobNumber}_Rev{Job.Identity.RevisionNumber}_Report.txt"
+        };
+        if (dlg.ShowDialog() != true) return;
+
+        string outputPath = dlg.FileName;
+        var result = _validationEngine.Validate(Job);
+
+        await Task.Run(() =>
+            new RCS.Piping.Core.Builders.PdfReportBuilder()
+                .Build(Job, result, outputPath));
+
+        // Open in default viewer (Notepad / OS default)
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName        = outputPath,
+                UseShellExecute = true
+            });
+        }
+        catch { /* non-fatal — file was still saved */ }
+    }
+
     private void RefreshNavigatorStatus()
     {
         var result = _validationEngine.Validate(Job);
@@ -458,6 +490,37 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
         // Post status to Intake phase
         IntakeReport = report;
         OnPropertyChanged(nameof(IntakeReport));
+
+        // ── Show structured diff summary ──────────────────────────────────────
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine(report.Summary);
+        sb.AppendLine();
+
+        if (report.RowsAdded > 0 || report.RowsUpdated > 0 || report.RowsSkipped > 0)
+        {
+            sb.AppendLine($"  \u2705  Added     : {report.RowsAdded,6}");
+            sb.AppendLine($"  \ud83d\udd04  Updated   : {report.RowsUpdated,6}");
+            sb.AppendLine($"  \u23ed\ufe0f  Skipped   : {report.RowsSkipped,6}");
+        }
+
+        if (report.ValidationErrors.Count > 0)
+        {
+            sb.AppendLine();
+            sb.AppendLine("Validation issues:");
+            foreach (var err in report.ValidationErrors.Take(10))
+                sb.AppendLine($"  • {err}");
+            if (report.ValidationErrors.Count > 10)
+                sb.AppendLine($"  … and {report.ValidationErrors.Count - 10} more.");
+        }
+
+        var icon  = report.Success
+            ? System.Windows.MessageBoxImage.Information
+            : System.Windows.MessageBoxImage.Warning;
+        System.Windows.MessageBox.Show(
+            sb.ToString().TrimEnd(),
+            "Import Complete",
+            System.Windows.MessageBoxButton.OK,
+            icon);
 
         // Auto-advance to Points phase if import succeeded
         if (report.PointsLoaded > 0 || report.RunsLoaded > 0)

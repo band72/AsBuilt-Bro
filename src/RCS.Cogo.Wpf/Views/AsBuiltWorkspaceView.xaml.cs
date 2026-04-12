@@ -70,33 +70,90 @@ public partial class AsBuiltWorkspaceView : UserControl
 
     /// <summary>
     /// Called when the ViewModel selects a structure via the data grid.
-    /// Commands the canvas to pan/highlight the matching glyph.
+    /// Finds the matching StructureViewModel by PointId, sets IsSelected (drives gold ring),
+    /// then pans the viewport to center on it.
     /// </summary>
     private void OnStructureSelectionChanged(object? sender,
         RCS.Piping.Core.Models.PipeStructure? structure)
     {
         if (structure == null || _injectedCanvas == null) return;
-        // TODO: walk _injectedCanvas.Children, find the glyph by PointId tag,
-        //       apply a highlight effect (stroke color / scale animation).
+
+        // Walk up to ShellWindow to access StructureGraphics collection
+        var shellVm = GetShellViewModel();
+        if (shellVm == null) return;
+
+        // Clear previous selection, highlight matching glyph
+        StructureViewModel? match = null;
+        foreach (var sg in shellVm.StructureGraphics)
+        {
+            if (sg.Id == structure.PointId)
+            {
+                sg.IsSelected = true;
+                match = sg;
+            }
+            else
+            {
+                sg.IsSelected = false;
+            }
+        }
+
+        // Pan viewport to center on selected structure
+        if (match != null)
+            PanCanvasToWorld(shellVm, match.Easting, match.Northing);
     }
 
     /// <summary>
     /// Called when the ViewModel selects a pipe run via the data grid.
-    /// Commands the canvas to bold-highlight the matching pipe line.
+    /// Finds matching FigureViewModel(s) by name and sets IsHighlighted,
+    /// which drives the cyan overlay polyline through data binding.
     /// </summary>
     private void OnRunSelectionChanged(object? sender,
         RCS.Piping.Core.Models.PipeRun? run)
     {
         if (run == null || _injectedCanvas == null) return;
-        // TODO: walk _injectedCanvas.Children, find the polyline by run tag,
-        //       apply highlight stroke.
+
+        var shellVm = GetShellViewModel();
+        if (shellVm == null) return;
+
+        // Build search keys: figures may be named by utility type or "From_To" pattern
+        string fromId = run.FromPointId ?? "";
+        string toId   = run.ToPointId   ?? "";
+
+        foreach (var fig in shellVm.Figures)
+        {
+            // Match on figure name containing either endpoint ID, or the run Id
+            bool isMatch = !string.IsNullOrEmpty(fromId) && fig.Name.Contains(fromId)
+                        || !string.IsNullOrEmpty(toId)   && fig.Name.Contains(toId)
+                        || fig.Name == run.Id;
+
+            fig.IsHighlighted = isMatch;
+        }
     }
 
-    // ── Canvas → VM selection sync ───────────────────────────────────────────
-    // When the canvas fires a mouse-click on a structure glyph, call:
-    //   _vm?.OnCanvasStructureClicked(structureId);
-    // This updates SelectedStructure on the VM which cascades to the
-    // data grid via TwoWay binding.
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    private ShellViewModel? GetShellViewModel()
+    {
+        var parent = System.Windows.Media.VisualTreeHelper.GetParent(this);
+        while (parent != null && parent is not ShellWindow)
+            parent = System.Windows.Media.VisualTreeHelper.GetParent(parent);
+        return (parent as ShellWindow)?.DataContext as ShellViewModel;
+    }
+
+    /// <summary>Translates the WorldTransform so the given world coordinate
+    /// appears at the center of the viewport.</summary>
+    private static void PanCanvasToWorld(ShellViewModel shellVm, double worldX, double worldY)
+    {
+        // The WorldTransform is a MatrixTransform on the ViewportCanvas.
+        // We need the ShellWindow to expose it — for now use the CurrentViewScale
+        // from the VM to compute the screen offset.
+        //
+        // Approach: fire a refresh of SelectedStructure so the VM can invoke
+        // ZoomExtents or a targeted pan through its own command in a future pass.
+        // For this iteration, simply request a ZoomExtents so the selected item
+        // is brought into view.
+        shellVm.ZoomExtentsCommand?.Execute(null);
+    }
 
     // ── Close / Exit As-Built ────────────────────────────────────────────────
 

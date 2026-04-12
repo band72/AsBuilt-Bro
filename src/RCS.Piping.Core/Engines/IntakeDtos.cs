@@ -15,4 +15,10 @@ public class IntakeReport
     public int    Warnings        { get; set; }
     public string Summary         { get; set; } = "No file imported yet.";
     public bool   Success         { get; set; }
+
+    // ── Diff fields (populated by JEA Excel and PNEZD importers) ─────────────
+    public int RowsAdded      { get; set; }
+    public int RowsUpdated    { get; set; }
+    public int RowsSkipped    { get; set; }
+    public System.Collections.Generic.List<string> ValidationErrors { get; set; } = [];
 }

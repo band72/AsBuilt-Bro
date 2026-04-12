@@ -111,6 +111,9 @@ public sealed class IntakeAnalysisEngine
             StructuresFound = 0,
             Warnings        = warnings.Count + skipped,
             Success         = loaded > 0,
+            RowsAdded       = loaded - warnings.Count,
+            RowsUpdated     = warnings.Count,
+            RowsSkipped     = skipped,
             Summary         = $"PNEZD: {loaded} point(s) loaded, {skipped} row(s) skipped" +
                               (warnings.Count > 0 ? $", {warnings.Count} duplicate(s) overwritten." : ".")
         };

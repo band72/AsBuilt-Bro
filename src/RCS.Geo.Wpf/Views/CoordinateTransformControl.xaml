@@ -50,21 +50,50 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="80"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Latitude:" Margin="0,2"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" Margin="0,2" IsReadOnly="True" Background="#333" Foreground="#98C379" Text="{Binding OutputLatitude}" />
-                    
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Longitude:" Margin="0,2"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Margin="0,2" IsReadOnly="True" Background="#333" Foreground="#61AFEF" Text="{Binding OutputLongitude}" />
+                    <!-- Header row -->
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Decimal Degrees" Foreground="#7A7A9A" FontSize="10" Margin="0,0,4,2"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="DMS" Foreground="#7A7A9A" FontSize="10" Margin="0,0,0,2"/>
+
+                    <!-- Latitude -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Latitude:" VerticalAlignment="Center" Margin="0,2"/>
+                    <TextBox   Grid.Row="1" Grid.Column="1" Margin="0,2,4,2" IsReadOnly="True"
+                               Background="#333" Foreground="#98C379" Text="{Binding OutputLatitude}"/>
+                    <TextBox   Grid.Row="1" Grid.Column="2" Margin="0,2" IsReadOnly="True"
+                               Background="#333" Foreground="#98C379" Text="{Binding OutputLatitudeDms}"/>
+
+                    <!-- Longitude -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Longitude:" VerticalAlignment="Center" Margin="0,2"/>
+                    <TextBox   Grid.Row="3" Grid.Column="1" Margin="0,2,4,2" IsReadOnly="True"
+                               Background="#333" Foreground="#61AFEF" Text="{Binding OutputLongitude}"/>
+                    <TextBox   Grid.Row="3" Grid.Column="2" Margin="0,2" IsReadOnly="True"
+                               Background="#333" Foreground="#61AFEF" Text="{Binding OutputLongitudeDms}"/>
                 </Grid>
-                
-                <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="#E06C75" Margin="0,10,0,0" TextWrapping="Wrap" />
+
+                <!-- Copy button + error -->
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding ErrorMessage}"
+                               Foreground="#E06C75" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                    <Button Grid.Column="1" Content="📋  Copy to Clipboard"
+                            Command="{Binding CopyToClipboardCommand}"
+                            Padding="10,6" Margin="8,0,0,0"
+                            Background="#2D4A3E" Foreground="#98C379"
+                            BorderBrush="#3E6B5A" BorderThickness="1"
+                            FontFamily="Segoe UI" FontSize="11"
+                            ToolTip="Copy Lat / Lon and DMS to clipboard"/>
+                </Grid>
             </StackPanel>
         </Grid>
     </Border>

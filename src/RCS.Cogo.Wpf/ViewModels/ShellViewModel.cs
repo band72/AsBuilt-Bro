@@ -352,7 +352,8 @@ public partial class ShellViewModel : ViewModelBase
     public System.Collections.ObjectModel.ObservableCollection<RecentFileEntry> RecentFiles { get; }
         = new();
 
-    public System.Windows.Input.ICommand OpenRecentFileCommand { get; private set; } = new RelayCommand(_ => { });
+    public System.Windows.Input.ICommand OpenRecentFileCommand { get; private set; }
+        = new RelayCommand(param => { }); // initialized in ctor via InitRecentFileCommand()
 
     private void LoadRecentFiles()
     {
@@ -1287,7 +1288,7 @@ public partial class ShellViewModel : ViewModelBase
         Dashboard.NewJobCommand     = new RelayCommand(_ => LaunchNewJobWizard());
         Dashboard.OpenJobCommand    = new RelayCommand(_ => OpenExistingJob());
         Dashboard.ImportDataCommand = new RelayCommand(_ => ImportDataIntoActiveJob());
-        Dashboard.TemplatesCommand  = new RelayCommand(_ => { /* TODO: templates dialog */ });
+        Dashboard.TemplatesCommand  = new RelayCommand(_ => TemplatesDialog());
 
         // Wire each navigator step's SelectCommand to update current phase
         foreach (var step in Navigator.Steps)
@@ -1302,6 +1303,89 @@ public partial class ShellViewModel : ViewModelBase
     }
 
     // ── New Job Wizard → Intake → Load ───────────────────────────────────────────────
+
+    private void TemplatesDialog()
+    {
+        var menu = new System.Windows.Controls.ContextMenu();
+
+        var saveItem = new System.Windows.Controls.MenuItem { Header = "💾  Save Current Settings as Template..." };
+        saveItem.Click += (_, __) =>
+        {
+            var dlg = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter      = "RCS Job Template (*.rcst)|*.rcst",
+                DefaultExt  = ".rcst",
+                FileName    = "JobTemplate",
+                Title       = "Save Job Template"
+            };
+            if (dlg.ShowDialog() != true) return;
+            try
+            {
+                var template = new
+                {
+                    Version       = "1.0",
+                    CreatedUtc    = DateTime.UtcNow,
+                    JobName       = CurrentProject?.ProjectName ?? "",
+                    UtilityTypes  = Figures.Select(f => f.Name).Distinct().ToList(),
+                    CodesSnapshot = CogoCodes.Select(c => new { c.LocalCode, c.SystemCode, c.Description, c.Block, c.BlockScale }).ToList()
+                };
+                var json = System.Text.Json.JsonSerializer.Serialize(template,
+                    new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                System.IO.File.WriteAllText(dlg.FileName, json);
+                CommandLog.Add($"[TEMPLATE] Saved template to {dlg.FileName}");
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Failed to save template:\n{ex.Message}",
+                    "Template Save Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+        };
+
+        var loadItem = new System.Windows.Controls.MenuItem { Header = "📂  Load Template (Restore Codes)..." };
+        loadItem.Click += (_, __) =>
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter      = "RCS Job Template (*.rcst)|*.rcst|All Files (*.*)|*.*",
+                DefaultExt  = ".rcst",
+                Title       = "Open Job Template"
+            };
+            if (dlg.ShowDialog() != true) return;
+            try
+            {
+                var json = System.IO.File.ReadAllText(dlg.FileName);
+                using var doc = System.Text.Json.JsonDocument.Parse(json);
+                if (!doc.RootElement.TryGetProperty("CodesSnapshot", out var codesEl)) return;
+
+                using var db = new RCS.Data.AppDbContext();
+                CogoCodes.Clear();
+                foreach (var codeEl in codesEl.EnumerateArray())
+                {
+                    string local = codeEl.GetProperty("LocalCode").GetString() ?? "";
+                    string sys   = codeEl.GetProperty("SystemCode").GetString() ?? "";
+                    string desc  = codeEl.TryGetProperty("Description", out var d) ? d.GetString() ?? sys : sys;
+                    string block = codeEl.TryGetProperty("Block", out var b) ? b.GetString() ?? "" : "";
+                    double scale = codeEl.TryGetProperty("BlockScale", out var s) ? s.GetDouble() : 1.0;
+
+                    if (!db.CogoCodes.Any(e => e.SystemCode == sys))
+                        db.CogoCodes.Add(new RCS.Data.Entities.CogoCodeEntity { LocalCode = local, SystemCode = sys, Description = desc, Block = block, BlockScale = scale });
+
+                    CogoCodes.Add(new CogoCode(local, sys, desc, block, scale));
+                }
+                db.SaveChanges();
+                CommandLog.Add($"[TEMPLATE] Loaded {CogoCodes.Count} codes from {System.IO.Path.GetFileName(dlg.FileName)}");
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Failed to load template:\n{ex.Message}",
+                    "Template Load Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+        };
+
+        menu.Items.Add(saveItem);
+        menu.Items.Add(loadItem);
+        menu.IsOpen = true;
+    }
 
     private void LaunchNewJobWizard()
     {
@@ -2827,6 +2911,18 @@ public class FigureViewModel : ViewModelBase
     public double?  Acres          { get; }
     public double?  PrecisionRatio { get; }
     public DateTime? LastQcRun     { get; }
+
+    // ── Run selection highlight ───────────────────────────────────────────────
+    private bool _isHighlighted;
+    /// <summary>True while this figure's matching pipe run is selected in the AsBuilt grid.
+    /// Drives a bold stroke via data binding — no visual-tree walk required.</summary>
+    public bool IsHighlighted
+    {
+        get => _isHighlighted;
+        set { _isHighlighted = value; OnPropertyChanged(); OnPropertyChanged(nameof(HighlightThickness)); }
+    }
+    /// <summary>Returns 4x the normal line thickness when highlighted, 1x otherwise.</summary>
+    public double HighlightThickness => IsHighlighted ? 4.0 : 1.0;
 
     /// <summary>
     /// Single-character glyph for the QC badge: ✓ (passed), ✗ (failed), ? (unknown).

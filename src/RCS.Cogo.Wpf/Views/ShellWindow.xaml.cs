@@ -20,6 +20,10 @@ public partial class ShellWindow : Window
     private AsBuiltWorkspaceViewModel?    _asBuiltVm;
     private const int AsBuiltTabIndex = 9;   // 0-based index of the 🏗 As-Built tab
 
+    // ── Piping script real-time diagnostics ───────────────────────────────────
+    private System.Windows.Threading.DispatcherTimer? _pipeSquiggleTimer;
+    private System.Windows.Controls.Canvas?           _squiggleOverlay;
+
     public ShellWindow()
     {
         InitializeComponent();
@@ -42,6 +46,16 @@ public partial class ShellWindow : Window
 
         // ── Show the Welcome screen once the main window is ready ────────────
         Loaded += OnFirstLoad;
+
+        // ── Piping script squiggle timer (500 ms debounce) ───────────────────
+        _pipeSquiggleTimer = new System.Windows.Threading.DispatcherTimer
+        {
+            Interval = System.TimeSpan.FromMilliseconds(500)
+        };
+        _pipeSquiggleTimer.Tick += OnSquiggleTimerTick;
+
+        // Attach overlay canvas once the visual tree is built
+        Loaded += (_, __) => InitSquiggleOverlay();
     }
 
     private void OnFirstLoad(object sender, RoutedEventArgs e)
@@ -583,9 +597,11 @@ public partial class ShellWindow : Window
     private void txtPipingScript_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
     {
         if (txtPipingLineNumbers.Visibility == Visibility.Visible)
-        {
             UpdateLineNumbers();
-        }
+
+        // Restart debounce timer on every keystroke
+        _pipeSquiggleTimer?.Stop();
+        _pipeSquiggleTimer?.Start();
     }
 
     private void txtPipingScript_ScrollChanged(object sender, System.Windows.Controls.ScrollChangedEventArgs e)
@@ -593,6 +609,108 @@ public partial class ShellWindow : Window
         if (txtPipingLineNumbers.Visibility == Visibility.Visible)
         {
             txtPipingLineNumbers.ScrollToVerticalOffset(e.VerticalOffset);
+        }
+    }
+
+    // \u2500\u2500 Piping Script Squiggle (real-time error highlighting) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+
+    private void InitSquiggleOverlay()
+    {
+        // Build a transparent overlay Grid that exactly covers the piping script TextBox.
+        // We place it inside the same parent grid cell using ZIndex so it floats on top
+        // but passes all mouse events through (IsHitTestVisible = false).
+        if (txtPipingScript.Parent is not System.Windows.Controls.Grid parentGrid) return;
+
+        _squiggleOverlay = new System.Windows.Controls.Canvas
+        {
+            IsHitTestVisible  = false,
+            ClipToBounds      = true,
+            Background        = System.Windows.Media.Brushes.Transparent
+        };
+
+        System.Windows.Controls.Grid.SetColumn(_squiggleOverlay,
+            System.Windows.Controls.Grid.GetColumn(txtPipingScript));
+        System.Windows.Controls.Panel.SetZIndex(_squiggleOverlay, 2);   // above the TextBox (ZIndex=1)
+        parentGrid.Children.Add(_squiggleOverlay);
+    }
+
+    private async void OnSquiggleTimerTick(object? sender, EventArgs e)
+    {
+        _pipeSquiggleTimer!.Stop();   // one-shot
+
+        if (_squiggleOverlay == null) return;
+        if (DataContext is not ShellViewModel vm) return;
+
+        string script = txtPipingScript.Text;
+
+        // Compile off-UI thread
+        var diagnostics = await System.Threading.Tasks.Task.Run(() =>
+        {
+            var compiler = new RCS.Piping.Core.Scripting.PipeScriptCompiler();
+            var result   = compiler.Compile(
+                script,
+                id => { var p = vm.Points.FirstOrDefault(pt => pt.Id == id); return p == null ? null : new RCS.Cogo.Core.Primitives.Point3D(p.Northing, p.Easting, p.Elevation); },
+                new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase),
+                new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase));
+            return result.Diagnostics;
+        });
+
+        // Paint on UI thread
+        _squiggleOverlay.Children.Clear();
+
+        if (diagnostics.Count == 0) return;
+
+        // Measure line height from font metrics
+        var formattedText = new System.Windows.Media.FormattedText(
+            "A",
+            System.Globalization.CultureInfo.InvariantCulture,
+            System.Windows.FlowDirection.LeftToRight,
+            new System.Windows.Media.Typeface(txtPipingScript.FontFamily.Source),
+            txtPipingScript.FontSize,
+            System.Windows.Media.Brushes.Black,
+            System.Windows.Media.VisualTreeHelper.GetDpi(this).PixelsPerDip);
+        double lineH = formattedText.Height + 1.5;   // approx line height
+
+        double topPad = txtPipingScript.Padding.Top;
+        double overlayW = _squiggleOverlay.ActualWidth;
+        if (overlayW <= 0) overlayW = txtPipingScript.ActualWidth;
+
+        var errorBrush = new System.Windows.Media.SolidColorBrush(
+            System.Windows.Media.Color.FromArgb(55, 255, 60, 60));
+        var warnBrush  = new System.Windows.Media.SolidColorBrush(
+            System.Windows.Media.Color.FromArgb(45, 255, 200, 0));
+        var errorBar   = System.Windows.Media.Brushes.Red;
+        var warnBar    = System.Windows.Media.Brushes.Orange;
+
+        foreach (var diag in diagnostics.Where(d => d.Severity is "ERROR" or "WARN"))
+        {
+            int zeroLine = diag.LineNumber - 1;
+            double y = topPad + zeroLine * lineH;
+
+            bool isErr = diag.Severity == "ERROR";
+
+            // Tinted row background
+            var bg = new System.Windows.Shapes.Rectangle
+            {
+                Width  = overlayW,
+                Height = lineH,
+                Fill   = isErr ? errorBrush : warnBrush,
+                ToolTip = $"[{diag.Severity}] Line {diag.LineNumber}: {diag.Message}"
+            };
+            System.Windows.Controls.Canvas.SetLeft(bg, 0);
+            System.Windows.Controls.Canvas.SetTop(bg, y);
+            _squiggleOverlay.Children.Add(bg);
+
+            // Left-edge severity bar (3px)
+            var bar = new System.Windows.Shapes.Rectangle
+            {
+                Width  = 3,
+                Height = lineH,
+                Fill   = isErr ? errorBar : warnBar
+            };
+            System.Windows.Controls.Canvas.SetLeft(bar, 0);
+            System.Windows.Controls.Canvas.SetTop(bar, y);
+            _squiggleOverlay.Children.Add(bar);
         }
     }
 
