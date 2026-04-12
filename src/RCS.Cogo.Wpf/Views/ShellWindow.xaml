@@ -419,6 +419,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                  <ColumnDefinition Width="Auto"/>
                                  <ColumnDefinition Width="Auto"/>
+                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <!-- Import -->
@@ -492,8 +493,17 @@
                                     ToolTip="Export all points as KML for Google Earth / Maps"
                                     Background="#1A2535" Foreground="#61AFEF"
                                     BorderBrush="#1A4A6E" BorderThickness="1"/>
+                            <!-- ── KML Import ── -->
+                            <Button Grid.Column="9"
+                                    Content="&#x1F4E5; KML"
+                                    Command="{Binding ImportKmlCommand}"
+                                    Padding="8,5" Margin="4,0,0,0"
+                                    ToolTip="Import points from a KML file (Google Earth / Maps)"
+                                    Background="#1A2535" Foreground="#98C379"
+                                    BorderBrush="#3A6A3A" BorderThickness="1"/>
+
                             <!-- ── GPS Columns toggle ── -->
-                            <ToggleButton Grid.Column="9"
+                            <ToggleButton Grid.Column="10"
                                           Content="&#x1F30D; GPS"
                                           IsChecked="{Binding ShowGpsColumnsInGrid}"
                                           Padding="8,5" Margin="4,0,0,0"
@@ -1693,6 +1703,10 @@
                             Content="CROSS" Width="44" Margin="0,0,4,0"
                             Background="#2A1A4A" BorderBrush="#9B59B6" FontSize="10"
                             ToolTip="Find Overlapping Crossings"/>
+                    <ToggleButton IsChecked="{Binding IsPanModeActive}"
+                                  Content="&#x270B;" Width="38" Margin="0,0,4,0"
+                                  Background="#1A3A1A" BorderBrush="#27AE60" FontSize="16"
+                                  ToolTip="Pan / Hand Tool — left-click drag to pan"/>
                     <Button Command="{Binding ZoomWindowCommand}"
                             Content="&#x2B1A;" Width="38" Margin="0,0,4,0"
                             Background="#1A3A1A" BorderBrush="#27AE60" FontSize="16"

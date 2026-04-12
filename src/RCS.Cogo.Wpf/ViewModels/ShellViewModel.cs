@@ -677,6 +677,18 @@ public partial class ShellViewModel : ViewModelBase
         set => SetField(ref _showGpsColumnsInGrid, value);
     }
 
+    // ── Pan / Hand Tool ───────────────────────────────────────────────────────
+    private bool _isPanModeActive;
+    /// <summary>When true the viewport left-click drag pans instead of selecting.</summary>
+    public bool IsPanModeActive
+    {
+        get => _isPanModeActive;
+        set { _isPanModeActive = value; OnPropertyChanged(); PanModeRequested?.Invoke(this, value); }
+    }
+    /// <summary>Raised when the user toggles pan mode; bool arg = new active state.</summary>
+    public event EventHandler<bool>? PanModeRequested;
+
+
     /// <summary>Context-menu command: shows GPS lat/lon popup for the selected point.</summary>
     public System.Windows.Input.ICommand ShowGpsCoordinatesCommand { get; private set; }
         = new RelayCommand(_ => { }); // initialized in InitGpsCommand()
@@ -687,6 +699,10 @@ public partial class ShellViewModel : ViewModelBase
 
     /// <summary>Analyzes loaded point Easting values to detect the FL State Plane zone and warns if it mismatches the current setting.</summary>
     public System.Windows.Input.ICommand AnalyzeGpsZoneCommand { get; private set; }
+        = new RelayCommand(_ => { }); // initialized in InitGpsCommand()
+
+    /// <summary>Imports Placemarks from a KML file and adds them as projected COGO points in the current zone.</summary>
+    public System.Windows.Input.ICommand ImportKmlCommand { get; private set; }
         = new RelayCommand(_ => { }); // initialized in InitGpsCommand()
 
     /// <summary>Exports all drawing points as a KML file for Google Earth.</summary>
@@ -1360,6 +1376,36 @@ public partial class ShellViewModel : ViewModelBase
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show($"KML export error: {ex.Message}", "KML Export",
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+        });
+
+        // ── Import KML ────────────────────────────────────────────────────────────
+        ImportKmlCommand = new RelayCommand(_ =>
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                Title      = "Import GPS Points from KML",
+                Filter     = "KML Files (*.kml)|*.kml|All Files (*.*)|*.*",
+                DefaultExt = ".kml"
+            };
+            if (dlg.ShowDialog() != true) return;
+            try
+            {
+                string zone = RCS.Geo.Core.StatePlaneProjection.NormalizeZone(JeaStatePlaneZone);
+                var pts     = RCS.Geo.Core.KmlImporter.Import(dlg.FileName, zone);
+                foreach (var pt in pts)
+                    _context.AddPoint(pt.Id, new RCS.Cogo.Core.Primitives.Point3D(pt.Northing, pt.Easting, pt.ElevFt), pt.Description);
+                ResultLogText += $"KML Import: {pts.Count} point(s) \u2192 zone {zone} from {System.IO.Path.GetFileName(dlg.FileName)}{Environment.NewLine}";
+                OnPropertyChanged(nameof(Points));
+                AnalyzeGpsZone();   // re-check zone after import
+                System.Windows.MessageBox.Show(
+                    $"KML imported: {pts.Count} point(s) from {System.IO.Path.GetFileName(dlg.FileName)}",
+                    "KML Import", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"KML import error: {ex.Message}", "KML Import",
                     System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         });

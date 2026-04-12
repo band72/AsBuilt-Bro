@@ -11,6 +11,7 @@ public partial class ShellWindow : Window
 {
     private Point _lastMousePosition;
     private bool _isDragging;
+    private bool _isPanMode;          // true when the ✋ Pan toggle is active
     private bool _isZoomWindowMode;
     private bool _isZoomDragging;
     private Point _zoomStartPoint;
@@ -33,9 +34,10 @@ public partial class ShellWindow : Window
         vm.ZoomExtentsRequested  += (s, e) => ZoomExtents();
         vm.ZoomInRequested        += (s, e) => ZoomIn();
         vm.ZoomOutRequested       += (s, e) => ZoomOut();
-        vm.ZoomWindowRequested    += (s, e) => ActivateZoomWindow();
+        vm.ZoomWindowRequested    += (s, target) => ActivateZoomWindow();
         vm.ZoomToPointRequested   += (s, target) => ZoomToPoint(target);
         vm.ViewRestoreRequested   += (s, matrixArray) => RestoreView(matrixArray);
+        vm.PanModeRequested       += (s, active) => { _isPanMode = active; Mouse.OverrideCursor = active ? Cursors.Hand : null; };
 
         // Initialize Default View
         var matrix = new Matrix();
@@ -149,19 +151,31 @@ public partial class ShellWindow : Window
 
     private void ViewportGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
-        if (!_isZoomWindowMode) return;
+        // ── Zoom Window left-click drag ──────────────────────────────────────
+        if (_isZoomWindowMode && e.LeftButton == MouseButtonState.Pressed)
+        {
+            _zoomStartPoint = e.GetPosition(ViewportGrid);
+            _isZoomDragging = true;
 
-        _zoomStartPoint = e.GetPosition(ViewportGrid);
-        _isZoomDragging = true;
+            ZoomRect.Margin     = new Thickness(_zoomStartPoint.X, _zoomStartPoint.Y, 0, 0);
+            ZoomRect.Width      = 0;
+            ZoomRect.Height     = 0;
+            ZoomRect.Visibility = Visibility.Visible;
 
-        ZoomRect.Margin     = new Thickness(_zoomStartPoint.X, _zoomStartPoint.Y, 0, 0);
-        ZoomRect.Width      = 0;
-        ZoomRect.Height     = 0;
-        ZoomRect.Visibility = Visibility.Visible;
+            ViewportGrid.CaptureMouse();
+            e.Handled = true;
+            Log($"[ZOOM] Mouse down at {_zoomStartPoint}");
+            return;
+        }
 
-        ViewportGrid.CaptureMouse();
-        e.Handled = true;
-        Log($"[ZOOM] Mouse down at {_zoomStartPoint}");
+        // ── Pan mode left-click drag ─────────────────────────────────────────
+        if (_isPanMode && e.LeftButton == MouseButtonState.Pressed)
+        {
+            _lastMousePosition = e.GetPosition(this);
+            _isDragging        = true;
+            ((UIElement)sender).CaptureMouse();
+            e.Handled = true;
+        }
     }
 
     private void ViewportGrid_PreviewMouseMove(object sender, MouseEventArgs e)
@@ -196,6 +210,15 @@ public partial class ShellWindow : Window
 
     private void ViewportGrid_PreviewMouseUp(object sender, MouseButtonEventArgs e)
     {
+        // ── Release pan drag on left-button up ───────────────────────────────
+        if (_isDragging && e.LeftButton == MouseButtonState.Released && _isPanMode)
+        {
+            _isDragging = false;
+            ((UIElement)sender).ReleaseMouseCapture();
+            e.Handled = true;
+            return;
+        }
+
         if (!_isZoomDragging) return;
 
         _isZoomDragging = false;
@@ -207,7 +230,7 @@ public partial class ShellWindow : Window
         
         // Only exit WIN mode once the zoom completes successfully or is aborted
         _isZoomWindowMode       = false;
-        Mouse.OverrideCursor    = null;
+        Mouse.OverrideCursor    = _isPanMode ? Cursors.Hand : null;
 
         double dx = System.Math.Abs(endPoint.X - _zoomStartPoint.X);
         double dy = System.Math.Abs(endPoint.Y - _zoomStartPoint.Y);
