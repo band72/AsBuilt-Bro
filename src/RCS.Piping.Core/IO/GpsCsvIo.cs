@@ -111,15 +111,16 @@ public static class GpsCsvIo
     /// The primary lat/lon columns reflect <paramref name="useDms"/>:
     ///   false (default) → decimal degrees (7 dp);  true → DMS string.
     /// The DMS columns are always written regardless.
+    /// <paramref name="zone"/> is passed to <see cref="StatePlaneProjection.ToLatLon(double,double,string)"/>.
     /// </summary>
-    public static void ExportFullCsv(AsBuiltJob job, string outputPath, bool useDms = false)
+    public static void ExportFullCsv(AsBuiltJob job, string outputPath, bool useDms = false, string zone = "EPSG:2236")
     {
         using var sw = new StreamWriter(outputPath, false, new UTF8Encoding(true));
         sw.WriteLine("Point,Northing,Easting,Elevation,Latitude,Longitude,LatitudeDMS,LongitudeDMS,Description");
 
         foreach (var row in job.PointRows)
         {
-            var (lat, lon) = StatePlaneProjection.ToLatLon(row.Easting, row.Northing);
+            var (lat, lon) = StatePlaneProjection.ToLatLon(row.Easting, row.Northing, zone);
             string latDms  = StatePlaneProjection.ToDms(lat, isLatitude: true);
             string lonDms  = StatePlaneProjection.ToDms(lon, isLatitude: false);
             string latOut  = useDms ? Esc(latDms) : $"{lat:F7}";
@@ -139,22 +140,22 @@ public static class GpsCsvIo
 
     /// <summary>
     /// Export a compact Lat/Lon TXT file (Point, Lat, Lon, Desc).
-    /// When <paramref name="useDms"/> is true, Latitude and Longitude are formatted as DMS
-    /// (e.g. 30°19'07.20" N) instead of decimal degrees.
+    /// When <paramref name="useDms"/> is true, outputs DMS strings instead of decimal degrees.
+    /// <paramref name="zone"/> is passed to <see cref="StatePlaneProjection.ToLatLon(double,double,string)"/>.
     /// </summary>
-    public static void ExportLatLonTxt(AsBuiltJob job, string outputPath, bool useDms = false)
+    public static void ExportLatLonTxt(AsBuiltJob job, string outputPath, bool useDms = false, string zone = "EPSG:2236")
     {
         using var sw = new StreamWriter(outputPath, false, new UTF8Encoding(true));
         sw.WriteLine($"# GPS Coordinate Export — {job.Identity.JobNumber}");
         sw.WriteLine($"# Generated: {DateTime.Now:MM/dd/yyyy HH:mm}");
-        sw.WriteLine($"# Projection: FL State Plane East (EPSG:2236) → WGS84");
+        sw.WriteLine($"# Projection: {zone} → WGS84");
         sw.WriteLine(useDms
             ? "# Point,LatitudeDMS,LongitudeDMS,Description"
             : "# Point,Latitude,Longitude,Description");
 
         foreach (var row in job.PointRows)
         {
-            var (lat, lon) = StatePlaneProjection.ToLatLon(row.Easting, row.Northing);
+            var (lat, lon) = StatePlaneProjection.ToLatLon(row.Easting, row.Northing, zone);
             if (useDms)
             {
                 string latDms = StatePlaneProjection.ToDms(lat, isLatitude: true);

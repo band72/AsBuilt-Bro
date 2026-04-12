@@ -31,7 +31,11 @@ public partial class GeneralSettingsWindow : Window
             // ── DXF Blocks Library ──────────────────────────────────────
             RCS.Services.GlobalSettingsService.SaveSetting("RcsBlocksPath",              vm.RcsBlocksPath);
         // ── GPS coordinate display format ─────────────────────────────────
-        RCS.Services.GlobalSettingsService.SaveSetting("GpsCoordinateFormat", vm.GpsCoordinateFormat.ToString());
+        RCS.Services.GlobalSettingsService.SaveSetting("GpsCoordinateFormat",    vm.GpsCoordinateFormat.ToString());
+        RCS.Services.GlobalSettingsService.SaveSetting("ShowGpsColumnsInGrid",   vm.ShowGpsColumnsInGrid.ToString());
+        // ── GPS Transform session state ──────────────────────────────────
+        RCS.Services.GlobalSettingsService.SaveSetting("GpsTransformDirection",  vm.CoordinateTransformVm.Direction.ToString());
+        RCS.Services.GlobalSettingsService.SaveSetting("GpsTransformCrsId",      vm.CoordinateTransformVm.SelectedSourceCrs?.CrsId ?? "EPSG:6438");
         }
         Close();
     }

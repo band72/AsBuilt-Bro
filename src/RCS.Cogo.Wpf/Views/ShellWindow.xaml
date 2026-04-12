@@ -416,6 +416,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
+                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <!-- Import -->
@@ -479,6 +480,15 @@
                                     Background="{StaticResource BrBorder}" Foreground="{StaticResource BrTextMuted}"
                                     BorderThickness="0" FontWeight="Bold"
                                     ToolTip="Clear filter"/>
+
+                            <!-- ── GPS Columns toggle ── -->
+                            <ToggleButton Grid.Column="8"
+                                          Content="&#x1F30D; GPS"
+                                          IsChecked="{Binding ShowGpsColumnsInGrid}"
+                                          Padding="8,5" Margin="4,0,0,0"
+                                          ToolTip="Show / hide Latitude &amp; Longitude columns"
+                                          Background="#1A2535" Foreground="#98C379"
+                                          BorderBrush="#3A6A3A" BorderThickness="1"/>
                         </Grid>
 
                         <DataGrid Grid.Row="1" ItemsSource="{Binding PointsView}" AutoGenerateColumns="False"
@@ -500,6 +510,17 @@
                                 <DataGridTextColumn Header="Northing" Binding="{Binding Northing, StringFormat=F3}" Width="*"/>
                                 <DataGridTextColumn Header="Easting" Binding="{Binding Easting, StringFormat=F3}" Width="*"/>
                                 <DataGridTextColumn Header="Elevation" Binding="{Binding Elevation, StringFormat=F3}" Width="80"/>
+                                 <!-- ── GPS Lat/Lon columns (toggleable) ── -->
+                                 <DataGridTextColumn Header="Latitude" Binding="{Binding LatitudeDisplay}"
+                                                     Width="*" IsReadOnly="True"
+                                                     Visibility="{Binding DataContext.ShowGpsColumnsInGrid,
+                                                                  RelativeSource={RelativeSource AncestorType=DataGrid},
+                                                                  Converter={StaticResource BoolToVis}}"/>
+                                 <DataGridTextColumn Header="Longitude" Binding="{Binding LongitudeDisplay}"
+                                                     Width="*" IsReadOnly="True"
+                                                     Visibility="{Binding DataContext.ShowGpsColumnsInGrid,
+                                                                  RelativeSource={RelativeSource AncestorType=DataGrid},
+                                                                  Converter={StaticResource BoolToVis}}"/>
                                 
                                 <DataGridTemplateColumn Header="Description" SortMemberPath="Description" Width="2*">
                                     <DataGridTemplateColumn.CellTemplate>

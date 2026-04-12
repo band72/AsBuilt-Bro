@@ -662,6 +662,14 @@ public partial class ShellViewModel : ViewModelBase
     public GeoWpf.GpsDisplayFormat[] AvailableGpsFormats { get; } =
         Enum.GetValues<GeoWpf.GpsDisplayFormat>();
 
+    /// <summary>When true, the Points DataGrid shows Latitude and Longitude columns.</summary>
+    private bool _showGpsColumnsInGrid = false;
+    public bool ShowGpsColumnsInGrid
+    {
+        get => _showGpsColumnsInGrid;
+        set => SetField(ref _showGpsColumnsInGrid, value);
+    }
+
     /// <summary>Context-menu command: shows GPS lat/lon popup for the selected point.</summary>
     public System.Windows.Input.ICommand ShowGpsCoordinatesCommand { get; private set; }
         = new RelayCommand(_ => { }); // initialized in InitGpsCommand()
@@ -971,6 +979,8 @@ public partial class ShellViewModel : ViewModelBase
         // ── Bulk transform — applies SP⇔LatLon to all context COGO points ──
         CoordinateTransformVm.BulkApplyAction = (direction, _crsId) =>
         {
+            // Resolve the active zone from the JEA/Project setting
+            string zone = RCS.Geo.Core.StatePlaneProjection.NormalizeZone(JeaStatePlaneZone);
             int count = 0;
             foreach (var pt in _context.GetAllPoints())
             {
@@ -979,18 +989,18 @@ public partial class ShellViewModel : ViewModelBase
                 string desc = pt.Description ?? string.Empty;
                 if (direction == GeoWpf.TransformDirection.StatePlaneToLatLon)
                 {
-                    var (lat, lon) = RCS.Cogo.Wpf.Services.StatePlaneConverter.ToLatLon(p.Easting, p.Northing);
+                    var (lat, lon) = RCS.Geo.Core.StatePlaneProjection.ToLatLon(p.Easting, p.Northing, zone);
                     _context.AddPoint(pt.Id, new RCS.Cogo.Core.Primitives.Point3D(lat, lon, p.Elevation), desc);
                 }
                 else
                 {
-                    var (eft, nft) = RCS.Cogo.Wpf.Services.StatePlaneConverter.ToStatePlane(p.Northing, p.Easting);
+                    var (eft, nft) = RCS.Geo.Core.StatePlaneProjection.ToStatePlane(p.Northing, p.Easting, zone);
                     _context.AddPoint(pt.Id, new RCS.Cogo.Core.Primitives.Point3D(nft, eft, p.Elevation), desc);
                 }
                 count++;
             }
             System.Windows.MessageBox.Show(
-                $"Bulk transform complete.\n{count} point(s) updated.",
+                $"Bulk transform complete ({zone}).\n{count} point(s) updated.",
                 "GPS Transform", System.Windows.MessageBoxButton.OK,
                 System.Windows.MessageBoxImage.Information);
             OnPropertyChanged(nameof(Points));
@@ -1001,13 +1011,14 @@ public partial class ShellViewModel : ViewModelBase
         {
             try
             {
+                string zone    = RCS.Geo.Core.StatePlaneProjection.NormalizeZone(JeaStatePlaneZone);
                 var records = RCS.Piping.Core.IO.GpsCsvIo.Import(filePath);
                 foreach (var rec in records)
                 {
-                    var (eft, nft) = RCS.Cogo.Wpf.Services.StatePlaneConverter.ToStatePlane(rec.Latitude, rec.Longitude);
+                    var (eft, nft) = RCS.Geo.Core.StatePlaneProjection.ToStatePlane(rec.Latitude, rec.Longitude, zone);
                     _context.AddPoint(rec.PointId, new RCS.Cogo.Core.Primitives.Point3D(nft, eft, rec.Elevation), rec.Description ?? string.Empty);
                 }
-                ResultLogText += $"GPS Import: {records.Count} point(s) loaded from {System.IO.Path.GetFileName(filePath)}{Environment.NewLine}";
+                ResultLogText += $"GPS Import: {records.Count} point(s) loaded from {System.IO.Path.GetFileName(filePath)} [{zone}]{Environment.NewLine}";
                 OnPropertyChanged(nameof(Points));
             }
             catch (Exception ex)
@@ -1044,10 +1055,11 @@ public partial class ShellViewModel : ViewModelBase
                 };
 
                 bool useDms = GpsCoordinateFormat == GeoWpf.GpsDisplayFormat.DMS;
+                string zone  = RCS.Geo.Core.StatePlaneProjection.NormalizeZone(JeaStatePlaneZone);
                 if (fullCsv)
-                    RCS.Piping.Core.IO.GpsCsvIo.ExportFullCsv(tempJob, outputPath, useDms);
+                    RCS.Piping.Core.IO.GpsCsvIo.ExportFullCsv(tempJob, outputPath, useDms, zone);
                 else
-                    RCS.Piping.Core.IO.GpsCsvIo.ExportLatLonTxt(tempJob, outputPath, useDms);
+                    RCS.Piping.Core.IO.GpsCsvIo.ExportLatLonTxt(tempJob, outputPath, useDms, zone);
 
                 ResultLogText += $"GPS Export: {rows.Count} point(s) → {System.IO.Path.GetFileName(outputPath)}{Environment.NewLine}";
             }
@@ -1220,6 +1232,16 @@ public partial class ShellViewModel : ViewModelBase
             var _gpsFmtStr = RCS.Services.GlobalSettingsService.GetSetting("GpsCoordinateFormat", nameof(RCS.Geo.Wpf.ViewModels.GpsDisplayFormat.DecimalDegrees));
             if (System.Enum.TryParse<RCS.Geo.Wpf.ViewModels.GpsDisplayFormat>(_gpsFmtStr, out var _gpsFmt))
                 _gpsCoordinateFormat = _gpsFmt;   // set backing field directly to avoid null-ref on CoordinateTransformVm before it is wired
+            if (bool.TryParse(RCS.Services.GlobalSettingsService.GetSetting("ShowGpsColumnsInGrid", "False"), out bool sgc))
+                ShowGpsColumnsInGrid = sgc;
+            // ── GPS Transform session state (Direction + Zone) ──────────────────────
+            var dirStr = RCS.Services.GlobalSettingsService.GetSetting("GpsTransformDirection", nameof(GeoWpf.TransformDirection.StatePlaneToLatLon));
+            if (System.Enum.TryParse<GeoWpf.TransformDirection>(dirStr, out var savedDir))
+                CoordinateTransformVm.Direction = savedDir;
+            var savedCrsId = RCS.Services.GlobalSettingsService.GetSetting("GpsTransformCrsId", "EPSG:6438");
+            var savedCrs   = CoordinateTransformVm.AvailableCrs.FirstOrDefault(c => c.CrsId == savedCrsId);
+            if (savedCrs != null)
+                CoordinateTransformVm.SelectedSourceCrs = savedCrs;
         }
         catch (Exception ex)
         {
