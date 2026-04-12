@@ -1,4 +1,7 @@
 using System;
+using System.Net.Http;
+using System.Reflection;
+using System.Text.Json;
 using System.Windows;
 using System.Threading.Tasks;
 using RCS.Cogo.Wpf.Services;
@@ -15,6 +18,12 @@ public partial class App : Application
 {
     // Shared singleton — avoids socket exhaustion from multiple instances.
     private static readonly ErrorReporter _reporter = new();
+    private static readonly HttpClient    _http     = new() { Timeout = TimeSpan.FromSeconds(5) };
+
+    private const string GitHubReleasesApi =
+        "https://api.github.com/repos/band72/RCS.Cogo.Enterprise.Modern/releases/latest";
+    private const string GitHubReleasesPage =
+        "https://github.com/band72/RCS.Cogo.Enterprise.Modern/releases";
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -27,6 +36,9 @@ public partial class App : Application
 
         // ── Flush any crash reports that failed to send in a previous session ─
         _ = FlushPendingReportsAsync();
+
+        // ── Background update check (non-blocking, swallows all errors) ───────
+        _ = CheckForUpdateAsync();
 
         ErrorLogger.LogMessage("Application Started.");
     }
@@ -124,6 +136,64 @@ public partial class App : Application
         catch
         {
             // Flush is best-effort — never let it break startup
+        }
+    }
+
+    /// <summary>
+    /// Non-blocking: queries GitHub for the latest release tag and prompts the user
+    /// to download if a newer version is available.  All failures are silently swallowed.
+    /// </summary>
+    private static async Task CheckForUpdateAsync()
+    {
+        try
+        {
+            // GitHub API requires a User-Agent header
+            using var request = new HttpRequestMessage(HttpMethod.Get, GitHubReleasesApi);
+            request.Headers.Add("User-Agent", "RCS-Cogo-Enterprise");
+            request.Headers.Add("Accept", "application/vnd.github+json");
+
+            var response = await _http.SendAsync(request).ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode) return;
+
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            using var doc = JsonDocument.Parse(json);
+
+            if (!doc.RootElement.TryGetProperty("tag_name", out var tagEl)) return;
+            var tag = tagEl.GetString()?.TrimStart('v') ?? "";
+
+            if (!Version.TryParse(tag, out var latestVersion)) return;
+
+            // Read current version from assembly metadata
+            var currentVersion = Assembly.GetExecutingAssembly()
+                .GetCustomAttribute<AssemblyFileVersionAttribute>()
+                ?.Version ?? "0.0.0.0";
+            if (!Version.TryParse(currentVersion, out var thisVersion)) return;
+
+            if (latestVersion <= thisVersion) return;   // already up to date
+
+            // Show prompt on UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var result = MessageBox.Show(
+                    $"A new version of RCS COGO Enterprise is available!\n\n" +
+                    $"  Current : v{thisVersion}\n" +
+                    $"  Latest  : v{latestVersion}\n\n" +
+                    "Open the download page now?",
+                    "Update Available",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
+
+                if (result == MessageBoxResult.Yes)
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName        = GitHubReleasesPage,
+                        UseShellExecute = true
+                    });
+            });
+        }
+        catch
+        {
+            // Network unavailable, API rate-limit, parse error — all silently ignored
         }
     }
 

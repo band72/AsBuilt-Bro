@@ -44,32 +44,30 @@ public sealed class DxfBuilder
     // Matching is case-insensitive prefix/contains search.
     private static readonly (string keyword, string layer, int color)[] _pipeLayerMap =
     [
-        // Water
-        ("WATER",       "W-MAIN",        4),
-        ("POTABLE",     "W-MAIN",        4),
-        ("WM",          "W-MAIN",        4),
-        // Wastewater gravity
+        // Wastewater pressure / force main  (must precede "SEWER" / "WASTE")
+        ("FORCE",       "WW-FORCE-MAIN", 82),
+        ("PRESSURE",    "WW-FORCE-MAIN", 82),
+        ("WWP",         "WW-FORCE-MAIN", 82),
+        // Wastewater gravity  (must precede generic WATER)
         ("WASTEWATER",  "WW-MAIN",       3),
         ("SEWER",       "WW-MAIN",       3),
         ("GRAVITY",     "WW-MAIN",       3),
         ("WWG",         "WW-MAIN",       3),
-        // Wastewater pressure / force main
-        ("FORCE",       "WW-FORCE-MAIN", 82),
-        ("PRESSURE",    "WW-FORCE-MAIN", 82),
-        ("WWP",         "WW-FORCE-MAIN", 82),
+        // Potable water
+        ("POTABLE",     "W-MAIN",        4),
+        ("WATER",       "W-MAIN",        4),
+        ("WM",          "W-MAIN",        4),
         // Reclaimed
         ("RECLAIM",     "RCL-MAIN",      6),
         ("REUSE",       "RCL-MAIN",      6),
         ("RCL",         "RCL-MAIN",      6),
         // Storm
         ("STORM",       "ST-MAIN",       2),
-        ("ST",          "ST-MAIN",       2),
         ("DRAIN",       "ST-MAIN",       2),
         // Electric
         ("ELECTRIC",    "E-CONDUIT",     20),
         ("CONDUIT",     "E-CONDUIT",     20),
         ("DUCT",        "E-CONDUIT",     20),
-        ("ELECTRIC",    "E-CONDUIT",     20),
         // Gas
         ("GAS",         "G-MAIN",        30),
         // Telecom

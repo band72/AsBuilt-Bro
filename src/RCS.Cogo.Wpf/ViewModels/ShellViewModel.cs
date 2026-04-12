@@ -1584,9 +1584,13 @@ public partial class ShellViewModel : ViewModelBase
                 var eVal = eProp.GetValue(asset);
                 if (nVal != null && eVal != null)
                 {
-                    n = Convert.ToDouble(nVal);
-                    e = Convert.ToDouble(eVal);
-                    found = true;
+                    if (double.TryParse(nVal.ToString(), System.Globalization.NumberStyles.Float,
+                            System.Globalization.CultureInfo.InvariantCulture, out var nParsed) &&
+                        double.TryParse(eVal.ToString(), System.Globalization.NumberStyles.Float,
+                            System.Globalization.CultureInfo.InvariantCulture, out var eParsed))
+                    {
+                        n = nParsed; e = eParsed; found = true;
+                    }
                 }
             }
         }
@@ -1602,9 +1606,13 @@ public partial class ShellViewModel : ViewModelBase
                 var eVal = eProp.GetValue(asset);
                 if (nVal != null && eVal != null)
                 {
-                    n = Convert.ToDouble(nVal);
-                    e = Convert.ToDouble(eVal);
-                    found = true;
+                    if (double.TryParse(nVal.ToString(), System.Globalization.NumberStyles.Float,
+                            System.Globalization.CultureInfo.InvariantCulture, out var nParsed2) &&
+                        double.TryParse(eVal.ToString(), System.Globalization.NumberStyles.Float,
+                            System.Globalization.CultureInfo.InvariantCulture, out var eParsed2))
+                    {
+                        n = nParsed2; e = eParsed2; found = true;
+                    }
                 }
             }
         }

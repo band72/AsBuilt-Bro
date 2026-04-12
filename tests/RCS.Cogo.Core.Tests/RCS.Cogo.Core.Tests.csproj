@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\RCS.Cogo.Core\RCS.Cogo.Core.csproj" />
     <ProjectReference Include="..\..\src\RCS.Cogo.App\RCS.Cogo.App.csproj" />
+    <ProjectReference Include="..\..\src\RCS.Piping.Core\RCS.Piping.Core.csproj" />
   </ItemGroup>
 
 </Project>

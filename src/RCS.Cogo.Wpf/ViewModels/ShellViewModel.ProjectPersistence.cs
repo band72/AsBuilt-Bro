@@ -88,12 +88,30 @@ public partial class ShellViewModel
 
     private void EditProject()
     {
-        var window = new RCS.Cogo.Wpf.Views.ProjectDetailsWindow(CurrentProject);
+        if (CurrentProject == null)
+        {
+            System.Windows.MessageBox.Show(
+                "No project is currently open. Create or open a project first.",
+                "No Project", System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Information);
+            return;
+        }
+
+        var window = new RCS.Cogo.Wpf.Views.ProjectDetailsWindow(CurrentProject)
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
+
         if (window.ShowDialog() == true)
         {
             _context.Log($"[AUDIT] Updated Project Details: {CurrentProject.ProjectName}");
-            // Refresh title or status bar if bound?
-            // For now, logging confirms update.
+
+            // Persist the change immediately so it survives a crash
+            SaveProject();
+
+            // Refresh title bar / status strip
+            UpdateWindowTitle();
+            IsDirty = false;   // edit-project metadata change is not a "data dirty" event
         }
     }
 
