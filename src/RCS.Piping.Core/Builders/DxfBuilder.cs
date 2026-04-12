@@ -218,7 +218,7 @@ public sealed class DxfBuilder
 
             var (stLayer, stColor) = ResolveLayerForStructure(st.Type ?? "");
             WriteCircle(sb, pt.Easting, pt.Northing, 2.5, stLayer, stColor);
-            WriteText(sb, pt.Easting, pt.Northing + 3.0, st.Type, stLayer, 0.6);
+            WriteText(sb, pt.Easting, pt.Northing + 3.0, st.Type ?? string.Empty, stLayer, 0.6);
             if (st.RimElevation.HasValue)
                 WriteText(sb, pt.Easting, pt.Northing - 3.0,
                           $"Rim={st.RimElevation:F2}'", LayerLabels, 0.5);

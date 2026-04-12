@@ -56,7 +56,7 @@ public class XcCommand : ICommand
                 return Task.CompletedTask;
             }
 
-            string targetId = null;
+            string? targetId = null;
             Angle az = Angle.Zero;
             double dist = 0;
 

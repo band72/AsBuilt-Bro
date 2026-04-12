@@ -1095,7 +1095,8 @@
                                 <TextBlock Text="Mat:" VerticalAlignment="Center" Margin="0,0,5,0"/>
                                 <ComboBox ItemsSource="{Binding AvailableMaterials}" SelectedItem="{Binding FilterMaterial}" Width="60"/>
                             </StackPanel>
-                            <Button Content="Reset Filters" Command="{Binding ClearCurveSolverCommand}" Visibility="Collapsed"/> <!-- Placeholder -->
+                            <Button Content="Reset Filters" Command="{Binding ClearCurveSolverCommand}"
+                                    Padding="8,2" Margin="4,0"/>
                         </WrapPanel>
                         
                         <DataGrid Grid.Row="2" ItemsSource="{Binding FilteredCatalog}" SelectedItem="{Binding SelectedCatalogItem}" AutoGenerateColumns="False" Margin="0,0,0,10">
