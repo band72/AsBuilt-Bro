@@ -28,7 +28,7 @@ namespace RCS.Cogo.Wpf.ViewModels
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => throw new NotImplementedException();
+            => Binding.DoNothing;   // one-way converter — ConvertBack is never used
     }
 }
 

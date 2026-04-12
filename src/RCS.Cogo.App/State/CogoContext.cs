@@ -35,7 +35,10 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
     public string EdmMode { get; set; } = "STD";
     public string PrismMode { get; set; } = "0";
     public double MapCheckClosureTolerance { get; set; } = 0.01;
-    public bool ShowAlignmentLabels { get; set; } = true;
+    public bool ShowAlignmentLabels         { get; set; } = true;
+    public bool ShowVerticalAlignmentLabels { get; set; } = true;
+    public bool ShowVPIs                    { get; set; } = true;
+    public bool ShowGradePercent            { get; set; } = true;
     public double MinimumBoundaryArea { get; set; } = 100.0;
 
     // --- Cross Section Session State ---

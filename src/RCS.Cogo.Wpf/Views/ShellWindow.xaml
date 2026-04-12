@@ -29,7 +29,7 @@
             </MenuItem>
             <MenuItem Header="_Project">
                 <MenuItem Header="New Project..." Command="{Binding NewProjectCommand}"/>
-                <MenuItem Header="Edit Project Details..." Command="{Binding EditProjectCommand}"/> <!-- Need this command -->
+                <MenuItem Header="Edit Project Details..." Command="{Binding EditProjectCommand}"/>
                 <Separator/>
                 <MenuItem Header="Save Project" Command="{Binding SaveProjectCommand}"/>
                 <MenuItem Header="Save Project As..." Command="{Binding SaveProjectAsCommand}"/>
@@ -845,7 +845,7 @@
                                 <DataGridTextColumn Header="From" Binding="{Binding FromPointId}" Width="40"/>
                                 <DataGridTextColumn Header="To" Binding="{Binding ToPointId}" Width="40"/>
                                 <DataGridTextColumn Header="D" Binding="{Binding Diameter}" Width="30"/>
-                                <DataGridTextColumn Header="Slope" Binding="{Binding InvertStart}" Width="*"/> <!-- Placeholder binding, implies showing calculated slope later -->
+                                <DataGridTextColumn Header="Slope %" Binding="{Binding SlopePercent, StringFormat={}{0:F1}%}" Width="*"/>
                             </DataGrid.Columns>
                         </DataGrid>
 

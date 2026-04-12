@@ -58,7 +58,10 @@ internal sealed class StubCogoContext : ICogoContext
     public string EdmMode           { get; set; } = "Normal";
     public string PrismMode         { get; set; } = "S";
     public double MapCheckClosureTolerance { get; set; } = 0.05;
-    public bool  ShowAlignmentLabels{ get; set; }
+    public bool  ShowAlignmentLabels        { get; set; }
+    public bool  ShowVerticalAlignmentLabels{ get; set; }
+    public bool  ShowVPIs                   { get; set; }
+    public bool  ShowGradePercent           { get; set; }
 
     // ── Figure / session state ────────────────────────────────────────────────
     public Figure? CurrentFigure { get; set; }

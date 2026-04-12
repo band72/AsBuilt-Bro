@@ -795,7 +795,25 @@ public partial class ShellViewModel : ViewModelBase
             RefreshData(false); 
         }
     }
-    
+
+    public bool ShowVerticalAlignmentLabels
+    {
+        get => _context.ShowVerticalAlignmentLabels;
+        set { _context.ShowVerticalAlignmentLabels = value; OnPropertyChanged(); RefreshData(false); }
+    }
+
+    public bool ShowVPIs
+    {
+        get => _context.ShowVPIs;
+        set { _context.ShowVPIs = value; OnPropertyChanged(); RefreshData(false); }
+    }
+
+    public bool ShowGradePercent
+    {
+        get => _context.ShowGradePercent;
+        set { _context.ShowGradePercent = value; OnPropertyChanged(); RefreshData(false); }
+    }
+
     private bool _showFigureLabels = true;
     public bool ShowFigureLabels
     {

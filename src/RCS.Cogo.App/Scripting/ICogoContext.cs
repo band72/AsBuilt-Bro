@@ -43,6 +43,9 @@ public interface ICogoContext
     string PrismMode { get; set; }
     double MapCheckClosureTolerance { get; set; }
     bool ShowAlignmentLabels { get; set; }
+    bool ShowVerticalAlignmentLabels { get; set; }
+    bool ShowVPIs { get; set; }
+    bool ShowGradePercent { get; set; }
 
     /// <summary>
     /// Gets or sets the currently active figure being constructed.
