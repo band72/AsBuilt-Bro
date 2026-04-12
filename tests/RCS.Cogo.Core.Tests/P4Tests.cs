@@ -463,8 +463,9 @@ public class PackageBuilderTests
         {
             var dir   = new PackageBuilder(tmp).Build(job);
             var files = Directory.GetFiles(dir);
-            // 6 deliverables + 1 manifest = 7
-            Assert.Equal(7, files.Length);
+            // 6 deliverable types + 1 manifest = 7 files, but PdfReport produces
+            // both _Report.pdf AND _Report.txt, so total = 8.
+            Assert.Equal(8, files.Length);
         }
         finally { if (Directory.Exists(tmp)) Directory.Delete(tmp, true); }
     }
@@ -659,5 +660,249 @@ public class GeometryEngineTests
         var az  = Angle.FromDegrees(0);  // both due north
         var result = GeometryEngine.IntersectionBearingBearing(p1, az, p2, az);
         Assert.Null(result);
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PdfReportBuilderTests   (real PDF binary output)
+// ─────────────────────────────────────────────────────────────────────────────
+public class PdfReportBuilderTests
+{
+    private static AsBuiltJob MakeJob()
+    {
+        var net = new PipeNetwork();
+        net.AddRun(new PipeRun { Id="R1", Type="WATER", FromPointId="1", ToPointId="2",
+            Diameter=8, Material="DI", SlopePercent=0.5, ComputedLength=100.0 });
+        net.AddStructure(new PipeStructure { Id="S1", PointId="1", Type="VALVE", RimElevation=100.0 });
+        return new AsBuiltJob
+        {
+            Identity  = new ProjectIdentity { JobNumber="PDF-T", ClientName="Test Co", Drafter="D", Checker="C",
+                                              County="County", UtilityOwner="UtilOwner", RevisionNumber=1, FieldDate = new DateTime(2026,1,1) },
+            Environment = CoordinateEnvironment.LocalGrid,
+            PointRows   = new ObservableCollection<PointRow>
+            {
+                new() { PointId="1", Northing=10000, Easting=10000, Elevation=100, Description="V1" },
+                new() { PointId="2", Northing=10100, Easting=10100, Elevation=99,  Description="V2" },
+            },
+            Network = net
+        };
+    }
+
+    [Fact]
+    public void PdfBuilder_CreatesNonEmptyFile()
+    {
+        var tmp = Path.GetTempFileName();
+        try
+        {
+            new PdfReportBuilder().Build(MakeJob(), tmp);
+            Assert.True(new FileInfo(tmp).Length > 100);
+        }
+        finally { File.Delete(tmp); }
+    }
+
+    [Fact]
+    public void PdfBuilder_StartsWithPdfHeader()
+    {
+        var tmp = Path.GetTempFileName();
+        try
+        {
+            new PdfReportBuilder().Build(MakeJob(), tmp);
+            var header = File.ReadAllText(tmp, Encoding.Latin1)[..8];
+            Assert.StartsWith("%PDF-1.4", header);
+        }
+        finally { File.Delete(tmp); }
+    }
+
+    [Fact]
+    public void PdfBuilder_EndsWithEof()
+    {
+        var tmp = Path.GetTempFileName();
+        try
+        {
+            new PdfReportBuilder().Build(MakeJob(), tmp);
+            var content = File.ReadAllText(tmp, Encoding.Latin1).TrimEnd();
+            Assert.EndsWith("%%EOF", content);
+        }
+        finally { File.Delete(tmp); }
+    }
+
+    [Fact]
+    public void PdfBuilder_ContainsCatalogObject()
+    {
+        var tmp = Path.GetTempFileName();
+        try
+        {
+            new PdfReportBuilder().Build(MakeJob(), tmp);
+            var content = File.ReadAllText(tmp, Encoding.Latin1);
+            Assert.Contains("/Catalog", content);
+            Assert.Contains("/Pages",   content);
+        }
+        finally { File.Delete(tmp); }
+    }
+
+    [Fact]
+    public void PdfBuilder_ContainsHelveticaFont()
+    {
+        var tmp = Path.GetTempFileName();
+        try
+        {
+            new PdfReportBuilder().Build(MakeJob(), tmp);
+            var content = File.ReadAllText(tmp, Encoding.Latin1);
+            Assert.Contains("Helvetica", content);
+        }
+        finally { File.Delete(tmp); }
+    }
+
+    [Fact]
+    public void PdfBuilder_ViaPackageBuilder_CreatesPdfFile()
+    {
+        var tmp = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        var job = MakeJob();
+        job.Deliverables.Add(new DeliverableCard { TypeEnum = DeliverableType.PdfReport, IsEnabled = true });
+        try
+        {
+            var dir = new PackageBuilder(tmp).Build(job);
+            Assert.True(File.Exists(Path.Combine(dir, "PDF-T_Report.pdf")));
+            Assert.True(File.Exists(Path.Combine(dir, "PDF-T_Report.txt")));
+        }
+        finally { if (Directory.Exists(tmp)) Directory.Delete(tmp, true); }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LandXmlValidationTests   (structural correctness of generated XML)
+// ─────────────────────────────────────────────────────────────────────────────
+public class LandXmlValidationTests
+{
+    private static string GenerateXml(string jobNum = "LXV-001")
+    {
+        var net = new PipeNetwork();
+        net.AddRun(new PipeRun { Id="R1", Type="STORM", FromPointId="1", ToPointId="2",
+            Diameter=12, Material="RCP", SlopePercent=1.0, ComputedLength=75.0 });
+        net.AddStructure(new PipeStructure { Id="S1", PointId="1", Type="JUNCTION", RimElevation=55.0 });
+        var job = new AsBuiltJob
+        {
+            Identity  = new ProjectIdentity { JobNumber=jobNum, ClientName="Test", RevisionNumber=1 },
+            PointRows = new ObservableCollection<PointRow>
+            {
+                new() { PointId="1", Northing=5000, Easting=5000, Elevation=55, Description="JB1" },
+                new() { PointId="2", Northing=5075, Easting=5000, Elevation=54, Description="CB1" },
+            },
+            Network = net
+        };
+        job.Deliverables.Add(new DeliverableCard { TypeEnum = DeliverableType.LandXml, IsEnabled = true });
+        var tmp = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        try
+        {
+            var dir = new PackageBuilder(tmp).Build(job);
+            return File.ReadAllText(Path.Combine(dir, $"{jobNum}.xml"));
+        }
+        finally { if (Directory.Exists(tmp)) Directory.Delete(tmp, true); }
+    }
+
+    [Fact]
+    public void LandXml_IsWellFormedXml()
+    {
+        var xml = GenerateXml();
+        // System.Xml.XmlDocument throws on malformed XML
+        var doc = new System.Xml.XmlDocument();
+        var ex  = Record.Exception(() => doc.LoadXml(xml));
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public void LandXml_HasVersion12Attribute()
+    {
+        var xml = GenerateXml();
+        Assert.Contains("version=\"1.2\"", xml);
+    }
+
+    [Fact]
+    public void LandXml_HasLandXmlNamespace()
+    {
+        var xml = GenerateXml();
+        Assert.Contains("landxml.org/schema/LandXML-1.2", xml);
+    }
+
+    [Fact]
+    public void LandXml_CgPoints_MatchPointRowCount()
+    {
+        var xml = GenerateXml();
+        int count = System.Text.RegularExpressions.Regex.Matches(xml, "<CgPoint ").Count;
+        Assert.Equal(2, count);   // 2 PointRows in MakeJob
+    }
+
+    [Fact]
+    public void LandXml_ContainsNoPipeNamedNull()
+    {
+        var xml = GenerateXml();
+        Assert.DoesNotContain("name=\"null\"", xml);
+        Assert.DoesNotContain("name=\"\"",     xml);
+    }
+
+    [Fact]
+    public void LandXml_NoNanValues()
+    {
+        var xml = GenerateXml();
+        Assert.DoesNotContain("NaN", xml, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void LandXml_ProjectElementContainsJobNumber()
+    {
+        var xml = GenerateXml("LXV-PROJ");
+        Assert.Contains("LXV-PROJ", xml);
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// OutputCommandTests   (UiCommands OUTPUT ON/OFF state)
+// ─────────────────────────────────────────────────────────────────────────────
+public class OutputCommandTests
+{
+    [Fact]
+    public async Task Output_DefaultIsOn()
+    {
+        var ctx = new StubCogoContext();
+        Assert.True(ctx.OutputEnabled);
+    }
+
+    [Fact]
+    public async Task Output_OffTurnsOffFlag()
+    {
+        var ctx = new StubCogoContext();
+        await new OutputCommand().ExecuteAsync(new[] { "OUTPUT", "OFF" }, ctx);
+        Assert.False(ctx.OutputEnabled);
+    }
+
+    [Fact]
+    public async Task Output_OnTurnsOnFlag()
+    {
+        var ctx = new StubCogoContext();
+        ctx.OutputEnabled = false;
+        await new OutputCommand().ExecuteAsync(new[] { "OUTPUT", "ON" }, ctx);
+        Assert.True(ctx.OutputEnabled);
+    }
+
+    [Fact]
+    public async Task Output_LogsCurrentState_WhenNoArg()
+    {
+        var ctx = new StubCogoContext();
+        await new OutputCommand().ExecuteAsync(new[] { "OUTPUT" }, ctx);
+        Assert.Contains(ctx.Messages, m => m.Contains("ON"));
+    }
+
+    [Fact]
+    public async Task Output_LogsOffConfirmation()
+    {
+        var ctx = new StubCogoContext();
+        await new OutputCommand().ExecuteAsync(new[] { "OUTPUT", "OFF" }, ctx);
+        Assert.Contains(ctx.Messages, m => m.Contains("OFF"));
+    }
+
+    [Fact]
+    public void Output_Name_IsOutput()
+    {
+        Assert.Equal("OUTPUT", new OutputCommand().Name);
     }
 }

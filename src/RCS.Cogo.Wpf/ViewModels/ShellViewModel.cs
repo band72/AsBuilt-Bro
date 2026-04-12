@@ -2746,7 +2746,9 @@ public partial class ShellViewModel : ViewModelBase
         if (existing != null)
         {
             existing.Quantity += 1;
-            // Hack to refresh/notify
+            // MaterialItem is a POCO (no INotifyPropertyChanged).
+            // Remove + Add forces ObservableCollection to fire CollectionChanged
+            // so the DataGrid row repaint picks up the updated Quantity.
              ProjectMaterials.Remove(existing);
              ProjectMaterials.Add(existing);
         }

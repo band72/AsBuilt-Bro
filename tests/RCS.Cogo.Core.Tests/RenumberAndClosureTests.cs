@@ -62,6 +62,7 @@ internal sealed class StubCogoContext : ICogoContext
     public bool  ShowVerticalAlignmentLabels{ get; set; }
     public bool  ShowVPIs                   { get; set; }
     public bool  ShowGradePercent           { get; set; }
+    public bool  OutputEnabled               { get; set; } = true;
 
     // ── Figure / session state ────────────────────────────────────────────────
     public Figure? CurrentFigure { get; set; }

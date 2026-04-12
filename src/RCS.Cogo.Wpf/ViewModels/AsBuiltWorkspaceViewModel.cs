@@ -349,7 +349,7 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
                 .Build(Job, Path.Combine(folder, $"{jobNum}_Rev{rev}_PNEZD.csv"));
 
             new RCS.Piping.Core.Builders.PdfReportBuilder()
-                .Build(Job, result, Path.Combine(folder, $"{jobNum}_Rev{rev}_Report.txt"));
+                .Build(Job, Path.Combine(folder, $"{jobNum}_Rev{rev}_Report.pdf"));
         });
 
         // Bump revision
@@ -384,7 +384,7 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
 
         await Task.Run(() =>
             new RCS.Piping.Core.Builders.PdfReportBuilder()
-                .Build(Job, result, outputPath));
+                .Build(Job, outputPath));
 
         // Open in default viewer (Notepad / OS default)
         try

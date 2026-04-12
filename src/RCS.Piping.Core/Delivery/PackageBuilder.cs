@@ -42,7 +42,7 @@ public class PackageBuilder
                 var path = card.TypeEnum switch
                 {
                     DeliverableType.Dxf                  => WriteDxf(job, packageDir),
-                    DeliverableType.PdfReport            => WriteTextReport(job, packageDir),
+                    DeliverableType.PdfReport            => WritePdfAndText(job, packageDir),
                     DeliverableType.Pnezd                => WritePnezd(job, packageDir),
                     DeliverableType.PartsReport          => WritePartsReport(job, packageDir),
                     DeliverableType.LandXml              => WriteLandXml(job, packageDir),
@@ -95,6 +95,22 @@ public class PackageBuilder
         var builder = new DxfBuilder();
         builder.Build(job, path);
         return path;
+    }
+
+    /// <summary>
+    /// Produces a real binary PDF report via <see cref="PdfReportBuilder"/>
+    /// and also a plain-text copy for diff/review tooling.
+    /// Returns the PDF path as the primary manifest entry.
+    /// </summary>
+    private static string WritePdfAndText(AsBuiltJob job, string dir)
+    {
+        // Plain-text version (always useful for diffs and editors)
+        WriteTextReport(job, dir);
+
+        // Real PDF
+        var pdfPath = Path.Combine(dir, $"{job.Identity.JobNumber}_Report.pdf");
+        new PdfReportBuilder().Build(job, pdfPath);
+        return pdfPath;
     }
 
     /// <summary>

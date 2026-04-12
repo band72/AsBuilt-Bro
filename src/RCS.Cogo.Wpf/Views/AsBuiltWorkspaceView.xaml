@@ -433,7 +433,7 @@
                           HorizontalAlignment="Stretch"
                           Background="#2A2A45"/>
 
-            <!-- ── RIGHT: Live CAD Viewer (Canvas stub) ──────────────────── -->
+            <!-- ── RIGHT: Live CAD Viewer ──────────────────────────────────────── -->
             <Border Grid.Column="4"
                     Background="#0D0D1A"
                     BorderBrush="{StaticResource Border0}"
@@ -471,7 +471,7 @@
                             Background="#0D0D1A"
                             ClipToBounds="True">
                         <!-- The live geometry canvas is injected here at runtime.
-                             Placeholder watermark shown until data is loaded.  -->
+                             Fallback watermark is visible only when no job data is loaded. -->
                         <TextBlock Text="Live CAD Viewer"
                                    Foreground="#252545"
                                    FontSize="20" FontWeight="Bold"

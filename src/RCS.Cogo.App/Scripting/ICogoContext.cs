@@ -47,6 +47,10 @@ public interface ICogoContext
     bool ShowVPIs { get; set; }
     bool ShowGradePercent { get; set; }
 
+    /// <summary>When false the OUTPUT OFF command has been invoked; callers
+    /// should suppress console logging until set back to true.</summary>
+    bool OutputEnabled { get; set; }
+
     /// <summary>
     /// Gets or sets the currently active figure being constructed.
     /// </summary>

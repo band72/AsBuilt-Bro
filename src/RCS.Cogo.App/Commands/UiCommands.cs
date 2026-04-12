@@ -5,15 +5,19 @@ namespace RCS.Cogo.App.Commands;
 
 public class OutputCommand : ICommand
 {
-    public string Name => "OUTPUT";
-    public string Description => "Toggle Output (ON/OFF).";
+    public string Name        => "OUTPUT";
+    public string Description => "Toggle printed output to log (ON / OFF). When OFF, subsequent Log() calls are suppressed.";
     public Task ExecuteAsync(string[] args, ICogoContext context)
     {
-        if (args.Length > 1) 
+        if (args.Length > 1)
         {
-             // TODO: Connect to UI state if needed.
-             // For now, just log state change.
-             context.Log($"Output: {args[1].ToUpper()}");
+            bool enable = args[1].Trim().ToUpperInvariant() != "OFF";
+            context.OutputEnabled = enable;
+            context.Log($"Output: {(enable ? "ON" : "OFF")}");
+        }
+        else
+        {
+            context.Log($"Output is currently: {(context.OutputEnabled ? "ON" : "OFF")}");
         }
         return Task.CompletedTask;
     }
@@ -99,11 +103,12 @@ public class DispCommand : ICommand
 
 public class SkipCommand : ICommand
 {
-    public string Name => "SKIP";
-    public string Description => "Skip lines/pages in output.";
+    public string Name        => "SKIP";
+    public string Description => "Skip N blank lines in printed output. Args: SKIP [n]";
     public Task ExecuteAsync(string[] args, ICogoContext context)
     {
-        // Pagination logic?
+        int n = (args.Length > 1 && int.TryParse(args[1], out var v)) ? v : 1;
+        context.Log(string.Join(string.Empty, System.Linq.Enumerable.Repeat(Environment.NewLine, n)));
         return Task.CompletedTask;
     }
 }

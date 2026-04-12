@@ -39,6 +39,7 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
     public bool ShowVerticalAlignmentLabels { get; set; } = true;
     public bool ShowVPIs                    { get; set; } = true;
     public bool ShowGradePercent            { get; set; } = true;
+    public bool OutputEnabled                { get; set; } = true;
     public double MinimumBoundaryArea { get; set; } = 100.0;
 
     // --- Cross Section Session State ---
