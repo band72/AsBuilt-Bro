@@ -91,8 +91,15 @@ public class PointViewModel : ViewModelBase
     public static RCS.Geo.Wpf.ViewModels.GpsDisplayFormat CoordinateFormat { get; set; }
         = RCS.Geo.Wpf.ViewModels.GpsDisplayFormat.DecimalDegrees;
 
-    public double LatitudeGps  => RCS.Geo.Core.StatePlaneProjection.ToLatLon(Easting, Northing).Lat;
-    public double LongitudeGps => RCS.Geo.Core.StatePlaneProjection.ToLatLon(Easting, Northing).Lon;
+    /// <summary>
+    /// Active FL State Plane zone (EPSG string) — set by ShellViewModel from
+    /// <c>JeaStatePlaneZone</c>. Defaults to FL East (EPSG:2236).
+    /// Changing this causes RefreshGpsDisplay() to re-project every visible point.
+    /// </summary>
+    public static string ActiveZone { get; set; } = "EPSG:2236";
+
+    public double LatitudeGps  => RCS.Geo.Core.StatePlaneProjection.ToLatLon(Easting, Northing, ActiveZone).Lat;
+    public double LongitudeGps => RCS.Geo.Core.StatePlaneProjection.ToLatLon(Easting, Northing, ActiveZone).Lon;
 
     /// <summary>Latitude formatted per <see cref="CoordinateFormat"/> (DD or DMS).</summary>
     public string LatitudeDisplay => CoordinateFormat == RCS.Geo.Wpf.ViewModels.GpsDisplayFormat.DMS
@@ -104,7 +111,7 @@ public class PointViewModel : ViewModelBase
         ? RCS.Geo.Core.StatePlaneProjection.ToDms(LongitudeGps, isLatitude: false)
         : $"{LongitudeGps:F7}";
 
-    /// <summary>Refreshes all GPS display properties — called when CoordinateFormat changes.</summary>
+    /// <summary>Refreshes all GPS display properties — called when CoordinateFormat or ActiveZone changes.</summary>
     public void RefreshGpsDisplay()
     {
         OnPropertyChanged(nameof(LatitudeDisplay));
@@ -780,7 +787,15 @@ public partial class ShellViewModel : ViewModelBase
     public string JeaStatePlaneZone
     {
         get => _jeaStatePlaneZone;
-        set { _jeaStatePlaneZone = value ?? string.Empty; OnPropertyChanged(); }
+        set
+        {
+            _jeaStatePlaneZone = value ?? string.Empty;
+            OnPropertyChanged();
+            // Propagate to PointViewModel so GPS DataGrid columns re-project immediately
+            PointViewModel.ActiveZone = RCS.Geo.Core.StatePlaneProjection.NormalizeZone(value);
+            foreach (var pt in Points)
+                pt.RefreshGpsDisplay();
+        }
     }
 
     public System.Collections.ObjectModel.ObservableCollection<string> AvailableStatePlaneZones { get; } =
@@ -1223,6 +1238,8 @@ public partial class ShellViewModel : ViewModelBase
             // ── JEA settings ────────────────────────────────────────────────
             JeaTemplatePath   = RCS.Services.GlobalSettingsService.GetSetting("JeaTemplatePath",   string.Empty);
             JeaStatePlaneZone = RCS.Services.GlobalSettingsService.GetSetting("JeaStatePlaneZone", "Florida East (EPSG:2236)");
+            // Initialise PointViewModel static so GPS columns are correct from the first load
+            PointViewModel.ActiveZone = RCS.Geo.Core.StatePlaneProjection.NormalizeZone(JeaStatePlaneZone);
             // ── DXF Blocks Library ───────────────────────────────────────────
             RcsBlocksPath = RCS.Services.GlobalSettingsService.GetSetting("RcsBlocksPath", string.Empty);
             
