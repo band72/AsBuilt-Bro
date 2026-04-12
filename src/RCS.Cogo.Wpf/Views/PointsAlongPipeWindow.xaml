@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Points Along Pipe (PAP)" Height="350" Width="400"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
-        Background="#1E1E1E" Foreground="#D4D4D4">
+        Background="{StaticResource BrBg}" Foreground="{StaticResource BrTextPrimary}">
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -39,6 +39,6 @@
             </ComboBox>
         </StackPanel>
 
-        <Button Grid.Row="3" Content="Compute Points" Click="Compute_Click" Width="120" Height="35" Background="#007ACC" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center"/>
+        <Button Grid.Row="3" Content="Compute Points" Click="Compute_Click" Width="120" Height="35" Background="{StaticResource BrAccentDim}" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center"/>
     </Grid>
 </Window>

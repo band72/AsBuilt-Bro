@@ -11,7 +11,7 @@
         <Style TargetType="DataGridColumnHeader">
             <Setter Property="Background" Value="#003344"/>
             <Setter Property="Foreground" Value="#00E5FF"/>
-            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontFamily" Value="{StaticResource FfMono}"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontSize" Value="10"/>
             <Setter Property="Padding" Value="6,4"/>
@@ -30,7 +30,7 @@
             <Setter Property="VerticalGridLinesBrush" Value="#1A3A4A"/>
             <Setter Property="BorderBrush" Value="#005577"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontFamily" Value="{StaticResource FfMono}"/>
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
             <Setter Property="CanUserAddRows" Value="False"/>
@@ -55,7 +55,7 @@
         <Style TargetType="TabItem">
             <Setter Property="Background" Value="#0D2030"/>
             <Setter Property="Foreground" Value="#80DEEA"/>
-            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontFamily" Value="{StaticResource FfBody}"/>
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="Padding" Value="10,5"/>
             <Setter Property="BorderThickness" Value="1,1,1,0"/>

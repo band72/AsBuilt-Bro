@@ -1,0 +1,236 @@
+<UserControl x:Class="RCS.Cogo.Wpf.Views.AsBuilt.ValidationPhaseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Header / summary bar -->
+            <RowDefinition Height="Auto"/>   <!-- Category filter -->
+            <RowDefinition Height="*"/>      <!-- Issue list -->
+        </Grid.RowDefinitions>
+
+        <!-- ── Summary bar ────────────────────────────────────────────── -->
+        <Border Grid.Row="0" Padding="16,12"
+                BorderBrush="#2A2A45" BorderThickness="0,0,0,1">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="#1A1A2E"/>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Counters -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="VALIDATION CENTER" FontSize="9" FontWeight="SemiBold"
+                               Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,0,0,8"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Border x:Name="BadgeErrors" Background="#4D1A1A" CornerRadius="4"
+                                Padding="12,6" Margin="0,0,10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="TxtErrorCount" Text="0"
+                                           FontSize="22" FontWeight="Bold" Foreground="#E74C3C"
+                                           FontFamily="Segoe UI"/>
+                                <TextBlock Text=" Errors" FontSize="13" FontWeight="SemiBold"
+                                           Foreground="#E74C3C" FontFamily="Segoe UI"
+                                           VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                            </StackPanel>
+                        </Border>
+                        <Border x:Name="BadgeWarnings" Background="#4D3D1A" CornerRadius="4"
+                                Padding="12,6" Margin="0,0,10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="TxtWarnCount" Text="0"
+                                           FontSize="22" FontWeight="Bold" Foreground="#F39C12"
+                                           FontFamily="Segoe UI"/>
+                                <TextBlock Text=" Warnings" FontSize="13" FontWeight="SemiBold"
+                                           Foreground="#F39C12" FontFamily="Segoe UI"
+                                           VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                            </StackPanel>
+                        </Border>
+                        <Border x:Name="BadgePassed" Background="#1A3D1A" CornerRadius="4"
+                                Padding="12,6">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="TxtPassCount" Text="0"
+                                           FontSize="22" FontWeight="Bold" Foreground="#2ECC71"
+                                           FontFamily="Segoe UI"/>
+                                <TextBlock Text=" Passed" FontSize="13" FontWeight="SemiBold"
+                                           Foreground="#2ECC71" FontFamily="Segoe UI"
+                                           VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Actions -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Bottom">
+                    <Border x:Name="ExportGateBadge" CornerRadius="6" Padding="14,8" Margin="0,0,0,8">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="#4D1A1A"/>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock x:Name="TxtExportGate" Text="🔴  Export Blocked"
+                                   FontSize="13" FontWeight="Bold" Foreground="#E74C3C"
+                                   FontFamily="Segoe UI" HorizontalAlignment="Center"/>
+                    </Border>
+                    <Button Content="▶  Run Validation Now" Padding="14,8"
+                            Background="#4A90E2" Foreground="White" BorderThickness="0"
+                            FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
+                            Click="BtnRunValidation_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ── Category filter strip ──────────────────────────────────── -->
+        <Border Grid.Row="1" Background="#12121F" Padding="10,6"
+                BorderBrush="#2A2A45" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Filter:" FontSize="11" Foreground="#7A7A9A"
+                           FontFamily="Segoe UI" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <Button x:Name="BtnFilterAll" Content="All" Tag="All" Click="FilterBtn_Click"
+                        Padding="10,4" Background="#252545" Foreground="#E8E8F0"
+                        BorderBrush="#4A90E2" BorderThickness="1"
+                        FontFamily="Segoe UI" FontSize="11" Margin="0,0,5,0"/>
+                <Button Content="Geometry"     Tag="Geometry"     Click="FilterBtn_Click" Padding="10,4" Background="#252545" Foreground="#7A7A9A" BorderBrush="#2A2A45" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,5,0"/>
+                <Button Content="Structures"   Tag="Structures"   Click="FilterBtn_Click" Padding="10,4" Background="#252545" Foreground="#7A7A9A" BorderBrush="#2A2A45" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,5,0"/>
+                <Button Content="Runs"         Tag="Runs"         Click="FilterBtn_Click" Padding="10,4" Background="#252545" Foreground="#7A7A9A" BorderBrush="#2A2A45" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,5,0"/>
+                <Button Content="Parts"        Tag="PartsMapping" Click="FilterBtn_Click" Padding="10,4" Background="#252545" Foreground="#7A7A9A" BorderBrush="#2A2A45" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,5,0"/>
+                <Button Content="Coordinates"  Tag="Coordinates"  Click="FilterBtn_Click" Padding="10,4" Background="#252545" Foreground="#7A7A9A" BorderBrush="#2A2A45" BorderThickness="1" FontFamily="Segoe UI" FontSize="11"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Issue list ─────────────────────────────────────────────── -->
+        <ListBox Grid.Row="2" x:Name="IssueList"
+                 Background="Transparent" BorderThickness="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 SelectionChanged="IssueList_SelectionChanged">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="8,2" CornerRadius="6" Padding="12,10">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="#1A1A2E"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Severity}" Value="Error">
+                                        <Setter Property="Background" Value="#1F0D0D"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Severity}" Value="Warning">
+                                        <Setter Property="Background" Value="#1F1A0D"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="65"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Severity badge -->
+                            <Border Grid.Column="0" CornerRadius="3" Padding="6,2" VerticalAlignment="Center">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Severity}" Value="Error">
+                                                <Setter Property="Background" Value="#4D1A1A"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Severity}" Value="Warning">
+                                                <Setter Property="Background" Value="#4D3D1A"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Severity}" Value="Info">
+                                                <Setter Property="Background" Value="#1A2D4D"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="{Binding Severity}" FontSize="10" FontWeight="SemiBold"
+                                           FontFamily="Segoe UI" HorizontalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Severity}" Value="Error">
+                                                    <Setter Property="Foreground" Value="#E74C3C"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Severity}" Value="Warning">
+                                                    <Setter Property="Foreground" Value="#F39C12"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Severity}" Value="Info">
+                                                    <Setter Property="Foreground" Value="#4A90E2"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Border>
+
+                            <!-- Category -->
+                            <TextBlock Grid.Column="1" Text="{Binding Category}"
+                                       FontSize="10" Foreground="#7A7A9A"
+                                       FontFamily="Segoe UI" VerticalAlignment="Center" Margin="8,0"/>
+
+                            <!-- Message -->
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Message}"
+                                           FontSize="12" Foreground="#E8E8F0"
+                                           FontFamily="Segoe UI" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding SuggestedFix, StringFormat='Fix: {0}'}"
+                                           FontSize="10" Foreground="#7A7A9A"
+                                           FontFamily="Segoe UI" Margin="0,2,0,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SuggestedFix}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <!-- Action buttons -->
+                            <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Content="🔍 Zoom" Padding="8,4"
+                                        Background="#252545" Foreground="#4A90E2"
+                                        BorderBrush="#3A3A5A" BorderThickness="1"
+                                        FontFamily="Segoe UI" FontSize="10" Margin="0,0,4,0"
+                                        Tag="{Binding TargetId}"
+                                        Click="BtnZoomTo_Click"/>
+                                <Button Content="✅ Fix" Padding="8,4"
+                                        Background="#1A3D25" Foreground="#2ECC71"
+                                        BorderBrush="#2A5A35" BorderThickness="1"
+                                        FontFamily="Segoe UI" FontSize="10"
+                                        Tag="{Binding}"
+                                        Click="BtnAutoFix_Click">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding AutoFixable}" Value="False">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

@@ -20,15 +20,15 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Text="Alignment Editor" FontWeight="Bold" FontSize="16"
-                       Foreground="#56CCF2" Margin="0,0,0,10"/>
+                       Foreground="{StaticResource BrInfo}" Margin="0,0,0,10"/>
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,12">
                 <TextBlock Text="Alignment:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#B0C4DE"/>
                 <TextBox x:Name="AlignmentNameBox" Width="140" Background="#252D3C" Foreground="White"
                          Padding="4,2" Margin="0,0,8,0" BorderBrush="#3A4A60"/>
-                <Button Content="Save HA" Padding="10,3" Background="#1A3048" Foreground="#56CCF2"
+                <Button Content="Save HA" Padding="10,3" Background="#1A3048" Foreground="{StaticResource BrInfo}"
                         BorderBrush="#3A4A60" Click="OnSaveHa" ToolTip="Save Horizontal Alignment"/>
-                <Button Content="Save VA" Padding="10,3" Background="#1A3048" Foreground="#FFD232"
+                <Button Content="Save VA" Padding="10,3" Background="#1A3048" Foreground="{StaticResource BrAmber}"
                         BorderBrush="#3A4A60" Margin="4,0,0,0" Click="OnSaveVa" ToolTip="Save Vertical Alignment"/>
             </StackPanel>
 
@@ -38,7 +38,7 @@
                       AutoGenerateColumns="False"
                       BorderThickness="1" BorderBrush="#2C3E54"
                       Background="#14181F" RowBackground="#14181F"
-                      AlternatingRowBackground="#1A2030" Foreground="#DCDCDC"
+                      AlternatingRowBackground="#1A2030" Foreground="{StaticResource BrTextPrimary}"
                       GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#252D3C"
                       ColumnHeaderHeight="28">
                 <DataGrid.ColumnHeaderStyle>
@@ -146,7 +146,7 @@
 
                     <!-- Refresh button -->
                     <Button Content="⟳ Refresh Profile" HorizontalAlignment="Right" VerticalAlignment="Top"
-                            Margin="0,4,8,0" Padding="8,3" Background="#1A3048" Foreground="#56CCF2"
+                            Margin="0,4,8,0" Padding="8,3" Background="#1A3048" Foreground="{StaticResource BrInfo}"
                             BorderBrush="#2C3E54" FontSize="10" Click="OnRefreshProfile"/>
                 </Grid>
             </Border>

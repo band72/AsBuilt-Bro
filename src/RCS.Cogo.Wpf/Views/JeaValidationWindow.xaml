@@ -10,14 +10,14 @@
         <Style x:Key="SeverityCell" TargetType="TextBlock">
             <Style.Triggers>
                 <Trigger Property="Text" Value="Error">
-                    <Setter Property="Foreground" Value="#FF5252"/>
+                    <Setter Property="Foreground" Value="{StaticResource BrError}"/>
                     <Setter Property="FontWeight" Value="Bold"/>
                 </Trigger>
                 <Trigger Property="Text" Value="Warning">
-                    <Setter Property="Foreground" Value="#FFD232"/>
+                    <Setter Property="Foreground" Value="{StaticResource BrAmber}"/>
                 </Trigger>
                 <Trigger Property="Text" Value="Info">
-                    <Setter Property="Foreground" Value="#56CCF2"/>
+                    <Setter Property="Foreground" Value="{StaticResource BrInfo}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -45,7 +45,7 @@
                     <TextBlock x:Name="StatusLabel"
                                Text="✔ Ready for JEA Export"
                                FontSize="16" FontWeight="Bold"
-                               Foreground="#44E08B"/>
+                               Foreground="{StaticResource BrSuccess}"/>
                     <TextBlock x:Name="SummaryLabel"
                                Text="Run validation to check your data."
                                FontSize="12" Foreground="#88AABB" Margin="0,2,0,0"/>
@@ -58,7 +58,7 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="⛔" FontSize="14" Margin="0,0,6,0"/>
                         <TextBlock x:Name="ErrorBadge" Text="0 Errors"
-                                   Foreground="#FF5252" FontWeight="Bold" FontSize="14"/>
+                                   Foreground="{StaticResource BrError}" FontWeight="Bold" FontSize="14"/>
                     </StackPanel>
                 </Border>
 
@@ -69,7 +69,7 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="⚠" FontSize="14" Margin="0,0,6,0"/>
                         <TextBlock x:Name="WarnBadge" Text="0 Warnings"
-                                   Foreground="#FFD232" FontWeight="Bold" FontSize="14"/>
+                                   Foreground="{StaticResource BrAmber}" FontWeight="Bold" FontSize="14"/>
                     </StackPanel>
                 </Border>
 
@@ -80,7 +80,7 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="ℹ" FontSize="14" Margin="0,0,6,0"/>
                         <TextBlock x:Name="InfoBadge" Text="0 Info"
-                                   Foreground="#56CCF2" FontWeight="Bold" FontSize="14"/>
+                                   Foreground="{StaticResource BrInfo}" FontWeight="Bold" FontSize="14"/>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -91,15 +91,15 @@
             <TextBlock Text="Filter:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#88AABB"/>
             <ToggleButton x:Name="ShowErrors" IsChecked="True" Content="Errors" Padding="12,4"
                           Checked="OnFilterChanged" Unchecked="OnFilterChanged"
-                          Background="#2A1520" Foreground="#FF5252" BorderBrush="#FF5252"
+                          Background="#2A1520" Foreground="{StaticResource BrError}" BorderBrush="#FF5252"
                           FontWeight="Bold" Margin="0,0,4,0"/>
             <ToggleButton x:Name="ShowWarnings" IsChecked="True" Content="Warnings" Padding="12,4"
                           Checked="OnFilterChanged" Unchecked="OnFilterChanged"
-                          Background="#252015" Foreground="#FFD232" BorderBrush="#FFD232"
+                          Background="#252015" Foreground="{StaticResource BrAmber}" BorderBrush="#FFD232"
                           Margin="0,0,4,0"/>
             <ToggleButton x:Name="ShowInfo" IsChecked="True" Content="Info" Padding="12,4"
                           Checked="OnFilterChanged" Unchecked="OnFilterChanged"
-                          Background="#151825" Foreground="#56CCF2" BorderBrush="#56CCF2"
+                          Background="#151825" Foreground="{StaticResource BrInfo}" BorderBrush="#56CCF2"
                           Margin="0,0,16,0"/>
             <TextBlock Text="Sheet:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#88AABB"/>
             <ComboBox x:Name="SheetFilter" Width="220" Background="#1A1D24" Foreground="White"
@@ -113,7 +113,7 @@
                   AlternatingRowBackground="#13171F"
                   BorderBrush="#1C2436" BorderThickness="1" Margin="8,0,8,4"
                   GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#1A2030"
-                  Foreground="#DCDCDC" SelectionMode="Single">
+                  Foreground="{StaticResource BrTextPrimary}" SelectionMode="Single">
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="Background" Value="#151A24"/>
@@ -156,18 +156,18 @@
             <StackPanel Orientation="Horizontal">
                 <Button Content="▶  Run Validation" x:Name="RunBtn"
                         Width="150" Height="34" Padding="0,0"
-                        Background="#1A3048" Foreground="#56CCF2"
+                        Background="#1A3048" Foreground="{StaticResource BrInfo}"
                         BorderBrush="#2C4060" FontWeight="Bold"
                         Click="OnValidate" Margin="0,0,8,0"/>
                 <Button Content="🗎  Export Report..." x:Name="ExportBtn"
                         Width="150" Height="34"
-                        Background="#1A2820" Foreground="#44E08B"
-                        BorderBrush="#266040" FontWeight="Bold"
+                        Background="#1A2820" Foreground="{StaticResource BrSuccess}"
+                        BorderBrush="{StaticResource BrSuccess}" FontWeight="Bold"
                         Click="OnExportReport" Margin="0,0,8,0" IsEnabled="False"/>
                 <Button Content="✔  Looks Good — Export JEA Now" x:Name="ExportJeaBtn"
                         Height="34" Padding="16,0"
-                        Background="#163025" Foreground="#44E08B"
-                        BorderBrush="#266040" FontWeight="Bold"
+                        Background="#163025" Foreground="{StaticResource BrSuccess}"
+                        BorderBrush="{StaticResource BrSuccess}" FontWeight="Bold"
                         Click="OnProceedExport" IsEnabled="False"/>
 
                 <TextBlock x:Name="CountLabel" Text="0 issues shown"

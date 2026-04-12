@@ -7,77 +7,9 @@
         xmlns:views="clr-namespace:RCS.Cogo.Wpf.Views"
         xmlns:geo="clr-namespace:RCS.Geo.Wpf.Views;assembly=RCS.Geo.Wpf"
         mc:Ignorable="d"
-        Title="{Binding WindowTitle}" Height="800" Width="1200"
-        Background="#1E1E1E" Foreground="#D4D4D4">
-    
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Resources/Symbols.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        Title="{Binding WindowTitle}" Height="800" Width="1200">
 
-            <Style TargetType="TextBlock">
-                <Setter Property="FontFamily" Value="Segoe UI"/>
-                <Setter Property="FontSize" Value="14"/>
-            </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="Background" Value="#252526"/>
-            <Setter Property="Foreground" Value="#D4D4D4"/>
-            <Setter Property="BorderBrush" Value="#3E3E42"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="CaretBrush" Value="White"/>
-        </Style>
-        <Style TargetType="ComboBox">
-            <Setter Property="Background" Value="#E0E0E0"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="BorderBrush" Value="Gray"/>
-            <Setter Property="IsEditable" Value="True"/>
-            <Setter Property="IsReadOnly" Value="True"/>
-        </Style>
-        <Style TargetType="ComboBoxItem">
-            <Setter Property="Background" Value="#E0E0E0"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="BorderThickness" Value="0"/>
-        </Style>
-        <Style TargetType="ListBox">
-            <Setter Property="Background" Value="#252526"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="#D4D4D4"/>
-        </Style>
-        <Style TargetType="DataGrid">
-            <Setter Property="Background" Value="#252526"/>
-            <Setter Property="RowBackground" Value="#252526"/>
-            <Setter Property="Foreground" Value="#D4D4D4"/>
-            <Setter Property="BorderBrush" Value="#3E3E42"/>
-            <Setter Property="HeadersVisibility" Value="Column"/>
-            <Setter Property="GridLinesVisibility" Value="None"/>
-        </Style>
-        <Style TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#3E3E42"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Padding" Value="5"/>
-        </Style>
-        <Style TargetType="Menu">
-            <Setter Property="Background" Value="#2D2D30"/>
-            <Setter Property="Foreground" Value="White"/>
-        </Style>
-        <Style TargetType="MenuItem">
-            <Setter Property="Background" Value="#2D2D30"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Padding" Value="10,5"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="BorderBrush" Value="#3E3E42"/>
-            <Style.Triggers>
-                <Trigger Property="IsHighlighted" Value="True">
-                    <Setter Property="Background" Value="#3E3E42"/>
-                    <Setter Property="Foreground" Value="#007ACC"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        </ResourceDictionary>
-    </Window.Resources>
+    <!-- BoolToVis shipped globally in RcsTheme.xaml — referenced as {StaticResource BoolToVis} -->
 
     <Grid>
         <Grid.RowDefinitions>
@@ -85,7 +17,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Background="#2D2D30" Foreground="#D4D4D4" Padding="5,2">
+        <Menu Grid.Row="0" Padding="5,2">
             <MenuItem Header="_File">
                 <MenuItem Header="E_xit" Command="{Binding CloseCommand}"/>
                 <Separator/>
@@ -141,27 +73,27 @@
                     <Separator/>
                     <MenuItem Header="📥 Import JEA As-Built Template (.xlsx)..."
                               Command="{Binding ImportJeaTemplateCommand}"
-                              FontWeight="SemiBold" Foreground="#44E08B"
+                              FontWeight="SemiBold" Foreground="{StaticResource BrSuccess}"
                               ToolTip="Read a filled JEA As-Built Excel file and import records into the current project"/>
                     <MenuItem Header="🛠️ Generate 3D Piping Linework From JEA SQL Nodes..."
                               Command="{Binding GenerateJeaLineworkCommand}"
-                              FontWeight="SemiBold" Foreground="#00E6FF"
+                              FontWeight="SemiBold" Foreground="{StaticResource BrInfo}"
                               ToolTip="Automatically generates structural nodes and dynamic pipe runs based on the internal database."/>
                     <MenuItem Header="🚀 New Project from Segment1A Excel (.xlsx)..."
                               Command="{Binding ImportS1AProjectCommand}"
-                              FontWeight="Bold" Foreground="#FFD700"
+                              FontWeight="Bold" Foreground="{StaticResource BrAmber}"
                               ToolTip="Creates the 70498-S1A project and imports all Segment1A tables in one step"/>
                 </MenuItem>
                 <MenuItem Header="_Export">
                     <!-- ═══ JEA As-Built Deliverable ═════════════════════ -->
                     <MenuItem Command="{Binding ValidateJeaCommand}"
-                              FontWeight="SemiBold" Foreground="#FFD232"
+                              FontWeight="SemiBold" Foreground="{StaticResource BrAmber}"
                               ToolTip="Check all project assets against JEA validation rules before export">
                         <MenuItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="🔍 Validate JEA Data..."/>
                                 <!-- Live issue-count badge — visible only after a validation run -->
-                                <Border Background="#C0392B" CornerRadius="6"
+                                <Border Background="{StaticResource BrError}" CornerRadius="6"
                                         Margin="8,0,0,0" Padding="5,1"
                                         VerticalAlignment="Center">
                                     <Border.Style>
@@ -183,7 +115,7 @@
                     </MenuItem>
                     <MenuItem Header="🏛 Export JEA As-Built Template (.xlsx)..."
                               Command="{Binding ExportJeaTemplateCommand}"
-                              FontWeight="SemiBold" Foreground="#56CCF2"
+                              FontWeight="SemiBold" Foreground="{StaticResource BrInfo}"
                               ToolTip="Fill the JEA As-Built Template with all project utility data and save as .xlsx"/>
                     <Separator/>
                     <!-- ═════════════════════════════════════════════════== -->
@@ -261,12 +193,12 @@
                 <Separator/>
                 <MenuItem Header="📐 All Tables (all tabs)..."
                           Command="{Binding OpenTablesCommand}" CommandParameter="-1"
-                          FontWeight="SemiBold" Foreground="#00BCD4"
+                          FontWeight="SemiBold" Foreground="{StaticResource BrTeal}"
                           ToolTip="Open all 7 tables in one window"/>
             </MenuItem>
             <MenuItem Header="_Help">
                 <!-- ═══ EXAMPLE PROJECT — recommended first stop ═══ -->
-                <MenuItem Header="🚀 Example Project (Oakwood Water Main)" FontWeight="Bold" Foreground="#44E08B">
+                <MenuItem Header="🚀 Example Project (Oakwood Water Main)" FontWeight="Bold" Foreground="{StaticResource BrSuccess}">
                     <MenuItem Header="📋 Step-by-Step Walkthrough Guide"
                               Command="{Binding OpenExampleWalkthroughCommand}"
                               FontWeight="SemiBold"
@@ -280,10 +212,26 @@
                               ToolTip="All import formats explained: COGO script, PNEZD text file, JEA Excel template, Pipe CSV.&#x0a;Includes column layouts, examples, rules, and common error fixes."/>
                 </MenuItem>
                 <Separator/>
+                <!-- ═══ AS-BUILT DEMO PROJECT ═══ -->
+                <MenuItem Header="🏗 AsBuilt Demo  (W-04471)" FontWeight="Bold" Foreground="{StaticResource BrTeal}">
+                    <MenuItem Header="📂 Open Demo Project Folder"
+                              Click="OpenAsBuiltDemoFolder_Click"
+                              ToolTip="Opens the pre-built JEA W-04471 demo project in File Explorer.&#x0a;Folder: Desktop\AsBuilt_Demo\JEA-2024-W-04471_Rev1_04122025"/>
+                    <MenuItem Header="📋 Open Load Order Guide"
+                              Click="OpenAsBuiltDemoReadme_Click"
+                              ToolTip="Opens README_LOAD_ORDER.txt — step-by-step import guide for the demo project."/>
+                    <MenuItem Header="📍 Load Demo Points into Editor"
+                              Click="LoadAsBuiltDemoPnezd_Click"
+                              ToolTip="Loads W-04471_PNEZD.csv into the Script Editor so you can see the survey point format."/>
+                    <MenuItem Header="📜 Load Demo COGO Script into Editor"
+                              Click="LoadAsBuiltDemoCogo_Click"
+                              ToolTip="Loads W-04471_COGO.cogo into the Script Editor — shows full PRUN network syntax."/>
+                </MenuItem>
+                <Separator/>
                 <MenuItem Header="📖 User Manual" Command="{Binding OpenManualCommand}"/>
                 <MenuItem Header="Survey Commands" Command="{Binding OpenSurveyCommandsCommand}"/>
                 <MenuItem Header="Pipe Commands" Command="{Binding OpenPipeCommandsCommand}"/>
-                <MenuItem Header="🎓 Survey Tutorials" FontWeight="SemiBold" Foreground="#44E08B">
+                <MenuItem Header="🎓 Survey Tutorials" FontWeight="SemiBold" Foreground="{StaticResource BrSuccess}">
                     <MenuItem Header="T01: Coordinates and Inverse" Command="{Binding OpenTutorial01Command}"/>
                     <MenuItem Header="T02: Traverse" Command="{Binding OpenTutorial02Command}"/>
                     <MenuItem Header="T03: Rotation" Command="{Binding OpenTutorial03Command}"/>
@@ -300,7 +248,7 @@
                 <MenuItem Header="Cogo Figures" Command="{Binding OpenExampleFiguresCommand}"/>
                 <MenuItem Header="Angle Script" Command="{Binding OpenExampleAngleCommand}"/>
                 <Separator/>
-                <MenuItem Header="🗃 Civil 3D Table Extraction" FontWeight="SemiBold" Foreground="#FF9800">
+                <MenuItem Header="🗃 Civil 3D Table Extraction" FontWeight="SemiBold" Foreground="{StaticResource BrAmber}">
                     <MenuItem.ToolTip>
                         <ToolTip>
                             <StackPanel MaxWidth="420">
@@ -308,34 +256,34 @@
                                 <TextBlock TextWrapping="Wrap" Margin="0,0,0,8"
                                     Text="Extracts data from Civil 3D Point Tables (Water Fittings, Valves, Wire Boxes, Top-of-Pipe) and imports them into the JEA As-Built template."/>
 
-                                <TextBlock Text="STEP 1 — Run LISP inside Civil 3D:" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,4"/>
+                                <TextBlock Text="STEP 1 — Run LISP inside Civil 3D:" FontWeight="Bold" Foreground="{StaticResource BrAmber}" Margin="0,0,0,4"/>
                                 <TextBlock TextWrapping="Wrap" Margin="0,0,0,2" Text="1. In Civil 3D, type APPLOAD → load export_tables.lsp"/>
                                 <TextBlock TextWrapping="Wrap" Margin="0,0,0,2" Text="2. Type DUMPTABLE → press Enter"/>
                                 <TextBlock TextWrapping="Wrap" Margin="0,0,0,2" Text="3. Select the exploded *U block references → press Enter"/>
                                 <TextBlock TextWrapping="Wrap" Margin="0,0,0,8" Text="4. Output CSV saved to: C:\Temp\table_dump.txt  (repeat for each table)"/>
 
-                                <TextBlock Text="STEP 2 — Convert dumps to Excel:" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,4"/>
+                                <TextBlock Text="STEP 2 — Convert dumps to Excel:" FontWeight="Bold" Foreground="{StaticResource BrAmber}" Margin="0,0,0,4"/>
                                 <TextBlock TextWrapping="Wrap" Margin="0,0,0,2" Text="Run export_acad_tables.py to convert all 4 dump files into individual .xlsx files with columns remapped to JEA template column order."/>
-                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,8" Foreground="#AAAAAA"
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,8" Foreground="{StaticResource BrTextMuted}"
                                     Text="python export_acad_tables.py"/>
 
-                                <TextBlock Text="STEP 3 — Import into this app:" FontWeight="Bold" Foreground="#FFD700" Margin="0,0,0,4"/>
+                                <TextBlock Text="STEP 3 — Import into this app:" FontWeight="Bold" Foreground="{StaticResource BrAmber}" Margin="0,0,0,4"/>
                                 <TextBlock TextWrapping="Wrap"
                                     Text="Use Data → Import → 🚀 New Project from Segment1A Excel (.xlsx)... to load all tables in one step."/>
 
-                                <TextBlock TextWrapping="Wrap" Margin="0,8,0,0" Foreground="#AAAAAA" FontStyle="Italic"
+                                <TextBlock TextWrapping="Wrap" Margin="0,8,0,0" Foreground="{StaticResource BrTextMuted}" FontStyle="Italic"
                                     Text="Files: export_tables.lsp  |  export_acad_tables.py  (repo root)"/>
                             </StackPanel>
                         </ToolTip>
                     </MenuItem.ToolTip>
                     <MenuItem Header="📋 Step 1: Load DUMPTABLE into Civil 3D"
-                              IsEnabled="False" Foreground="#AAAAAA"
+                              IsEnabled="False" Foreground="{StaticResource BrTextMuted}"
                               ToolTip="In Civil 3D: APPLOAD → export_tables.lsp → type DUMPTABLE → select table blocks → Enter"/>
                     <MenuItem Header="⚙ Step 2: Convert Dumps to Excel (export_acad_tables.py)"
-                              IsEnabled="False" Foreground="#AAAAAA"
+                              IsEnabled="False" Foreground="{StaticResource BrTextMuted}"
                               ToolTip="Run: python export_acad_tables.py  —  reads C:\...\table-ssmc\table_dump*.txt and writes 4 xlsx files"/>
                     <MenuItem Header="📥 Step 3: Import via Data → Import → Segment1A Excel"
-                              IsEnabled="False" Foreground="#AAAAAA"
+                              IsEnabled="False" Foreground="{StaticResource BrTextMuted}"
                               ToolTip="Use the 🚀 New Project from Segment1A Excel command to load all 4 tables into the project database"/>
                     <Separator/>
                     <MenuItem Header="📁 Open Extraction Scripts Folder" Command="{Binding OpenExtractionScriptsFolderCommand}"
@@ -364,7 +312,7 @@
                 <MenuItem Header="Gas Script V2" Command="{Binding OpenExampleGasV2Command}"/>
                 <MenuItem Header="Electric Script V2" Command="{Binding OpenExampleElectricV2Command}"/>
                 <Separator/>
-                <MenuItem Header="Report a Bug / Error..." Command="{Binding OpenErrorReportCommand}" Foreground="#FF6B6B" FontWeight="Bold"/>
+                <MenuItem Header="Report a Bug / Error..." Command="{Binding OpenErrorReportCommand}" Foreground="{StaticResource BrError}" FontWeight="Bold"/>
                 <MenuItem Header="_About" Command="{Binding AboutCommand}"/>
             </MenuItem>
         </Menu>
@@ -384,7 +332,7 @@
 
         <!-- Left Pane: Console / History -->
         <Grid Grid.Column="0" Grid.Row="0" Margin="10">
-            <TabControl Background="#252526" BorderThickness="0" SelectedIndex="{Binding SelectedTabIndex}" SelectionChanged="TabControl_SelectionChanged">
+            <TabControl Background="{StaticResource BrSurface}" BorderThickness="0" SelectedIndex="{Binding SelectedTabIndex}" SelectionChanged="TabControl_SelectionChanged">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -460,29 +408,29 @@
                             <Button Grid.Column="0" Content="Import Text..."
                                     Command="{Binding ImportPointsListCommand}"
                                     Padding="10,5" Margin="0,0,8,0"
-                                    Background="#2D2D30" Foreground="White"/>
+                                    Background="{StaticResource BrHeader}" Foreground="White"/>
                             <!-- Export TXT -->
                             <Button Grid.Column="1" Content="Export TXT"
                                     Command="{Binding ExportPointsTxtCommand}"
                                     Padding="10,5" Margin="0,0,8,0"
-                                    Background="#2D2D30" Foreground="White"/>
+                                    Background="{StaticResource BrHeader}" Foreground="White"/>
                             <!-- Export XML -->
                             <Button Grid.Column="2" Content="Export XML"
                                     Command="{Binding ExportPointsXmlCommand}"
                                     Padding="10,5" Margin="0,0,8,0"
-                                    Background="#2D2D30" Foreground="White"/>
+                                    Background="{StaticResource BrHeader}" Foreground="White"/>
                             <!-- Save -->
                             <Button Grid.Column="3" Content="Save"
                                     Command="{Binding SavePointsCommand}"
                                     Padding="10,5" Margin="0,0,8,0"
-                                    Background="#28A745" Foreground="White" FontWeight="Bold"
+                                    Background="{StaticResource BrSuccess}" Foreground="White" FontWeight="Bold"
                                     ToolTip="Save Points to Database"/>
                             <!-- Refresh -->
                             <Button Grid.Column="4" Content="Refresh"
                                     Command="{Binding RefreshPointsCommand}"
                                     Padding="10,5" Margin="0,0,0,0"
-                                    Background="#1E1E1E" Foreground="White"
-                                    BorderBrush="#3E3E42" BorderThickness="1"
+                                    Background="{StaticResource BrBg}" Foreground="White"
+                                    BorderBrush="{StaticResource BrBorder}" BorderThickness="1"
                                     ToolTip="Validate points against local codes"/>
 
                             <!-- ── Live Quick-Filter ─────────────────────────────── -->
@@ -491,11 +439,11 @@
                                          Text="{Binding PointsFilter, UpdateSourceTrigger=PropertyChanged}"
                                          Padding="4,3" FontFamily="Segoe UI" FontSize="13"
                                          ToolTip="Filter by Point# or Description"
-                                         Background="#252526" Foreground="#D4D4D4"
-                                         BorderBrush="#3E3E42" BorderThickness="1"/>
+                                         Background="{StaticResource BrSurface}" Foreground="{StaticResource BrTextPrimary}"
+                                         BorderBrush="{StaticResource BrBorder}" BorderThickness="1"/>
                                 <!-- Placeholder hint (visible only when empty) -->
                                 <TextBlock IsHitTestVisible="False" Text="🔍  Filter points..."
-                                           Foreground="#666666" FontSize="12"
+                                           Foreground="{StaticResource BrTextMuted}" FontSize="12"
                                            VerticalAlignment="Center" Margin="8,0,0,0">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
@@ -514,21 +462,21 @@
                             <Button Grid.Column="7" Content="✕"
                                     Command="{Binding ClearPointsFilterCommand}"
                                     Width="26" Margin="4,0,0,0"
-                                    Background="#3E3E42" Foreground="#AAAAAA"
+                                    Background="{StaticResource BrBorder}" Foreground="{StaticResource BrTextMuted}"
                                     BorderThickness="0" FontWeight="Bold"
                                     ToolTip="Clear filter"/>
                         </Grid>
 
                         <DataGrid Grid.Row="1" ItemsSource="{Binding PointsView}" AutoGenerateColumns="False"
                                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="True"
-                                  BorderThickness="1" BorderBrush="#3E3E42">
+                                  BorderThickness="1" BorderBrush="{StaticResource BrBorder}">
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn Header="Point Number" SortMemberPath="NumericId" Width="80" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Padding="5">
                                                 <Hyperlink Command="{Binding DataContext.ZoomToImportedPointCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
-                                                           CommandParameter="{Binding}" Foreground="#007ACC" TextDecorations="Underline">
+                                                           CommandParameter="{Binding}" Foreground="{StaticResource BrAccent}" TextDecorations="Underline">
                                                     <TextBlock Text="{Binding Id}"/>
                                                 </Hyperlink>
                                             </TextBlock>
@@ -551,7 +499,7 @@
                                                 
                                                 <!-- Feedback Icon -->
                                                 <TextBlock Grid.Column="1" Text="✔" Foreground="LimeGreen" FontWeight="Bold" Margin="5,0"
-                                                           Visibility="{Binding IsValidCode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                                           Visibility="{Binding IsValidCode, Converter={StaticResource BoolToVis}}"/>
                                                 
                                                 <!-- 
                                                 Actually, I need to Highlight RED if INCORRECT.
@@ -602,17 +550,17 @@
                         </Grid.RowDefinitions>
                         
                         <ListBox Grid.Row="0" ItemsSource="{Binding CommandLog}" Margin="0,0,0,10"
-                                 Background="#1E1E1E" BorderThickness="0">
+                                 Background="{StaticResource BrBg}" BorderThickness="0">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding}" TextWrapping="Wrap" FontFamily="Consolas" Foreground="#D4D4D4"/>
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap" FontFamily="Consolas" Foreground="{StaticResource BrTextPrimary}"/>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
                         
                         <!-- Floating Command Hint -->
                         <Border Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
-                                Background="#E6333333" Margin="5,0,0,5" Padding="8,5" CornerRadius="3" MinWidth="100">
+                                Background="{StaticResource BrSurface}" Margin="5,0,0,5" Padding="8,5" CornerRadius="3" MinWidth="100">
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Setter Property="Visibility" Value="Visible"/>
@@ -641,7 +589,7 @@
                                 </TextBox.InputBindings>
                             </TextBox>
                             <Button Grid.Column="1" Content="✨ AI Helper" Command="{Binding OpenConvertImageCommand}" 
-                                    Margin="5,0,0,0" Padding="15,0" Background="#8A2BE2" Foreground="White" FontWeight="Bold" ToolTip="Open AI Vision to COGO Translator"/>
+                                    Margin="5,0,0,0" Padding="15,0" Background="{StaticResource BrAccentDim}" Foreground="White" FontWeight="Bold" ToolTip="Open AI Vision to COGO Translator"/>
                         </Grid>
                     </Grid>
                 </TabItem>
@@ -658,40 +606,40 @@
                         <!-- Toolbar -->
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                             <Button Content="Import Script" Command="{Binding ImportBatchCommand}" 
-                                    Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                                    Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White"/>
                             <Button Content="Run Script" Command="{Binding RunBatchCommand}" 
-                                    Padding="10,5" Margin="0,0,10,0" Background="#007ACC" Foreground="White" FontWeight="Bold"/>
+                                    Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrAccentDim}" Foreground="White" FontWeight="Bold"/>
                             <Button Content="Walk Script" Command="{Binding WalkBatchCommand}" 
-                                    Padding="10,5" Margin="0,0,10,0" Background="#28A745" Foreground="White" FontWeight="Bold"/>
+                                    Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrSuccess}" Foreground="White" FontWeight="Bold"/>
 
                             <ToggleButton Content="P" IsChecked="{Binding ShowPointNumbers}" 
-                                    Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Numbers"/>
+                                    Width="30" Margin="0,0,5,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Numbers"/>
                             <ToggleButton Content="X" IsChecked="{Binding ShowPointMarkers}" 
-                                    Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Markers"/>
+                                    Width="30" Margin="0,0,5,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Markers"/>
                             <ToggleButton Content="L" IsChecked="{Binding ShowFigureLabels}" 
-                                    Width="30" Margin="0,0,10,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Figure Labels"/>
+                                    Width="30" Margin="0,0,10,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Toggle Figure Labels"/>
 
                             <Button Content="DXF" Command="{Binding ExportDxfCommand}" 
-                                    Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                                    Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White"/>
                             <Button Content="TXT" Command="{Binding ExportScriptCommand}" 
-                                    Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
+                                    Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White"/>
                             <Button Content="Save Figures" Command="{Binding SaveFiguresCommand}" 
-                                    Padding="10,5" Margin="0,0,10,0" Background="#007ACC" Foreground="White" FontWeight="Bold" ToolTip="Save all figures to database"/>
+                                    Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrAccentDim}" Foreground="White" FontWeight="Bold" ToolTip="Save all figures to database"/>
                             <Button Content="✨ AI" Command="{Binding AnalyzeScriptCommand}" 
-                                    Padding="10,5" Background="#8A2BE2" Foreground="White" FontWeight="Bold" ToolTip="AI Script Validator"/>
+                                    Padding="10,5" Background="{StaticResource BrAccentDim}" Foreground="White" FontWeight="Bold" ToolTip="AI Script Validator"/>
                         </StackPanel>
                         
                         <!-- Editor -->
                         <TextBox Grid.Row="1" Text="{Binding BatchScriptContent}" 
                                  FontFamily="Consolas" FontSize="14" AcceptsReturn="True" 
                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
-                                 Background="#1E1E1E" Foreground="#DCDCDC" BorderThickness="1"/>
+                                 Background="{StaticResource BrBg}" Foreground="{StaticResource BrTextPrimary}" BorderThickness="1"/>
                                  
                         <Grid Grid.Row="2" Margin="0,5,0,0">
                             <TextBlock Text="Use // for comments" Foreground="Gray" FontStyle="Italic"/>
-                            <StackPanel Orientation="Horizontal" Visibility="{Binding IsRunningScript, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <ProgressBar IsIndeterminate="True" Width="200" Height="10" Margin="0,0,10,0" Foreground="#28A745"/>
-                                <TextBlock Text="Running Script..." Foreground="#28A745" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <StackPanel Orientation="Horizontal" Visibility="{Binding IsRunningScript, Converter={StaticResource BoolToVis}}">
+                                <ProgressBar IsIndeterminate="True" Width="200" Height="10" Margin="0,0,10,0" Foreground="{StaticResource BrSuccess}"/>
+                                <TextBlock Text="Running Script..." Foreground="{StaticResource BrSuccess}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Grid>
                     </Grid>
@@ -737,15 +685,15 @@
                         
                         <!-- DMS Output -->
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="Delta (DMS):" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="Gray"/>
-                        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding CurveDeltaDms, Mode=OneWay}" IsReadOnly="True" Margin="0,5" Background="#1E1E1E" BorderThickness="0"/>
+                        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding CurveDeltaDms, Mode=OneWay}" IsReadOnly="True" Margin="0,5" Background="{StaticResource BrBg}" BorderThickness="0"/>
                         
                         <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
                             <Button Content="SOLVE" Command="{Binding SolveCurveCommand}" 
                                     Width="75" Margin="0,0,10,0" Padding="10,5" 
-                                    Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
+                                    Background="{StaticResource BrHeader}" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
                             <Button Command="{Binding ClearCurveSolverCommand}" Content="Clear" 
                                     Width="75" Padding="10,5"
-                                    Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
+                                    Background="{StaticResource BrHeader}" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
                         </StackPanel>
 
                         <TextBlock Grid.Row="9" Grid.ColumnSpan="2" Text="Results will update above and in Output Log." Margin="0,10,0,0" FontStyle="Italic" Foreground="Gray" TextWrapping="Wrap"/>
@@ -756,48 +704,48 @@
                             <TextBlock Text="Utilities" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
                             
                             <!-- DMS Converter -->
-                            <TextBlock Text="Decimal to DMS Converter:" Foreground="#CCCCCC" Margin="0,0,0,5"/>
+                            <TextBlock Text="Decimal to DMS Converter:" Foreground="{StaticResource BrTextSecondary}" Margin="0,0,0,5"/>
                             <Grid Margin="0,0,0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBox Grid.Column="0" Text="{Binding UtilDecInput, UpdateSourceTrigger=PropertyChanged}" ToolTip="Enter Decimal Degrees" Margin="0,0,5,0"/>
-                                <Button Grid.Column="1" Command="{Binding UtilConvertCommand}" Content="Convert" Padding="10,2" Background="#333333" Foreground="White"/>
+                                <Button Grid.Column="1" Command="{Binding UtilConvertCommand}" Content="Convert" Padding="10,2" Background="{StaticResource BrCard}" Foreground="White"/>
                             </Grid>
                             <TextBlock Text="{Binding UtilDmsOutput}" Foreground="Cyan" Margin="0,0,0,15" FontWeight="Bold" HorizontalAlignment="Right"/>
 
                             <!-- DMS to DD Converter -->
-                            <TextBlock Text="DMS to Decimal Converter:" Foreground="#CCCCCC" Margin="0,0,0,5"/>
+                            <TextBlock Text="DMS to Decimal Converter:" Foreground="{StaticResource BrTextSecondary}" Margin="0,0,0,5"/>
                             <Grid Margin="0,0,0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBox Grid.Column="0" Text="{Binding UtilDmsInput, UpdateSourceTrigger=PropertyChanged}" ToolTip="Enter DMS" Margin="0,0,5,0"/>
-                                <Button Grid.Column="1" Command="{Binding UtilConvertDmsToDdCommand}" Content="Convert" Padding="10,2" Background="#333333" Foreground="White"/>
+                                <Button Grid.Column="1" Command="{Binding UtilConvertDmsToDdCommand}" Content="Convert" Padding="10,2" Background="{StaticResource BrCard}" Foreground="White"/>
                             </Grid>
                             <TextBlock Text="{Binding UtilDdOutput}" Foreground="Cyan" Margin="0,0,0,15" FontWeight="Bold" HorizontalAlignment="Right"/>
 
                             <!-- Supplement Finder -->
-                            <TextBlock Text="Supplement Finder (180 - Angle):" Foreground="#CCCCCC" Margin="0,0,0,5"/>
+                            <TextBlock Text="Supplement Finder (180 - Angle):" Foreground="{StaticResource BrTextSecondary}" Margin="0,0,0,5"/>
                             <Grid Margin="0,0,0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBox Grid.Column="0" Text="{Binding UtilSuppInput, UpdateSourceTrigger=PropertyChanged}" ToolTip="Enter Angle (Decimal Degrees)" Margin="0,0,5,0"/>
-                                <Button Grid.Column="1" Command="{Binding UtilSupplementCommand}" Content="Convert" Padding="10,2" Background="#333333" Foreground="White"/>
+                                <Button Grid.Column="1" Command="{Binding UtilSupplementCommand}" Content="Convert" Padding="10,2" Background="{StaticResource BrCard}" Foreground="White"/>
                             </Grid>
                             <TextBlock Text="{Binding UtilSuppOutput}" Foreground="Cyan" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,0,0,15"/>
 
                             <!-- Bearing Math -->
-                            <TextBlock Text="Add or Subtract:" Foreground="#CCCCCC" Margin="0,0,0,5"/>
+                            <TextBlock Text="Add or Subtract:" Foreground="{StaticResource BrTextSecondary}" Margin="0,0,0,5"/>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBox Width="120" Text="{Binding Bearing1Input, UpdateSourceTrigger=PropertyChanged}" ToolTip="First Bearing (DMS)" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                 <StackPanel Margin="0,0,5,0" VerticalAlignment="Center">
-                                    <Button Content="+" Command="{Binding AddBearingsCommand}" Padding="5,0" Background="#333333" Foreground="White" Margin="0,0,0,2" Width="30"/>
-                                    <Button Content="-" Command="{Binding SubtractBearingsCommand}" Padding="5,0" Background="#333333" Foreground="White" Width="30"/>
+                                    <Button Content="+" Command="{Binding AddBearingsCommand}" Padding="5,0" Background="{StaticResource BrCard}" Foreground="White" Margin="0,0,0,2" Width="30"/>
+                                    <Button Content="-" Command="{Binding SubtractBearingsCommand}" Padding="5,0" Background="{StaticResource BrCard}" Foreground="White" Width="30"/>
                                 </StackPanel>
                                 <TextBox Width="120" Text="{Binding Bearing2Input, UpdateSourceTrigger=PropertyChanged}" ToolTip="Second Bearing (DMS)" VerticalAlignment="Center"/>
                             </StackPanel>
@@ -866,12 +814,12 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Text="{Binding PipeSlope}" IsReadOnly="True" Margin="5,2" Background="#333" Foreground="LightGreen"/>
+                            <TextBox Grid.Column="0" Text="{Binding PipeSlope}" IsReadOnly="True" Margin="5,2" Background="{StaticResource BrSurface}" Foreground="LightGreen"/>
                             <Button Grid.Column="1" Content="CALC" Command="{Binding CalculateSlopeCommand}" Padding="5,0" Margin="5,2"/>
                         </Grid>
 
                         <Button Grid.Row="6" Grid.ColumnSpan="2" Content="ADD PIPE" Command="{Binding AddPipeCommand}" 
-                                Margin="0,5" Padding="10,2" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+                                Margin="0,5" Padding="10,2" Background="{StaticResource BrHeader}" Foreground="White" BorderThickness="1" BorderBrush="{StaticResource BrBorder}"/>
 
                         <DataGrid Grid.Row="7" Grid.ColumnSpan="2" ItemsSource="{Binding PipeRuns}" AutoGenerateColumns="False" Margin="0,5">
                             <DataGrid.Columns>
@@ -907,7 +855,7 @@
                         </Grid>
 
                         <Button Grid.Row="12" Grid.ColumnSpan="2" Content="ADD PART" Command="{Binding AddStructureCommand}" 
-                                Margin="0,5" Padding="10,2" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+                                Margin="0,5" Padding="10,2" Background="{StaticResource BrHeader}" Foreground="White" BorderThickness="1" BorderBrush="{StaticResource BrBorder}"/>
 
                         <DataGrid Grid.Row="13" Grid.ColumnSpan="2" ItemsSource="{Binding Structures}" AutoGenerateColumns="False" Margin="0,5">
                             <DataGrid.Columns>
@@ -924,11 +872,11 @@
                             </Grid.ColumnDefinitions>
                             <!-- VALIDATE -->
                             <Button Grid.Column="0" Content="VALIDATE NETWORK" Command="{Binding ValidateNetworkCommand}"
-                                    Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
+                                    Padding="10,5" Background="{StaticResource BrHeader}" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
 
                             <!-- SYNC -->
                             <Button Grid.Column="2" Content="SYNC TO ASSETS" Command="{Binding SyncToAssetsCommand}"
-                                    Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"
+                                    Padding="10,5" Background="{StaticResource BrHeader}" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"
                                     ToolTip="Manually sync processed piping/structure data to Installed Assets DB."/>
                         </Grid>
 
@@ -938,8 +886,8 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0" Content="SAVE NETWORK" Command="{Binding SavePipingCommand}" Margin="0,0,5,0" Padding="5,5" Background="#2D2D30" Foreground="White"/>
-                            <Button Grid.Column="1" Content="LOAD NETWORK" Command="{Binding LoadPipingCommand}" Margin="5,0,0,0" Padding="5,5" Background="#2D2D30" Foreground="White"/>
+                            <Button Grid.Column="0" Content="SAVE NETWORK" Command="{Binding SavePipingCommand}" Margin="0,0,5,0" Padding="5,5" Background="{StaticResource BrHeader}" Foreground="White"/>
+                            <Button Grid.Column="1" Content="LOAD NETWORK" Command="{Binding LoadPipingCommand}" Margin="5,0,0,0" Padding="5,5" Background="{StaticResource BrHeader}" Foreground="White"/>
                         </Grid>
 
                     </Grid>
@@ -957,27 +905,27 @@
                         
                         <DockPanel Grid.Row="0" Margin="0,0,0,5" LastChildFill="False">
                             <TextBlock Text="Enter Piping Script:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
-                            <Button Content="Import..." Command="{Binding ImportPipingScriptCommand}" Padding="5,2" Margin="0,0,5,0" Background="#2D2D30" Foreground="White" DockPanel.Dock="Left"/>
+                            <Button Content="Import..." Command="{Binding ImportPipingScriptCommand}" Padding="5,2" Margin="0,0,5,0" Background="{StaticResource BrHeader}" Foreground="White" DockPanel.Dock="Left"/>
                             
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Left" Margin="20,0,0,0">
-                                <ToggleButton x:Name="btnToggleLineNumbers" Content="#" Click="btnToggleLineNumbers_Click" Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Line Numbers"/>
-                                <Button Content="C" Click="btnCommentPipingScript_Click" Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Comment Selected Lines"/>
-                                <Button Content="U" Click="btnUncommentPipingScript_Click" Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Uncomment Selected Lines"/>
-                                <Button Content="MIX" Click="btnMixPipingScript_Click" Width="35" Margin="0,0,10,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Insert Mixed Engine Directives"/>
+                                <ToggleButton x:Name="btnToggleLineNumbers" Content="#" Click="btnToggleLineNumbers_Click" Width="30" Margin="0,0,5,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Toggle Line Numbers"/>
+                                <Button Content="C" Click="btnCommentPipingScript_Click" Width="30" Margin="0,0,5,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Comment Selected Lines"/>
+                                <Button Content="U" Click="btnUncommentPipingScript_Click" Width="30" Margin="0,0,5,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Uncomment Selected Lines"/>
+                                <Button Content="MIX" Click="btnMixPipingScript_Click" Width="35" Margin="0,0,10,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Insert Mixed Engine Directives"/>
                             </StackPanel>
                             
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                                <ToggleButton Content="P" IsChecked="{Binding ShowPointNumbers}" Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Numbers"/>
-                                <ToggleButton Content="X" IsChecked="{Binding ShowPointMarkers}" Width="30" Margin="0,0,5,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Markers"/>
-                                <ToggleButton Content="L" IsChecked="{Binding ShowFigureLabels}" Width="30" Margin="0,0,10,0" Background="#4A4A4A" Foreground="White" FontWeight="Bold" ToolTip="Toggle Figure Labels"/>
-                                <Button Content="DXF" Command="{Binding ExportDxfCommand}" Padding="10,5" Margin="0,0,5,0" Background="#2D2D30" Foreground="White"/>
-                                <Button Content="TXT" Command="{Binding ExportPipingScriptCommand}" Padding="10,5" Background="#2D2D30" Foreground="White"/>
-                                <Button Content="✨ AI" Command="{Binding AnalyzePipingScriptCommand}" Padding="10,5" Margin="5,0,0,0" Background="#8A2BE2" Foreground="White" FontWeight="Bold" ToolTip="AI Script Validator"/>
+                                <ToggleButton Content="P" IsChecked="{Binding ShowPointNumbers}" Width="30" Margin="0,0,5,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Numbers"/>
+                                <ToggleButton Content="X" IsChecked="{Binding ShowPointMarkers}" Width="30" Margin="0,0,5,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Markers"/>
+                                <ToggleButton Content="L" IsChecked="{Binding ShowFigureLabels}" Width="30" Margin="0,0,10,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Toggle Figure Labels"/>
+                                <Button Content="DXF" Command="{Binding ExportDxfCommand}" Padding="10,5" Margin="0,0,5,0" Background="{StaticResource BrHeader}" Foreground="White"/>
+                                <Button Content="TXT" Command="{Binding ExportPipingScriptCommand}" Padding="10,5" Background="{StaticResource BrHeader}" Foreground="White"/>
+                                <Button Content="✨ AI" Command="{Binding AnalyzePipingScriptCommand}" Padding="10,5" Margin="5,0,0,0" Background="{StaticResource BrAccentDim}" Foreground="White" FontWeight="Bold" ToolTip="AI Script Validator"/>
                             </StackPanel>
                         </DockPanel>
                         <!-- Floating Piping Script Hint -->
                         <Border Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
-                                Background="#E6333333" Margin="5,0,0,5" Padding="8,5" CornerRadius="3" MinWidth="100" Panel.ZIndex="10">
+                                Background="{StaticResource BrSurface}" Margin="5,0,0,5" Padding="8,5" CornerRadius="3" MinWidth="100" Panel.ZIndex="10">
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Setter Property="Visibility" Value="Visible"/>
@@ -999,13 +947,13 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBox x:Name="txtPipingLineNumbers" IsReadOnly="True" Background="#2D2D30" Foreground="#858585" 
+                            <TextBox x:Name="txtPipingLineNumbers" IsReadOnly="True" Background="{StaticResource BrHeader}" Foreground="{StaticResource BrTextMuted}" 
                                      BorderThickness="0" TextAlignment="Right" Padding="5,5,5,5" 
                                      FontFamily="Consolas" VerticalScrollBarVisibility="Hidden"
                                      Visibility="Collapsed" MinWidth="30" Margin="0,0,2,0" />
                             <TextBox x:Name="txtPipingScript" Grid.Column="1" Text="{Binding PipingScriptText, UpdateSourceTrigger=PropertyChanged}" 
                                      AcceptsReturn="True" FontFamily="Consolas" VerticalScrollBarVisibility="Auto"
-                                     Background="#1E1E1E" Foreground="#D4D4D4" BorderThickness="1" BorderBrush="#3E3E42" Padding="5" Panel.ZIndex="1"
+                                     Background="{StaticResource BrBg}" Foreground="{StaticResource BrTextPrimary}" BorderThickness="1" BorderBrush="{StaticResource BrBorder}" Padding="5" Panel.ZIndex="1"
                                      TextChanged="txtPipingScript_TextChanged" ScrollViewer.ScrollChanged="txtPipingScript_ScrollChanged"/>
                         </Grid>
                         
@@ -1018,18 +966,18 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Button Grid.Column="0" Content="Process Script" Command="{Binding ProcessPipingScriptCommand}" 
-                                    Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
+                                    Padding="10,5" Background="{StaticResource BrHeader}" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
                             <Button Grid.Column="2" Content="✨ AI Chat" Command="{Binding OpenAiChatCommand}" 
-                                    Padding="20,5" Background="#007ACC" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold" ToolTip="Start AI Chat Assistant"/>
+                                    Padding="20,5" Background="{StaticResource BrAccentDim}" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold" ToolTip="Start AI Chat Assistant"/>
                             <Button Grid.Column="4" Content="Sync To Assets" Command="{Binding SyncToAssetsCommand}" 
-                                    Padding="10,5" Background="#2D2D30" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
+                                    Padding="10,5" Background="{StaticResource BrHeader}" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
                         </Grid>
 
                         <Grid Grid.Row="3" Margin="0,5,0,0">
                             <TextBlock Text="Use // for comments" Foreground="Gray" FontStyle="Italic"/>
-                            <StackPanel Orientation="Horizontal" Visibility="{Binding IsRunningScript, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <ProgressBar IsIndeterminate="True" Width="200" Height="10" Margin="0,0,10,0" Foreground="#28A745"/>
-                                <TextBlock Text="Processing Piping Script..." Foreground="#28A745" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <StackPanel Orientation="Horizontal" Visibility="{Binding IsRunningScript, Converter={StaticResource BoolToVis}}">
+                                <ProgressBar IsIndeterminate="True" Width="200" Height="10" Margin="0,0,10,0" Foreground="{StaticResource BrSuccess}"/>
+                                <TextBlock Text="Processing Piping Script..." Foreground="{StaticResource BrSuccess}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Grid>
                     </Grid>
@@ -1049,18 +997,18 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                <Button Content="Import CSV" Command="{Binding ImportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
-                                <Button Content="Export CSV" Command="{Binding ExportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White"/>
-                                <Button Content="Clear DB" Command="{Binding ClearCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" FontWeight="Bold" ToolTip="Deletes ALL codes from the Master Database" BorderThickness="1" BorderBrush="White"/>
-                                <Button Content="Symbol Manager..." Command="{Binding OpenSymbolManagerCommand}" Padding="10,5" Margin="0,0,10,0" Background="#007ACC" Foreground="White" FontWeight="Bold" BorderThickness="0" ToolTip="Open the graphical Symbol Manager"/>
+                                <Button Content="Import CSV" Command="{Binding ImportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White" BorderThickness="1" BorderBrush="White"/>
+                                <Button Content="Export CSV" Command="{Binding ExportCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White" BorderThickness="1" BorderBrush="White"/>
+                                <Button Content="Clear DB" Command="{Binding ClearCodesCommand}" Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White" FontWeight="Bold" ToolTip="Deletes ALL codes from the Master Database" BorderThickness="1" BorderBrush="White"/>
+                                <Button Content="Symbol Manager..." Command="{Binding OpenSymbolManagerCommand}" Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrAccentDim}" Foreground="White" FontWeight="Bold" BorderThickness="0" ToolTip="Open the graphical Symbol Manager"/>
                                 <Button Content="⚡ Auto-Match Blocks" Command="{Binding AutoMatchBlocksCommand}" Padding="10,5" Margin="0,0,10,0"
-                                        Background="#1A3A1A" Foreground="#44E08B" FontWeight="Bold" BorderThickness="1" BorderBrush="#266040"
+                                        Background="{StaticResource BrAccentGlow}" Foreground="{StaticResource BrSuccess}" FontWeight="Bold" BorderThickness="1" BorderBrush="{StaticResource BrSuccess}"
                                         ToolTip="Automatically matches each unassigned code to the best-fit block in the RCS_Blocks library (exact → prefix → keyword)."/>
-                                <Button Content="S" Command="{Binding SaveCodesCommand}" Padding="10,5" Background="#28A745" Foreground="White" FontWeight="Bold" ToolTip="Save Grid to Database"/>
+                                <Button Content="S" Command="{Binding SaveCodesCommand}" Padding="10,5" Background="{StaticResource BrSuccess}" Foreground="White" FontWeight="Bold" ToolTip="Save Grid to Database"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <TextBox Text="{Binding CodeSearchText, UpdateSourceTrigger=PropertyChanged}" Width="108" Height="25" VerticalAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Left" Background="#1E1E1E" Foreground="White" BorderThickness="1" BorderBrush="Gray" Padding="2,0,0,0" ToolTip="Search Codes (wildcard * accepted)"/>
-                                <Button Content="..." Command="{Binding SearchCodesCommand}" Width="25" Height="25" VerticalAlignment="Center" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="White" ToolTip="Search Codes"/>
+                                <TextBox Text="{Binding CodeSearchText, UpdateSourceTrigger=PropertyChanged}" Width="108" Height="25" VerticalAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Left" Background="{StaticResource BrBg}" Foreground="White" BorderThickness="1" BorderBrush="Gray" Padding="2,0,0,0" ToolTip="Search Codes (wildcard * accepted)"/>
+                                <Button Content="..." Command="{Binding SearchCodesCommand}" Width="25" Height="25" VerticalAlignment="Center" Background="{StaticResource BrHeader}" Foreground="White" BorderThickness="1" BorderBrush="White" ToolTip="Search Codes"/>
                             </StackPanel>
                         </Grid>
                         
@@ -1077,8 +1025,8 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="Local Code" Binding="{Binding LocalCode}" Width="*"/>
-                                <DataGridTextColumn Header="System Code" Binding="{Binding SystemCode}" Width="*" IsReadOnly="True" Foreground="#A9A9A9"/>
-                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="2*" IsReadOnly="True" Foreground="#A9A9A9"/>
+                                <DataGridTextColumn Header="System Code" Binding="{Binding SystemCode}" Width="*" IsReadOnly="True" Foreground="{StaticResource BrTextSecondary}"/>
+                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="2*" IsReadOnly="True" Foreground="{StaticResource BrTextSecondary}"/>
                                 <DataGridTextColumn Header="Block (DWG)" Binding="{Binding Block}" Width="1.5*"/>
                                 <DataGridTextColumn Header="Scale" Binding="{Binding BlockScale, StringFormat='{}{0:G}'}" Width="60" IsReadOnly="True"/>
                             </DataGrid.Columns>
@@ -1101,7 +1049,7 @@
                         
                         <DockPanel Grid.Row="0" Margin="0,0,0,5">
                             <TextBlock Text="Master Catalog (Validation List)" FontWeight="Bold" VerticalAlignment="Center"/>
-                            <Button Content="Import CSV..." Command="{Binding ImportCatalogCommand}" HorizontalAlignment="Right" Padding="10,2" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42" DockPanel.Dock="Right"/>
+                            <Button Content="Import CSV..." Command="{Binding ImportCatalogCommand}" HorizontalAlignment="Right" Padding="10,2" Background="{StaticResource BrHeader}" Foreground="White" BorderThickness="1" BorderBrush="{StaticResource BrBorder}" DockPanel.Dock="Right"/>
                         </DockPanel>
                         
                         <!-- Filters -->
@@ -1140,7 +1088,7 @@
                         </DataGrid>
                         
                         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
-                            <Button Content="Add Selected to Project" Command="{Binding AddMaterialToProjectCommand}" Padding="20,5" Background="#007ACC" Foreground="White" FontWeight="Bold"/>
+                            <Button Content="Add Selected to Project" Command="{Binding AddMaterialToProjectCommand}" Padding="20,5" Background="{StaticResource BrAccentDim}" Foreground="White" FontWeight="Bold"/>
                         </StackPanel>
                         
                         <TextBlock Grid.Row="4" Text="Project Schedule of Materials" FontWeight="Bold" Margin="0,10,0,5"/>
@@ -1156,7 +1104,7 @@
                             </DataGrid.Columns>
                         </DataGrid>
                         
-                        <Button Grid.Row="6" Content="Export Project Schedule (CSV)" Command="{Binding ExportMaterialsCommand}" HorizontalAlignment="Right" Padding="10,5" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
+                        <Button Grid.Row="6" Content="Export Project Schedule (CSV)" Command="{Binding ExportMaterialsCommand}" HorizontalAlignment="Right" Padding="10,5" Background="{StaticResource BrHeader}" Foreground="White" BorderThickness="1" BorderBrush="{StaticResource BrBorder}"/>
                     </Grid>
                 </TabItem>
                 <!-- Tab 8: Coordinate Transform -->
@@ -1165,14 +1113,32 @@
                         <geo:CoordinateTransformControl DataContext="{Binding CoordinateTransformVm}" />
                     </Grid>
                 </TabItem>
+
+                <!-- ══ Tab 9: As-Built Production Workspace ══════════════════════════
+                     When active, the workspace view is injected as a ContentControl
+                     that covers the full Row-1 area (all three columns) so it can
+                     render its own four-pane layout without being squeezed into the
+                     594-px left-column.
+                 ═══════════════════════════════════════════════════════════════════ -->
+                <TabItem Header="🏗 As-Built">
+                    <!-- Placeholder shown inside the tab strip; the real workspace
+                         is overlaid on the entire Row-1 content area and toggled by
+                         AsBuiltTabOverlay visibility — see ShellWindow.xaml.cs.     -->
+                    <Grid Height="60">
+                        <TextBlock Text="As-Built workspace is overlaying the main window…"
+                                   Foreground="{StaticResource BrTextMuted}" FontFamily="Segoe UI" FontSize="11"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </TabItem>
+
             </TabControl>
         </Grid>
 
         <!-- Grid Splitter -->
-        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Width="5" HorizontalAlignment="Stretch" Background="#3E3E42"/>
+        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Width="5" HorizontalAlignment="Stretch" Background="{StaticResource BrBorder}"/>
 
         <!-- Center Pane: Graphics -->
-        <Border Grid.Column="2" Grid.Row="0" Background="#000000" Margin="5,10" CornerRadius="5" ClipToBounds="True">
+        <Border Grid.Column="2" Grid.Row="0" Background="{StaticResource BrBg}" Margin="5,10" CornerRadius="5" ClipToBounds="True">
             <Grid x:Name="ViewportGrid"
                   Background="Transparent"
                   MouseWheel="OnMouseWheel" 
@@ -1206,7 +1172,7 @@
                 </ItemsControl>
 
                 <!-- Figure Labels -->
-                <ItemsControl ItemsSource="{Binding Figures}" Visibility="{Binding DataContext.ShowFigureLabels, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ItemsControl ItemsSource="{Binding Figures}" Visibility="{Binding DataContext.ShowFigureLabels, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <Canvas/>
@@ -1235,14 +1201,14 @@
                                             </Canvas.RenderTransform>
                                             
                                             <!-- Center the text block roughly by shifting it left/up by half its approx size -->
-                                            <Border Background="#AA000000" CornerRadius="2" Padding="2" Canvas.Left="-30" Canvas.Top="5">
+                                            <Border Background="#AA0F0F17" CornerRadius="2" Padding="2" Canvas.Left="-30" Canvas.Top="5">
                                                 <Border.RenderTransform>
                                                     <TransformGroup>
                                                         <ScaleTransform ScaleY="-1"/>
                                                         <RotateTransform Angle="{Binding RotationDegrees}"/>
                                                     </TransformGroup>
                                                 </Border.RenderTransform>
-                                                <TextBlock Text="{Binding Text}" Foreground="#FFFFAA" FontSize="12" TextAlignment="Center" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding Text}" Foreground="{StaticResource BrAmber}" FontSize="12" TextAlignment="Center" FontWeight="SemiBold"/>
                                             </Border>
                                         </Canvas>
                                     </DataTemplate>
@@ -1285,7 +1251,7 @@
                                  <Ellipse Width="28" Height="28"
                                           Canvas.Left="-14" Canvas.Top="-14"
                                           Stroke="#FFD700" StrokeThickness="2.5"
-                                          Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                          Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}"
                                           IsHitTestVisible="False">
                                      <Ellipse.Effect>
                                          <BlurEffect Radius="5"/>
@@ -1294,20 +1260,20 @@
                                  <Ellipse Width="20" Height="20"
                                           Canvas.Left="-10" Canvas.Top="-10"
                                           Fill="#FFD700" Opacity="0.35"
-                                          Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                          Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}"
                                           IsHitTestVisible="False"/>
 
                                  <!-- The Green X -->
                                  <Line X1="-5" Y1="-5" X2="5" Y2="5" Stroke="#00FF00" StrokeThickness="1.5"
-                                       Visibility="{Binding DataContext.ShowPointMarkers, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                       Visibility="{Binding DataContext.ShowPointMarkers, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}"/>
                                  <Line X1="5" Y1="-5" X2="-5" Y2="5" Stroke="#00FF00" StrokeThickness="1.5"
-                                       Visibility="{Binding DataContext.ShowPointMarkers, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                       Visibility="{Binding DataContext.ShowPointMarkers, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}"/>
 
                                  <!-- The Point Number Label — turns gold when selected -->
                                  <TextBlock Text="{Binding Id}"
                                             FontSize="{Binding DataContext.PointNumberSize, RelativeSource={RelativeSource AncestorType=Window}}"
                                             FontWeight="Bold"
-                                            Visibility="{Binding DataContext.ShowPointNumbers, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                            Visibility="{Binding DataContext.ShowPointNumbers, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}"
                                             Canvas.Left="8" Canvas.Top="22">
                                       <TextBlock.RenderTransform>
                                           <ScaleTransform ScaleY="-1"/>
@@ -1354,7 +1320,7 @@
                                 <!-- Selection highlight ring -->
                                 <Ellipse Width="34" Height="34" Canvas.Left="-17" Canvas.Top="-17"
                                          Stroke="#FFD700" StrokeThickness="2"
-                                         Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                         Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}"
                                          IsHitTestVisible="False" Opacity="0.85">
                                     <Ellipse.Effect><BlurEffect Radius="4"/></Ellipse.Effect>
                                 </Ellipse>
@@ -1400,10 +1366,10 @@
                                 </ContentControl>
                                 <!-- Asset ID Label below symbol -->
                                 <TextBlock Text="{Binding Label}"
-                                           Visibility="{Binding DataContext.ShowAssetLabels, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                           Visibility="{Binding DataContext.ShowAssetLabels, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}"
                                            FontSize="9" FontWeight="SemiBold"
-                                           Foreground="#FFE082"
-                                           Background="#88000000"
+                                           Foreground="{StaticResource BrAmber}"
+                                           Background="#880F0F17"
                                            Padding="1,0"
                                            Canvas.Left="16" Canvas.Top="14"
                                            IsHitTestVisible="False">
@@ -1471,9 +1437,9 @@
                      Appears bottom-right when user clicks a symbol on the canvas. -->
                 <Border HorizontalAlignment="Right" VerticalAlignment="Bottom"
                         Margin="0,0,12,12" Width="280" MaxHeight="450"
-                        Background="#EE0D1117" BorderBrush="#4472C4" BorderThickness="1.5"
+                        Background="{StaticResource BrBg}" BorderBrush="{StaticResource BrAccent}" BorderThickness="1.5"
                         CornerRadius="6" Padding="12" Panel.ZIndex="50"
-                        Visibility="{Binding InspectorVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding InspectorVisible, Converter={StaticResource BoolToVis}}">
                     <Border.Effect>
                         <DropShadowEffect Color="Black" BlurRadius="14" Opacity="0.7" ShadowDepth="3"/>
                     </Border.Effect>
@@ -1482,14 +1448,14 @@
                         <DockPanel Margin="0,0,0,8">
                             <Button DockPanel.Dock="Right" Content="✕" Width="22" Height="22"
                                     Command="{Binding ClearInspectorCommand}"
-                                    Background="Transparent" Foreground="#888888"
+                                    Background="Transparent" Foreground="{StaticResource BrTextMuted}"
                                     BorderThickness="0" FontWeight="Bold" Cursor="Hand"/>
                             <TextBlock Text="{Binding SelectedStructure.Label}"
-                                       Foreground="#4FC3F7" FontWeight="Bold" FontSize="14"
+                                       Foreground="{StaticResource BrInfo}" FontWeight="Bold" FontSize="14"
                                        VerticalAlignment="Center"/>
                         </DockPanel>
                         <TextBlock Text="{Binding SelectedStructure.Type}"
-                                   Foreground="#888888" FontSize="10" Margin="0,0,0,6"/>
+                                   Foreground="{StaticResource BrTextMuted}" FontSize="10" Margin="0,0,0,6"/>
                         <Rectangle Height="1" Fill="#334472C4" Margin="0,0,0,8"/>
                         <!-- Attribute key/value list -->
                         <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
@@ -1502,9 +1468,9 @@
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Text="{Binding Key}"
-                                                       Foreground="#666666" FontSize="10" VerticalAlignment="Center"/>
+                                                       Foreground="{StaticResource BrTextMuted}" FontSize="10" VerticalAlignment="Center"/>
                                             <TextBox Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
-                                                     Foreground="#DEDEDE" Background="#11FFFFFF" BorderBrush="#33FFFFFF" 
+                                                     Foreground="{StaticResource BrTextPrimary}" Background="Transparent" BorderBrush="{StaticResource BrBorderLight}" 
                                                      BorderThickness="1" Padding="2" FontSize="10" FontWeight="SemiBold" 
                                                      TextWrapping="Wrap" IsReadOnly="{Binding IsReadOnly}"/>
                                         </Grid>
@@ -1522,13 +1488,13 @@
                             </Grid.ColumnDefinitions>
                             <Button Content="💾 Save DB"
                                     Command="{Binding SaveInspectorCommand}"
-                                    Padding="5" Background="#0D2038" Foreground="#4FC3F7"
-                                    BorderBrush="#4472C4" BorderThickness="1" FontWeight="Bold"/>
+                                    Padding="5" Background="{StaticResource BrAccentGlow}" Foreground="{StaticResource BrInfo}"
+                                    BorderBrush="{StaticResource BrAccent}" BorderThickness="1" FontWeight="Bold"/>
 
                             <Button Grid.Column="2" Content="⬇ DXF"
                                     Command="{Binding ExportDxfCommand}"
-                                    Padding="5" Background="#0D2038" Foreground="#4FC3F7"
-                                    BorderBrush="#4472C4" BorderThickness="1" FontWeight="Bold"/>
+                                    Padding="5" Background="{StaticResource BrAccentGlow}" Foreground="{StaticResource BrInfo}"
+                                    BorderBrush="{StaticResource BrAccent}" BorderThickness="1" FontWeight="Bold"/>
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -1536,27 +1502,27 @@
 
                 <!-- Zoom State Text Overlay -->
                 <TextBlock Text="{Binding CurrentViewScale, StringFormat='Zoom Scale: {0:F4}x'}" 
-                           Foreground="#88FFFFFF" FontSize="12" Margin="10"
+                           Foreground="{StaticResource BrTextMuted}" FontSize="12" Margin="10"
                            HorizontalAlignment="Left" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
                 
                 <!-- Zoom Toolbar -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
                     <ToggleButton IsChecked="{Binding ShowAssetLabels}" Content="L" Width="30" Height="30" Margin="0,0,5,0"
-                            Background="#333333" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Toggle Asset Labels"/>
+                            Background="{StaticResource BrCard}" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Toggle Asset Labels"/>
                     <Button Command="{Binding FindCrossingsCommand}" Content="X" Width="30" Height="30" Margin="0,0,5,0"
-                            Background="#8A2BE2" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Find Overlapping Crossings"/>
+                            Background="{StaticResource BrAccentDim}" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Find Overlapping Crossings"/>
                     <Button Command="{Binding ZoomWindowCommand}" Content="WIN" Width="40" Height="30" Margin="0,0,5,0"
-                            Background="#333333" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Zoom Window"/>
+                            Background="{StaticResource BrCard}" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Zoom Window"/>
                     <Button Command="{Binding ZoomInCommand}" Content="+" Width="30" Height="30" Margin="0,0,5,0"
-                            Background="#333333" Foreground="White" FontSize="18" FontWeight="Bold" ToolTip="Zoom In"/>
+                            Background="{StaticResource BrCard}" Foreground="White" FontSize="18" FontWeight="Bold" ToolTip="Zoom In"/>
                     <Button Command="{Binding ZoomOutCommand}" Content="-" Width="30" Height="30" Margin="0,0,5,0"
-                            Background="#333333" Foreground="White" FontSize="18" FontWeight="Bold" ToolTip="Zoom Out"/>
+                            Background="{StaticResource BrCard}" Foreground="White" FontSize="18" FontWeight="Bold" ToolTip="Zoom Out"/>
                     <Button Command="{Binding ZoomExtentsCommand}" Content="[ ]" Width="30" Height="30"
-                            Background="#333333" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Zoom Extents"/>
+                            Background="{StaticResource BrCard}" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Zoom Extents"/>
                 </StackPanel>
 
                 <!-- Symbol Legend -->
-                <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,10,10" Background="#DD222222" BorderBrush="#555555" BorderThickness="1" CornerRadius="4" Padding="10" Visibility="{Binding ShowViewportLegend, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,10,10" Background="{StaticResource BrSurface}" BorderBrush="{StaticResource BrBorder}" BorderThickness="1" CornerRadius="4" Padding="10" Visibility="{Binding ShowViewportLegend, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <TextBlock Text="Symbol Legend" Foreground="White" FontWeight="Bold" Margin="0,0,0,10" TextAlignment="Center"/>
                         
@@ -1570,7 +1536,7 @@
                                     <ScaleTransform ScaleX="0.8" ScaleY="0.8" CenterX="14" CenterY="14"/>
                                 </ContentControl.RenderTransform>
                             </ContentControl>
-                            <TextBlock Grid.Column="1" Text="Manhole" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            <TextBlock Grid.Column="1" Text="Manhole" Foreground="{StaticResource BrTextSecondary}" VerticalAlignment="Center" Margin="10,0,0,0"/>
                         </Grid>
                         
                         <Grid Margin="0,2">
@@ -1583,7 +1549,7 @@
                                     <ScaleTransform ScaleX="0.8" ScaleY="0.8" CenterX="14" CenterY="14"/>
                                 </ContentControl.RenderTransform>
                             </ContentControl>
-                            <TextBlock Grid.Column="1" Text="Water Valve" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            <TextBlock Grid.Column="1" Text="Water Valve" Foreground="{StaticResource BrTextSecondary}" VerticalAlignment="Center" Margin="10,0,0,0"/>
                         </Grid>
                         
                         <Grid Margin="0,2">
@@ -1596,7 +1562,7 @@
                                     <ScaleTransform ScaleX="0.8" ScaleY="0.8" CenterX="14" CenterY="14"/>
                                 </ContentControl.RenderTransform>
                             </ContentControl>
-                            <TextBlock Grid.Column="1" Text="Fire Hydrant" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            <TextBlock Grid.Column="1" Text="Fire Hydrant" Foreground="{StaticResource BrTextSecondary}" VerticalAlignment="Center" Margin="10,0,0,0"/>
                         </Grid>
                         
                         <Grid Margin="0,2">
@@ -1609,7 +1575,7 @@
                                     <ScaleTransform ScaleX="0.8" ScaleY="0.8" CenterX="14" CenterY="14"/>
                                 </ContentControl.RenderTransform>
                             </ContentControl>
-                            <TextBlock Grid.Column="1" Text="Catch Basin / Inlet" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            <TextBlock Grid.Column="1" Text="Catch Basin / Inlet" Foreground="{StaticResource BrTextSecondary}" VerticalAlignment="Center" Margin="10,0,0,0"/>
                         </Grid>
 
                         <Grid Margin="0,2">
@@ -1622,7 +1588,7 @@
                                     <ScaleTransform ScaleX="0.8" ScaleY="0.8" CenterX="14" CenterY="14"/>
                                 </ContentControl.RenderTransform>
                             </ContentControl>
-                            <TextBlock Grid.Column="1" Text="Vault / Meter" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            <TextBlock Grid.Column="1" Text="Vault / Meter" Foreground="{StaticResource BrTextSecondary}" VerticalAlignment="Center" Margin="10,0,0,0"/>
                         </Grid>
 
                         <Grid Margin="0,2">
@@ -1635,7 +1601,7 @@
                                     <ScaleTransform ScaleX="0.8" ScaleY="0.8" CenterX="14" CenterY="14"/>
                                 </ContentControl.RenderTransform>
                             </ContentControl>
-                            <TextBlock Grid.Column="1" Text="Fitting" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            <TextBlock Grid.Column="1" Text="Fitting" Foreground="{StaticResource BrTextSecondary}" VerticalAlignment="Center" Margin="10,0,0,0"/>
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -1646,13 +1612,13 @@
         <!-- Right Pane: Point Grid (Collapsable) -->
         <!-- Right Pane: Installed Assets (Collapsible) -->
         <!-- Right Side Splitter -->
-        <GridSplitter Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" Width="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#3E3E42"/>
+        <GridSplitter Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" Width="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource BrBorder}"/>
 
         <!-- Right Pane: Installed Assets (Collapsible) -->
         <Expander Grid.Column="4" Grid.Row="0" Grid.RowSpan="2" ExpandDirection="Left" IsExpanded="True" 
-                  Background="#1E1E1E" BorderThickness="0">
+                  Background="{StaticResource BrBg}" BorderThickness="0">
             <Expander.Header>
-                <TextBlock Text="Installed Assets" FontWeight="Bold" Foreground="#D4D4D4" RenderTransformOrigin="0.5,0.5" Margin="0,10">
+                <TextBlock Text="Installed Assets" FontWeight="Bold" Foreground="{StaticResource BrTextPrimary}" RenderTransformOrigin="0.5,0.5" Margin="0,10">
                     <TextBlock.LayoutTransform>
                         <RotateTransform Angle="-90"/>
                     </TextBlock.LayoutTransform>
@@ -1674,10 +1640,70 @@
                      TextWrapping="Wrap" 
                      VerticalScrollBarVisibility="Auto"
                      FontFamily="Consolas" 
-                     Background="#252526" 
+                     Background="{StaticResource BrSurface}" 
                      Foreground="White"
                      BorderThickness="0"/>
         </Grid>
     </Grid>
+
+    <!-- ══ As-Built Workspace Overlay ══════════════════════════════════════════
+         Direct child of the outer 2-row window Grid (Grid.Row=1).
+         Visibility toggled by ShellWindow.xaml.cs when the As-Built tab is
+         selected; ZIndex=10 ensures it floats above the normal three-column
+         layout without disrupting it.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+    <Grid x:Name="AsBuiltTabOverlay"
+          Grid.Row="1"
+          Visibility="Collapsed"
+          Panel.ZIndex="10"
+          Background="{StaticResource BrBg}">
+        <!-- AsBuiltWorkspaceView is injected here by ShellWindow code-behind
+             on first activation (lazy):
+               AsBuiltOverlayContent.Content = _asBuiltView;               -->
+        <ContentPresenter x:Name="AsBuiltOverlayContent"/>
     </Grid>
+
+    <!-- ══ Job Dashboard Overlay ════════════════════════════════════════════════
+         Visible when ShowDashboard = true (no job open).
+         ZIndex=11 floats above the main three-pane layout AND the as-built overlay.
+         ShellWindow.xaml.cs toggles this based on ShellViewModel.ShowDashboard.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+    <Grid x:Name="JobDashboardOverlay"
+          Grid.Row="1"
+          Panel.ZIndex="11"
+          Visibility="{Binding ShowDashboard, Converter={StaticResource BoolToVis}}"
+          Background="{StaticResource BrBg}">
+        <views:JobDashboardView DataContext="{Binding Dashboard}"/>
+    </Grid>
+
+    <!-- ══ Workflow Navigator Sidebar ═══════════════════════════════════════════
+         Always visible when a job is active (ShowWorkspace = true).
+         Left-docked 172px sidebar overlaying the main content pane at ZIndex=9.
+         ShellWindow.xaml.cs sets Visibility when the AsBuilt tab is activated.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+    <Grid x:Name="WorkflowNavigatorSidebar"
+          Grid.Row="1"
+          Panel.ZIndex="9"
+          HorizontalAlignment="Left"
+          Width="172"
+          Visibility="Collapsed">
+        <views:WorkflowNavigator DataContext="{Binding Navigator}"/>
+    </Grid>
+
+    <!-- ══ Diagnostics Pane ══════════════════════════════════════════════════════
+         Bottom-docked 170px pane, visible when a job is active.
+         ZIndex=8 renders below the navigator but above the tabbed main content.
+         DataContext inherits the ShellViewModel.Diagnostics sub-VM.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+    <Grid x:Name="DiagnosticsPaneOverlay"
+          Grid.Row="1"
+          Panel.ZIndex="8"
+          VerticalAlignment="Bottom"
+          Height="170"
+          Visibility="Collapsed">
+        <views:DiagnosticsPane DataContext="{Binding Diagnostics}"/>
+    </Grid>
+
+</Grid>
 </Window>
+

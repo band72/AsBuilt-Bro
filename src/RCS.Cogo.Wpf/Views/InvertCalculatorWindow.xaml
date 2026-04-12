@@ -1,89 +1,114 @@
 <Window x:Class="RCS.Cogo.Wpf.Views.InvertCalculatorWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Invert Calculator" Height="650" Width="360"
-        Background="#1E1E1E" Foreground="#D4D4D4"
-        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Title="Invert Calculator" Height="640" Width="380"
+        WindowStartupLocation="CenterOwner" ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False">
-    <Grid Margin="15">
+
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- Part Number / Search -->
-            <RowDefinition Height="Auto"/> <!-- Top Elevator -->
-            <RowDefinition Height="Auto"/> <!-- Outer Diameter -->
-            <RowDefinition Height="Auto"/> <!-- Nominal Diameter -->
-            <RowDefinition Height="Auto"/> <!-- Thickness -->
-            <RowDefinition Height="Auto"/> <!-- Inner Diameter -->
-            <RowDefinition Height="Auto"/> <!-- Deflection -->
-            <RowDefinition Height="Auto"/> <!-- Note -->
-            <RowDefinition Height="Auto"/> <!-- Calculation -->
+            <RowDefinition Height="52"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/> <!-- Buttons -->
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,15">
-            <TextBlock Text="Part Number (Specification Lookup):" FontWeight="Bold" Foreground="CornflowerBlue"/>
-            <Grid Margin="0,5,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBox x:Name="TxtPartNumber" Text="{Binding PartNumber, UpdateSourceTrigger=PropertyChanged}" Background="#252526" Foreground="White" Padding="5"/>
-                <Button Grid.Column="1" Content="Load Specs" Click="LoadSpecs_Click" Width="80" Margin="5,0,0,0" Background="#2D2D30" Foreground="White"/>
-            </Grid>
-        </StackPanel>
+        <Border Grid.Row="0" Style="{StaticResource WindowHeaderBand}">
+            <TextBlock Text="📐  Invert Calculator"
+                       VerticalAlignment="Center"
+                       FontSize="16" FontWeight="SemiBold"
+                       Foreground="{StaticResource BrTextPrimary}"/>
+        </Border>
 
-        <StackPanel Grid.Row="1" Margin="0,0,0,10">
-            <TextBlock Text="Top Outside Wall Elevation:"/>
-            <TextBox x:Name="TxtTopElev" Text="{Binding TopOutsideWallElev, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
-        </StackPanel>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="18,14">
 
-        <Grid Grid.Row="2" Margin="0,0,0,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                <TextBlock Text="Outer Diameter (OD):"/>
-                <TextBox x:Name="TxtOuterDia" Text="{Binding OuterDiameter, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                <!-- Part lookup -->
+                <TextBlock Style="{StaticResource TbSection}" Text="SPECIFICATION LOOKUP"/>
+                <Border Style="{StaticResource Card}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="TxtPartNumber"
+                                 Text="{Binding PartNumber, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,8,0"/>
+                        <Button Grid.Column="1" Content="Load Specs" Click="LoadSpecs_Click"
+                                Style="{StaticResource BtnPrimary}" Width="90"/>
+                    </Grid>
+                </Border>
+
+                <!-- Measurements -->
+                <TextBlock Style="{StaticResource TbSection}" Text="PIPE MEASUREMENTS"/>
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="TOP OUTSIDE WALL ELEVATION"/>
+                        <TextBox x:Name="TxtTopElev"
+                                 Text="{Binding TopOutsideWallElev, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F3\}}"
+                                 Margin="0,0,0,10"/>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="OUTER DIAMETER (OD)"/>
+                                <TextBox x:Name="TxtOuterDia"
+                                         Text="{Binding OuterDiameter, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F3\}}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="NOMINAL DIAMETER"/>
+                                <TextBox x:Name="TxtNominalDia"
+                                         Text="{Binding NominalDiameter, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F3\}}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="WALL THICKNESS (TOP)"/>
+                        <TextBox x:Name="TxtThickness"
+                                 Text="{Binding OuterWallThicknessTop, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F3\}}"
+                                 Margin="0,0,0,10"/>
+
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="INNER DIAMETER"/>
+                        <TextBox x:Name="TxtInnerDia"
+                                 Text="{Binding InnerDiameter, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F3\}}"
+                                 Margin="0,0,0,10"/>
+
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="DEFLECTION (optional)"/>
+                        <TextBox x:Name="TxtDeflection"
+                                 Text="{Binding Deflection, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F3\}}"
+                                 Margin="0,0,0,10"/>
+
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="PART NOTE"/>
+                        <TextBox x:Name="TxtNote"
+                                 Text="{Binding PartNote, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="44" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Result -->
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="COMPUTED INVERT"
+                                   Foreground="{StaticResource BrAccent}"/>
+                        <TextBlock x:Name="TxtResult"
+                                   Text="{Binding EstimatedInvert, Mode=OneWay, StringFormat=\{0:F3\}}"
+                                   FontSize="22" FontWeight="Bold"
+                                   Foreground="{StaticResource BrSuccess}"/>
+                    </StackPanel>
+                </Border>
+
             </StackPanel>
-            <StackPanel Grid.Column="1" Margin="5,0,0,0">
-                <TextBlock Text="Nominal Diameter:"/>
-                <TextBox x:Name="TxtNominalDia" Text="{Binding NominalDiameter, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+        </ScrollViewer>
+
+        <Border Grid.Row="2" Style="{StaticResource WindowFooterBand}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Cancel" Click="Cancel_Click"
+                        Style="{StaticResource BtnGhost}" Width="90" Margin="0,0,8,0"/>
+                <Button Content="Apply &amp; Save" Click="Apply_Click"
+                        Style="{StaticResource BtnPrimary}" Width="130"/>
             </StackPanel>
-        </Grid>
-
-        <StackPanel Grid.Row="4" Margin="0,0,0,10">
-            <TextBlock Text="Wall Thickness (Top):"/>
-            <TextBox x:Name="TxtThickness" Text="{Binding OuterWallThicknessTop, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="5" Margin="0,0,0,10">
-            <TextBlock Text="Inner Diameter:"/>
-            <TextBox x:Name="TxtInnerDia" Text="{Binding InnerDiameter, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="6" Margin="0,0,0,10">
-            <TextBlock Text="Deflection (optional, informational):"/>
-            <TextBox x:Name="TxtDeflection" Text="{Binding Deflection, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="7" Margin="0,0,0,15">
-            <TextBlock Text="Part Note:"/>
-            <TextBox x:Name="TxtNote" Text="{Binding PartNote, UpdateSourceTrigger=PropertyChanged}" Background="#252526" Foreground="White" Padding="5" Height="40" TextWrapping="Wrap" AcceptsReturn="True"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="8" Margin="0,10,0,10">
-            <TextBlock Text="Computed Invert:" Foreground="CornflowerBlue" FontWeight="Bold"/>
-            <TextBlock x:Name="TxtResult" Text="{Binding EstimatedInvert, Mode=OneWay, StringFormat=\{0:F3\}}" FontSize="16" Foreground="LightGreen" FontWeight="Bold" Margin="0,5,0,0"/>
-        </StackPanel>
-
-        <Grid Grid.Row="8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Button Content="Cancel" Click="Cancel_Click" Background="#2D2D30" Foreground="White" Padding="10,8" Margin="0,0,5,0"/>
-            <Button Grid.Column="1" Content="Apply &amp; Save Specs" Click="Apply_Click" Background="#007ACC" Foreground="White" Padding="10,8" Margin="5,0,0,0"/>
-        </Grid>
+        </Border>
     </Grid>
 </Window>

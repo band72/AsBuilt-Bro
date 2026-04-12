@@ -1,0 +1,645 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ── Shared converters ────────────────────────────────────────────────── -->
+    <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         RCS COGO ENTERPRISE — MASTER DESIGN SYSTEM  v2.3
+         All application colours, typography, and control styles live here.
+         Every window/view automatically inherits via App.xaml MergedDictionaries.
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Colour Palette ───────────────────────────────────────────────────── -->
+
+    <!-- Chrome / Shell -->
+    <Color x:Key="ClrBg">#0F0F17</Color>
+    <Color x:Key="ClrSurface">#16161F</Color>
+    <Color x:Key="ClrCard">#1C1C29</Color>
+    <Color x:Key="ClrCardAlt">#21213A</Color>
+    <Color x:Key="ClrBorder">#2A2A3E</Color>
+    <Color x:Key="ClrBorderLight">#3A3A55</Color>
+    <Color x:Key="ClrHeader">#13131C</Color>
+
+    <!-- Text -->
+    <Color x:Key="ClrTextPrimary">#E8E8F2</Color>
+    <Color x:Key="ClrTextSecondary">#9090B0</Color>
+    <Color x:Key="ClrTextMuted">#5A5A78</Color>
+    <Color x:Key="ClrTextDisabled">#40405A</Color>
+
+    <!-- Accent — Electric Blue -->
+    <Color x:Key="ClrAccent">#4F9EF8</Color>
+    <Color x:Key="ClrAccentDim">#2A5A9A</Color>
+    <Color x:Key="ClrAccentGlow">#1A3560</Color>
+
+    <!-- Accent — Teal (As-Built) -->
+    <Color x:Key="ClrTeal">#2DCCA0</Color>
+    <Color x:Key="ClrTealDim">#1A7A60</Color>
+
+    <!-- Accent — Amber (Warnings) -->
+    <Color x:Key="ClrAmber">#F2C94C</Color>
+    <Color x:Key="ClrAmberDim">#7A5E1A</Color>
+
+    <!-- Semantic -->
+    <Color x:Key="ClrSuccess">#27AE60</Color>
+    <Color x:Key="ClrError">#E94560</Color>
+    <Color x:Key="ClrWarning">#F39C12</Color>
+    <Color x:Key="ClrInfo">#56CCF2</Color>
+
+    <!-- Input Fields -->
+    <Color x:Key="ClrInputBg">#12121A</Color>
+    <Color x:Key="ClrInputBorder">#2A2A3E</Color>
+    <Color x:Key="ClrInputFocusBorder">#4F9EF8</Color>
+
+    <!-- ── SolidColorBrush references ────────────────────────────────────────── -->
+    <SolidColorBrush x:Key="BrBg"            Color="{StaticResource ClrBg}"/>
+    <SolidColorBrush x:Key="BrSurface"       Color="{StaticResource ClrSurface}"/>
+    <SolidColorBrush x:Key="BrCard"          Color="{StaticResource ClrCard}"/>
+    <SolidColorBrush x:Key="BrCardAlt"       Color="{StaticResource ClrCardAlt}"/>
+    <SolidColorBrush x:Key="BrBorder"        Color="{StaticResource ClrBorder}"/>
+    <SolidColorBrush x:Key="BrBorderLight"   Color="{StaticResource ClrBorderLight}"/>
+    <SolidColorBrush x:Key="BrHeader"        Color="{StaticResource ClrHeader}"/>
+    <SolidColorBrush x:Key="BrTextPrimary"   Color="{StaticResource ClrTextPrimary}"/>
+    <SolidColorBrush x:Key="BrTextSecondary" Color="{StaticResource ClrTextSecondary}"/>
+    <SolidColorBrush x:Key="BrTextMuted"     Color="{StaticResource ClrTextMuted}"/>
+    <SolidColorBrush x:Key="BrTextDisabled"  Color="{StaticResource ClrTextDisabled}"/>
+    <SolidColorBrush x:Key="BrAccent"        Color="{StaticResource ClrAccent}"/>
+    <SolidColorBrush x:Key="BrAccentDim"     Color="{StaticResource ClrAccentDim}"/>
+    <SolidColorBrush x:Key="BrAccentGlow"    Color="{StaticResource ClrAccentGlow}"/>
+    <SolidColorBrush x:Key="BrTeal"          Color="{StaticResource ClrTeal}"/>
+    <SolidColorBrush x:Key="BrTealDim"       Color="{StaticResource ClrTealDim}"/>
+    <SolidColorBrush x:Key="BrAmber"         Color="{StaticResource ClrAmber}"/>
+    <SolidColorBrush x:Key="BrAmberDim"      Color="{StaticResource ClrAmberDim}"/>
+    <SolidColorBrush x:Key="BrSuccess"       Color="{StaticResource ClrSuccess}"/>
+    <SolidColorBrush x:Key="BrError"         Color="{StaticResource ClrError}"/>
+    <SolidColorBrush x:Key="BrWarning"       Color="{StaticResource ClrWarning}"/>
+    <SolidColorBrush x:Key="BrInfo"          Color="{StaticResource ClrInfo}"/>
+    <SolidColorBrush x:Key="BrInputBg"       Color="{StaticResource ClrInputBg}"/>
+    <SolidColorBrush x:Key="BrInputBorder"   Color="{StaticResource ClrInputBorder}"/>
+    <SolidColorBrush x:Key="Transparent"     Color="Transparent"/>
+
+    <!-- ── Gradient brushes ─────────────────────────────────────────────────── -->
+    <LinearGradientBrush x:Key="BrHeaderGradient" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#13131C" Offset="0"/>
+        <GradientStop Color="#1A1A2A" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="BrAccentGradient" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#2F5FA8" Offset="0"/>
+        <GradientStop Color="#4F9EF8" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="BrSuccessGradient" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#1A5E38" Offset="0"/>
+        <GradientStop Color="#27AE60" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="BrErrorGradient" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#7A1A2A" Offset="0"/>
+        <GradientStop Color="#E94560" Offset="1"/>
+    </LinearGradientBrush>
+
+    <!-- ── Typography ───────────────────────────────────────────────────────── -->
+    <FontFamily x:Key="FfBody">Segoe UI</FontFamily>
+    <FontFamily x:Key="FfMono">Consolas</FontFamily>
+
+    <sys:Double x:Key="FsXs">10</sys:Double>
+    <sys:Double x:Key="FsSm">11</sys:Double>
+    <sys:Double x:Key="FsBase">12</sys:Double>
+    <sys:Double x:Key="FsMd">13</sys:Double>
+    <sys:Double x:Key="FsLg">15</sys:Double>
+    <sys:Double x:Key="FsXl">18</sys:Double>
+    <sys:Double x:Key="Fs2xl">22</sys:Double>
+
+    <!-- ── Spacing / Corner radius ──────────────────────────────────────────── -->
+    <CornerRadius x:Key="CrSm">4</CornerRadius>
+    <CornerRadius x:Key="CrMd">6</CornerRadius>
+    <CornerRadius x:Key="CrLg">10</CornerRadius>
+    <CornerRadius x:Key="CrXl">14</CornerRadius>
+    <CornerRadius x:Key="CrPill">20</CornerRadius>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         CONTROL STYLES — implicit (no x:Key) so they apply automatically
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Window (base) ────────────────────────────────────────────────────── -->
+    <Style TargetType="Window">
+        <Setter Property="Background"   Value="{StaticResource BrBg}"/>
+        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsBase}"/>
+    </Style>
+
+    <!-- ── TextBlock ────────────────────────────────────────────────────────── -->
+    <Style TargetType="TextBlock">
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsBase}"/>
+        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+    </Style>
+
+    <!-- ── TextBox ──────────────────────────────────────────────────────────── -->
+    <Style TargetType="TextBox">
+        <Setter Property="Background"                Value="{StaticResource BrInputBg}"/>
+        <Setter Property="Foreground"                Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush"               Value="{StaticResource BrInputBorder}"/>
+        <Setter Property="BorderThickness"           Value="1"/>
+        <Setter Property="CaretBrush"                Value="{StaticResource BrAccent}"/>
+        <Setter Property="SelectionBrush"            Value="{StaticResource BrAccentDim}"/>
+        <Setter Property="FontFamily"                Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"                  Value="{StaticResource FsMd}"/>
+        <Setter Property="Height"                    Value="32"/>
+        <Setter Property="Padding"                   Value="8,0"/>
+        <Setter Property="VerticalContentAlignment"  Value="Center"/>
+        <Setter Property="SnapsToDevicePixels"       Value="True"/>
+        <Style.Triggers>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource BrAccent}"/>
+            </Trigger>
+            <Trigger Property="IsReadOnly" Value="True">
+                <Setter Property="Foreground"   Value="{StaticResource BrTextMuted}"/>
+                <Setter Property="Background"   Value="{StaticResource BrSurface}"/>
+                <Setter Property="BorderBrush"  Value="{StaticResource BrBorder}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ── PasswordBox ──────────────────────────────────────────────────────── -->
+    <Style TargetType="PasswordBox">
+        <Setter Property="Background"               Value="{StaticResource BrInputBg}"/>
+        <Setter Property="Foreground"               Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush"              Value="{StaticResource BrInputBorder}"/>
+        <Setter Property="BorderThickness"          Value="1"/>
+        <Setter Property="CaretBrush"               Value="{StaticResource BrAccent}"/>
+        <Setter Property="FontFamily"               Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"                 Value="{StaticResource FsMd}"/>
+        <Setter Property="Height"                   Value="32"/>
+        <Setter Property="Padding"                  Value="8,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <!-- ── Button (default) ─────────────────────────────────────────────────── -->
+    <Style TargetType="Button">
+        <Setter Property="Background"       Value="{StaticResource BrCard}"/>
+        <Setter Property="Foreground"       Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrBorderLight}"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="FontFamily"       Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"         Value="{StaticResource FsMd}"/>
+        <Setter Property="Height"           Value="32"/>
+        <Setter Property="Padding"          Value="16,0"/>
+        <Setter Property="Cursor"           Value="Hand"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background"    Value="{StaticResource BrCardAlt}"/>
+                            <Setter TargetName="bd" Property="BorderBrush"   Value="{StaticResource BrAccent}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="bd" Property="Background"    Value="{StaticResource BrAccentDim}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── Button — Primary Action (blue) ──────────────────────────────────── -->
+    <Style x:Key="BtnPrimary" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background"      Value="{StaticResource BrAccentDim}"/>
+        <Setter Property="Foreground"      Value="#FFFFFF"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource BrAccent}"/>
+        <Setter Property="FontWeight"      Value="SemiBold"/>
+    </Style>
+
+    <!-- ── Button — Success (green) ────────────────────────────────────────── -->
+    <Style x:Key="BtnSuccess" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background"   Value="#1A5438"/>
+        <Setter Property="Foreground"   Value="#FFFFFF"/>
+        <Setter Property="BorderBrush"  Value="{StaticResource BrSuccess}"/>
+        <Setter Property="FontWeight"   Value="SemiBold"/>
+    </Style>
+
+    <!-- ── Button — Danger (red) ────────────────────────────────────────────── -->
+    <Style x:Key="BtnDanger" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background"   Value="#5A1020"/>
+        <Setter Property="Foreground"   Value="#FFFFFF"/>
+        <Setter Property="BorderBrush"  Value="{StaticResource BrError}"/>
+        <Setter Property="FontWeight"   Value="SemiBold"/>
+    </Style>
+
+    <!-- ── Button — Ghost / Subtle ─────────────────────────────────────────── -->
+    <Style x:Key="BtnGhost" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background"    Value="Transparent"/>
+        <Setter Property="BorderBrush"   Value="{StaticResource BrBorder}"/>
+        <Setter Property="Foreground"    Value="{StaticResource BrTextSecondary}"/>
+    </Style>
+
+    <!-- ── ComboBox ─────────────────────────────────────────────────────────── -->
+    <Style TargetType="ComboBox">
+        <Setter Property="Background"       Value="{StaticResource BrInputBg}"/>
+        <Setter Property="Foreground"       Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrInputBorder}"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="FontFamily"       Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"         Value="{StaticResource FsMd}"/>
+        <Setter Property="Height"           Value="32"/>
+        <Setter Property="Padding"          Value="8,0"/>
+    </Style>
+
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="Background"       Value="{StaticResource BrCard}"/>
+        <Setter Property="Foreground"       Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="FontFamily"       Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"         Value="{StaticResource FsMd}"/>
+        <Setter Property="Padding"          Value="8,4"/>
+        <Setter Property="BorderThickness"  Value="0"/>
+        <Style.Triggers>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="{StaticResource BrCardAlt}"/>
+                <Setter Property="Foreground" Value="{StaticResource BrAccent}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ── CheckBox ─────────────────────────────────────────────────────────── -->
+    <Style TargetType="CheckBox">
+        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsMd}"/>
+        <Setter Property="Margin"       Value="0,4"/>
+        <Setter Property="Cursor"       Value="Hand"/>
+    </Style>
+
+    <!-- ── RadioButton ──────────────────────────────────────────────────────── -->
+    <Style TargetType="RadioButton">
+        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsMd}"/>
+        <Setter Property="Margin"       Value="0,3"/>
+        <Setter Property="Cursor"       Value="Hand"/>
+    </Style>
+
+    <!-- ── Label ────────────────────────────────────────────────────────────── -->
+    <Style TargetType="Label">
+        <Setter Property="Foreground"   Value="{StaticResource BrTextSecondary}"/>
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsBase}"/>
+        <Setter Property="FontWeight"   Value="SemiBold"/>
+        <Setter Property="Padding"      Value="0"/>
+        <Setter Property="Margin"       Value="0,0,0,3"/>
+    </Style>
+
+    <!-- ── Separator ────────────────────────────────────────────────────────── -->
+    <Style TargetType="Separator">
+        <Setter Property="Background"   Value="{StaticResource BrBorder}"/>
+        <Setter Property="Height"       Value="1"/>
+        <Setter Property="Margin"       Value="0,10"/>
+    </Style>
+
+    <!-- ── GroupBox ─────────────────────────────────────────────────────────── -->
+    <Style TargetType="GroupBox">
+        <Setter Property="Foreground"       Value="{StaticResource BrTextSecondary}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrBorder}"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="FontFamily"       Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"         Value="{StaticResource FsBase}"/>
+        <Setter Property="FontWeight"       Value="SemiBold"/>
+        <Setter Property="Padding"          Value="10,8"/>
+        <Setter Property="Margin"           Value="0,0,0,12"/>
+    </Style>
+
+    <!-- ── DataGrid ──────────────────────────────────────────────────────────── -->
+    <Style TargetType="DataGrid">
+        <Setter Property="Background"                Value="{StaticResource BrSurface}"/>
+        <Setter Property="Foreground"                Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush"               Value="{StaticResource BrBorder}"/>
+        <Setter Property="BorderThickness"           Value="1"/>
+        <Setter Property="RowBackground"             Value="{StaticResource BrSurface}"/>
+        <Setter Property="AlternatingRowBackground"  Value="{StaticResource BrCard}"/>
+        <Setter Property="GridLinesVisibility"       Value="Horizontal"/>
+        <Setter Property="HorizontalGridLinesBrush"  Value="{StaticResource BrBorder}"/>
+        <Setter Property="FontFamily"                Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"                  Value="{StaticResource FsBase}"/>
+        <Setter Property="HeadersVisibility"         Value="Column"/>
+        <Setter Property="SelectionMode"             Value="Single"/>
+        <Setter Property="SelectionUnit"             Value="FullRow"/>
+        <Setter Property="CanUserResizeRows"         Value="False"/>
+        <Setter Property="RowHeight"                 Value="30"/>
+    </Style>
+
+    <Style TargetType="DataGridColumnHeader">
+        <Setter Property="Background"       Value="{StaticResource BrHeader}"/>
+        <Setter Property="Foreground"       Value="{StaticResource BrTextSecondary}"/>
+        <Setter Property="FontFamily"       Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"         Value="{StaticResource FsBase}"/>
+        <Setter Property="FontWeight"       Value="SemiBold"/>
+        <Setter Property="Padding"          Value="10,8"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrBorder}"/>
+        <Setter Property="BorderThickness"  Value="0,0,1,1"/>
+        <Setter Property="Height"           Value="34"/>
+    </Style>
+
+    <Style TargetType="DataGridRow">
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsBase}"/>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource BrAccentDim}"/>
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource BrCardAlt}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="DataGridCell">
+        <Setter Property="Padding"          Value="10,0"/>
+        <Setter Property="BorderThickness"  Value="0"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ── ListView ─────────────────────────────────────────────────────────── -->
+    <Style TargetType="ListView">
+        <Setter Property="Background"       Value="{StaticResource BrSurface}"/>
+        <Setter Property="Foreground"       Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrBorder}"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="FontFamily"       Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"         Value="{StaticResource FsBase}"/>
+    </Style>
+
+    <Style TargetType="ListViewItem">
+        <Setter Property="Padding"      Value="8,6"/>
+        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource BrAccentDim}"/>
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource BrCardAlt}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ── ListBox ──────────────────────────────────────────────────────────── -->
+    <Style TargetType="ListBox">
+        <Setter Property="Background"       Value="{StaticResource BrSurface}"/>
+        <Setter Property="Foreground"       Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrBorder}"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="FontFamily"       Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"         Value="{StaticResource FsBase}"/>
+    </Style>
+
+    <Style TargetType="ListBoxItem">
+        <Setter Property="Padding"   Value="8,6"/>
+        <Setter Property="Foreground" Value="{StaticResource BrTextPrimary}"/>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource BrAccentDim}"/>
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource BrCardAlt}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ── ScrollBar ────────────────────────────────────────────────────────── -->
+    <Style TargetType="ScrollBar">
+        <Setter Property="Background"   Value="{StaticResource BrSurface}"/>
+        <Setter Property="Width"        Value="8"/>
+        <Setter Property="MinWidth"     Value="8"/>
+    </Style>
+
+    <!-- ── ProgressBar ──────────────────────────────────────────────────────── -->
+    <Style TargetType="ProgressBar">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background"      Value="{StaticResource BrCard}"/>
+        <Setter Property="Foreground"      Value="{StaticResource BrAccent}"/>
+        <Setter Property="Height"          Value="6"/>
+    </Style>
+
+    <!-- ── Slider ───────────────────────────────────────────────────────────── -->
+    <Style TargetType="Slider">
+        <Setter Property="Foreground" Value="{StaticResource BrAccent}"/>
+    </Style>
+
+    <!-- ── TabControl ───────────────────────────────────────────────────────── -->
+    <Style TargetType="TabControl">
+        <Setter Property="Background"       Value="{StaticResource BrSurface}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrBorder}"/>
+        <Setter Property="BorderThickness"  Value="0,1,0,0"/>
+        <Setter Property="Padding"          Value="0"/>
+    </Style>
+
+    <Style TargetType="TabItem">
+        <Setter Property="Background"       Value="Transparent"/>
+        <Setter Property="Foreground"       Value="{StaticResource BrTextSecondary}"/>
+        <Setter Property="FontFamily"       Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"         Value="{StaticResource FsBase}"/>
+        <Setter Property="FontWeight"       Value="SemiBold"/>
+        <Setter Property="Padding"          Value="14,8"/>
+        <Setter Property="BorderThickness"  Value="0"/>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource BrAccent}"/>
+                <Setter Property="Background" Value="{StaticResource BrCard}"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource BrTextPrimary}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ── Menu ─────────────────────────────────────────────────────────────── -->
+    <Style TargetType="Menu">
+        <Setter Property="Background"   Value="{StaticResource BrHeader}"/>
+        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsBase}"/>
+    </Style>
+
+    <Style TargetType="MenuItem">
+        <Setter Property="Background"   Value="{StaticResource BrHeader}"/>
+        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsBase}"/>
+    </Style>
+
+    <!-- ── ToolTip ──────────────────────────────────────────────────────────── -->
+    <Style TargetType="ToolTip">
+        <Setter Property="Background"       Value="{StaticResource BrCard}"/>
+        <Setter Property="Foreground"       Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrBorderLight}"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="FontFamily"       Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"         Value="{StaticResource FsSm}"/>
+        <Setter Property="Padding"          Value="8,4"/>
+    </Style>
+
+    <!-- ── StatusBar ────────────────────────────────────────────────────────── -->
+    <Style TargetType="StatusBar">
+        <Setter Property="Background"   Value="{StaticResource BrHeader}"/>
+        <Setter Property="Foreground"   Value="{StaticResource BrTextSecondary}"/>
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsSm}"/>
+    </Style>
+
+    <!-- ── TextBox mono (for COGO scripts) ──────────────────────────────────── -->
+    <Style x:Key="MonoTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="FontFamily"   Value="{StaticResource FfMono}"/>
+        <Setter Property="FontSize"     Value="13"/>
+        <Setter Property="Height"       Value="Auto"/>
+        <Setter Property="Padding"      Value="8,6"/>
+    </Style>
+
+    <!-- ── Section header TextBlock ─────────────────────────────────────────── -->
+    <Style x:Key="TbSection" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="FontSize"     Value="{StaticResource FsSm}"/>
+        <Setter Property="FontWeight"   Value="SemiBold"/>
+        <Setter Property="Foreground"   Value="{StaticResource BrTextMuted}"/>
+        <Setter Property="Margin"       Value="0,0,0,6"/>
+    </Style>
+
+    <!-- ── Page title TextBlock ─────────────────────────────────────────────── -->
+    <Style x:Key="TbTitle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="FontSize"     Value="{StaticResource FsXl}"/>
+        <Setter Property="FontWeight"   Value="SemiBold"/>
+        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="Margin"       Value="0,0,0,16"/>
+    </Style>
+
+    <!-- ── Badge / Status chip ──────────────────────────────────────────────── -->
+    <Style x:Key="ChipInfo" TargetType="Border">
+        <Setter Property="Background"       Value="{StaticResource BrAccentGlow}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrAccent}"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="CornerRadius"     Value="10"/>
+        <Setter Property="Padding"          Value="8,2"/>
+    </Style>
+
+    <Style x:Key="ChipSuccess" TargetType="Border">
+        <Setter Property="Background"       Value="#143D26"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrSuccess}"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="CornerRadius"     Value="10"/>
+        <Setter Property="Padding"          Value="8,2"/>
+    </Style>
+
+    <Style x:Key="ChipError" TargetType="Border">
+        <Setter Property="Background"       Value="#3A0E1A"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrError}"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="CornerRadius"     Value="10"/>
+        <Setter Property="Padding"          Value="8,2"/>
+    </Style>
+
+    <Style x:Key="ChipWarn" TargetType="Border">
+        <Setter Property="Background"       Value="#3A280A"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrAmber}"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="CornerRadius"     Value="10"/>
+        <Setter Property="Padding"          Value="8,2"/>
+    </Style>
+
+    <!-- ── Card border ──────────────────────────────────────────────────────── -->
+    <Style x:Key="Card" TargetType="Border">
+        <Setter Property="Background"       Value="{StaticResource BrCard}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrBorder}"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="CornerRadius"     Value="8"/>
+        <Setter Property="Padding"          Value="14,10"/>
+        <Setter Property="Margin"           Value="0,0,0,8"/>
+    </Style>
+
+    <!-- ── Window header band ───────────────────────────────────────────────── -->
+    <Style x:Key="WindowHeaderBand" TargetType="Border">
+        <Setter Property="Background"       Value="{StaticResource BrHeaderGradient}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrAccent}"/>
+        <Setter Property="BorderThickness"  Value="0,0,0,2"/>
+        <Setter Property="Padding"          Value="18,0"/>
+        <Setter Property="Height"           Value="52"/>
+    </Style>
+
+    <!-- ── Window footer band ───────────────────────────────────────────────── -->
+    <Style x:Key="WindowFooterBand" TargetType="Border">
+        <Setter Property="Background"       Value="{StaticResource BrHeader}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrBorder}"/>
+        <Setter Property="BorderThickness"  Value="0,1,0,0"/>
+        <Setter Property="Padding"          Value="18,10"/>
+    </Style>
+
+    <!-- ── Field label (form labels above inputs) ────────────────────────────── -->
+    <Style x:Key="FieldLabel" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="FontSize"     Value="{StaticResource FsSm}"/>
+        <Setter Property="FontWeight"   Value="SemiBold"/>
+        <Setter Property="Foreground"   Value="{StaticResource BrTextSecondary}"/>
+        <Setter Property="Margin"       Value="0,0,0,4"/>
+    </Style>
+
+    <!-- ── Step View Styles ───────────────────────────────────────────────────── -->
+
+    <!-- Top banner in every workflow step UserControl -->
+    <Style x:Key="StepHeaderBand" TargetType="Border">
+        <Setter Property="Background"       Value="{StaticResource BrHeaderGradient}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BrBorder}"/>
+        <Setter Property="BorderThickness"  Value="0,0,0,1"/>
+    </Style>
+
+    <!-- RadioButton styled as a tab pill (used in StepPreview) -->
+    <Style x:Key="TabRadio" TargetType="RadioButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="bd" CornerRadius="4" Padding="12,5"
+                            Background="Transparent"
+                            BorderBrush="Transparent" BorderThickness="0,0,0,2">
+                        <ContentPresenter VerticalAlignment="Center"
+                                          HorizontalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="bd" Property="BorderBrush"  Value="{StaticResource BrAccent}"/>
+                            <Setter Property="Foreground"                    Value="{StaticResource BrTextPrimary}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource BrCardAlt}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Foreground" Value="{StaticResource BrTextMuted}"/>
+        <Setter Property="FontSize"   Value="12"/>
+        <Setter Property="Cursor"     Value="Hand"/>
+    </Style>
+
+</ResourceDictionary>
+

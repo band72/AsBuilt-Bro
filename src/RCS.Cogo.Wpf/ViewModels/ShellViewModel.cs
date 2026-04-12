@@ -108,8 +108,51 @@ public partial class ShellViewModel : ViewModelBase
 {
     private readonly ScriptEngine _engine;
     private readonly CogoContext _context;
-    
+
+    // ── Production UX sub-ViewModels ───────────────────────────────────────────
+    /// <summary>Drives the left-pane workflow step navigator.</summary>
+    public WorkflowNavigatorViewModel Navigator { get; } = new();
+
+    /// <summary>Drives the bottom diagnostics pane (Errors / Warnings / Info / Audit).</summary>
+    public DiagnosticsViewModel Diagnostics { get; } = new();
+
+    /// <summary>Drives the start-screen Job Dashboard.</summary>
+    public JobDashboardViewModel Dashboard { get; } = new();
+
+    private bool _showDashboard = true;
+    /// <summary>
+    /// True when no job is open → shows JobDashboardView in the center pane.
+    /// False when a job is active → shows the workflow-step editor.
+    /// </summary>
+    public bool ShowDashboard
+    {
+        get => _showDashboard;
+        set { _showDashboard = value; OnPropertyChanged(); OnPropertyChanged(nameof(ShowWorkspace)); }
+    }
+    public bool ShowWorkspace => !_showDashboard;
+
+    /// <summary>
+    /// The currently open as-built job — set by ShellWindow after constructing
+    /// AsBuiltWorkspaceViewModel. Used by RefreshWorkflowState to drive the Navigator.
+    /// </summary>
+    public RCS.Piping.Core.Workflow.AsBuiltJob? ActiveJob { get; set; }
+
+    /// <summary>
+    /// Central refresh — call after any mutation that affects job state,
+    /// validation results, or workflow phase.
+    /// </summary>
+    public void RefreshWorkflowState()
+    {
+        var job = ActiveJob;
+        if (job == null) return;
+        var engine = new RCS.Piping.Core.Workflow.ValidationEngine();
+        var result = engine.Validate(job);
+        Navigator.Refresh(job, result);
+        Diagnostics.Refresh(result);
+    }
+
     public CogoContext GetContext() => _context;
+
 
     private string _commandInput = "";
     private string _commandHint = "";
@@ -1239,7 +1282,144 @@ public partial class ShellViewModel : ViewModelBase
 
         // Load default/empty project
         _ = LoadInstalledAssetsAsync();
+
+        // ── Production UX: Dashboard + Navigator wiring ──────────────────
+        Dashboard.NewJobCommand     = new RelayCommand(_ => LaunchNewJobWizard());
+        Dashboard.OpenJobCommand    = new RelayCommand(_ => OpenExistingJob());
+        Dashboard.ImportDataCommand = new RelayCommand(_ => ImportDataIntoActiveJob());
+        Dashboard.TemplatesCommand  = new RelayCommand(_ => { /* TODO: templates dialog */ });
+
+        // Wire each navigator step's SelectCommand to update current phase
+        foreach (var step in Navigator.Steps)
+        {
+            var capturedPhase = step.Phase;
+            step.SelectCommand = new RelayCommand(_ =>
+            {
+                Navigator.CurrentPhase = capturedPhase;
+                ShowDashboard = false;
+            });
+        }
     }
+
+    // ── New Job Wizard → Intake → Load ───────────────────────────────────────────────
+
+    private void LaunchNewJobWizard()
+    {
+        var wizard = new RCS.Cogo.Wpf.Views.AsBuilt.NewJobWizardWindow();
+        wizard.Owner = System.Windows.Application.Current.MainWindow;
+        if (wizard.ShowDialog() != true || wizard.ResultJob is not { } job) return;
+
+        if (job.PendingImportPaths.Count > 0)
+        {
+            var engine = new RCS.Piping.Core.Engines.IntakeAnalysisEngine();
+            foreach (var filePath in job.PendingImportPaths)
+            {
+                var fileType = DetectFileType(filePath);
+                var report   = engine.Analyze(filePath, fileType, job);
+                Diagnostics.Audit($"Intake: {System.IO.Path.GetFileName(filePath)} → {report.Summary}");
+            }
+            job.PendingImportPaths.Clear();
+        }
+
+        ActivateJob(job, saveImmediately: true);
+    }
+
+    private void OpenExistingJob()
+    {
+        var dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Title  = "Open RCS As-Built Job",
+            Filter = "RCS Job Files (*.rcsj)|*.rcsj|All Files (*.*)|*.*",
+            InitialDirectory = System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "RCS.Cogo", "Jobs")
+        };
+        if (dlg.ShowDialog() != true) return;
+
+        try
+        {
+            var persistence = new RCS.Piping.Core.Services.JobPersistenceService();
+            var job         = persistence.Load(dlg.FileName);
+            Diagnostics.Audit($"Job opened: {dlg.FileName}");
+            ActivateJob(job, saveImmediately: false);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(
+                $"Could not open job file:\n{ex.Message}",
+                "Open Job", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+        }
+    }
+
+    private void ImportDataIntoActiveJob()
+    {
+        var dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Title    = "Import Field / Design Data",
+            Filter   = "Supported Files|*.csv;*.txt;*.cogo;*.dxf;*.xlsx|CSV/PNEZD|*.csv;*.txt|COGO Script|*.cogo|DXF|*.dxf|Excel|*.xlsx",
+            Multiselect = true
+        };
+        if (dlg.ShowDialog() != true) return;
+
+        var job    = ActiveJob ?? new RCS.Piping.Core.Workflow.AsBuiltJob();
+        var engine = new RCS.Piping.Core.Engines.IntakeAnalysisEngine();
+        foreach (var file in dlg.FileNames)
+        {
+            var report = engine.Analyze(file, DetectFileType(file), job);
+            Diagnostics.Audit($"Imported: {System.IO.Path.GetFileName(file)} → {report.Summary}");
+        }
+
+        if (ActiveJob == null) ActivateJob(job, saveImmediately: true);
+        else { RefreshWorkflowState(); AutosaveActiveJob(); }
+    }
+
+    /// <summary>Shared activation path for New and Open flows.</summary>
+    public void ActivateJob(RCS.Piping.Core.Workflow.AsBuiltJob job, bool saveImmediately)
+    {
+        ActiveJob     = job;
+        ShowDashboard = false;
+        RefreshWorkflowState();
+        Diagnostics.Audit($"Job activated: {job.Identity.JobNumber} Rev {job.Identity.RevisionNumber}");
+
+        var persistence = new RCS.Piping.Core.Services.JobPersistenceService();
+        string filePath = saveImmediately ? persistence.Save(job) : RCS.Piping.Core.Services.JobPersistenceService.DefaultPath(job);
+        if (saveImmediately) Diagnostics.Audit($"Job saved: {filePath}");
+
+        Dashboard.PushRecentJob(job, filePath);
+        StartAutosave(job);
+    }
+
+    // ── Autosave timer ────────────────────────────────────────────────────
+
+    private System.Windows.Threading.DispatcherTimer? _autosaveTimer;
+
+    private void StartAutosave(RCS.Piping.Core.Workflow.AsBuiltJob job)
+    {
+        _autosaveTimer?.Stop();
+        _autosaveTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(90) };
+        _autosaveTimer.Tick += (_, _) => AutosaveActiveJob();
+        _autosaveTimer.Start();
+    }
+
+    public void AutosaveActiveJob()
+    {
+        if (ActiveJob == null) return;
+        try { new RCS.Piping.Core.Services.JobPersistenceService().Autosave(ActiveJob); }
+        catch { /* best-effort */ }
+    }
+
+    // ── File type detection ───────────────────────────────────────────────────
+
+    private static RCS.Piping.Core.Engines.IntakeFileType DetectFileType(string path) =>
+        System.IO.Path.GetExtension(path).ToLowerInvariant() switch
+        {
+            ".cogo"            => RCS.Piping.Core.Engines.IntakeFileType.CogoScript,
+            ".dxf"             => RCS.Piping.Core.Engines.IntakeFileType.Dxf,
+            ".xlsx" or ".xls"  => RCS.Piping.Core.Engines.IntakeFileType.JeaExcel,
+            _                  => RCS.Piping.Core.Engines.IntakeFileType.Pnezd
+        };
+
+
 
     private InstalledAssetsViewModel _installedAssets = null!;
     public InstalledAssetsViewModel InstalledAssets

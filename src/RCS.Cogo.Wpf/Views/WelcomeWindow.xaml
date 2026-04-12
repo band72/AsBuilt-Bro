@@ -15,7 +15,7 @@
             <Setter Property="Background" Value="#0F3460"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Padding" Value="18,10"/>
-            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontFamily" Value="{StaticResource FfBody}"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -40,7 +40,7 @@
         <!-- Recent file row button -->
         <Style x:Key="RecentBtn" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="Foreground" Value="{StaticResource BrTextPrimary}"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="Padding" Value="12,8"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -98,8 +98,13 @@
                             Click="OnOpenProject"/>
                     <Button x:Name="BtnImport" Content="📥  Import Field Data..."
                             Style="{StaticResource PrimaryBtn}"
-                            Margin="0,0,0,24"
+                            Margin="0,0,0,8"
                             Click="OnImport"/>
+                    <Button x:Name="BtnNewAsBuilt" Content="🏗  New As-Built Job..."
+                            Style="{StaticResource PrimaryBtn}"
+                            Background="#1A7A6E"
+                            Margin="0,0,0,24"
+                            Click="OnNewAsBuilt"/>
 
                     <Separator Background="#1A3A6E" Margin="0,0,0,16"/>
                     <TextBlock Text="VERSION" Foreground="#607090" FontSize="9"

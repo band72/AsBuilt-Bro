@@ -6,14 +6,14 @@
              xmlns:views="clr-namespace:RCS.Cogo.Wpf.Views"
              mc:Ignorable="d" 
              d:DesignHeight="1200" d:DesignWidth="800">
-    <Grid Background="#1E1E1E">
+    <Grid Background="{StaticResource BrBg}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
-        <TextBlock Text="Installed Assets Data" FontWeight="Bold" Foreground="#D4D4D4" Margin="10,10,10,4" FontSize="16"/>
+        <TextBlock Text="Installed Assets Data" FontWeight="Bold" Foreground="{StaticResource BrTextPrimary}" Margin="10,10,10,4" FontSize="16"/>
 
         <!-- ── Quick-Filter bar ────────────────────────────────────────────── -->
         <Grid Grid.Row="1" Margin="10,0,10,6">
@@ -23,7 +23,7 @@
             </Grid.ColumnDefinitions>
             <TextBox x:Name="AssetsFilterBox"
                      Grid.Column="0"
-                     Background="#252526" Foreground="#D4D4D4"
+                     Background="{StaticResource BrSurface}" Foreground="{StaticResource BrTextPrimary}"
                      BorderBrush="#555" Padding="5,3"
                      FontSize="12"
                      TextChanged="AssetsFilterBox_TextChanged"
@@ -31,7 +31,7 @@
             <Button Grid.Column="1"
                     Content="✕" Width="28" Height="22"
                     Margin="4,0,0,0"
-                    Background="#3E3E42" Foreground="#D4D4D4"
+                    Background="{StaticResource BrBorder}" Foreground="{StaticResource BrTextPrimary}"
                     BorderThickness="0" FontSize="11" Cursor="Hand"
                     Click="ClearAssetsFilter_Click"
                     ToolTip="Clear filter"/>
@@ -41,9 +41,9 @@
             <StackPanel>
                 <StackPanel.Resources>
                     <Style TargetType="Expander">
-                         <Setter Property="Foreground" Value="#D4D4D4"/>
-                         <Setter Property="BorderBrush" Value="#3E3E42"/>
-                         <Setter Property="Background" Value="#252526"/>
+                         <Setter Property="Foreground" Value="{StaticResource BrTextPrimary}"/>
+                         <Setter Property="BorderBrush" Value="{StaticResource BrBorder}"/>
+                         <Setter Property="Background" Value="{StaticResource BrSurface}"/>
                          <Setter Property="IsExpanded" Value="False"/>
                          <Setter Property="Margin" Value="0,1"/>
                     </Style>
@@ -51,9 +51,9 @@
                         <EventSetter Event="MouseDoubleClick" Handler="DataGrid_MouseDoubleClick"/>
                         <EventSetter Event="SelectionChanged" Handler="DataGrid_SelectionChanged"/>
                         <Setter Property="MaxHeight" Value="300"/>
-                        <Setter Property="Background" Value="#252526"/>
-                        <Setter Property="RowBackground" Value="#252526"/>
-                        <Setter Property="Foreground" Value="#D4D4D4"/>
+                        <Setter Property="Background" Value="{StaticResource BrSurface}"/>
+                        <Setter Property="RowBackground" Value="{StaticResource BrSurface}"/>
+                        <Setter Property="Foreground" Value="{StaticResource BrTextPrimary}"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="AutoGenerateColumns" Value="False"/>
                         <Setter Property="CanUserAddRows" Value="True"/>
@@ -62,7 +62,7 @@
                         <Setter Property="ColumnWidth" Value="Auto"/>
                     </Style>
                     <Style TargetType="DataGridColumnHeader">
-                        <Setter Property="Background" Value="#3E3E42"/>
+                        <Setter Property="Background" Value="{StaticResource BrBorder}"/>
                         <Setter Property="Foreground" Value="White"/>
                         <Setter Property="Padding" Value="5"/>
                         <Setter Property="HorizontalContentAlignment" Value="Center"/>

@@ -6,23 +6,23 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800"
              Loaded="UserControl_Loaded">
-    <Grid Background="#1E1E1E">
+    <Grid Background="{StaticResource BrBg}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" Margin="10,5">
-            <TextBlock Text="Installed Assets Map Viewer" FontWeight="Bold" Foreground="#007ACC" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+            <TextBlock Text="Installed Assets Map Viewer" FontWeight="Bold" Foreground="{StaticResource BrAccent}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right">
                 <Button Content="Zoom In" Click="ZoomIn_Click" Width="60" Margin="0,0,5,0" Background="#333" Foreground="White"/>
                 <Button Content="Zoom Out" Click="ZoomOut_Click" Width="60" Margin="0,0,5,0" Background="#333" Foreground="White"/>
                 <Button Content="Extents" Click="ZoomExtents_Click" Width="60" Margin="0,0,10,0" Background="#333" Foreground="White"/>
-                <Button Content="Refresh" Click="Refresh_Click" Width="80" Background="#007ACC" Foreground="White"/>
+                <Button Content="Refresh" Click="Refresh_Click" Width="80" Background="{StaticResource BrAccentDim}" Foreground="White"/>
             </StackPanel>
         </DockPanel>
 
-        <Border Grid.Row="1" Background="Black" ClipToBounds="True" BorderBrush="#3E3E42" BorderThickness="1" Margin="10,0,10,10">
+        <Border Grid.Row="1" Background="Black" ClipToBounds="True" BorderBrush="{StaticResource BrBorder}" BorderThickness="1" Margin="10,0,10,10">
             <Canvas x:Name="MapCanvas" 
                     MouseWheel="MapCanvas_MouseWheel"
                     MouseLeftButtonDown="MapCanvas_MouseLeftButtonDown"

@@ -2,6 +2,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using RCS.Cogo.Wpf.ViewModels;
+// AsBuiltWorkspaceView and AsBuiltWorkspaceViewModel share this assembly;
+// no additional using needed — they live in RCS.Cogo.Wpf.Views / .ViewModels.
 
 namespace RCS.Cogo.Wpf.Views;
 
@@ -12,6 +14,11 @@ public partial class ShellWindow : Window
     private bool _isZoomWindowMode;
     private bool _isZoomDragging;
     private Point _zoomStartPoint;
+
+    // ── As-Built workspace (lazy-initialised on first tab activation) ─────────
+    private AsBuiltWorkspaceView?         _asBuiltView;
+    private AsBuiltWorkspaceViewModel?    _asBuiltVm;
+    private const int AsBuiltTabIndex = 9;   // 0-based index of the 🏗 As-Built tab
 
     public ShellWindow()
     {
@@ -60,7 +67,19 @@ public partial class ShellWindow : Window
                 if (welcome.SelectedRecentFile != null)
                     vm.OpenRecentFileCommand?.Execute(welcome.SelectedRecentFile);
                 break;
+            case WelcomeWindow.WelcomeAction.NewAsBuilt:
+                // Switch directly to the As-Built tab index; the user then clicks New Job in the workspace
+                NavigateToAsBuilt();
+                return; // skip SyncProjectToAsBuiltJob — wizard creates its own job
+
+
         }
+
+        // ── Push new/opened project into the As-Built workspace ──────────────
+        // When the user creates or opens a project from the Welcome screen,
+        // we construct a fresh AsBuiltJob seeded with the project identity so
+        // the workflow navigator starts from the correct state.
+        SyncProjectToAsBuiltJob();
     }
 
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -463,19 +482,78 @@ public partial class ShellWindow : Window
     private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
         // Only trigger if the event source is the TabControl itself
-        if (e.OriginalSource is System.Windows.Controls.TabControl)
+        if (e.OriginalSource is not System.Windows.Controls.TabControl) return;
+        if (DataContext is not ShellViewModel vm) return;
+
+        // ── Auto-focus Cogo input box ─────────────────────────────────────────
+        if (vm.SelectedTabIndex == 1)
         {
-            if (DataContext is ShellViewModel vm)
-            {
-                // Index 1 corresponds to Tab 2: Cogo
-                // Use a minor dispatch delay to let WPF fully swap the visual tree elements before focusing
-                if (vm.SelectedTabIndex == 1)
-                {
-                    Dispatcher.BeginInvoke(new Action(() => CogoInputTextBox.Focus()), System.Windows.Threading.DispatcherPriority.Input);
-                }
-            }
+            Dispatcher.BeginInvoke(new System.Action(() => CogoInputTextBox.Focus()),
+                System.Windows.Threading.DispatcherPriority.Input);
         }
+
+        // ── As-Built workspace overlay ────────────────────────────────────────
+        bool isAsBuilt = vm.SelectedTabIndex == AsBuiltTabIndex;
+        AsBuiltTabOverlay.Visibility = isAsBuilt ? Visibility.Visible : Visibility.Collapsed;
+
+        if (isAsBuilt)
+            EnsureAsBuiltViewInitialized(vm);
     }
+
+    /// <summary>
+    /// Lazily creates the <see cref="AsBuiltWorkspaceView"/> and its ViewModel
+    /// on the first time the As-Built tab is activated. Injects the existing
+    /// <see cref="ViewportCanvas"/> so the workspace right-pane can render into
+    /// the same canvas as the rest of the application.
+    /// </summary>
+    private void EnsureAsBuiltViewInitialized(ShellViewModel shellVm)
+    {
+        if (_asBuiltView != null) return;   // already built
+
+        _asBuiltVm   = new AsBuiltWorkspaceViewModel();
+        _asBuiltView = new AsBuiltWorkspaceView { DataContext = _asBuiltVm };
+
+        // ── Canvas injection ──────────────────────────────────────────────────
+        _asBuiltView.InjectCanvas(ViewportCanvas);
+
+        // Put the view into the overlay slot
+        AsBuiltOverlayContent.Content = _asBuiltView;
+
+        // ── Production UX: show navigator + diagnostics when workspace is active ──
+        WorkflowNavigatorSidebar.Visibility = Visibility.Visible;
+        DiagnosticsPaneOverlay.Visibility   = Visibility.Visible;
+
+        // Seed job identity from the active project
+        SyncProjectToAsBuiltJob();
+    }
+
+    private void SyncProjectToAsBuiltJob()
+    {
+        if (_asBuiltVm == null || DataContext is not ShellViewModel shell) return;
+
+        var job = new RCS.Piping.Core.Workflow.AsBuiltJob();
+
+        var proj = shell.CurrentProject;
+        job.Identity.JobNumber    = proj?.AvailNo      ?? string.Empty;
+        job.Identity.ClientName   = proj?.ProjectName  ?? string.Empty;
+        job.Identity.UtilityOwner = proj?.Utility      ?? string.Empty;
+
+        _asBuiltVm.LoadJob(job);
+
+        // ── Wire the job to ShellViewModel for navigator/diagnostics refresh ──
+        shell.ActiveJob = job;
+        shell.ShowDashboard = false;           // hide dashboard, show workspace
+        shell.RefreshWorkflowState();
+        shell.Diagnostics.Audit($"Job loaded: {job.Identity.JobNumber} — Rev {job.Identity.RevisionNumber}");
+    }
+
+
+    private void NavigateToAsBuilt()
+    {
+        if (DataContext is ShellViewModel vm)
+            vm.SelectedTabIndex = AsBuiltTabIndex;
+    }
+
 
     private void btnToggleLineNumbers_Click(object sender, RoutedEventArgs e)
     {
@@ -622,6 +700,100 @@ public partial class ShellWindow : Window
         {
             sym.SelectCommand?.Execute(null);
             e.Handled = true;
+        }
+    }
+
+    // ── As-Built Demo menu handlers ───────────────────────────────────────────
+
+    private static readonly string _demoFolder = ResolveDemoFolder();
+
+    private static string ResolveDemoFolder()
+    {
+        // Installed path: {app}\AsBuiltDemo  (bundled by Inno Setup)
+        var installed = System.IO.Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "AsBuiltDemo");
+        if (System.IO.Directory.Exists(installed)) return installed;
+
+        // Dev / manual fallback: Desktop\AsBuilt_Demo\JEA-2024-W-04471_Rev1_04122025
+        return System.IO.Path.Combine(
+            System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop),
+            "AsBuilt_Demo", "JEA-2024-W-04471_Rev1_04122025");
+    }
+
+    private void OpenAsBuiltDemoFolder_Click(object sender, RoutedEventArgs e)
+    {
+        if (!System.IO.Directory.Exists(_demoFolder))
+        {
+            MessageBox.Show(
+                $"Demo folder not found:\n{_demoFolder}\n\nRe-run the 'Give me a prebuilt as-built project' command to regenerate it.",
+                "AsBuilt Demo", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+        System.Diagnostics.Process.Start("explorer.exe", $"\"{_demoFolder}\"");
+    }
+
+    private void OpenAsBuiltDemoReadme_Click(object sender, RoutedEventArgs e)
+    {
+        var file = System.IO.Path.Combine(_demoFolder, "README_LOAD_ORDER.txt");
+        LaunchDemoFile(file);
+    }
+
+    private void LoadAsBuiltDemoPnezd_Click(object sender, RoutedEventArgs e)
+    {
+        var file = System.IO.Path.Combine(_demoFolder, "W-04471_PNEZD.csv");
+        LoadDemoFileIntoEditor(file);
+    }
+
+    private void LoadAsBuiltDemoCogo_Click(object sender, RoutedEventArgs e)
+    {
+        var file = System.IO.Path.Combine(_demoFolder, "W-04471_COGO.cogo");
+        LoadDemoFileIntoEditor(file);
+    }
+
+    /// <summary>Opens the file with the OS default application (Notepad, etc.).</summary>
+    private void LaunchDemoFile(string path)
+    {
+        if (!System.IO.File.Exists(path))
+        {
+            MessageBox.Show($"File not found:\n{path}", "AsBuilt Demo",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+            FileName = path,
+            UseShellExecute = true
+        });
+    }
+
+    /// <summary>Loads a text file into the Script Editor TextBox directly.</summary>
+    private void LoadDemoFileIntoEditor(string path)
+    {
+        if (!System.IO.File.Exists(path))
+        {
+            MessageBox.Show($"File not found:\n{path}", "AsBuilt Demo",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        var content = System.IO.File.ReadAllText(path);
+
+        // Prefer the Piping/COGO script TextBox if visible; fall back to any named editor.
+        if (txtPipingScript != null)
+        {
+            txtPipingScript.Text = content;
+            txtPipingScript.Focus();
+            txtPipingScript.CaretIndex = 0;
+
+            // Switch VM to tab 0 (Script Editor) so the user sees the loaded content.
+            if (DataContext is ShellViewModel vm)
+                vm.SelectedTabIndex = 0;
+        }
+        else
+        {
+            MessageBox.Show("Script editor not available on the current tab.\n\n" +
+                            "Navigate to the Script Editor tab first, then try again.",
+                            "AsBuilt Demo", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

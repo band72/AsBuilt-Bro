@@ -1,0 +1,139 @@
+<UserControl x:Class="RCS.Cogo.Wpf.Views.AsBuilt.StructuresPhaseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="2*" MinWidth="260"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- LEFT: Structures Grid -->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" Background="#1A1A2E" Padding="10,6"
+                    BorderBrush="#2A2A45" BorderThickness="0,0,0,1">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="🏗 Structures" FontSize="13" FontWeight="Bold"
+                               Foreground="#E8E8F0" FontFamily="Segoe UI" VerticalAlignment="Center"/>
+                    <Separator Width="1" Background="#2A2A45" Margin="12,0"/>
+                    <Button x:Name="BtnAddStructure" Content="+ Add" Padding="10,4"
+                            Background="#252545" Foreground="#E8E8F0"
+                            BorderBrush="#3A3A5A" BorderThickness="1"
+                            FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
+                            Click="BtnAddStructure_Click"/>
+                    <Button x:Name="BtnInferRims" Content="⚡ Infer Rims" Padding="10,4"
+                            Background="#252545" Foreground="#56CCF2"
+                            BorderBrush="#3A3A5A" BorderThickness="1"
+                            FontFamily="Segoe UI" FontSize="11"
+                            Click="BtnInferRims_Click"/>
+                    <Separator Width="1" Background="#2A2A45" Margin="12,0"/>
+                    <TextBlock x:Name="TxtStructCount" Text="0 structures"
+                               FontSize="11" Foreground="#7A7A9A"
+                               FontFamily="Segoe UI" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+            <DataGrid Grid.Row="1" x:Name="StructuresGrid"
+                      AutoGenerateColumns="False" CanUserAddRows="True"
+                      CanUserDeleteRows="True" SelectionMode="Single"
+                      GridLinesVisibility="Horizontal"
+                      Background="#12121F" RowBackground="#1A1A2E"
+                      AlternatingRowBackground="#1E1E35"
+                      Foreground="#E8E8F0" BorderThickness="0"
+                      FontFamily="Consolas" FontSize="12"
+                      ColumnHeaderHeight="30" RowHeight="26"
+                      SelectionChanged="StructuresGrid_SelectionChanged">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#22223A"/>
+                        <Setter Property="Foreground" Value="#7A7A9A"/>
+                        <Setter Property="FontFamily" Value="Segoe UI"/>
+                        <Setter Property="FontSize"   Value="10"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Padding"    Value="8,0"/>
+                        <Setter Property="BorderBrush" Value="#2A2A45"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID"       Binding="{Binding Id}"         Width="80"/>
+                    <DataGridTextColumn Header="Point"    Binding="{Binding PointId}"    Width="60"/>
+                    <DataGridTextColumn Header="Type"     Binding="{Binding Type}"       Width="100"/>
+                    <DataGridTextColumn Header="Rim Elev" Binding="{Binding RimElevation, StringFormat=F2}" Width="80"/>
+                    <DataGridTextColumn Header="Inv In"   Binding="{Binding InvertIn, StringFormat=F2}"    Width="75"/>
+                    <DataGridTextColumn Header="Inv Out"  Binding="{Binding InvertOut, StringFormat=F2}"   Width="75"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="#2A2A45"/>
+
+        <!-- RIGHT: Detail Card -->
+        <Border Grid.Column="2" Background="#1A1A2E"
+                BorderBrush="#2A2A45" BorderThickness="1,0,0,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="16,14">
+                <StackPanel x:Name="DetailPanel">
+                    <TextBlock Text="SELECT A STRUCTURE" FontSize="9" FontWeight="SemiBold"
+                               Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Structure ID" FontSize="11" Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,0,0,4"/>
+                    <TextBox x:Name="TxtDetailId" Background="#12121F" Foreground="#E8E8F0"
+                             BorderBrush="#3A3A5A" BorderThickness="1"
+                             FontFamily="Consolas" FontSize="12" Padding="6,4" Margin="0,0,0,10"
+                             TextChanged="Detail_TextChanged"/>
+
+                    <TextBlock Text="Type" FontSize="11" Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,0,0,4"/>
+                    <ComboBox x:Name="CboDetailType" Background="#12121F" Foreground="#E8E8F0"
+                              BorderBrush="#3A3A5A" BorderThickness="1"
+                              FontFamily="Segoe UI" FontSize="12" Padding="6,4" Margin="0,0,0,10"
+                              SelectionChanged="Detail_SelectionChanged">
+                        <ComboBoxItem>Manhole</ComboBoxItem>
+                        <ComboBoxItem>Inlet</ComboBoxItem>
+                        <ComboBoxItem>Catch Basin</ComboBoxItem>
+                        <ComboBoxItem>Cleanout</ComboBoxItem>
+                        <ComboBoxItem>Valve</ComboBoxItem>
+                        <ComboBoxItem>Meter</ComboBoxItem>
+                        <ComboBoxItem>Fitting</ComboBoxItem>
+                        <ComboBoxItem>Junction Box</ComboBoxItem>
+                        <ComboBoxItem>Other</ComboBoxItem>
+                    </ComboBox>
+
+                    <TextBlock Text="Rim Elevation" FontSize="11" Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,0,0,4"/>
+                    <TextBox x:Name="TxtDetailRim" Background="#12121F" Foreground="#E8E8F0"
+                             BorderBrush="#3A3A5A" BorderThickness="1"
+                             FontFamily="Consolas" FontSize="12" Padding="6,4" Margin="0,0,0,10"
+                             TextChanged="Detail_TextChanged"/>
+
+                    <TextBlock Text="Invert In" FontSize="11" Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,0,0,4"/>
+                    <TextBox x:Name="TxtDetailInvIn" Background="#12121F" Foreground="#E8E8F0"
+                             BorderBrush="#3A3A5A" BorderThickness="1"
+                             FontFamily="Consolas" FontSize="12" Padding="6,4" Margin="0,0,0,10"
+                             TextChanged="Detail_TextChanged"/>
+
+                    <TextBlock Text="Invert Out" FontSize="11" Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,0,0,4"/>
+                    <TextBox x:Name="TxtDetailInvOut" Background="#12121F" Foreground="#E8E8F0"
+                             BorderBrush="#3A3A5A" BorderThickness="1"
+                             FontFamily="Consolas" FontSize="12" Padding="6,4" Margin="0,0,0,10"
+                             TextChanged="Detail_TextChanged"/>
+
+                    <Rectangle Fill="#2A2A45" Height="1" Margin="0,6,0,12"/>
+
+                    <TextBlock x:Name="TxtInferStatus" Text=""
+                               FontSize="11" Foreground="#56CCF2"
+                               FontFamily="Segoe UI" Margin="0,0,0,8"
+                               TextWrapping="Wrap"/>
+
+                    <Button Content="💾 Apply Changes" Padding="0,8"
+                            Background="#4A90E2" Foreground="White"
+                            BorderThickness="0" FontFamily="Segoe UI"
+                            FontSize="12" FontWeight="SemiBold"
+                            Click="BtnApplyDetail_Click"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

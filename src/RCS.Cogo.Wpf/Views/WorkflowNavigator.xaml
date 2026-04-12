@@ -1,0 +1,187 @@
+<UserControl x:Class="RCS.Cogo.Wpf.Views.WorkflowNavigator"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RCS.Cogo.Wpf.ViewModels"
+             Width="172">
+
+    <UserControl.Resources>
+        <!-- Step status → accent colour mapping -->
+        <SolidColorBrush x:Key="StepCompleteAccent"   Color="#27AE60"/>
+        <SolidColorBrush x:Key="StepWarningAccent"    Color="#F2C94C"/>
+        <SolidColorBrush x:Key="StepBlockedAccent"    Color="#E94560"/>
+        <SolidColorBrush x:Key="StepInProgressAccent" Color="#4F9EF8"/>
+        <SolidColorBrush x:Key="StepNotStartedAccent" Color="#3A3A55"/>
+
+        <!-- Step row style — changes highlight & left bar per status/selection -->
+        <Style x:Key="StepRow" TargetType="Border">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Padding"         Value="0,2"/>
+            <Setter Property="Margin"          Value="8,2"/>
+            <Setter Property="CornerRadius"    Value="6"/>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- ── Shell ─────────────────────────────────────────────────────────────── -->
+    <Grid Background="{StaticResource BrHeader}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Job identity badge -->
+            <RowDefinition Height="Auto"/>  <!-- Separator -->
+            <RowDefinition Height="*"/>     <!-- Step list -->
+            <RowDefinition Height="Auto"/>  <!-- Bottom hint -->
+        </Grid.RowDefinitions>
+
+        <!-- ── Job Identity ─────────────────────────────────────────────────── -->
+        <Border Grid.Row="0"
+                Background="{StaticResource BrHeaderGradient}"
+                BorderBrush="{StaticResource BrAccent}"
+                BorderThickness="0,0,0,1"
+                Padding="12,14">
+            <StackPanel>
+                <TextBlock Text="WORKFLOW"
+                           FontSize="8"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource BrTextMuted}"
+                           Margin="0,0,0,4"/>
+                <TextBlock Text="{Binding JobLabel}"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource BrTextPrimary}"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Text="{Binding RevLabel}"
+                           FontSize="10"
+                           Foreground="{StaticResource BrAccent}"
+                           Margin="0,2,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Step List ────────────────────────────────────────────────────── -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Steps}" Margin="0,8,0,8">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border>
+                            <!-- Selection/hover highlight via triggers -->
+                            <Border.Style>
+                                <Style TargetType="Border" BasedOn="{StaticResource StepRow}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource BrCard}"/>
+                                        </DataTrigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource BrCardAlt}"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+
+
+                            <Button Command="{Binding SelectCommand}"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Padding="0"
+                                    Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <ContentPresenter/>
+                                    </ControlTemplate>
+                                </Button.Template>
+
+                                <Grid Margin="10,7">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="4"/>    <!-- status bar -->
+                                        <ColumnDefinition Width="28"/>   <!-- icon -->
+                                        <ColumnDefinition Width="*"/>    <!-- label -->
+                                        <ColumnDefinition Width="Auto"/> <!-- badge -->
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- ── Left status bar ──────────────────── -->
+                                    <Border Grid.Column="0" CornerRadius="2" Margin="0,2,6,2">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{StaticResource StepNotStartedAccent}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding StatusKey}" Value="Complete">
+                                                        <Setter Property="Background" Value="{StaticResource StepCompleteAccent}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding StatusKey}" Value="Warning">
+                                                        <Setter Property="Background" Value="{StaticResource StepWarningAccent}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding StatusKey}" Value="Blocked">
+                                                        <Setter Property="Background" Value="{StaticResource StepBlockedAccent}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding StatusKey}" Value="InProgress">
+                                                        <Setter Property="Background" Value="{StaticResource StepInProgressAccent}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                    </Border>
+
+                                    <!-- ── Step icon ────────────────────────── -->
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Icon}"
+                                               FontSize="15"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"/>
+
+                                    <!-- ── Step label ───────────────────────── -->
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Label}"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="{StaticResource BrTextSecondary}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource BrTextPrimary}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <!-- Issue sub-label (visible only when HasIssues) -->
+                                        <TextBlock Visibility="{Binding HasIssues, Converter={StaticResource BoolToVis}}"
+                                                   FontSize="9"
+                                                   Margin="0,1,0,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="{StaticResource BrTextMuted}"/>
+                                                </Style>
+                                            </TextBlock.Style>
+                                            <Run Text="{Binding ErrorCount,   StringFormat='{}{0}E /', Mode=OneWay}"
+                                                 Foreground="{StaticResource BrError}"/>
+                                            <Run Text="{Binding WarningCount, StringFormat='{}{0}W', Mode=OneWay}"
+                                                 Foreground="{StaticResource BrAmber}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <!-- ── Status glyph badge ────────────────── -->
+                                    <TextBlock Grid.Column="3"
+                                               Text="{Binding StatusGlyph}"
+                                               FontSize="11"
+                                               VerticalAlignment="Center"
+                                               Margin="4,0,0,0"/>
+                                </Grid>
+                            </Button>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- ── Bottom hint ───────────────────────────────────────────────────── -->
+        <Border Grid.Row="3"
+                BorderBrush="{StaticResource BrBorder}"
+                BorderThickness="0,1,0,0"
+                Padding="12,8">
+            <TextBlock Text="Click step to navigate"
+                       FontSize="9"
+                       Foreground="{StaticResource BrTextMuted}"
+                       HorizontalAlignment="Center"/>
+        </Border>
+    </Grid>
+</UserControl>

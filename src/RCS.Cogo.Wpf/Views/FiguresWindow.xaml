@@ -2,27 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Edit Figures" Height="800" Width="1000"
-        Background="#1E1E1E" Foreground="#D4D4D4">
-    
-    <Window.Resources>
-        <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#D4D4D4"/>
-        </Style>
-        <Style TargetType="DataGrid">
-            <Setter Property="Background" Value="#252526"/>
-            <Setter Property="RowBackground" Value="#252526"/>
-            <Setter Property="Foreground" Value="#D4D4D4"/>
-            <Setter Property="BorderBrush" Value="#3E3E42"/>
-            <Setter Property="HeadersVisibility" Value="Column"/>
-            <Setter Property="GridLinesVisibility" Value="None"/>
-        </Style>
-        <Style TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#3E3E42"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Padding" Value="5"/>
-        </Style>
-    </Window.Resources>
+        Background="{StaticResource BrBg}" Foreground="{StaticResource BrTextPrimary}">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -41,10 +21,10 @@
                     </Style>
                 </ComboBox.ItemContainerStyle>
             </ComboBox>
-            <Button Content="Set Material..." Width="120" Margin="20,0,0,0" Click="MaterialButton_Click" Background="#8A2BE2" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
-            <Button Content="Active Viewer" Width="120" Margin="20,0,0,0" Click="ActiveViewerButton_Click" Background="#28A745" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
+            <Button Content="Set Material..." Width="120" Margin="20,0,0,0" Click="MaterialButton_Click" Background="{StaticResource BrAccentDim}" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
+            <Button Content="Active Viewer" Width="120" Margin="20,0,0,0" Click="ActiveViewerButton_Click" Background="{StaticResource BrSuccess}" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
             <Button Content="Sync Figures" Width="120" Margin="20,0,0,0" Click="SyncButton_Click" Background="#007acc" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
-            <Button Content="Delete Selected Figure" Width="150" Margin="20,0,0,0" Click="DeleteButton_Click" Background="#c53030" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
+            <Button Content="Delete Selected Figure" Width="150" Margin="20,0,0,0" Click="DeleteButton_Click" Background="{StaticResource BrError}" Foreground="White" BorderThickness="0" FontWeight="Bold"/>
         </StackPanel>
 
         <Grid Grid.Row="1">
@@ -82,9 +62,9 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="#3E3E42"/>
+                <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="{StaticResource BrBorder}"/>
 
-                <Grid Grid.Row="2" Background="#1E1E1E">
+                <Grid Grid.Row="2" Background="{StaticResource BrBg}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="180"/>
@@ -101,39 +81,39 @@
                     </DataGrid>
 
                     <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                        <StackPanel x:Name="PointEditForm" IsEnabled="False" Background="#252526" Margin="0">
+                        <StackPanel x:Name="PointEditForm" IsEnabled="False" Background="{StaticResource BrSurface}" Margin="0">
                         <TextBlock Text="Edit Vertex" FontWeight="Bold" Margin="5"/>
                         <TextBlock Text="Order Index:" Margin="5,0"/>
-                        <TextBox x:Name="TxtOrderIndex" Margin="5,0,5,5" Background="#3E3E42" Foreground="White" BorderThickness="0" Padding="2"/>
+                        <TextBox x:Name="TxtOrderIndex" Margin="5,0,5,5" Background="{StaticResource BrBorder}" Foreground="White" BorderThickness="0" Padding="2"/>
                         <TextBlock Text="Bulge:" Margin="5,0"/>
-                        <TextBox x:Name="TxtBulge" Margin="5,0,5,5" Background="#3E3E42" Foreground="White" BorderThickness="0" Padding="2"/>
+                        <TextBox x:Name="TxtBulge" Margin="5,0,5,5" Background="{StaticResource BrBorder}" Foreground="White" BorderThickness="0" Padding="2"/>
                         
                         <TextBlock Text="Northing:" Margin="5,0"/>
-                        <TextBox x:Name="TxtNorthing" Margin="5,0,5,5" Background="#3E3E42" Foreground="White" BorderThickness="0" Padding="2" TextChanged="VertexCoordinate_TextChanged"/>
+                        <TextBox x:Name="TxtNorthing" Margin="5,0,5,5" Background="{StaticResource BrBorder}" Foreground="White" BorderThickness="0" Padding="2" TextChanged="VertexCoordinate_TextChanged"/>
                         <TextBlock Text="Easting:" Margin="5,0"/>
-                        <TextBox x:Name="TxtEasting" Margin="5,0,5,5" Background="#3E3E42" Foreground="White" BorderThickness="0" Padding="2" TextChanged="VertexCoordinate_TextChanged"/>
+                        <TextBox x:Name="TxtEasting" Margin="5,0,5,5" Background="{StaticResource BrBorder}" Foreground="White" BorderThickness="0" Padding="2" TextChanged="VertexCoordinate_TextChanged"/>
                         <TextBlock Text="Elevation:" Margin="5,0"/>
-                        <TextBox x:Name="TxtElevation" Margin="5,0,5,5" Background="#3E3E42" Foreground="White" BorderThickness="0" Padding="2" TextChanged="VertexCoordinate_TextChanged"/>
+                        <TextBox x:Name="TxtElevation" Margin="5,0,5,5" Background="{StaticResource BrBorder}" Foreground="White" BorderThickness="0" Padding="2" TextChanged="VertexCoordinate_TextChanged"/>
 
-                        <Border Background="#3E3E42" Margin="5,5,5,5" Padding="5" CornerRadius="2">
+                        <Border Background="{StaticResource BrBorder}" Margin="5,5,5,5" Padding="5" CornerRadius="2">
                             <StackPanel>
-                                <TextBlock x:Name="LblSlopePrev" Text="Slope from Prev: N/A" Foreground="#B0B0B0" Margin="0,0,0,2" FontSize="11"/>
-                                <TextBlock x:Name="LblSlopeNext" Text="Slope to Next: N/A" Foreground="#B0B0B0" FontSize="11"/>
+                                <TextBlock x:Name="LblSlopePrev" Text="Slope from Prev: N/A" Foreground="{StaticResource BrTextSecondary}" Margin="0,0,0,2" FontSize="11"/>
+                                <TextBlock x:Name="LblSlopeNext" Text="Slope to Next: N/A" Foreground="{StaticResource BrTextSecondary}" FontSize="11"/>
                             </StackPanel>
                         </Border>
 
-                        <Button Content="Save Vertex" Click="SavePointButton_Click" Background="#28A745" Foreground="White" BorderThickness="0" FontWeight="Bold" Margin="5,10,5,5" Padding="5"/>
+                        <Button Content="Save Vertex" Click="SavePointButton_Click" Background="{StaticResource BrSuccess}" Foreground="White" BorderThickness="0" FontWeight="Bold" Margin="5,10,5,5" Padding="5"/>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
             </Grid>
 
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="#3E3E42"/>
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="{StaticResource BrBorder}"/>
 
             <!-- Right: Viewer -->
-            <Border Grid.Column="2" BorderThickness="1" BorderBrush="#3E3E42" Background="#121212" Margin="5,0,0,0">
+            <Border Grid.Column="2" BorderThickness="1" BorderBrush="{StaticResource BrBorder}" Background="#121212" Margin="5,0,0,0">
                 <Grid>
-                    <TextBlock Text="Figure Viewer" Margin="10" FontWeight="Bold" Foreground="#888888"/>
+                    <TextBlock Text="Figure Viewer" Margin="10" FontWeight="Bold" Foreground="{StaticResource BrTextMuted}"/>
                     <Canvas x:Name="FigureCanvas" Margin="10,30,10,10" SizeChanged="FigureCanvas_SizeChanged" ClipToBounds="True"/>
                 </Grid>
             </Border>

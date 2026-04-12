@@ -1,0 +1,226 @@
+<Window x:Class="RCS.Cogo.Wpf.Views.AsBuilt.NewJobWizardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="New As-Built Job — Setup Wizard"
+        Width="660" Height="600"
+        WindowStartupLocation="CenterOwner"
+        Background="#12121F" ResizeMode="NoResize"
+        WindowStyle="None" AllowsTransparency="True">
+
+    <Window.Resources>
+        <Style x:Key="WizBtn" TargetType="Button">
+            <Setter Property="Background" Value="#4A90E2"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding"    Value="20,9"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"     Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#5BA0F2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Foreground" Value="#7A7A9A"/>
+            <Setter Property="Margin"     Value="0,0,0,4"/>
+        </Style>
+        <Style x:Key="FieldBox" TargetType="TextBox">
+            <Setter Property="Background"   Value="#1A1A2E"/>
+            <Setter Property="Foreground"   Value="#E8E8F0"/>
+            <Setter Property="BorderBrush"  Value="#3A3A5A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontFamily"   Value="Segoe UI"/>
+            <Setter Property="FontSize"     Value="12"/>
+            <Setter Property="Padding"      Value="8,6"/>
+            <Setter Property="Margin"       Value="0,0,0,12"/>
+        </Style>
+    </Window.Resources>
+
+    <Border BorderBrush="#2A2A45" BorderThickness="1" CornerRadius="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>   <!-- Title bar -->
+                <RowDefinition Height="Auto"/>   <!-- Step indicator -->
+                <RowDefinition Height="*"/>      <!-- Step content -->
+                <RowDefinition Height="Auto"/>   <!-- Navigation buttons -->
+            </Grid.RowDefinitions>
+
+            <!-- Title bar -->
+            <Border Grid.Row="0" Background="#1A1A2E" CornerRadius="10,10,0,0"
+                    Padding="24,16" MouseDown="TitleBar_MouseDown">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="🏗  New As-Built Job" FontSize="18" FontWeight="Bold"
+                                   Foreground="#E8E8F0" FontFamily="Segoe UI"/>
+                        <TextBlock x:Name="TxtStepTitle" Text="Step 1 of 4 — Job Identity"
+                                   FontSize="11" Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,4,0,0"/>
+                    </StackPanel>
+                    <Button Content="✕" HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Background="Transparent" Foreground="#7A7A9A" BorderThickness="0"
+                            FontSize="16" Cursor="Hand" Click="BtnClose_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- Step pip indicator -->
+            <Border Grid.Row="1" Background="#12121F" Padding="24,10" BorderBrush="#2A2A45" BorderThickness="0,0,0,1">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Border x:Name="Pip1" Width="32" Height="8" CornerRadius="4" Background="#4A90E2" Margin="4,0"/>
+                    <Border x:Name="Pip2" Width="32" Height="8" CornerRadius="4" Background="#2A2A45" Margin="4,0"/>
+                    <Border x:Name="Pip3" Width="32" Height="8" CornerRadius="4" Background="#2A2A45" Margin="4,0"/>
+                    <Border x:Name="Pip4" Width="32" Height="8" CornerRadius="4" Background="#2A2A45" Margin="4,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Step content area -->
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                <Grid Margin="28,20">
+
+                    <!-- Step 1: Job Identity -->
+                    <StackPanel x:Name="Step1">
+                        <TextBlock Text="JOB IDENTITY" Style="{StaticResource FieldLabel}" FontWeight="SemiBold" Margin="0,0,0,14"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="16"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Job Number / Avail #" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="TxtJobNumber" Style="{StaticResource FieldBox}"/>
+                                <TextBlock Text="Drafter" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="TxtDrafter"  Style="{StaticResource FieldBox}"/>
+                                <TextBlock Text="Field Date" Style="{StaticResource FieldLabel}"/>
+                                <DatePicker x:Name="DtpFieldDate"
+                                            Background="#1A1A2E" Foreground="#E8E8F0"
+                                            BorderBrush="#3A3A5A" BorderThickness="1"
+                                            FontFamily="Segoe UI" FontSize="12" Margin="0,0,0,12"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Client / Project Name" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="TxtClientName" Style="{StaticResource FieldBox}"/>
+                                <TextBlock Text="Utility Owner" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="TxtUtilityOwner" Style="{StaticResource FieldBox}"/>
+                                <TextBlock Text="County / Municipality" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="TxtCounty" Style="{StaticResource FieldBox}"/>
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Text="Checker" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="TxtChecker" Style="{StaticResource FieldBox}"/>
+                    </StackPanel>
+
+                    <!-- Step 2: Coordinate Environment -->
+                    <StackPanel x:Name="Step2" Visibility="Collapsed">
+                        <TextBlock Text="COORDINATE ENVIRONMENT" Style="{StaticResource FieldLabel}" FontWeight="SemiBold" Margin="0,0,0,14"/>
+                        <TextBlock Text="How are coordinates recorded in the field data?" FontSize="12" Foreground="#E8E8F0" FontFamily="Segoe UI" Margin="0,0,0,16" TextWrapping="Wrap"/>
+
+                        <RadioButton x:Name="RbStatePlane" Content="🗺  State Plane Projection (e.g. Florida East EPSG:2236)"
+                                     Foreground="#E8E8F0" FontFamily="Segoe UI" FontSize="13" IsChecked="True" Margin="0,0,0,12"/>
+                        <RadioButton x:Name="RbLocalGrid" Content="📐  Local Assumed Grid (Northing/Easting from arbitrary origin)"
+                                     Foreground="#E8E8F0" FontFamily="Segoe UI" FontSize="13" Margin="0,0,0,12"/>
+                        <RadioButton x:Name="RbGps" Content="🌐  GPS / Lat-Long (WGS84)"
+                                     Foreground="#E8E8F0" FontFamily="Segoe UI" FontSize="13" Margin="0,0,0,12"/>
+                        <RadioButton x:Name="RbUnknown" Content="❓  Unknown — detect automatically"
+                                     Foreground="#7A7A9A" FontFamily="Segoe UI" FontSize="13" Margin="0,0,0,24"/>
+
+                        <TextBlock Text="EPSG Code (optional, State Plane only)" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="TxtEpsg" Style="{StaticResource FieldBox}"/>
+                    </StackPanel>
+
+                    <!-- Step 3: Import Sources -->
+                    <StackPanel x:Name="Step3" Visibility="Collapsed">
+                        <TextBlock Text="IMPORT SOURCES" Style="{StaticResource FieldLabel}" FontWeight="SemiBold" Margin="0,0,0,14"/>
+                        <TextBlock Text="Select one or more data sources. You can import more later." FontSize="12" Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,0,0,16" TextWrapping="Wrap"/>
+
+                        <!-- PNEZD -->
+                        <Border Background="#1A1A2E" CornerRadius="8" BorderBrush="#2A2A45" BorderThickness="1" Padding="14,10" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="PNEZD / CSV Point File" FontSize="13" FontWeight="SemiBold" Foreground="#E8E8F0" FontFamily="Segoe UI"/>
+                                    <TextBlock Text="Point#, N, E, Elevation, Description" FontSize="11" Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="Browse…" Padding="12,6" Click="BtnImportPnezd_Click"
+                                        Background="#252545" Foreground="#E8E8F0" BorderBrush="#3A3A5A" BorderThickness="1"
+                                        FontFamily="Segoe UI" FontSize="11" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <TextBlock x:Name="TxtPnezdPath" Text="" FontSize="10" Foreground="#2ECC71" FontFamily="Consolas" Margin="4,0,0,8"/>
+
+                        <!-- JEA Excel -->
+                        <Border Background="#1A1A2E" CornerRadius="8" BorderBrush="#2A2A45" BorderThickness="1" Padding="14,10" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="🏛  JEA As-Built Template (.xlsx)" FontSize="13" FontWeight="SemiBold" Foreground="#56CCF2" FontFamily="Segoe UI"/>
+                                    <TextBlock Text="Filled JEA Excel form" FontSize="11" Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="Browse…" Padding="12,6" Click="BtnImportJea_Click"
+                                        Background="#252545" Foreground="#56CCF2" BorderBrush="#3A3A5A" BorderThickness="1"
+                                        FontFamily="Segoe UI" FontSize="11" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <TextBlock x:Name="TxtJeaPath" Text="" FontSize="10" Foreground="#2ECC71" FontFamily="Consolas" Margin="4,0,0,8"/>
+
+                        <!-- COGO Script -->
+                        <Border Background="#1A1A2E" CornerRadius="8" BorderBrush="#2A2A45" BorderThickness="1" Padding="14,10" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="COGO Script (.cogo / .txt)" FontSize="13" FontWeight="SemiBold" Foreground="#E8E8F0" FontFamily="Segoe UI"/>
+                                    <TextBlock Text="ST / BD / PIPE batch script" FontSize="11" Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="Browse…" Padding="12,6" Click="BtnImportCogo_Click"
+                                        Background="#252545" Foreground="#E8E8F0" BorderBrush="#3A3A5A" BorderThickness="1"
+                                        FontFamily="Segoe UI" FontSize="11" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <TextBlock x:Name="TxtCogoPath" Text="" FontSize="10" Foreground="#2ECC71" FontFamily="Consolas" Margin="4,0,0,8"/>
+
+                        <CheckBox x:Name="ChkBlankStart" Content="Start from blank (no import)" Foreground="#7A7A9A" FontFamily="Segoe UI" FontSize="12" Margin="0,8,0,0"/>
+                    </StackPanel>
+
+                    <!-- Step 4: Output Targets (Deliverables) -->
+                    <StackPanel x:Name="Step4" Visibility="Collapsed">
+                        <TextBlock Text="EXPECTED DELIVERABLES" Style="{StaticResource FieldLabel}" FontWeight="SemiBold" Margin="0,0,0,14"/>
+                        <TextBlock Text="Select the outputs this job will need to produce." FontSize="12" Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,0,0,16" TextWrapping="Wrap"/>
+
+                        <CheckBox x:Name="ChkDxf"      Content="✏  DXF Drawing"           IsChecked="True"  Foreground="#E8E8F0" FontFamily="Segoe UI" FontSize="13" Margin="0,0,0,12"/>
+                        <CheckBox x:Name="ChkPdf"      Content="📄  PDF Report"             IsChecked="True"  Foreground="#E8E8F0" FontFamily="Segoe UI" FontSize="13" Margin="0,0,0,12"/>
+                        <CheckBox x:Name="ChkPnezd"    Content="📋  PNEZD Coordinate List" IsChecked="True"  Foreground="#E8E8F0" FontFamily="Segoe UI" FontSize="13" Margin="0,0,0,12"/>
+                        <CheckBox x:Name="ChkLandXml"  Content="🌐  LandXML"               IsChecked="False" Foreground="#7A7A9A" FontFamily="Segoe UI" FontSize="13" Margin="0,0,0,12"/>
+                        <CheckBox x:Name="ChkParts"    Content="🔧  Parts / Material Report" IsChecked="True" Foreground="#E8E8F0" FontFamily="Segoe UI" FontSize="13" Margin="0,0,0,12"/>
+                        <CheckBox x:Name="ChkCert"     Content="📜  Certification Package"  IsChecked="False" Foreground="#7A7A9A" FontFamily="Segoe UI" FontSize="13" Margin="0,0,0,24"/>
+
+                        <Border Background="#1A1A2E" CornerRadius="8" BorderBrush="#2ECC71" BorderThickness="1" Padding="14,10">
+                            <TextBlock Text="✅  Deliverable selections can be changed at any time in the Deliverables step."
+                                       FontSize="11" Foreground="#7A7A9A" FontFamily="Segoe UI" TextWrapping="Wrap"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- Navigation -->
+            <Border Grid.Row="3" Background="#1A1A2E" CornerRadius="0,0,10,10"
+                    Padding="24,14" BorderBrush="#2A2A45" BorderThickness="0,1,0,0">
+                <Grid>
+                    <Button x:Name="BtnBack" Content="← Back" Style="{StaticResource WizBtn}"
+                            HorizontalAlignment="Left" Background="#252545"
+                            Click="BtnBack_Click" IsEnabled="False"/>
+                    <Button x:Name="BtnNext" Content="Next →" Style="{StaticResource WizBtn}"
+                            HorizontalAlignment="Right" Click="BtnNext_Click"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

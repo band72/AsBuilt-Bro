@@ -3,11 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Name="Root"
         Title="Edit Installed Asset" Height="800" Width="600"
-        Background="#1E1E1E" Foreground="#D4D4D4"
+        Background="{StaticResource BrBg}" Foreground="{StaticResource BrTextPrimary}"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         ShowInTaskbar="False">
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <!-- BoolToVis converter is global — defined in RcsTheme.xaml -->
     </Window.Resources>
     
     <Grid Margin="20">
@@ -30,7 +30,7 @@
             <TextBox Grid.Column="1" Text="{Binding PartKey}" IsReadOnly="False" Background="#333" Foreground="White" Padding="5"/>
         </Grid>
 
-        <Border Grid.Row="2" BorderBrush="#3E3E42" BorderThickness="1" CornerRadius="4" Margin="0,20">
+        <Border Grid.Row="2" BorderBrush="{StaticResource BrBorder}" BorderThickness="1" CornerRadius="4" Margin="0,20">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="10">
                     <!-- Dynamic form rows -->
@@ -41,7 +41,7 @@
 
                     <StackPanel>
                         <TextBlock Text="Feature Type:" Margin="0,5,0,0"/>
-                        <TextBox Text="{Binding FeatureType}" Background="#252526" Foreground="White" Padding="5"/>
+                        <TextBox Text="{Binding FeatureType}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
@@ -67,7 +67,7 @@
 
                     <StackPanel>
                         <TextBlock Text="Size Secondary:" Margin="0,5,0,0"/>
-                        <TextBox Text="{Binding SizeSecondary}" Background="#252526" Foreground="White" Padding="5"/>
+                        <TextBox Text="{Binding SizeSecondary}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
@@ -102,7 +102,7 @@
 
                     <StackPanel>
                         <TextBlock Text="Invert Elevations w/ Directions:" Margin="0,5,0,0"/>
-                        <TextBox Text="{Binding InvertElevationsWithDirections}" Background="#252526" Foreground="White" Padding="5"/>
+                        <TextBox Text="{Binding InvertElevationsWithDirections}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                     </StackPanel>
                     
                     <StackPanel>
@@ -116,7 +116,7 @@
                     </StackPanel>
 
                     <!-- Point Geometry (Structures, Valves, Meters, etc) -->
-                    <Grid Margin="0,5,0,0" Visibility="{Binding Path=IsPointGeometry, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid Margin="0,5,0,0" Visibility="{Binding Path=IsPointGeometry, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -124,11 +124,11 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,5,0">
                             <TextBlock Text="Northing:"/>
-                            <TextBox Text="{Binding Northing, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBox Text="{Binding Northing, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="5,0,5,0">
                             <TextBlock Text="Easting:"/>
-                            <TextBox Text="{Binding Easting, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBox Text="{Binding Easting, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Margin="5,0,0,0">
                             <TextBlock Text="Top/Grade Elev:"/>
@@ -137,14 +137,14 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Text="{Binding TopElevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5" Margin="0,0,2,0"/>
-                                <TextBox Grid.Column="1" Text="{Binding GradeElevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5" Margin="2,0,0,0"/>
+                                <TextBox Grid.Column="0" Text="{Binding TopElevation, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5" Margin="0,0,2,0"/>
+                                <TextBox Grid.Column="1" Text="{Binding GradeElevation, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5" Margin="2,0,0,0"/>
                             </Grid>
                         </StackPanel>
                     </Grid>
 
                     <!-- Line Geometry (Pipes) -->
-                    <Grid Margin="0,15,0,0" Visibility="{Binding Path=IsPipe, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid Margin="0,15,0,0" Visibility="{Binding Path=IsPipe, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -152,11 +152,11 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,5,0">
                             <TextBlock Text="Upstream Invert:"/>
-                            <TextBox Text="{Binding UpstreamInvert, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBox Text="{Binding UpstreamInvert, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="5,0,5,0">
                             <TextBlock Text="Upstream Grade:"/>
-                            <TextBox Text="{Binding UpstreamGrade, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBox Text="{Binding UpstreamGrade, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Margin="5,0,0,0">
                             <TextBlock Text="Length / Slope:"/>
@@ -165,13 +165,13 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Text="{Binding Length, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5" Margin="0,0,2,0"/>
-                                <TextBox Grid.Column="1" Text="{Binding Slope, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5" Margin="2,0,0,0"/>
+                                <TextBox Grid.Column="0" Text="{Binding Length, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5" Margin="0,0,2,0"/>
+                                <TextBox Grid.Column="1" Text="{Binding Slope, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5" Margin="2,0,0,0"/>
                             </Grid>
                         </StackPanel>
                     </Grid>
 
-                    <Grid Margin="0,5,0,0" Visibility="{Binding Path=IsPipe, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid Margin="0,5,0,0" Visibility="{Binding Path=IsPipe, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -179,28 +179,28 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,5,0">
                             <TextBlock Text="Downstream Invert:"/>
-                            <TextBox Text="{Binding DownstreamInvert, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBox Text="{Binding DownstreamInvert, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="5,0,5,0">
                             <TextBlock Text="Downstream Grade:"/>
-                            <TextBox Text="{Binding DownstreamGrade, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBox Text="{Binding DownstreamGrade, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Margin="5,0,0,0">
                         </StackPanel>
                     </Grid>
 
-                    <StackPanel Margin="0,5,0,0" Visibility="{Binding Path=IsPointGeometry, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <StackPanel Margin="0,5,0,0" Visibility="{Binding Path=IsPointGeometry, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
                         <TextBlock Text="Quantity:"/>
-                        <TextBox Text="{Binding Quantity}" Background="#252526" Foreground="White" Padding="5"/>
+                        <TextBox Text="{Binding Quantity}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                     </StackPanel>
 
                     <!-- Pipe Crossing Geometry -->
-                    <StackPanel Visibility="{Binding Path=IsPipeCrossing, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <StackPanel Visibility="{Binding Path=IsPipeCrossing, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
                         <TextBlock Text="Crossing Specific Info" FontWeight="Bold" Foreground="LimeGreen" Margin="0,15,0,5"/>
 
                         <StackPanel Margin="0,5,0,0">
                             <TextBlock Text="Crossing Number:"/>
-                            <TextBox Text="{Binding CrossingNumber}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBox Text="{Binding CrossingNumber}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                         </StackPanel>
                         
                         <Grid Margin="0,5,0,0">
@@ -210,11 +210,11 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,5,0">
                                 <TextBlock Text="Upper Pipe Type:"/>
-                                <TextBox Text="{Binding UpperPipeType}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding UpperPipeType}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="5,0,0,0">
                                 <TextBlock Text="Lower Pipe Type:"/>
-                                <TextBox Text="{Binding LowerPipeType}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding LowerPipeType}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                         </Grid>
                         
@@ -225,17 +225,17 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,5,0">
                                 <TextBlock Text="Upper Pipe Size:"/>
-                                <TextBox Text="{Binding UpperPipeSize}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding UpperPipeSize}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="5,0,0,0">
                                 <TextBlock Text="Lower Pipe Size:"/>
-                                <TextBox Text="{Binding LowerPipeSize}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding LowerPipeSize}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                         </Grid>
 
                         <StackPanel Margin="0,5,0,0">
                             <TextBlock Text="Finished Grade Elevation (Feet):"/>
-                            <TextBox Text="{Binding GradeElevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                            <TextBox Text="{Binding GradeElevation, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                         </StackPanel>
 
                         <Grid Margin="0,5,0,0">
@@ -245,11 +245,11 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,5,0">
                                 <TextBlock Text="Upper Pipe Top Elev:"/>
-                                <TextBox Text="{Binding UpperPipeTopElevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding UpperPipeTopElevation, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="5,0,0,0">
                                 <TextBlock Text="Lower Pipe Top Elev:"/>
-                                <TextBox Text="{Binding LowerPipeTopElevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding LowerPipeTopElevation, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                         </Grid>
 
@@ -260,11 +260,11 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,5,0">
                                 <TextBlock Text="Cover to Top of Upper Pipe:"/>
-                                <TextBox Text="{Binding UpperCover, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding UpperCover, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="5,0,0,0">
                                 <TextBlock Text="Cover to Top of Lower Pipe:"/>
-                                <TextBox Text="{Binding LowerCover, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding LowerCover, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                         </Grid>
 
@@ -275,11 +275,11 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,5,0">
                                 <TextBlock Text="Upper Pipe Bottom Elev:"/>
-                                <TextBox Text="{Binding UpperPipeBottomElevation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding UpperPipeBottomElevation, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="5,0,0,0">
                                 <TextBlock Text="Separation Between Pipes:"/>
-                                <TextBox Text="{Binding Separation, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding Separation, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                         </Grid>
 
@@ -290,11 +290,11 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,5,0">
                                 <TextBlock Text="Northing:"/>
-                                <TextBox Text="{Binding Northing, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding Northing, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="5,0,0,0">
                                 <TextBlock Text="Easting:"/>
-                                <TextBox Text="{Binding Easting, StringFormat=\{0:F3\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding Easting, StringFormat=\{0:F3\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                         </Grid>
 
@@ -305,11 +305,11 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,5,0">
                                 <TextBlock Text="Latitude:"/>
-                                <TextBox Text="{Binding Latitude, StringFormat=\{0:F6\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding Latitude, StringFormat=\{0:F6\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="5,0,0,0">
                                 <TextBlock Text="Longitude:"/>
-                                <TextBox Text="{Binding Longitude, StringFormat=\{0:F6\}}" Background="#252526" Foreground="White" Padding="5"/>
+                                <TextBox Text="{Binding Longitude, StringFormat=\{0:F6\}}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>
@@ -327,15 +327,15 @@
 
                     <StackPanel Margin="0,5,0,0">
                         <TextBlock Text="Year Manufactured:"/>
-                        <TextBox Text="{Binding YearManufactured}" Background="#252526" Foreground="White" Padding="5"/>
+                        <TextBox Text="{Binding YearManufactured}" Background="{StaticResource BrSurface}" Foreground="White" Padding="5"/>
                     </StackPanel>
                     <!-- Figure Vertices (Figures) -->
-                    <Grid Margin="0,15,0,0" Visibility="{Binding Path=IsFigure, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid Margin="0,15,0,0" Visibility="{Binding Path=IsFigure, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
                         <StackPanel>
-                            <TextBlock Text="Figure Vertices:" FontWeight="Bold" Foreground="#007ACC" Margin="0,0,0,5"/>
+                            <TextBlock Text="Figure Vertices:" FontWeight="Bold" Foreground="{StaticResource BrAccent}" Margin="0,0,0,5"/>
                             <DataGrid ItemsSource="{Binding Path=FigureVertices, RelativeSource={RelativeSource AncestorType=Window}}" 
                                       AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" MaxHeight="200"
-                                      Background="#252526" RowBackground="#252526" Foreground="#D4D4D4" BorderThickness="1" BorderBrush="#3E3E42">
+                                      Background="{StaticResource BrSurface}" RowBackground="{StaticResource BrSurface}" Foreground="{StaticResource BrTextPrimary}" BorderThickness="1" BorderBrush="{StaticResource BrBorder}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Order" Binding="{Binding OrderIndex}" IsReadOnly="True" Width="50"/>
                                     <DataGridTextColumn Header="Point ID" Binding="{Binding PointId}" IsReadOnly="True" Width="80"/>
@@ -355,11 +355,11 @@
         
         <Grid Grid.Row="4">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Materials" Click="Materials_Click" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
-                <Button Content="Universal" Click="Universal_Click" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" ToolTip="Apply these metadata settings to all other records in the current grid" Foreground="White"/>
-                <Button Content="Delete" Click="Delete_Click" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
-                <Button Content="Cancel" Click="Cancel_Click" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White"/>
-                <Button Content="Save" Click="Save_Click" Padding="10,5" Background="#2D2D30" Foreground="White"/>
+                <Button Content="Materials" Click="Materials_Click" Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White"/>
+                <Button Content="Universal" Click="Universal_Click" Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" ToolTip="Apply these metadata settings to all other records in the current grid" Foreground="White"/>
+                <Button Content="Delete" Click="Delete_Click" Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White"/>
+                <Button Content="Cancel" Click="Cancel_Click" Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White"/>
+                <Button Content="Save" Click="Save_Click" Padding="10,5" Background="{StaticResource BrHeader}" Foreground="White"/>
             </StackPanel>
         </Grid>
     </Grid>

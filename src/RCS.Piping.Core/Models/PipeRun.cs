@@ -16,10 +16,14 @@ public class PipeRun
     public string Material { get; set; } = string.Empty;
     public double? InvertStart { get; set; }
     public double? InvertEnd { get; set; }
-    
+
+    // Computed (populated by PipeRunsPhaseView.BtnComputeSlopes)
+    public double SlopePercent   { get; set; }
+    public double ComputedLength { get; set; }
+
     // Flow Logic
     public bool FlowLocked { get; set; }
     public bool FlowReversed { get; set; }
-    
+
     public override string ToString() => $"Pipe {Id} ({FromPointId} -> {ToPointId}) D={Diameter}";
 }

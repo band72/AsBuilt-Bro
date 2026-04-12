@@ -1,0 +1,124 @@
+<UserControl x:Class="RCS.Cogo.Wpf.Views.DiagnosticsPane"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border Background="{StaticResource BrHeader}"
+            BorderBrush="{StaticResource BrBorder}"
+            BorderThickness="0,1,0,0">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- ── Tab bar ──────────────────────────────────────────────────── -->
+            <TabControl Grid.Row="0" Grid.RowSpan="2"
+                        Background="Transparent"
+                        BorderThickness="0">
+                <!-- Errors tab -->
+                <TabItem Header="🔴 Errors" x:Name="TabErrors">
+                    <TabItem.Style>
+                        <Style TargetType="TabItem" BasedOn="{StaticResource {x:Type TabItem}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ErrorCount}" Value="0">
+                                    <Setter Property="Foreground" Value="{StaticResource BrTextMuted}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TabItem.Style>
+                    <ListBox ItemsSource="{Binding Errors}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             MaxHeight="160"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="4,3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="🔴" FontSize="11" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding TargetId}" FontSize="10"
+                                               Foreground="{StaticResource BrTextMuted}"
+                                               Margin="0,0,8,0" VerticalAlignment="Center"
+                                               MinWidth="60"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Message}" FontSize="11"
+                                               Foreground="{StaticResource BrError}"
+                                               TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </TabItem>
+
+                <!-- Warnings tab -->
+                <TabItem Header="⚠ Warnings">
+                    <ListBox ItemsSource="{Binding Warnings}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             MaxHeight="160"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="4,3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="⚠" FontSize="11" Margin="0,0,6,0" VerticalAlignment="Center"
+                                               Foreground="{StaticResource BrAmber}"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding TargetId}" FontSize="10"
+                                               Foreground="{StaticResource BrTextMuted}"
+                                               Margin="0,0,8,0" VerticalAlignment="Center"
+                                               MinWidth="60"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Message}" FontSize="11"
+                                               Foreground="{StaticResource BrAmber}"
+                                               TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </TabItem>
+
+                <!-- Info / output log tab -->
+                <TabItem Header="ℹ Info">
+                    <TextBox Text="{Binding OutputLog, Mode=OneWay}"
+                             IsReadOnly="True"
+                             Style="{StaticResource MonoTextBox}"
+                             Height="Auto"
+                             MaxHeight="160"
+                             AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto"
+                             Background="{StaticResource BrBg}"/>
+                </TabItem>
+
+                <!-- Audit trail tab -->
+                <TabItem Header="🗒 Audit">
+                    <ListBox ItemsSource="{Binding AuditEntries}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             MaxHeight="160"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="4,2">
+                                    <TextBlock Text="{Binding Timestamp, StringFormat='HH:mm:ss'}"
+                                               FontFamily="{StaticResource FfMono}"
+                                               FontSize="10"
+                                               Foreground="{StaticResource BrTextMuted}"
+                                               Margin="0,0,10,0"/>
+                                    <TextBlock Text="{Binding Message}"
+                                               FontSize="11"
+                                               Foreground="{StaticResource BrTextSecondary}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Border>
+</UserControl>

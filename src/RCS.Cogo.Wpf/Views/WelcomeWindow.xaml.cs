@@ -14,7 +14,7 @@ namespace RCS.Cogo.Wpf.Views;
 /// </summary>
 public partial class WelcomeWindow : Window
 {
-    public enum WelcomeAction { None, New, Open, ImportData, OpenRecent }
+    public enum WelcomeAction { None, New, Open, ImportData, OpenRecent, NewAsBuilt }
 
     /// <summary>Action the user elected. Read by ShellWindow after ShowDialog().</summary>
     public WelcomeAction SelectedAction { get; private set; } = WelcomeAction.None;
@@ -63,6 +63,12 @@ public partial class WelcomeWindow : Window
     {
         SelectedAction = WelcomeAction.ImportData;
         DialogResult = true;
+    }
+
+    private void OnNewAsBuilt(object sender, RoutedEventArgs e)
+    {
+        SelectedAction = WelcomeAction.NewAsBuilt;
+        DialogResult   = true;
     }
 
     private void OnSkip(object sender, RoutedEventArgs e)

@@ -3,121 +3,97 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Project Details" Height="660" Width="700"
         WindowStartupLocation="CenterOwner" ResizeMode="CanResizeWithGrip"
-        Background="#1E1E1E" Foreground="#D4D4D4" MinWidth="520" MinHeight="500">
-    <Window.Resources>
-        <Style TargetType="TextBox">
-            <Setter Property="Background"   Value="#252526"/>
-            <Setter Property="Foreground"   Value="#D4D4D4"/>
-            <Setter Property="BorderBrush"  Value="#3E3E42"/>
-            <Setter Property="Height"       Value="32"/>
-            <Setter Property="Padding"      Value="8,6"/>
-            <Setter Property="FontSize"     Value="13"/>
-            <Setter Property="Margin"       Value="0,0,0,12"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-        <Style TargetType="ComboBox">
-            <Setter Property="Background"   Value="#252526"/>
-            <Setter Property="Foreground"   Value="#D4D4D4"/>
-            <Setter Property="BorderBrush"  Value="#3E3E42"/>
-            <Setter Property="Height"       Value="32"/>
-            <Setter Property="FontSize"     Value="13"/>
-            <Setter Property="Margin"       Value="0,0,0,12"/>
-        </Style>
-        <Style TargetType="TextBlock">
-            <Setter Property="FontSize"     Value="12"/>
-            <Setter Property="FontWeight"   Value="SemiBold"/>
-            <Setter Property="Foreground"   Value="#B0B0B0"/>
-            <Setter Property="Margin"       Value="0,8,0,3"/>
-        </Style>
-        <Style TargetType="CheckBox">
-            <Setter Property="Foreground"   Value="#D4D4D4"/>
-            <Setter Property="FontSize"     Value="13"/>
-            <Setter Property="Margin"       Value="0,4"/>
-        </Style>
-    </Window.Resources>
+        MinWidth="520" MinHeight="500">
 
     <Grid>
-        <!-- Dark header banner -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="54"/>
+            <RowDefinition Height="52"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="#252526" BorderBrush="#007ACC" BorderThickness="0,0,0,2">
+        <!-- ── Header ───────────────────────────────────────────────── -->
+        <Border Grid.Row="0" Style="{StaticResource WindowHeaderBand}">
             <TextBlock Text="📁  Project Details"
-                       VerticalAlignment="Center" HorizontalAlignment="Left"
-                       Margin="18,0,0,0"
-                       FontSize="18" FontWeight="Bold" Foreground="#FFFFFF"/>
+                       VerticalAlignment="Center"
+                       FontSize="16" FontWeight="SemiBold"
+                       Foreground="{StaticResource BrTextPrimary}"/>
         </Border>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="18,12,18,0">
+        <!-- ── Form ─────────────────────────────────────────────────── -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20,16,20,0">
             <StackPanel>
-                <TextBlock Text="PROJECT NAME (Required)"/>
-                <TextBox Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <TextBlock Text="AVAILABILITY NUMBER (AvailNo)"/>
-                <TextBox Text="{Binding AvailNo, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Style="{StaticResource FieldLabel}" Text="PROJECT NAME  (Required)"/>
+                <TextBox Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,0,12"/>
 
-                <Grid>
+                <TextBlock Style="{StaticResource FieldLabel}" Text="AVAILABILITY NUMBER (AvailNo)"/>
+                <TextBox Text="{Binding AvailNo, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,0,12"/>
+
+                <Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="16"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
-                        <TextBlock Text="UTILITY TYPE"/>
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="UTILITY TYPE"/>
                         <ComboBox SelectedItem="{Binding Utility}" ItemsSource="{Binding UtilityTypes}"/>
                     </StackPanel>
                     <StackPanel Grid.Column="2">
-                        <TextBlock Text="UNITS"/>
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="UNITS"/>
                         <ComboBox SelectedItem="{Binding Units}" ItemsSource="{Binding UnitTypes}"/>
                     </StackPanel>
                 </Grid>
 
-                <TextBlock Text="REVISION"/>
-                <TextBox Text="{Binding Revision, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Style="{StaticResource FieldLabel}" Text="REVISION"/>
+                <TextBox Text="{Binding Revision, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,0,12"/>
 
-                <TextBlock Text="SAVE LOCATION (auto-generates folder)"/>
-                <Grid Margin="0,0,0,12">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="SAVE LOCATION  (auto-generates folder)"/>
+                <Grid Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="8"/>
                         <ColumnDefinition Width="44"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" Margin="0"
+                    <TextBox Grid.Column="0"
                              Text="{Binding SaveLocation, UpdateSourceTrigger=PropertyChanged}"/>
                     <Button Grid.Column="2" Content="…" Height="32"
                             Click="BrowseFolder_Click"
-                            Background="#3E3E42" Foreground="White"
-                            BorderThickness="0" FontSize="16"/>
+                            Style="{StaticResource BtnGhost}"
+                            FontSize="16"/>
                 </Grid>
 
-                <GroupBox Header="Deliverables Checklist" Margin="0,8,0,16"
-                          Foreground="#D4D4D4" BorderBrush="#3E3E42" Padding="10,8">
+                <!-- Deliverables -->
+                <TextBlock Style="{StaticResource TbSection}" Text="DELIVERABLES CHECKLIST"/>
+                <Border Style="{StaticResource Card}">
                     <StackPanel>
                         <CheckBox Content="Certification Report (PDF)"
-                                  IsChecked="{Binding Settings.RequirePdfReport}"/>
+                                  IsChecked="{Binding Settings.RequirePdfReport}"
+                                  Margin="0,0,0,6"/>
                         <CheckBox Content="LandXML Export"
-                                  IsChecked="{Binding Settings.RequireLandXml}"/>
+                                  IsChecked="{Binding Settings.RequireLandXml}"
+                                  Margin="0,0,0,6"/>
                         <CheckBox Content="CSV Point Export"
                                   IsChecked="{Binding Settings.RequireCsv}"/>
                     </StackPanel>
-                </GroupBox>
+                </Border>
+
             </StackPanel>
         </ScrollViewer>
 
-        <!-- Footer buttons -->
-        <Border Grid.Row="2" Background="#252526" BorderBrush="#3E3E42" BorderThickness="0,1,0,0" Padding="18,12">
+        <!-- ── Footer ───────────────────────────────────────────────── -->
+        <Border Grid.Row="2" Style="{StaticResource WindowFooterBand}">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Save Details" IsDefault="True" Click="Save_Click"
-                        Width="120" Height="34" Margin="0,0,12,0"
-                        Background="#007ACC" Foreground="White" BorderThickness="0"
-                        FontSize="13" FontWeight="SemiBold"/>
+                        Style="{StaticResource BtnPrimary}"
+                        Width="120" Margin="0,0,10,0"/>
                 <Button Content="Cancel" IsCancel="True"
-                        Width="90" Height="34"
-                        Background="#3E3E42" Foreground="White" BorderThickness="0"
-                        FontSize="13"/>
+                        Style="{StaticResource BtnGhost}"
+                        Width="90"/>
             </StackPanel>
         </Border>
     </Grid>

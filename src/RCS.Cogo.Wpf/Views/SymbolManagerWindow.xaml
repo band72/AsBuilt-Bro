@@ -7,7 +7,7 @@
         xmlns:localViews="clr-namespace:RCS.Cogo.Wpf.Views"
         mc:Ignorable="d"
         Title="Symbol Code Editor" Height="450" Width="800"
-        WindowStartupLocation="CenterOwner" Background="#1E1E1E" Foreground="White">
+        WindowStartupLocation="CenterOwner" Background="{StaticResource BrBg}" Foreground="White">
         
     <Window.Resources>
         <localViews:StringToResourceTemplateSelector x:Key="SymbolTemplateSelector" />
@@ -21,25 +21,25 @@
         </Grid.RowDefinitions>
         
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-            <Button Content="Import CSV" Command="{Binding ImportCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
-            <Button Content="Export CSV" Command="{Binding ExportCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
-            <Button Content="Add Symbol Link" Command="{Binding AddCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
-            <Button Content="Delete Selected" Command="{Binding DeleteCommand}" Padding="10,5" Margin="0,0,10,0" Background="#2D2D30" Foreground="White" BorderThickness="1" BorderBrush="#3E3E42"/>
-            <Button Content="Save Changes" Command="{Binding SaveCommand}" Padding="10,5" Background="#007ACC" Foreground="White" FontWeight="Bold" BorderThickness="0"/>
+            <Button Content="Import CSV" Command="{Binding ImportCommand}" Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White" BorderThickness="1" BorderBrush="{StaticResource BrBorder}"/>
+            <Button Content="Export CSV" Command="{Binding ExportCommand}" Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White" BorderThickness="1" BorderBrush="{StaticResource BrBorder}"/>
+            <Button Content="Add Symbol Link" Command="{Binding AddCommand}" Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White" BorderThickness="1" BorderBrush="{StaticResource BrBorder}"/>
+            <Button Content="Delete Selected" Command="{Binding DeleteCommand}" Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White" BorderThickness="1" BorderBrush="{StaticResource BrBorder}"/>
+            <Button Content="Save Changes" Command="{Binding SaveCommand}" Padding="10,5" Background="{StaticResource BrAccentDim}" Foreground="White" FontWeight="Bold" BorderThickness="0"/>
         </StackPanel>
         
         <DataGrid Grid.Row="1" ItemsSource="{Binding Symbols}" SelectedItem="{Binding SelectedSymbol, Mode=TwoWay}" AutoGenerateColumns="False" CanUserAddRows="False"
-                  Background="#2D2D30" Foreground="White" BorderBrush="#3E3E42" HorizontalGridLinesBrush="#3E3E42" VerticalGridLinesBrush="#3E3E42" HeadersVisibility="Column">
+                  Background="{StaticResource BrHeader}" Foreground="White" BorderBrush="{StaticResource BrBorder}" HorizontalGridLinesBrush="#3E3E42" VerticalGridLinesBrush="#3E3E42" HeadersVisibility="Column">
             <DataGrid.Resources>
                 <Style TargetType="DataGridColumnHeader">
-                    <Setter Property="Background" Value="#1E1E1E"/>
+                    <Setter Property="Background" Value="{StaticResource BrBg}"/>
                     <Setter Property="Foreground" Value="White"/>
                     <Setter Property="Padding" Value="5"/>
                     <Setter Property="BorderThickness" Value="1"/>
-                    <Setter Property="BorderBrush" Value="#3E3E42"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource BrBorder}"/>
                 </Style>
                 <Style TargetType="DataGridRow">
-                    <Setter Property="Background" Value="#2D2D30"/>
+                    <Setter Property="Background" Value="{StaticResource BrHeader}"/>
                     <Setter Property="Foreground" Value="Black"/>
                 </Style>
             </DataGrid.Resources>
@@ -60,7 +60,7 @@
                         <DataTemplate>
                             <ComboBox SelectedValue="{Binding Symbol, UpdateSourceTrigger=PropertyChanged}" 
                                       ItemsSource="{Binding Source={x:Static local:SymbolManagerStaticSource.AvailableSymbols}}"
-                                      Background="#1E1E1E" Foreground="White" BorderBrush="#3E3E42">
+                                      Background="{StaticResource BrBg}" Foreground="White" BorderBrush="{StaticResource BrBorder}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" Margin="2">

@@ -1,0 +1,112 @@
+; =============================================================================
+; RCS COGO Piping Script  —  JEA Availability No. W-04471
+; Project:  Oakridge Subdivision Phase 1B Utility Extension
+; Location: 4800-4900 block of Oakridge Blvd, Jacksonville FL 32218
+; Date:     04/12/2025
+; Surveyor: R. Collins, PSM  |  Contractor: Coastal Utility Contractors Inc.
+; Load PNEZD file first, then execute this script to build the network.
+; =============================================================================
+
+; ── WATER MAIN  (12" PVC C900 DR14) ─────────────────────────────────────────
+PRUN START W DIAM 12 MAT PVC-C900 FIG WM-OAKRIDGE-BLVD
+WM-B 1001
+WM-C 1002
+WM-C 1003
+WM-C 1004
+WM-C 1005
+WM-C 1006
+PRUN END
+
+; ── WATER SERVICE LATERALS  (1" copper) ─────────────────────────────────────
+PRUN START W DIAM 1 MAT COPPER FIG WS-SERVICE-A
+WM-B 1010
+WM-C 1011
+PRUN END
+
+PRUN START W DIAM 1 MAT COPPER FIG WS-SERVICE-B
+WM-B 1015
+WM-C 1016
+PRUN END
+
+PRUN START W DIAM 1 MAT COPPER FIG WS-SERVICE-C
+WM-B 1020
+WM-C 1021
+PRUN END
+
+PRUN START W DIAM 1 MAT COPPER FIG WS-SERVICE-D
+WM-B 1025
+WM-C 1026
+PRUN END
+
+PRUN START W DIAM 1 MAT COPPER FIG WS-SERVICE-E
+WM-B 1030
+WM-C 1031
+PRUN END
+
+; ── FIRE HYDRANT LATERALS  (6" DI) ──────────────────────────────────────────
+PRUN START W DIAM 6 MAT DI-CL51 FIG FH-LATERAL-N
+WM-B 1040
+WM-C 1041
+PRUN END
+
+PRUN START W DIAM 6 MAT DI-CL51 FIG FH-LATERAL-S
+WM-B 1045
+WM-C 1046
+PRUN END
+
+; ── SANITARY SEWER MAINLINE  (8" PVC SDR35) ─────────────────────────────────
+PRUN START SS DIAM 8 MAT PVC-SDR35 FIG SS-MAIN-OAKRIDGE
+SS-B 2001
+SS-C 2002 Manhole
+SS-C 2003 Manhole
+SS-C 2004 Manhole
+SS-C 2005 Manhole
+SS-C 2006 Manhole
+PRUN END
+
+; ── SEWER LATERAL SERVICES  (4" PVC SDR35) ─────────────────────────────────
+PRUN START SS DIAM 4 MAT PVC-SDR35 FIG SS-LAT-101
+SS-B 2010
+SS-C 2011
+PRUN END
+
+PRUN START SS DIAM 4 MAT PVC-SDR35 FIG SS-LAT-103
+SS-B 2015
+SS-C 2016
+PRUN END
+
+PRUN START SS DIAM 4 MAT PVC-SDR35 FIG SS-LAT-105
+SS-B 2020
+SS-C 2021
+PRUN END
+
+PRUN START SS DIAM 4 MAT PVC-SDR35 FIG SS-LAT-107
+SS-B 2025
+SS-C 2026
+PRUN END
+
+PRUN START SS DIAM 4 MAT PVC-SDR35 FIG SS-LAT-109
+SS-B 2030
+SS-C 2031
+PRUN END
+
+; ── STORM DRAIN NORTH TRUNK  (18" RCP) ──────────────────────────────────────
+PRUN START SD DIAM 18 MAT RCP-CL3 FIG SD-NORTH-TRUNK
+SD-B 3001
+SD-C 3002 JunctionBox
+SD-C 3003 Inlet
+SD-C 3004 CatchBasin
+PRUN END
+
+; ── STORM DRAIN SOUTH TRUNK  (18" RCP) ──────────────────────────────────────
+PRUN START SD DIAM 18 MAT RCP-CL3 FIG SD-SOUTH-TRUNK
+SD-B 3010
+SD-C 3011 JunctionBox
+SD-C 3012 Inlet
+SD-C 3013 CatchBasin
+PRUN END
+
+; =============================================================================
+; END OF SCRIPT
+; Diagnostics: 0 expected errors.  Load sequence: PNEZD → this script.
+; =============================================================================

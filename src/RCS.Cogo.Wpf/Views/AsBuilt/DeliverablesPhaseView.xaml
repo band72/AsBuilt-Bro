@@ -1,0 +1,212 @@
+<UserControl x:Class="RCS.Cogo.Wpf.Views.AsBuilt.DeliverablesPhaseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Export Gate + Summary -->
+        <Border Grid.Row="0" Padding="16,12"
+                BorderBrush="#2A2A45" BorderThickness="0,0,0,1">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="#1A1A2E"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsExportReady}" Value="True">
+                            <Setter Property="Background" Value="#0D1F14"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="DELIVERABLE PACKAGES" FontSize="9" FontWeight="SemiBold"
+                               Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,0,0,6"/>
+                    <TextBlock Text="{Binding ExportGateLabel}" FontSize="16" FontWeight="Bold"
+                               FontFamily="Segoe UI">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#E74C3C"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsExportReady}" Value="True">
+                                        <Setter Property="Foreground" Value="#2ECC71"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock Text="{Binding WarningCount, StringFormat='⚠  {0} warning(s) noted'}"
+                               FontSize="11" Foreground="#F39C12" FontFamily="Segoe UI" Margin="0,4,0,0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding WarningCount}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+                <Button Grid.Column="1" Content="▶  Run Validation"
+                        Command="{Binding ValidateNowCommand}"
+                        Background="#4A90E2" Foreground="White"
+                        BorderThickness="0" FontFamily="Segoe UI"
+                        FontSize="12" FontWeight="SemiBold" Padding="14,8"
+                        VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Deliverable Cards -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="16,12">
+            <ItemsControl ItemsSource="{Binding Deliverables}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#1E1E35" CornerRadius="8"
+                                BorderThickness="1" Margin="0,0,0,10" Padding="16,12">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsBlocked}" Value="True">
+                                            <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsBlocked}" Value="False">
+                                            <Setter Property="BorderBrush" Value="#2ECC71"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding Type}" FontSize="14" FontWeight="SemiBold"
+                                               Foreground="#E8E8F0" FontFamily="Segoe UI"/>
+                                    <TextBlock Text="{Binding StatusMessage}" FontSize="11"
+                                               Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,4,0,0"/>
+                                    <TextBlock Text="{Binding BlockingErrorCount, StringFormat='🔴  {0} blocking error(s)'}"
+                                               FontSize="10" Foreground="#E74C3C" FontFamily="Segoe UI" Margin="0,4,0,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsBlocked}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+
+                                <!-- Ready / Blocked badge -->
+                                <Border Grid.Column="1" CornerRadius="4" Padding="10,4" VerticalAlignment="Top">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsBlocked}" Value="True">
+                                                    <Setter Property="Background" Value="#4D1A1A"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsBlocked}" Value="False">
+                                                    <Setter Property="Background" Value="#1A4D2E"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock FontSize="11" FontWeight="SemiBold" FontFamily="Segoe UI">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsBlocked}" Value="True">
+                                                        <Setter Property="Text"       Value="Blocked"/>
+                                                        <Setter Property="Foreground" Value="#E74C3C"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsBlocked}" Value="False">
+                                                        <Setter Property="Text"       Value="✅ Ready"/>
+                                                        <Setter Property="Foreground" Value="#2ECC71"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- ── Output Folder + Build Package CTA ─────────────────────────── -->
+        <Border Grid.Row="2" Padding="16,10"
+                Background="#1A1A2E" BorderBrush="#2A2A45" BorderThickness="0,1,0,0">
+            <StackPanel>
+                <!-- Output folder row -->
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Output folder:" FontSize="11"
+                               Foreground="#7A7A9A" FontFamily="Segoe UI"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox Grid.Column="1" x:Name="TxtOutputFolder" Padding="6,4"
+                             Background="#12121F" Foreground="#E8E8F0"
+                             BorderBrush="#3A3A5A" BorderThickness="1"
+                             FontFamily="Consolas" FontSize="11"/>
+                    <Button Grid.Column="2" Content="…" Padding="10,4" Margin="6,0,0,0"
+                            Background="#252545" Foreground="#E8E8F0"
+                            BorderBrush="#3A3A5A" BorderThickness="1"
+                            FontFamily="Segoe UI" FontSize="11"
+                            Click="BtnBrowseFolder_Click"
+                            ToolTip="Browse for output folder"/>
+                </Grid>
+
+                <!-- Build button -->
+                <Button x:Name="BtnBuildPackage"
+                        Content="🚀  Build Export Package"
+                        HorizontalAlignment="Stretch"
+                        FontSize="14" FontWeight="Bold" FontFamily="Segoe UI"
+                        Padding="0,12"
+                        Background="#2ECC71" Foreground="#0A1F12"
+                        BorderThickness="0"
+                        Click="BtnBuildPackage_Click"
+                        ToolTip="Build all enabled deliverables into the output folder"/>
+
+                <!-- Export history expander -->
+                <Expander Header="📋 Export History" Margin="0,10,0,0"
+                          IsExpanded="False"
+                          Foreground="#7A7A9A" FontFamily="Segoe UI" FontSize="11">
+                    <ListBox x:Name="ExportHistoryList" MaxHeight="100"
+                             Background="Transparent" BorderThickness="0"
+                             Foreground="#7A7A9A">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock FontFamily="Consolas" FontSize="10">
+                                    <Run Text="{Binding ExportedAt, StringFormat='HH:mm dd-MMM-yyyy'}"/>
+                                    <Run Text="  Rev "/>
+                                    <Run Text="{Binding RevisionNumber}"/>
+                                    <Run Text="  →  "/>
+                                    <Run Text="{Binding PackagePath}" Foreground="#56CCF2"/>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Expander>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
