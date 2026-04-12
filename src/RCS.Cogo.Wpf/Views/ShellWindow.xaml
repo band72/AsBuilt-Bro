@@ -422,6 +422,11 @@
                                  <ColumnDefinition Width="Auto"/>
                                  <ColumnDefinition Width="Auto"/>
                                  <ColumnDefinition Width="Auto"/>
+                                  <!-- CSV, Print, Undo, Redo -->
+                                  <ColumnDefinition Width="Auto"/>
+                                  <ColumnDefinition Width="Auto"/>
+                                  <ColumnDefinition Width="Auto"/>
+                                  <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <!-- Import -->
@@ -530,6 +535,42 @@
                                           ToolTip="Show / hide Latitude &amp; Longitude columns"
                                           Background="#1A2535" Foreground="#98C379"
                                           BorderBrush="#3A6A3A" BorderThickness="1"/>
+
+                            <!-- ── CSV Import ── -->
+                            <Button Grid.Column="13"
+                                    Content="&#x1F4E5; CSV"
+                                    Command="{Binding ImportCsvCommand}"
+                                    Padding="8,5" Margin="4,0,0,0"
+                                    ToolTip="Import points from a CSV file (Pt#, N, E, Elev, Desc)"
+                                    Background="#1A2535" Foreground="#98C379"
+                                    BorderBrush="#3A6A3A" BorderThickness="1"/>
+
+                            <!-- ── Print Report ── -->
+                            <Button Grid.Column="14"
+                                    Content="&#x1F5A8; Print"
+                                    Command="{Binding PrintPointsCommand}"
+                                    Padding="8,5" Margin="4,0,0,0"
+                                    ToolTip="Print / save a paginated PDF point report"
+                                    Background="#1A2535" Foreground="#61AFEF"
+                                    BorderBrush="#2A5A8A" BorderThickness="1"/>
+
+                            <!-- ── Undo ── -->
+                            <Button Grid.Column="15"
+                                    Content="&#x21A9;"
+                                    Command="{Binding UndoPointCommand}"
+                                    Padding="8,5" Margin="4,0,0,0"
+                                    ToolTip="{Binding UndoDescription}"
+                                    Background="#1A2535" Foreground="#E5C07B"
+                                    BorderBrush="#5A4A20" BorderThickness="1"/>
+
+                            <!-- ── Redo ── -->
+                            <Button Grid.Column="16"
+                                    Content="&#x21AA;"
+                                    Command="{Binding RedoPointCommand}"
+                                    Padding="8,5" Margin="4,0,0,0"
+                                    ToolTip="{Binding RedoDescription}"
+                                    Background="#1A2535" Foreground="#E5C07B"
+                                    BorderBrush="#5A4A20" BorderThickness="1"/>
                         </Grid>
 
                         <!-- ── GPS Zone Warning Banner ── -->

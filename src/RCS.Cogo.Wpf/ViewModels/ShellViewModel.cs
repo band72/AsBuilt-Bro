@@ -376,7 +376,9 @@ public partial class ShellViewModel : ViewModelBase
             : System.IO.Path.GetFileName(_currentDbPath);
 
         string dirty = _isDirty ? " *" : "";
-        WindowTitle = $"{name}  [{file}]{dirty}  —  RCS COGO Enterprise";
+        string ver = System.Reflection.Assembly.GetExecutingAssembly()
+            .GetCustomAttributes(typeof(System.Reflection.AssemblyFileVersionAttribute), false).OfType<System.Reflection.AssemblyFileVersionAttribute>().FirstOrDefault()?.Version ?? "2.x";
+        WindowTitle = $"{name}  [{file}]{dirty}  —  RCS COGO Enterprise v{ver}";
     }
 
     // ── Recent Files (MRU) ───────────────────────────────────────────────────
@@ -693,6 +695,26 @@ public partial class ShellViewModel : ViewModelBase
 
     /// <summary>Renumbers all points sequentially from a user-specified base number.</summary>
     public System.Windows.Input.ICommand RenumberPointsCommand { get; private set; }
+        = new RelayCommand(_ => { }); // initialized in ctor
+
+    /// <summary>Imports points from a CSV file (round-trip with CSV export).</summary>
+    public System.Windows.Input.ICommand ImportCsvCommand { get; private set; }
+        = new RelayCommand(_ => { }); // initialized in ctor
+
+    /// <summary>Opens the system PrintDialog to print a paginated point report.</summary>
+    public System.Windows.Input.ICommand PrintPointsCommand { get; private set; }
+        = new RelayCommand(_ => { }); // initialized in ctor
+
+    // ── Undo / Redo ───────────────────────────────────────────────────────────
+    private RCS.Cogo.Wpf.Services.PointUndoStack? _undoStack;
+    public bool   CanUndo         => _undoStack?.CanUndo ?? false;
+    public bool   CanRedo         => _undoStack?.CanRedo ?? false;
+    public string UndoDescription => _undoStack?.UndoDescription ?? "Undo";
+    public string RedoDescription => _undoStack?.RedoDescription ?? "Redo";
+
+    public System.Windows.Input.ICommand UndoPointCommand { get; private set; }
+        = new RelayCommand(_ => { }); // initialized in ctor
+    public System.Windows.Input.ICommand RedoPointCommand { get; private set; }
         = new RelayCommand(_ => { }); // initialized in ctor
 
     // ── Pan / Hand Tool ───────────────────────────────────────────────────────
@@ -1462,10 +1484,102 @@ public partial class ShellViewModel : ViewModelBase
             ResultLogText += $"Renumbered {done}/{renames.Count} point(s) starting at {startNum}.{Environment.NewLine}";
             OnPropertyChanged(nameof(Points));
         });
+        // ── Undo stack ────────────────────────────────────────────────────
+        _undoStack = new RCS.Cogo.Wpf.Services.PointUndoStack(_context, () =>
+        {
+            OnPropertyChanged(nameof(CanUndo));
+            OnPropertyChanged(nameof(CanRedo));
+            OnPropertyChanged(nameof(UndoDescription));
+            OnPropertyChanged(nameof(RedoDescription));
+        });
 
+        UndoPointCommand = new RelayCommand(
+            _ => { _undoStack.Undo(); OnPropertyChanged(nameof(Points)); },
+            _ => _undoStack.CanUndo);
 
+        RedoPointCommand = new RelayCommand(
+            _ => { _undoStack.Redo(); OnPropertyChanged(nameof(Points)); },
+            _ => _undoStack.CanRedo);
 
-        ZoomInCommand = new RelayCommand(_ => ZoomInRequested?.Invoke(this, EventArgs.Empty));
+        // ── Bulk point delete ─────────────────────────────────────────────────
+        DeleteSelectedPointsCommand = new RelayCommand(param =>
+        {
+            if (param is not System.Collections.IList selected || selected.Count == 0) return;
+            var toDelete = selected.Cast<PointViewModel>()
+                .Select(p => (p.Id, _context.GetPoint(p.Id) ?? new RCS.Cogo.Core.Primitives.Point3D(0,0,0), p.Description))
+                .ToList();
+            int removed = 0;
+            foreach (var (id, _, _) in toDelete)
+                if (_context.RemovePoint(id)) removed++;
+            if (removed > 0)
+                _undoStack.Push(new RCS.Cogo.Wpf.Services.DeletePointsAction(toDelete.Take(removed)));
+            ResultLogText += $"Deleted {removed} point(s).{Environment.NewLine}";
+            OnPropertyChanged(nameof(Points));
+        });
+
+        // ── Sequential renumber ─────────────────────────────────────────────────
+        RenumberPointsCommand = new RelayCommand(_ =>
+        {
+            var dlg = new RCS.Cogo.Wpf.Views.RenumberDialog { Owner = System.Windows.Application.Current.MainWindow };
+            if (dlg.ShowDialog() != true) return;
+            int startNum = dlg.StartNumber;
+            var allPts = _context.GetAllPoints().OrderBy(p =>
+                int.TryParse(p.Id, out int n) ? n : int.MaxValue).ToList();
+            var renames = allPts.Select((p, i) => (OldId: p.Id, NewId: (startNum + i).ToString())).ToList();
+            var applied = new List<(string OldId, string NewId)>();
+            foreach (var (oldId, newId) in renames)
+                if (_context.RenamePoint(oldId, newId)) applied.Add((oldId, newId));
+            if (applied.Count > 0)
+                _undoStack.Push(new RCS.Cogo.Wpf.Services.RenumberAction(applied));
+            ResultLogText += $"Renumbered {applied.Count}/{renames.Count} point(s) starting at {startNum}.{Environment.NewLine}";
+            OnPropertyChanged(nameof(Points));
+        });
+
+        // ── CSV Import ──────────────────────────────────────────────────────
+        ImportCsvCommand = new RelayCommand(_ =>
+        {
+            var openDlg = new Microsoft.Win32.OpenFileDialog
+            {
+                Title  = "Import COGO Points from CSV",
+                Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*"
+            };
+            if (openDlg.ShowDialog() != true) return;
+
+            var result = RCS.Cogo.Wpf.Services.CsvPointImporter.Parse(openDlg.FileName);
+
+            if (result.Errors.Count > 0)
+                ResultLogText += string.Join(Environment.NewLine, result.Errors) + Environment.NewLine;
+
+            if (result.Points.Count == 0)
+            {
+                ResultLogText += $"CSV import: no valid points found in {System.IO.Path.GetFileName(openDlg.FileName)}.{Environment.NewLine}";
+                return;
+            }
+
+            var added = new List<(string Id, RCS.Cogo.Core.Primitives.Point3D Pt, string Desc)>();
+            foreach (var (id, n, e, elev, desc) in result.Points)
+            {
+                var pt = new RCS.Cogo.Core.Primitives.Point3D(n, e, elev);
+                _context.AddPoint(id, pt, desc);
+                added.Add((id, pt, desc));
+            }
+            _undoStack.Push(new RCS.Cogo.Wpf.Services.ImportPointsAction(
+                added, System.IO.Path.GetFileName(openDlg.FileName)));
+            ResultLogText += $"Imported {added.Count} point(s) from {System.IO.Path.GetFileName(openDlg.FileName)}.{Environment.NewLine}";
+            OnPropertyChanged(nameof(Points));
+        });
+
+        // ── Print / PDF Report ─────────────────────────────────────────────────
+        PrintPointsCommand = new RelayCommand(_ =>
+        {
+            var rows = Points.Select(p => new RCS.Cogo.Wpf.Views.PointReportPrinter.PointRow(
+                p.Id, p.Northing, p.Easting, p.Elevation, p.Description,
+                ShowGpsColumnsInGrid ? p.LatitudeGps.ToString("F6") : null, ShowGpsColumnsInGrid ? p.LongitudeGps.ToString("F6") : null))
+                .ToList();
+            string projName = _currentProject?.ProjectName ?? "Untitled";
+            RCS.Cogo.Wpf.Views.PointReportPrinter.Print(rows, projName, ShowGpsColumnsInGrid);
+        });
+
         ZoomOutCommand = new RelayCommand(_ => ZoomOutRequested?.Invoke(this, EventArgs.Empty));
         ZoomExtentsCommand = new RelayCommand(_ => ZoomExtentsRequested?.Invoke(this, EventArgs.Empty));
         ZoomWindowCommand = new RelayCommand(_ => ZoomWindowRequested?.Invoke(this, EventArgs.Empty));
@@ -1600,13 +1714,9 @@ public partial class ShellViewModel : ViewModelBase
         OpenErrorReportCommand = new RelayCommand(_ => new Views.ErrorReportWindow() { Owner = System.Windows.Application.Current.MainWindow }.ShowDialog());
         AboutCommand = new RelayCommand(_ =>
         {
-            var ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            string verStr = ver != null ? $"{ver.Major}.{ver.Minor}.{ver.Build}" : "2.0";
-            System.Windows.MessageBox.Show(
-                $"RCS COGO Enterprise\nVersion {verStr}\n\nAdvanced Survey & Utility Data Platform",
-                "About RCS COGO Enterprise",
-                System.Windows.MessageBoxButton.OK,
-                System.Windows.MessageBoxImage.Information);
+            var dlg = new RCS.Cogo.Wpf.Views.AboutDialog
+                { Owner = System.Windows.Application.Current.MainWindow };
+            dlg.ShowDialog();
         });
         OpenSurveyCommandsCommand = new RelayCommand(_ => OpenDocument("docs\\USER_GUIDE.md"));
         OpenPipeCommandsCommand = new RelayCommand(_ => OpenDocument("docs\\PIPING_MANUAL.md"));
