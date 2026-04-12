@@ -4,7 +4,7 @@
         Title="AI Script Assistant" Height="580" Width="480"
         Background="{StaticResource BrBg}" Foreground="{StaticResource BrTextPrimary}"
         WindowStartupLocation="CenterOwner">
-    <Grid Margin="10">
+    <Grid Background="{StaticResource BrBg}" Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>

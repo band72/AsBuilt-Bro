@@ -150,6 +150,7 @@
         <Setter Property="SelectionBrush"            Value="{StaticResource BrAccentDim}"/>
         <Setter Property="FontFamily"                Value="{StaticResource FfBody}"/>
         <Setter Property="FontSize"                  Value="{StaticResource FsMd}"/>
+        <!-- Single-line defaults -->
         <Setter Property="Height"                    Value="32"/>
         <Setter Property="Padding"                   Value="8,0"/>
         <Setter Property="VerticalContentAlignment"  Value="Center"/>
@@ -159,9 +160,19 @@
                 <Setter Property="BorderBrush" Value="{StaticResource BrAccent}"/>
             </Trigger>
             <Trigger Property="IsReadOnly" Value="True">
-                <Setter Property="Foreground"   Value="{StaticResource BrTextMuted}"/>
-                <Setter Property="Background"   Value="{StaticResource BrSurface}"/>
-                <Setter Property="BorderBrush"  Value="{StaticResource BrBorder}"/>
+                <Setter Property="Foreground"             Value="{StaticResource BrTextMuted}"/>
+                <Setter Property="Background"             Value="{StaticResource BrSurface}"/>
+                <Setter Property="BorderBrush"            Value="{StaticResource BrBorder}"/>
+                <Setter Property="Height"                 Value="Auto"/>
+                <Setter Property="VerticalContentAlignment" Value="Top"/>
+                <Setter Property="Padding"                Value="8,6"/>
+            </Trigger>
+            <!-- Multi-line mode: override single-line defaults -->
+            <Trigger Property="AcceptsReturn" Value="True">
+                <Setter Property="Height"                   Value="Auto"/>
+                <Setter Property="VerticalContentAlignment" Value="Top"/>
+                <Setter Property="Padding"                  Value="8,6"/>
+                <Setter Property="TextWrapping"             Value="NoWrap"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -189,7 +200,7 @@
         <Setter Property="FontFamily"       Value="{StaticResource FfBody}"/>
         <Setter Property="FontSize"         Value="{StaticResource FsMd}"/>
         <Setter Property="Height"           Value="32"/>
-        <Setter Property="Padding"          Value="16,0"/>
+        <Setter Property="Padding"          Value="10,0"/>
         <Setter Property="Cursor"           Value="Hand"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="Template">
@@ -202,7 +213,11 @@
                             CornerRadius="5"
                             Padding="{TemplateBinding Padding}">
                         <ContentPresenter HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"/>
+                                          VerticalAlignment="Center"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"
+                                          TextElement.FontFamily="{TemplateBinding FontFamily}"
+                                          TextElement.FontSize="{TemplateBinding FontSize}"
+                                          TextElement.FontWeight="{TemplateBinding FontWeight}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -254,29 +269,149 @@
 
     <!-- ── ComboBox ─────────────────────────────────────────────────────────── -->
     <Style TargetType="ComboBox">
-        <Setter Property="Background"       Value="{StaticResource BrInputBg}"/>
-        <Setter Property="Foreground"       Value="{StaticResource BrTextPrimary}"/>
-        <Setter Property="BorderBrush"      Value="{StaticResource BrInputBorder}"/>
-        <Setter Property="BorderThickness"  Value="1"/>
-        <Setter Property="FontFamily"       Value="{StaticResource FfBody}"/>
-        <Setter Property="FontSize"         Value="{StaticResource FsMd}"/>
-        <Setter Property="Height"           Value="32"/>
-        <Setter Property="Padding"          Value="8,0"/>
+        <Setter Property="Background"              Value="{StaticResource BrInputBg}"/>
+        <Setter Property="Foreground"              Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush"             Value="{StaticResource BrInputBorder}"/>
+        <Setter Property="BorderThickness"         Value="1"/>
+        <Setter Property="FontFamily"              Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"                Value="{StaticResource FsMd}"/>
+        <Setter Property="Height"                  Value="32"/>
+        <Setter Property="Padding"                 Value="8,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility"   Value="Auto"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <!-- Outer border / background -->
+                        <Border x:Name="MainBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4"/>
+
+                        <!-- Arrow toggle button (right side) -->
+                        <ToggleButton x:Name="ToggleBtn"
+                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
+                                                  RelativeSource={RelativeSource TemplatedParent}}"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      Focusable="False"
+                                      HorizontalAlignment="Right"
+                                      Width="28">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border Background="Transparent">
+                                        <TextBlock Text="▾"
+                                                   Foreground="{StaticResource BrTextSecondary}"
+                                                   FontSize="10"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+
+                        <!-- Selected-item content presenter -->
+                        <ContentPresenter x:Name="ContentSite"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                          Margin="8,0,28,0"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Left"
+                                          IsHitTestVisible="False"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"/>
+
+                        <!-- Editable mode text box (only used when IsEditable=True) -->
+                        <TextBox x:Name="PART_EditableTextBox"
+                                 Style="{x:Null}"
+                                 Background="Transparent"
+                                 Foreground="{TemplateBinding Foreground}"
+                                 CaretBrush="{StaticResource BrAccent}"
+                                 BorderThickness="0"
+                                 Margin="6,0,28,0"
+                                 VerticalAlignment="Center"
+                                 FontFamily="{TemplateBinding FontFamily}"
+                                 FontSize="{TemplateBinding FontSize}"
+                                 Focusable="True"
+                                 Visibility="Hidden"
+                                 IsReadOnly="{TemplateBinding IsReadOnly}"/>
+
+                        <!-- Dropdown Popup -->
+                        <Popup x:Name="PART_Popup"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               Placement="Bottom"
+                               AllowsTransparency="True"
+                               Focusable="False"
+                               PopupAnimation="Slide">
+                            <Border Background="{StaticResource BrCard}"
+                                    BorderBrush="{StaticResource BrBorder}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    MinWidth="{TemplateBinding ActualWidth}"
+                                    MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <ScrollViewer Background="Transparent"
+                                              VerticalScrollBarVisibility="Auto"
+                                              HorizontalScrollBarVisibility="Disabled">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- Keyboard focus highlight -->
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="MainBorder" Property="BorderBrush"
+                                    Value="{StaticResource BrAccent}"/>
+                        </Trigger>
+                        <!-- Editable mode -->
+                        <Trigger Property="IsEditable" Value="True">
+                            <Setter TargetName="ContentSite"    Property="Visibility" Value="Hidden"/>
+                            <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <!-- Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="MainBorder"  Property="Opacity" Value="0.5"/>
+                            <Setter Property="Foreground"    Value="{StaticResource BrTextDisabled}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="ComboBoxItem">
-        <Setter Property="Background"       Value="{StaticResource BrCard}"/>
+        <Setter Property="Background"       Value="Transparent"/>
         <Setter Property="Foreground"       Value="{StaticResource BrTextPrimary}"/>
         <Setter Property="FontFamily"       Value="{StaticResource FfBody}"/>
         <Setter Property="FontSize"         Value="{StaticResource FsMd}"/>
-        <Setter Property="Padding"          Value="8,4"/>
+        <Setter Property="Padding"          Value="10,6"/>
         <Setter Property="BorderThickness"  Value="0"/>
-        <Style.Triggers>
-            <Trigger Property="IsHighlighted" Value="True">
-                <Setter Property="Background" Value="{StaticResource BrCardAlt}"/>
-                <Setter Property="Foreground" Value="{StaticResource BrAccent}"/>
-            </Trigger>
-        </Style.Triggers>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border x:Name="ItemBorder"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="ItemBorder" Property="Background"
+                                    Value="{StaticResource BrCardAlt}"/>
+                            <Setter Property="Foreground" Value="{StaticResource BrAccent}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="ItemBorder" Property="Background"
+                                    Value="{StaticResource BrAccentDim}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- ── CheckBox ─────────────────────────────────────────────────────────── -->
@@ -316,6 +451,7 @@
 
     <!-- ── GroupBox ─────────────────────────────────────────────────────────── -->
     <Style TargetType="GroupBox">
+        <Setter Property="Background"       Value="{StaticResource BrCard}"/>
         <Setter Property="Foreground"       Value="{StaticResource BrTextSecondary}"/>
         <Setter Property="BorderBrush"      Value="{StaticResource BrBorder}"/>
         <Setter Property="BorderThickness"  Value="1"/>
@@ -324,6 +460,43 @@
         <Setter Property="FontWeight"       Value="SemiBold"/>
         <Setter Property="Padding"          Value="10,8"/>
         <Setter Property="Margin"           Value="0,0,0,12"/>
+        <!-- Override the default template — WPF's built-in template has a hardcoded
+             SystemColors.ControlBrush (white) that a Background property setter alone
+             cannot reach. This template replaces it entirely with dark theme colours. -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GroupBox">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <!-- Header band -->
+                        <Border Grid.Row="0"
+                                Background="{StaticResource BrHeader}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1,1,1,0"
+                                CornerRadius="4,4,0,0"
+                                Padding="10,6">
+                            <ContentPresenter ContentSource="Header"
+                                              RecognizesAccessKey="True"
+                                              TextElement.Foreground="{StaticResource BrTextSecondary}"
+                                              TextElement.FontWeight="SemiBold"
+                                              TextElement.FontSize="{StaticResource FsSm}"/>
+                        </Border>
+                        <!-- Content area -->
+                        <Border Grid.Row="1"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1,0,1,1"
+                                CornerRadius="0,0,4,4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- ── DataGrid ──────────────────────────────────────────────────────────── -->
@@ -484,13 +657,105 @@
         <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
         <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
         <Setter Property="FontSize"     Value="{StaticResource FsBase}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Menu">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <ItemsPresenter/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="MenuItem">
-        <Setter Property="Background"   Value="{StaticResource BrHeader}"/>
-        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
-        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
-        <Setter Property="FontSize"     Value="{StaticResource FsBase}"/>
+        <Setter Property="Background"      Value="{StaticResource BrHeader}"/>
+        <Setter Property="Foreground"      Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="FontFamily"      Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"        Value="{StaticResource FsBase}"/>
+        <Setter Property="Padding"         Value="12,6"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuItem">
+                    <Grid>
+                        <!-- Top-level menu header item -->
+                        <Border x:Name="HeaderBorder"
+                                Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter ContentSource="Header"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"
+                                              TextElement.FontFamily="{TemplateBinding FontFamily}"
+                                              TextElement.FontSize="{TemplateBinding FontSize}"
+                                              RecognizesAccessKey="True"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+
+                        <!-- Submenu Popup -->
+                        <Popup x:Name="PART_Popup"
+                               IsOpen="{TemplateBinding IsSubmenuOpen}"
+                               Placement="Bottom"
+                               AllowsTransparency="True"
+                               Focusable="False"
+                               PopupAnimation="Fade">
+                            <Border Background="{StaticResource BrCard}"
+                                    BorderBrush="{StaticResource BrBorder}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="0,4">
+                                <ScrollViewer Background="Transparent"
+                                              VerticalScrollBarVisibility="Auto"
+                                              HorizontalScrollBarVisibility="Disabled"
+                                              MaxHeight="600">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="HeaderBorder" Property="Background"
+                                    Value="{StaticResource BrCardAlt}"/>
+                            <Setter Property="Foreground" Value="{StaticResource BrAccent}"/>
+                        </Trigger>
+                        <Trigger Property="IsSubmenuOpen" Value="True">
+                            <Setter TargetName="HeaderBorder" Property="Background"
+                                    Value="{StaticResource BrCardAlt}"/>
+                        </Trigger>
+                        <Trigger Property="Role" Value="SubmenuItem">
+                            <Setter Property="Padding" Value="14,7"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Role"          Value="SubmenuItem"/>
+                                <Condition Property="IsHighlighted" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="HeaderBorder" Property="Background"
+                                    Value="{StaticResource BrAccentDim}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource BrTextDisabled}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Separator inside menus — dark hairline, not white -->
+    <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Separator">
+                    <Border Height="1"
+                            Background="{StaticResource BrBorder}"
+                            Margin="8,3"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- ── ToolTip ──────────────────────────────────────────────────────────── -->
@@ -510,6 +775,79 @@
         <Setter Property="Foreground"   Value="{StaticResource BrTextSecondary}"/>
         <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
         <Setter Property="FontSize"     Value="{StaticResource FsSm}"/>
+    </Style>
+
+    <!-- ── ScrollViewer ─────────────────────────────────────────────────────── -->
+    <!-- WPF's default ScrollViewer uses SystemColors.WindowBrush = white.      -->
+    <!-- Adding an implicit style prevents white panes behind DataGrids etc.    -->
+    <Style TargetType="ScrollViewer">
+        <Setter Property="Background"                    Value="Transparent"/>
+        <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="VerticalScrollBarVisibility"   Value="Auto"/>
+    </Style>
+
+    <!-- ── Expander ─────────────────────────────────────────────────────────── -->
+    <Style TargetType="Expander">
+        <Setter Property="Background"   Value="{StaticResource BrCard}"/>
+        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush"  Value="{StaticResource BrBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsBase}"/>
+        <Setter Property="Padding"      Value="8,4"/>
+    </Style>
+
+    <!-- ── DatePicker ───────────────────────────────────────────────────────── -->
+    <Style TargetType="DatePicker">
+        <Setter Property="Background"  Value="{StaticResource BrInputBg}"/>
+        <Setter Property="Foreground"  Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrInputBorder}"/>
+        <Setter Property="FontFamily"  Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"    Value="{StaticResource FsBase}"/>
+        <Setter Property="Height"      Value="32"/>
+        <Setter Property="Padding"     Value="6,0"/>
+    </Style>
+    <Style TargetType="DatePickerTextBox">
+        <Setter Property="Background"  Value="{StaticResource BrInputBg}"/>
+        <Setter Property="Foreground"  Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontFamily"  Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"    Value="{StaticResource FsBase}"/>
+    </Style>
+
+    <!-- ── TreeView / TreeViewItem ──────────────────────────────────────────── -->
+    <Style TargetType="TreeView">
+        <Setter Property="Background"   Value="{StaticResource BrSurface}"/>
+        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush"  Value="{StaticResource BrBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsBase}"/>
+    </Style>
+    <Style TargetType="TreeViewItem">
+        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsBase}"/>
+        <Setter Property="Padding"      Value="4,2"/>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource BrAccentDim}"/>
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource BrCardAlt}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ── ContextMenu ──────────────────────────────────────────────────────── -->
+    <Style TargetType="ContextMenu">
+        <Setter Property="Background"   Value="{StaticResource BrCard}"/>
+        <Setter Property="Foreground"   Value="{StaticResource BrTextPrimary}"/>
+        <Setter Property="BorderBrush"  Value="{StaticResource BrBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize"     Value="{StaticResource FsBase}"/>
     </Style>
 
     <!-- ── TextBox mono (for COGO scripts) ──────────────────────────────────── -->

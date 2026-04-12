@@ -497,7 +497,19 @@ public partial class ShellWindow : Window
         AsBuiltTabOverlay.Visibility = isAsBuilt ? Visibility.Visible : Visibility.Collapsed;
 
         if (isAsBuilt)
+        {
+            // Show the job dashboard if no job is loaded yet
+            if (vm.ActiveJob == null)
+                vm.ShowDashboard = true;
+
             EnsureAsBuiltViewInitialized(vm);
+        }
+        else
+        {
+            // Always hide the dashboard when leaving the As-Built tab
+            // so it never blocks COGO / Piping / other tabs
+            vm.ShowDashboard = false;
+        }
     }
 
     /// <summary>

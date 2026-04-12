@@ -10,7 +10,7 @@
         <!-- BoolToVis converter is global — defined in RcsTheme.xaml -->
     </Window.Resources>
     
-    <Grid Margin="20">
+    <Grid Background="{StaticResource BrBg}" Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -36,7 +36,7 @@
                     <!-- Dynamic form rows -->
                     <StackPanel>
                         <TextBlock Text="Discipline:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding Discipline}" ItemsSource="{Binding DisciplineList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding Discipline}" ItemsSource="{Binding DisciplineList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
@@ -46,23 +46,23 @@
 
                     <StackPanel>
                         <TextBlock Text="Size:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding Size}" ItemsSource="{Binding PipeSizeList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding Size}" ItemsSource="{Binding PipeSizeList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
                         <TextBlock Text="Material:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding Material}" ItemsSource="{Binding MaterialsList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding Material}" ItemsSource="{Binding MaterialsList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <!-- Core Added JEA Common Fields -->
                     <StackPanel>
                         <TextBlock Text="Subtype:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding Subtype}" ItemsSource="{Binding SubtypesList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding Subtype}" ItemsSource="{Binding SubtypesList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
                         <TextBlock Text="Facility Owner:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding FacilityOwner}" ItemsSource="{Binding FacilityOwnersList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding FacilityOwner}" ItemsSource="{Binding FacilityOwnersList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
@@ -72,32 +72,32 @@
 
                     <StackPanel>
                         <TextBlock Text="Pipe Class:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding PipeClass}" ItemsSource="{Binding PipeClassList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding PipeClass}" ItemsSource="{Binding PipeClassList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
                         <TextBlock Text="Lining Manufacturer:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding LiningManufacturer}" ItemsSource="{Binding LiningManufacturerList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding LiningManufacturer}" ItemsSource="{Binding LiningManufacturerList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
                         <TextBlock Text="Lining Material:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding LiningMaterial}" ItemsSource="{Binding LiningMaterialList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding LiningMaterial}" ItemsSource="{Binding LiningMaterialList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
                         <TextBlock Text="Orientation:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding Orientation}" ItemsSource="{Binding OrientationsList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding Orientation}" ItemsSource="{Binding OrientationsList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
                         <TextBlock Text="Pipe Type:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding PipeRole}" ItemsSource="{Binding PipeRoleList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding PipeRole}" ItemsSource="{Binding PipeRoleList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
                         <TextBlock Text="Drop Type:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding DropType}" ItemsSource="{Binding DropTypeList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding DropType}" ItemsSource="{Binding DropTypeList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel>
@@ -107,12 +107,12 @@
                     
                     <StackPanel>
                         <TextBlock Text="Tape Type:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding ExteriorJointTapeType}" ItemsSource="{Binding TapeTypeList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding ExteriorJointTapeType}" ItemsSource="{Binding TapeTypeList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
                     
                     <StackPanel>
                         <TextBlock Text="Exterior Joint Tape Mfr:" Margin="0,5,0,0"/>
-                        <ComboBox Text="{Binding ExteriorJointTapeManufacturer}" ItemsSource="{Binding ExteriorJointTapeManufacturerList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding ExteriorJointTapeManufacturer}" ItemsSource="{Binding ExteriorJointTapeManufacturerList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <!-- Point Geometry (Structures, Valves, Meters, etc) -->
@@ -317,12 +317,12 @@
                     <!-- Manufacturer info -->
                     <StackPanel Margin="0,15,0,0">
                         <TextBlock Text="Manufacturer:" FontWeight="Bold" Foreground="CornflowerBlue"/>
-                        <ComboBox Text="{Binding Manufacturer}" ItemsSource="{Binding ManufacturerList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5" Margin="0,5,0,0"/>
+                        <ComboBox Text="{Binding Manufacturer}" ItemsSource="{Binding ManufacturerList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5" Margin="0,5,0,0"/>
                     </StackPanel>
 
                     <StackPanel Margin="0,5,0,0">
                         <TextBlock Text="Model / Part No:"/>
-                        <ComboBox Text="{Binding ManufacturerPartNo}" ItemsSource="{Binding HydrantModelList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Background="White" Foreground="Black" Padding="5"/>
+                        <ComboBox Text="{Binding ManufacturerPartNo}" ItemsSource="{Binding HydrantModelList, RelativeSource={RelativeSource AncestorType=Window}}" IsEditable="True" Padding="5"/>
                     </StackPanel>
 
                     <StackPanel Margin="0,5,0,0">

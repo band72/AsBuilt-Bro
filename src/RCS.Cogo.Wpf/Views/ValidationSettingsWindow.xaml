@@ -4,7 +4,7 @@
         Title="Validation Settings" Height="700" Width="920"
         WindowStartupLocation="CenterOwner" ResizeMode="CanResizeWithGrip">
 
-    <Grid>
+    <Grid Background="{StaticResource BrBg}">
         <Grid.RowDefinitions>
             <RowDefinition Height="52"/>
             <RowDefinition Height="Auto"/>

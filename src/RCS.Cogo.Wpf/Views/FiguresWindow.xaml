@@ -4,7 +4,7 @@
         Title="Edit Figures" Height="800" Width="1000"
         Background="{StaticResource BrBg}" Foreground="{StaticResource BrTextPrimary}">
 
-    <Grid Margin="10">
+    <Grid Background="{StaticResource BrBg}" Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>

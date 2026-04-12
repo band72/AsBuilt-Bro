@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Alignment Editor" Height="720" Width="1100"
         WindowStartupLocation="CenterOwner" Background="#1A1D24" Foreground="White">
-    <Grid>
+    <Grid Background="{StaticResource BrBg}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="380"/>
             <ColumnDefinition Width="5"/>

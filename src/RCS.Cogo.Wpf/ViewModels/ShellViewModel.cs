@@ -119,7 +119,7 @@ public partial class ShellViewModel : ViewModelBase
     /// <summary>Drives the start-screen Job Dashboard.</summary>
     public JobDashboardViewModel Dashboard { get; } = new();
 
-    private bool _showDashboard = true;
+    private bool _showDashboard = false;   // Only shown when user clicks 🏗 As-Built tab with no active job
     /// <summary>
     /// True when no job is open → shows JobDashboardView in the center pane.
     /// False when a job is active → shows the workflow-step editor.

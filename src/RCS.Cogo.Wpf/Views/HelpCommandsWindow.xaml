@@ -5,7 +5,7 @@
         Background="{StaticResource BrBg}" Foreground="{StaticResource BrTextPrimary}"
         WindowStartupLocation="CenterOwner">
     
-    <Grid Margin="10">
+    <Grid Background="{StaticResource BrBg}" Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>

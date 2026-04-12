@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Select DXF Layers to Import" Height="300" Width="300"
         WindowStartupLocation="CenterOwner" Background="{StaticResource BrBg}" Foreground="White">
-    <Grid Margin="10">
+    <Grid Background="{StaticResource BrBg}" Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>

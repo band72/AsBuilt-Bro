@@ -70,7 +70,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid>
+    <Grid Background="{StaticResource BrBg}">
         <Grid.RowDefinitions>
             <RowDefinition Height="55"/>
             <RowDefinition Height="Auto"/>

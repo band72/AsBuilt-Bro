@@ -5,7 +5,7 @@
         WindowStartupLocation="CenterOwner" ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False">
 
-    <Grid>
+    <Grid Background="{StaticResource BrBg}">
         <Grid.RowDefinitions>
             <RowDefinition Height="52"/>
             <RowDefinition Height="Auto"/>

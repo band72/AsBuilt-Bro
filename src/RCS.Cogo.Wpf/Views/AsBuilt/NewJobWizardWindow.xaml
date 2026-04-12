@@ -52,7 +52,7 @@
     </Window.Resources>
 
     <Border BorderBrush="#2A2A45" BorderThickness="1" CornerRadius="10">
-        <Grid>
+        <Grid Background="{StaticResource BrBg}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>   <!-- Title bar -->
                 <RowDefinition Height="Auto"/>   <!-- Step indicator -->

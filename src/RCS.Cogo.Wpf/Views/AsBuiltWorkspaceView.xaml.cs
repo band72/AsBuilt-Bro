@@ -97,4 +97,24 @@ public partial class AsBuiltWorkspaceView : UserControl
     //   _vm?.OnCanvasStructureClicked(structureId);
     // This updates SelectedStructure on the VM which cascades to the
     // data grid via TwoWay binding.
+
+    // ── Close / Exit As-Built ────────────────────────────────────────────────
+
+    /// <summary>
+    /// Walks up to the ShellWindow and switches the selected tab back to 0
+    /// (Points / Cogo), which collapses the As-Built overlay.
+    /// </summary>
+    private void BtnCloseWorkspace_Click(object sender, System.Windows.RoutedEventArgs e)
+    {
+        // Walk up visual tree to the ShellWindow
+        var parent = System.Windows.Media.VisualTreeHelper.GetParent(this);
+        while (parent != null && parent is not ShellWindow)
+            parent = System.Windows.Media.VisualTreeHelper.GetParent(parent);
+
+        if (parent is ShellWindow shell &&
+            shell.DataContext is ShellViewModel vm)
+        {
+            vm.SelectedTabIndex = 0;   // Switch to Points tab → hides overlay
+        }
+    }
 }

@@ -4,7 +4,7 @@
         Title="Report an Issue" Height="420" Width="520"
         WindowStartupLocation="CenterOwner" ResizeMode="CanResizeWithGrip">
 
-    <Grid>
+    <Grid Background="{StaticResource BrBg}">
         <Grid.RowDefinitions>
             <RowDefinition Height="52"/>
             <RowDefinition Height="*"/>

@@ -11,7 +11,7 @@
 
     <!-- BoolToVis shipped globally in RcsTheme.xaml — referenced as {StaticResource BoolToVis} -->
 
-    <Grid>
+    <Grid Background="{StaticResource BrBg}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -327,7 +327,8 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="200"/> 
+                <RowDefinition Height="260"/>
+
             </Grid.RowDefinitions>
 
         <!-- Left Pane: Console / History -->
@@ -362,16 +363,29 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="TabControl">
-                                    <Grid>
+                                    <Grid Background="{StaticResource BrSurface}">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
-                                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                                            <TabPanel Grid.Row="0" IsItemsHost="True" Background="Transparent"/>
-                                        </ScrollViewer>
-                                        <Border Grid.Row="1" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
-                                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,0">
+                                        <!-- Tab strip — WrapPanel lets tabs flow to a second row -->
+                                        <Border Grid.Row="0"
+                                                Background="{StaticResource BrHeader}"
+                                                BorderBrush="{StaticResource BrBorder}"
+                                                BorderThickness="0,0,0,1">
+                                            <WrapPanel IsItemsHost="True"
+                                                       Background="Transparent"
+                                                       Orientation="Horizontal"/>
+                                        </Border>
+                                        <!-- Content row -->
+                                        <Border Grid.Row="1"
+                                                Background="{TemplateBinding Background}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                BorderBrush="{TemplateBinding BorderBrush}">
+                                            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                                          HorizontalScrollBarVisibility="Disabled"
+                                                          Background="Transparent"
+                                                          Padding="0,0,10,0">
                                                 <ContentPresenter ContentSource="SelectedContent"/>
                                             </ScrollViewer>
                                         </Border>
@@ -630,10 +644,15 @@
                         </StackPanel>
                         
                         <!-- Editor -->
-                        <TextBox Grid.Row="1" Text="{Binding BatchScriptContent}" 
-                                 FontFamily="Consolas" FontSize="14" AcceptsReturn="True" 
+                        <TextBox Grid.Row="1" Text="{Binding BatchScriptContent}"
+                                 FontFamily="Consolas" FontSize="14"
+                                 AcceptsReturn="True" AcceptsTab="True"
                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
-                                 Background="{StaticResource BrBg}" Foreground="{StaticResource BrTextPrimary}" BorderThickness="1"/>
+                                 VerticalContentAlignment="Top"
+                                 Padding="8,6"
+                                 Background="{StaticResource BrBg}"
+                                 Foreground="{StaticResource BrTextPrimary}"
+                                 BorderThickness="1"/>
                                  
                         <Grid Grid.Row="2" Margin="0,5,0,0">
                             <TextBlock Text="Use // for comments" Foreground="Gray" FontStyle="Italic"/>
@@ -688,7 +707,7 @@
                         <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding CurveDeltaDms, Mode=OneWay}" IsReadOnly="True" Margin="0,5" Background="{StaticResource BrBg}" BorderThickness="0"/>
                         
                         <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                            <Button Content="SOLVE" Command="{Binding SolveCurveCommand}" 
+                            <Button Content="Solve" Command="{Binding SolveCurveCommand}" 
                                     Width="75" Margin="0,0,10,0" Padding="10,5" 
                                     Background="{StaticResource BrHeader}" Foreground="White" BorderBrush="White" BorderThickness="1" FontWeight="Bold"/>
                             <Button Command="{Binding ClearCurveSolverCommand}" Content="Clear" 
@@ -908,10 +927,10 @@
                             <Button Content="Import..." Command="{Binding ImportPipingScriptCommand}" Padding="5,2" Margin="0,0,5,0" Background="{StaticResource BrHeader}" Foreground="White" DockPanel.Dock="Left"/>
                             
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Left" Margin="20,0,0,0">
-                                <ToggleButton x:Name="btnToggleLineNumbers" Content="#" Click="btnToggleLineNumbers_Click" Width="30" Margin="0,0,5,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Toggle Line Numbers"/>
-                                <Button Content="C" Click="btnCommentPipingScript_Click" Width="30" Margin="0,0,5,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Comment Selected Lines"/>
-                                <Button Content="U" Click="btnUncommentPipingScript_Click" Width="30" Margin="0,0,5,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Uncomment Selected Lines"/>
-                                <Button Content="MIX" Click="btnMixPipingScript_Click" Width="35" Margin="0,0,10,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Insert Mixed Engine Directives"/>
+                                <ToggleButton x:Name="btnToggleLineNumbers" Content="#" Click="btnToggleLineNumbers_Click" Width="30" Margin="0,0,5,0" Padding="4,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Toggle Line Numbers"/>
+                                <Button Content="C" Click="btnCommentPipingScript_Click" Width="30" Margin="0,0,5,0" Padding="4,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Comment Selected Lines"/>
+                                <Button Content="U" Click="btnUncommentPipingScript_Click" Width="30" Margin="0,0,5,0" Padding="4,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Uncomment Selected Lines"/>
+                                <Button Content="MIX" Click="btnMixPipingScript_Click" Width="38" Margin="0,0,10,0" Padding="4,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Insert Mixed Engine Directives"/>
                             </StackPanel>
                             
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
@@ -951,10 +970,16 @@
                                      BorderThickness="0" TextAlignment="Right" Padding="5,5,5,5" 
                                      FontFamily="Consolas" VerticalScrollBarVisibility="Hidden"
                                      Visibility="Collapsed" MinWidth="30" Margin="0,0,2,0" />
-                            <TextBox x:Name="txtPipingScript" Grid.Column="1" Text="{Binding PipingScriptText, UpdateSourceTrigger=PropertyChanged}" 
-                                     AcceptsReturn="True" FontFamily="Consolas" VerticalScrollBarVisibility="Auto"
-                                     Background="{StaticResource BrBg}" Foreground="{StaticResource BrTextPrimary}" BorderThickness="1" BorderBrush="{StaticResource BrBorder}" Padding="5" Panel.ZIndex="1"
-                                     TextChanged="txtPipingScript_TextChanged" ScrollViewer.ScrollChanged="txtPipingScript_ScrollChanged"/>
+                            <TextBox x:Name="txtPipingScript" Grid.Column="1" Text="{Binding PipingScriptText, UpdateSourceTrigger=PropertyChanged}"
+                                     AcceptsReturn="True" AcceptsTab="True" FontFamily="Consolas" FontSize="14"
+                                     VerticalScrollBarVisibility="Auto"
+                                     VerticalContentAlignment="Top"
+                                     Padding="8,6" Panel.ZIndex="1"
+                                     Background="{StaticResource BrBg}"
+                                     Foreground="{StaticResource BrTextPrimary}"
+                                     BorderThickness="1" BorderBrush="{StaticResource BrBorder}"
+                                     TextChanged="txtPipingScript_TextChanged"
+                                     ScrollViewer.ScrollChanged="txtPipingScript_ScrollChanged"/>
                         </Grid>
                         
                         <Grid Grid.Row="2" Margin="0,10,0,0">
@@ -1040,7 +1065,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/> <!-- Master Catalog Header -->
                             <RowDefinition Height="Auto"/> <!-- Filters -->
-                            <RowDefinition Height="200"/>  <!-- Master Catalog Grid -->
+                            <RowDefinition Height="260"/>  <!-- Master Catalog Grid -->
                             <RowDefinition Height="Auto"/> <!-- Action Buttons -->
                             <RowDefinition Height="Auto"/> <!-- Project List Header -->
                             <RowDefinition Height="*"/>    <!-- Project List Grid -->
@@ -1507,18 +1532,110 @@
                 
                 <!-- Zoom Toolbar -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
-                    <ToggleButton IsChecked="{Binding ShowAssetLabels}" Content="L" Width="30" Height="30" Margin="0,0,5,0"
-                            Background="{StaticResource BrCard}" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Toggle Asset Labels"/>
-                    <Button Command="{Binding FindCrossingsCommand}" Content="X" Width="30" Height="30" Margin="0,0,5,0"
-                            Background="{StaticResource BrAccentDim}" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Find Overlapping Crossings"/>
-                    <Button Command="{Binding ZoomWindowCommand}" Content="WIN" Width="40" Height="30" Margin="0,0,5,0"
-                            Background="{StaticResource BrCard}" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Zoom Window"/>
-                    <Button Command="{Binding ZoomInCommand}" Content="+" Width="30" Height="30" Margin="0,0,5,0"
-                            Background="{StaticResource BrCard}" Foreground="White" FontSize="18" FontWeight="Bold" ToolTip="Zoom In"/>
-                    <Button Command="{Binding ZoomOutCommand}" Content="-" Width="30" Height="30" Margin="0,0,5,0"
-                            Background="{StaticResource BrCard}" Foreground="White" FontSize="18" FontWeight="Bold" ToolTip="Zoom Out"/>
-                    <Button Command="{Binding ZoomExtentsCommand}" Content="[ ]" Width="30" Height="30"
-                            Background="{StaticResource BrCard}" Foreground="White" FontSize="14" FontWeight="Bold" ToolTip="Zoom Extents"/>
+                    <StackPanel.Resources>
+                        <!-- Locally override Button style so these viewport buttons
+                             are fully self-contained and never hidden by theme issues -->
+                        <Style TargetType="Button">
+                            <Setter Property="Height"          Value="32"/>
+                            <Setter Property="FontFamily"      Value="Segoe UI"/>
+                            <Setter Property="FontWeight"      Value="Bold"/>
+                            <Setter Property="Cursor"          Value="Hand"/>
+                            <Setter Property="Foreground"      Value="White"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd"
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="5"
+                                                Padding="{TemplateBinding Padding}">
+                                            <TextBlock Text="{TemplateBinding Content}"
+                                                       Foreground="White"
+                                                       FontSize="{TemplateBinding FontSize}"
+                                                       FontWeight="{TemplateBinding FontWeight}"
+                                                       FontFamily="{TemplateBinding FontFamily}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Opacity" Value="0.8"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="bd" Property="Opacity" Value="0.6"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.35"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <Style TargetType="ToggleButton">
+                            <Setter Property="Height"          Value="32"/>
+                            <Setter Property="FontFamily"      Value="Segoe UI"/>
+                            <Setter Property="FontWeight"      Value="Bold"/>
+                            <Setter Property="Cursor"          Value="Hand"/>
+                            <Setter Property="Foreground"      Value="White"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="bd"
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="5"
+                                                Padding="{TemplateBinding Padding}">
+                                            <TextBlock Text="{TemplateBinding Content}"
+                                                       Foreground="White"
+                                                       FontSize="{TemplateBinding FontSize}"
+                                                       FontWeight="{TemplateBinding FontWeight}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="bd" Property="BorderBrush" Value="White"/>
+                                                <Setter TargetName="bd" Property="Opacity"     Value="1.0"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Opacity" Value="0.8"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </StackPanel.Resources>
+
+                    <ToggleButton IsChecked="{Binding ShowAssetLabels}"
+                                  Content="LABELS" Width="52" Margin="0,0,4,0"
+                                  Background="#1E3A5A" BorderBrush="#4F9EF8" FontSize="10"
+                                  ToolTip="Toggle Asset Labels"/>
+                    <Button Command="{Binding FindCrossingsCommand}"
+                            Content="CROSS" Width="44" Margin="0,0,4,0"
+                            Background="#2A1A4A" BorderBrush="#9B59B6" FontSize="10"
+                            ToolTip="Find Overlapping Crossings"/>
+                    <Button Command="{Binding ZoomWindowCommand}"
+                            Content="WIN" Width="38" Margin="0,0,4,0"
+                            Background="#1A3A1A" BorderBrush="#27AE60" FontSize="11"
+                            ToolTip="Zoom Window — drag a rectangle"/>
+                    <Button Command="{Binding ZoomInCommand}"
+                            Content="  +  " Width="36" Margin="0,0,4,0"
+                            Background="#1A3A1A" BorderBrush="#27AE60" FontSize="16"
+                            ToolTip="Zoom In"/>
+                    <Button Command="{Binding ZoomOutCommand}"
+                            Content="  −  " Width="36" Margin="0,0,4,0"
+                            Background="#1A3A1A" BorderBrush="#27AE60" FontSize="16"
+                            ToolTip="Zoom Out"/>
+                    <Button Command="{Binding ZoomExtentsCommand}"
+                            Content="EXT" Width="38"
+                            Background="#1A3A1A" BorderBrush="#27AE60" FontSize="11"
+                            ToolTip="Zoom Extents — fit all geometry"/>
                 </StackPanel>
 
                 <!-- Symbol Legend -->
@@ -1635,12 +1752,17 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Text="Computation Output" FontWeight="Bold" Margin="0,0,0,5"/>
-            <TextBox Grid.Row="1" Text="{Binding ResultLogText}" 
-                     IsReadOnly="True" 
-                     TextWrapping="Wrap" 
+            <TextBox Grid.Row="1" Text="{Binding ResultLogText}"
+                     IsReadOnly="True"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
                      VerticalScrollBarVisibility="Auto"
-                     FontFamily="Consolas" 
-                     Background="{StaticResource BrSurface}" 
+                     HorizontalScrollBarVisibility="Disabled"
+                     VerticalContentAlignment="Top"
+                     FontFamily="Consolas"
+                     FontSize="13"
+                     Padding="8,6"
+                     Background="{StaticResource BrSurface}"
                      Foreground="White"
                      BorderThickness="0"/>
         </Grid>

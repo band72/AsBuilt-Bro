@@ -4,7 +4,7 @@
         Title="Convert Image to COGO Script (AI)" Height="600" Width="800"
         Background="{StaticResource BrBg}" Foreground="{StaticResource BrTextPrimary}"
         WindowStartupLocation="CenterOwner">
-    <Grid Margin="10">
+    <Grid Background="{StaticResource BrBg}" Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Title -->
             <RowDefinition Height="Auto"/> <!-- API Settings -->
