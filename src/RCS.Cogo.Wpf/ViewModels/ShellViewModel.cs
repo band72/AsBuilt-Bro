@@ -83,6 +83,36 @@ public class PointViewModel : ViewModelBase
         Validate();
     }
 
+    // ── GPS computed coordinates ─────────────────────────────────────────
+    /// <summary>
+    /// Application-wide GPS display format — set by ShellViewModel whenever
+    /// GeneralSettings changes. Changing this raises property changed on all live instances.
+    /// </summary>
+    public static RCS.Geo.Wpf.ViewModels.GpsDisplayFormat CoordinateFormat { get; set; }
+        = RCS.Geo.Wpf.ViewModels.GpsDisplayFormat.DecimalDegrees;
+
+    public double LatitudeGps  => RCS.Geo.Core.StatePlaneProjection.ToLatLon(Easting, Northing).Lat;
+    public double LongitudeGps => RCS.Geo.Core.StatePlaneProjection.ToLatLon(Easting, Northing).Lon;
+
+    /// <summary>Latitude formatted per <see cref="CoordinateFormat"/> (DD or DMS).</summary>
+    public string LatitudeDisplay => CoordinateFormat == RCS.Geo.Wpf.ViewModels.GpsDisplayFormat.DMS
+        ? RCS.Geo.Core.StatePlaneProjection.ToDms(LatitudeGps,  isLatitude: true)
+        : $"{LatitudeGps:F7}";
+
+    /// <summary>Longitude formatted per <see cref="CoordinateFormat"/> (DD or DMS).</summary>
+    public string LongitudeDisplay => CoordinateFormat == RCS.Geo.Wpf.ViewModels.GpsDisplayFormat.DMS
+        ? RCS.Geo.Core.StatePlaneProjection.ToDms(LongitudeGps, isLatitude: false)
+        : $"{LongitudeGps:F7}";
+
+    /// <summary>Refreshes all GPS display properties — called when CoordinateFormat changes.</summary>
+    public void RefreshGpsDisplay()
+    {
+        OnPropertyChanged(nameof(LatitudeDisplay));
+        OnPropertyChanged(nameof(LongitudeDisplay));
+        OnPropertyChanged(nameof(LatitudeGps));
+        OnPropertyChanged(nameof(LongitudeGps));
+    }
+
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(Description))
@@ -611,6 +641,31 @@ public partial class ShellViewModel : ViewModelBase
         set => SetField(ref _isOutputLogDescending, value);
     }
 
+    // ── GPS coordinate display format ─────────────────────────────────────
+    private GeoWpf.GpsDisplayFormat _gpsCoordinateFormat = GeoWpf.GpsDisplayFormat.DecimalDegrees;
+    public GeoWpf.GpsDisplayFormat GpsCoordinateFormat
+    {
+        get => _gpsCoordinateFormat;
+        set
+        {
+            if (SetField(ref _gpsCoordinateFormat, value))
+            {
+                CoordinateTransformVm.CoordinateFormat = value;
+                // Push to PointViewModel static so all DataGrid rows re-format live
+                PointViewModel.CoordinateFormat = value;
+                foreach (var pt in Points)
+                    pt.RefreshGpsDisplay();
+            }
+        }
+    }
+
+    public GeoWpf.GpsDisplayFormat[] AvailableGpsFormats { get; } =
+        Enum.GetValues<GeoWpf.GpsDisplayFormat>();
+
+    /// <summary>Context-menu command: shows GPS lat/lon popup for the selected point.</summary>
+    public System.Windows.Input.ICommand ShowGpsCoordinatesCommand { get; private set; }
+        = new RelayCommand(_ => { }); // initialized in InitGpsCommand()
+
     public ObservableCollection<double> AvailableSymbolScales { get; } = new(new[] { 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 10.0 });
     public ObservableCollection<double> AvailablePointNumberSizes { get; } = new(new[] { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 48.0, 64.0 });
     public ObservableCollection<double> AvailablePointMarkerSizes { get; } = new(new[] { 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0, 5.0 });
@@ -912,7 +967,97 @@ public partial class ShellViewModel : ViewModelBase
         var staticCrsRegistry = new StaticCrsRegistry();
         var projNetTransform = new ProjNetCoordinateTransformService(staticCrsRegistry);
         CoordinateTransformVm = new GeoWpf.CoordinateTransformViewModel(projNetTransform);
-        
+
+        // ── Bulk transform — applies SP⇔LatLon to all context COGO points ──
+        CoordinateTransformVm.BulkApplyAction = (direction, _crsId) =>
+        {
+            int count = 0;
+            foreach (var pt in _context.GetAllPoints())
+            {
+                var p = _context.GetPoint(pt.Id);
+                if (p == null) continue;
+                string desc = pt.Description ?? string.Empty;
+                if (direction == GeoWpf.TransformDirection.StatePlaneToLatLon)
+                {
+                    var (lat, lon) = RCS.Cogo.Wpf.Services.StatePlaneConverter.ToLatLon(p.Easting, p.Northing);
+                    _context.AddPoint(pt.Id, new RCS.Cogo.Core.Primitives.Point3D(lat, lon, p.Elevation), desc);
+                }
+                else
+                {
+                    var (eft, nft) = RCS.Cogo.Wpf.Services.StatePlaneConverter.ToStatePlane(p.Northing, p.Easting);
+                    _context.AddPoint(pt.Id, new RCS.Cogo.Core.Primitives.Point3D(nft, eft, p.Elevation), desc);
+                }
+                count++;
+            }
+            System.Windows.MessageBox.Show(
+                $"Bulk transform complete.\n{count} point(s) updated.",
+                "GPS Transform", System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Information);
+            OnPropertyChanged(nameof(Points));
+        };
+
+        // ── GPS CSV import ──────────────────────────────────────────────────
+        CoordinateTransformVm.ImportGpsCsvAction = filePath =>
+        {
+            try
+            {
+                var records = RCS.Piping.Core.IO.GpsCsvIo.Import(filePath);
+                foreach (var rec in records)
+                {
+                    var (eft, nft) = RCS.Cogo.Wpf.Services.StatePlaneConverter.ToStatePlane(rec.Latitude, rec.Longitude);
+                    _context.AddPoint(rec.PointId, new RCS.Cogo.Core.Primitives.Point3D(nft, eft, rec.Elevation), rec.Description ?? string.Empty);
+                }
+                ResultLogText += $"GPS Import: {records.Count} point(s) loaded from {System.IO.Path.GetFileName(filePath)}{Environment.NewLine}";
+                OnPropertyChanged(nameof(Points));
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Import error: {ex.Message}", "GPS Import",
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+        };
+
+        // ── GPS CSV/TXT export ──────────────────────────────────────────────
+        CoordinateTransformVm.ExportGpsAction = (outputPath, fullCsv) =>
+        {
+            try
+            {
+                var allPts = _context.GetAllPoints().ToList();
+                var rows   = allPts.Select(pt =>
+                {
+                    var p3d = _context.GetPoint(pt.Id);
+                    return new RCS.Piping.Core.Workflow.PointRow
+                    {
+                        PointId     = pt.Id,
+                        Northing    = p3d?.Northing  ?? 0,
+                        Easting     = p3d?.Easting   ?? 0,
+                        Elevation   = p3d?.Elevation ?? 0,
+                        Description = pt.Description ?? string.Empty
+                    };
+                }).ToList();
+
+                var tempJob = new RCS.Piping.Core.Workflow.AsBuiltJob
+                {
+                    Identity  = new RCS.Piping.Core.Workflow.ProjectIdentity { JobNumber = "COGO-Export" },
+                    PointRows = new System.Collections.ObjectModel.ObservableCollection
+                        <RCS.Piping.Core.Workflow.PointRow>(rows)
+                };
+
+                bool useDms = GpsCoordinateFormat == GeoWpf.GpsDisplayFormat.DMS;
+                if (fullCsv)
+                    RCS.Piping.Core.IO.GpsCsvIo.ExportFullCsv(tempJob, outputPath, useDms);
+                else
+                    RCS.Piping.Core.IO.GpsCsvIo.ExportLatLonTxt(tempJob, outputPath, useDms);
+
+                ResultLogText += $"GPS Export: {rows.Count} point(s) → {System.IO.Path.GetFileName(outputPath)}{Environment.NewLine}";
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Export error: {ex.Message}", "GPS Export",
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+        };
+
         // Context logs to our ResultLogText
         _context = new CogoContext(log => 
         {
@@ -1071,6 +1216,10 @@ public partial class ShellViewModel : ViewModelBase
             
             // ── Script Auto-Save Path ────────────────────────────────────────
             CogoScriptDefaultSavePath = RCS.Services.GlobalSettingsService.GetSetting("CogoScriptDefaultSavePath", Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            // ── GPS coordinate display format ────────────────────────────────────────────
+            var _gpsFmtStr = RCS.Services.GlobalSettingsService.GetSetting("GpsCoordinateFormat", nameof(RCS.Geo.Wpf.ViewModels.GpsDisplayFormat.DecimalDegrees));
+            if (System.Enum.TryParse<RCS.Geo.Wpf.ViewModels.GpsDisplayFormat>(_gpsFmtStr, out var _gpsFmt))
+                _gpsCoordinateFormat = _gpsFmt;   // set backing field directly to avoid null-ref on CoordinateTransformVm before it is wired
         }
         catch (Exception ex)
         {
@@ -1085,6 +1234,31 @@ public partial class ShellViewModel : ViewModelBase
         OpenConvertImageCommand = new RelayCommand(_ => OpenConvertImage());
         RunBatchCommand = new RelayCommand(async _ => await RunBatchScriptAsync());
         WalkBatchCommand = new RelayCommand(async _ => await WalkBatchScriptAsync());
+
+        // ── GPS per-point coordinate viewer ──────────────────────────────────
+        ShowGpsCoordinatesCommand = new RelayCommand(param =>
+        {
+            if (param is not PointViewModel pt) return;
+            bool useDms = GpsCoordinateFormat == GeoWpf.GpsDisplayFormat.DMS;
+            var (lat, lon) = RCS.Geo.Core.StatePlaneProjection.ToLatLon(pt.Easting, pt.Northing);
+            string latStr = useDms
+                ? RCS.Geo.Core.StatePlaneProjection.ToDms(lat, isLatitude: true)
+                : $"{lat:F7}\u00b0";
+            string lonStr = useDms
+                ? RCS.Geo.Core.StatePlaneProjection.ToDms(lon, isLatitude: false)
+                : $"{lon:F7}\u00b0";
+            string msg =
+                $"Point:      {pt.Id}\n" +
+                $"Latitude:   {latStr}\n" +
+                $"Longitude:  {lonStr}\n\n" +
+                $"Northing:   {pt.Northing:F3} ft\n" +
+                $"Easting:    {pt.Easting:F3} ft\n" +
+                $"Elevation:  {pt.Elevation:F3} ft\n\n" +
+                $"Decimal coords copied to clipboard: {lat:F7}, {lon:F7}";
+            System.Windows.Clipboard.SetText($"{lat:F7}, {lon:F7}");
+            System.Windows.MessageBox.Show(msg, $"GPS Coordinates \u2014 Pt {pt.Id}",
+                System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+        });
 
         ZoomInCommand = new RelayCommand(_ => ZoomInRequested?.Invoke(this, EventArgs.Empty));
         ZoomOutCommand = new RelayCommand(_ => ZoomOutRequested?.Invoke(this, EventArgs.Empty));

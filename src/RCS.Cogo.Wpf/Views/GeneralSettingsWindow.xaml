@@ -49,7 +49,23 @@
                                   Margin="0,0,0,8"/>
                         <CheckBox IsChecked="{Binding IsOutputLogDescending}"
                                   Content="Output Log Descending (newest at top)"
-                                  ToolTip="Tick to show newest logs at the top"/>
+                                  ToolTip="Tick to show newest logs at the top"
+                                  Margin="0,0,0,8"/>
+                        <!-- GPS coordinate display format -->
+                        <Grid Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="GPS Coordinate Format"
+                                       VerticalAlignment="Center"
+                                       Foreground="{StaticResource BrTextSecondary}"
+                                       ToolTip="Controls how Latitude/Longitude values are displayed and exported (Decimal Degrees or DMS)."/>
+                            <ComboBox Grid.Column="1"
+                                      ItemsSource="{Binding AvailableGpsFormats}"
+                                      SelectedItem="{Binding GpsCoordinateFormat}"
+                                      ToolTip="Decimal Degrees e.g. 30.318667  |  DMS e.g. 30°19'07.00&quot; N"/>
+                        </Grid>
                     </StackPanel>
                 </Border>
 

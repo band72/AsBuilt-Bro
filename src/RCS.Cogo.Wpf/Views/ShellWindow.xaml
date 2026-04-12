@@ -542,6 +542,21 @@
                                     </DataGridTemplateColumn.CellEditingTemplate>
                                 </DataGridTemplateColumn>
                             </DataGrid.Columns>
+
+                            <!-- ContextMenu: GPS Coordinates & Zoom to Point -->
+                            <DataGrid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="&#127758;  Show GPS Coordinates"
+                                              Command="{Binding PlacementTarget.DataContext.ShowGpsCoordinatesCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                              CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                              ToolTip="Display and copy Lat/Lon (DD or DMS per Settings) for the selected point"/>
+                                    <Separator/>
+                                    <MenuItem Header="&#128269;  Zoom to Point"
+                                              Command="{Binding PlacementTarget.DataContext.ZoomToImportedPointCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                              CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                </ContextMenu>
+                            </DataGrid.ContextMenu>
+
                             
                             <!-- Row Style for Red Highlight on mismatch? 
                                  "Highlight in green... codes that match... Highlight in red missing or incorrect matches."

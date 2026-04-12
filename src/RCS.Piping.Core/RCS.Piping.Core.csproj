@@ -1,7 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\RCS.Cogo.Core\RCS.Cogo.Core.csproj" />
+    <ProjectReference Include="..\RCS.Geo.Abstractions\RCS.Geo.Abstractions.csproj" />
+    <ProjectReference Include="..\RCS.Geo.Core\RCS.Geo.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -11,3 +13,4 @@
   </PropertyGroup>
 
 </Project>
+

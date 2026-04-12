@@ -30,6 +30,8 @@ public partial class GeneralSettingsWindow : Window
             RCS.Services.GlobalSettingsService.SaveSetting("CogoScriptDefaultSavePath",  vm.CogoScriptDefaultSavePath);
             // ── DXF Blocks Library ──────────────────────────────────────
             RCS.Services.GlobalSettingsService.SaveSetting("RcsBlocksPath",              vm.RcsBlocksPath);
+        // ── GPS coordinate display format ─────────────────────────────────
+        RCS.Services.GlobalSettingsService.SaveSetting("GpsCoordinateFormat", vm.GpsCoordinateFormat.ToString());
         }
         Close();
     }
