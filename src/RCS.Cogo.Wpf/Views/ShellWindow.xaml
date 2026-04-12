@@ -402,6 +402,7 @@
                     <Grid Margin="10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
+                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         
@@ -416,6 +417,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
+                                 <ColumnDefinition Width="Auto"/>
                                  <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
@@ -481,8 +483,17 @@
                                     BorderThickness="0" FontWeight="Bold"
                                     ToolTip="Clear filter"/>
 
+
+                            <!-- ── KML Export ── -->
+                            <Button Grid.Column="8"
+                                    Content="&#x1F5FA; KML"
+                                    Command="{Binding ExportKmlCommand}"
+                                    Padding="8,5" Margin="4,0,0,0"
+                                    ToolTip="Export all points as KML for Google Earth / Maps"
+                                    Background="#1A2535" Foreground="#61AFEF"
+                                    BorderBrush="#1A4A6E" BorderThickness="1"/>
                             <!-- ── GPS Columns toggle ── -->
-                            <ToggleButton Grid.Column="8"
+                            <ToggleButton Grid.Column="9"
                                           Content="&#x1F30D; GPS"
                                           IsChecked="{Binding ShowGpsColumnsInGrid}"
                                           Padding="8,5" Margin="4,0,0,0"
@@ -491,7 +502,16 @@
                                           BorderBrush="#3A6A3A" BorderThickness="1"/>
                         </Grid>
 
-                        <DataGrid Grid.Row="1" ItemsSource="{Binding PointsView}" AutoGenerateColumns="False"
+                        <!-- ── GPS Zone Warning Banner ── -->
+                        <Border Grid.Row="1" Background="#2A2000" CornerRadius="4" Margin="0,4,0,0" Padding="10,6"
+                                Visibility="{Binding GpsZoneWarningVisible, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{Binding GpsZoneWarning}"
+                                       Foreground="#FFD700" FontWeight="Bold" FontSize="12"
+                                       TextWrapping="Wrap"/>
+                        </Border>
+
+
+                        <DataGrid Grid.Row="2" ItemsSource="{Binding PointsView}" AutoGenerateColumns="False"
                                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="True"
                                   BorderThickness="1" BorderBrush="{StaticResource BrBorder}">
                             <DataGrid.Columns>
@@ -575,6 +595,15 @@
                                     <MenuItem Header="&#128269;  Zoom to Point"
                                               Command="{Binding PlacementTarget.DataContext.ZoomToImportedPointCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                               CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                     <Separator/>
+                                     <MenuItem Header="&#127759;  Open in Google Maps"
+                                               Command="{Binding PlacementTarget.DataContext.OpenInGoogleMapsCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                               CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                               ToolTip="Open selected point coordinates in Google Maps (default browser)"/>
+                                     <Separator/>
+                                     <MenuItem Header="&#9888;  Detect GPS Zone"
+                                               Command="{Binding PlacementTarget.DataContext.AnalyzeGpsZoneCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                               ToolTip="Analyze loaded point Eastings to verify the correct FL State Plane zone is selected"/>
                                 </ContextMenu>
                             </DataGrid.ContextMenu>
 

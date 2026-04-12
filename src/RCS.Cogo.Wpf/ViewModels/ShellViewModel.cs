@@ -681,6 +681,28 @@ public partial class ShellViewModel : ViewModelBase
     public System.Windows.Input.ICommand ShowGpsCoordinatesCommand { get; private set; }
         = new RelayCommand(_ => { }); // initialized in InitGpsCommand()
 
+    /// <summary>Context-menu command: opens the selected point in Google Maps in the default browser.</summary>
+    public System.Windows.Input.ICommand OpenInGoogleMapsCommand { get; private set; }
+        = new RelayCommand(_ => { }); // initialized in InitGpsCommand()
+
+    /// <summary>Analyzes loaded point Easting values to detect the FL State Plane zone and warns if it mismatches the current setting.</summary>
+    public System.Windows.Input.ICommand AnalyzeGpsZoneCommand { get; private set; }
+        = new RelayCommand(_ => { }); // initialized in InitGpsCommand()
+
+    /// <summary>Exports all drawing points as a KML file for Google Earth.</summary>
+    public System.Windows.Input.ICommand ExportKmlCommand { get; private set; }
+        = new RelayCommand(_ => { }); // initialized in InitGpsCommand()
+
+    // ── Zone auto-detect banner ───────────────────────────────────────────
+    private string _gpsZoneWarning = string.Empty;
+    /// <summary>Shown in a yellow warning banner when the loaded points appear to use a different FL zone.</summary>
+    public string GpsZoneWarning
+    {
+        get => _gpsZoneWarning;
+        set { _gpsZoneWarning = value; OnPropertyChanged(); OnPropertyChanged(nameof(GpsZoneWarningVisible)); }
+    }
+    public bool GpsZoneWarningVisible => !string.IsNullOrEmpty(_gpsZoneWarning);
+
     public ObservableCollection<double> AvailableSymbolScales { get; } = new(new[] { 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 10.0 });
     public ObservableCollection<double> AvailablePointNumberSizes { get; } = new(new[] { 8.0, 10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 24.0, 28.0, 32.0, 36.0, 48.0, 64.0 });
     public ObservableCollection<double> AvailablePointMarkerSizes { get; } = new(new[] { 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0, 5.0 });
@@ -1278,8 +1300,9 @@ public partial class ShellViewModel : ViewModelBase
         ShowGpsCoordinatesCommand = new RelayCommand(param =>
         {
             if (param is not PointViewModel pt) return;
-            bool useDms = GpsCoordinateFormat == GeoWpf.GpsDisplayFormat.DMS;
-            var (lat, lon) = RCS.Geo.Core.StatePlaneProjection.ToLatLon(pt.Easting, pt.Northing);
+            string zone = RCS.Geo.Core.StatePlaneProjection.NormalizeZone(JeaStatePlaneZone);
+            bool useDms  = GpsCoordinateFormat == GeoWpf.GpsDisplayFormat.DMS;
+            var (lat, lon) = RCS.Geo.Core.StatePlaneProjection.ToLatLon(pt.Easting, pt.Northing, zone);
             string latStr = useDms
                 ? RCS.Geo.Core.StatePlaneProjection.ToDms(lat, isLatitude: true)
                 : $"{lat:F7}\u00b0";
@@ -1293,11 +1316,57 @@ public partial class ShellViewModel : ViewModelBase
                 $"Northing:   {pt.Northing:F3} ft\n" +
                 $"Easting:    {pt.Easting:F3} ft\n" +
                 $"Elevation:  {pt.Elevation:F3} ft\n\n" +
+                $"Zone: {zone}\n" +
                 $"Decimal coords copied to clipboard: {lat:F7}, {lon:F7}";
             System.Windows.Clipboard.SetText($"{lat:F7}, {lon:F7}");
             System.Windows.MessageBox.Show(msg, $"GPS Coordinates \u2014 Pt {pt.Id}",
                 System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
         });
+
+        // ── Open selected point in Google Maps ───────────────────────────
+        OpenInGoogleMapsCommand = new RelayCommand(param =>
+        {
+            if (param is not PointViewModel pt) return;
+            string zone = RCS.Geo.Core.StatePlaneProjection.NormalizeZone(JeaStatePlaneZone);
+            var (lat, lon) = RCS.Geo.Core.StatePlaneProjection.ToLatLon(pt.Easting, pt.Northing, zone);
+            string url = $"https://maps.google.com/?q={lat:F7},{lon:F7}";
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
+        });
+
+        // ── Export KML ────────────────────────────────────────────────────
+        ExportKmlCommand = new RelayCommand(_ =>
+        {
+            var dlg = new Microsoft.Win32.SaveFileDialog
+            {
+                Title      = "Export GPS Coordinates as KML",
+                Filter     = "KML Files (*.kml)|*.kml|All Files (*.*)|*.*",
+                DefaultExt = ".kml",
+                FileName   = "COGO_Points.kml"
+            };
+            if (dlg.ShowDialog() != true) return;
+            try
+            {
+                string zone = RCS.Geo.Core.StatePlaneProjection.NormalizeZone(JeaStatePlaneZone);
+                var pts = Points.Select(pt =>
+                    (pt.Id, pt.Description ?? string.Empty,
+                     RCS.Geo.Core.StatePlaneProjection.ToLatLon(pt.Easting, pt.Northing, zone),
+                     pt.Elevation)).ToList();
+                RCS.Geo.Core.KmlExporter.Export(dlg.FileName, pts);
+                ResultLogText += $"KML Export: {pts.Count} point(s) \u2192 {System.IO.Path.GetFileName(dlg.FileName)}{Environment.NewLine}";
+                System.Windows.MessageBox.Show(
+                    $"KML exported: {pts.Count} point(s)\n{dlg.FileName}",
+                    "KML Export", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"KML export error: {ex.Message}", "KML Export",
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+        });
+
+        // ── GPS zone auto-detect command ─────────────────────────────────────────
+        AnalyzeGpsZoneCommand = new RelayCommand(_ => AnalyzeGpsZone());
+
 
         ZoomInCommand = new RelayCommand(_ => ZoomInRequested?.Invoke(this, EventArgs.Empty));
         ZoomOutCommand = new RelayCommand(_ => ZoomOutRequested?.Invoke(this, EventArgs.Empty));
@@ -2032,6 +2101,53 @@ public partial class ShellViewModel : ViewModelBase
         RefreshData(false); // Refresh Data method already rebuilds the Points view models with the current valid codes
         _context.Log("[AUDIT] Points explicitly validated against Code Database via Refresh.");
     }
+
+    // ── GPS Zone Auto-Detect ──────────────────────────────────────────────────
+    /// <summary>
+    /// Inspects the median Easting of all loaded points to suggest the matching
+    /// FL State Plane zone. Sets <see cref="GpsZoneWarning"/> if the active zone
+    /// looks inconsistent with the data; clears it otherwise.
+    /// </summary>
+    private void AnalyzeGpsZone()
+    {
+        GpsZoneWarning = string.Empty;
+        if (!Points.Any()) return;
+
+        var eastings = Points.Select(p => p.Easting).OrderBy(e => e).ToList();
+        double medEasting = eastings[eastings.Count / 2];
+
+        // Discriminate zones by false easting offsets (US survey feet):
+        //   East  (EPSG:2236): FE ~656 167 ft  approx 450k-930k E
+        //   West  (EPSG:2237): FE ~656 167 ft  approx 350k-870k E
+        //   North (EPSG:2238): FE ~1 968 500 ft approx 1.4M-2.4M E
+        string suggestedZone;
+        if (medEasting > 1_400_000)
+            suggestedZone = "EPSG:2238";
+        else
+        {
+            double medNorthing = Points.Select(p => p.Northing).OrderBy(n => n).ToList()[Points.Count / 2];
+            suggestedZone = medNorthing < 900_000 ? "EPSG:2237" : "EPSG:2236";
+        }
+
+        string activeZone = RCS.Geo.Core.StatePlaneProjection.NormalizeZone(JeaStatePlaneZone);
+        if (suggestedZone != activeZone)
+        {
+            string zoneName = suggestedZone switch
+            {
+                "EPSG:2237" => "Florida West (EPSG:2237)",
+                "EPSG:2238" => "Florida North (EPSG:2238)",
+                _           => "Florida East (EPSG:2236)"
+            };
+            GpsZoneWarning =
+                $"Zone Mismatch: points appear to belong to {zoneName} but current setting is {JeaStatePlaneZone}. " +
+                $"Update in General Settings \u2192 GPS.";
+        }
+        else
+        {
+            GpsZoneWarning = $"Zone OK \u2014 data consistent with {activeZone}.";
+        }
+    }
+
 
     private void EditPoints()
     {

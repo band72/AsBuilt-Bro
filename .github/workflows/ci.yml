@@ -1,0 +1,59 @@
+name: CI — Build & Test
+
+on:
+  push:
+    branches: [ master, main, develop ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build-and-test:
+    name: Build & Test (.NET 8)
+    runs-on: windows-latest          # WPF requires Windows
+
+    steps:
+      # ── Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0             # full history for versioning
+
+      # ── .NET SDK ──────────────────────────────────────────────────────────
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      # ── Restore NuGet packages ────────────────────────────────────────────
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # ── Build (Release) ──────────────────────────────────────────────────
+      - name: Build solution (Release)
+        run: dotnet build --configuration Release --no-restore
+
+      # ── Test (all projects) ───────────────────────────────────────────────
+      - name: Run unit tests
+        run: >
+          dotnet test
+          --configuration Release
+          --no-build
+          --verbosity normal
+          --logger "trx;LogFileName=test-results.trx"
+          --results-directory ./TestResults
+
+      # ── Publish test results ──────────────────────────────────────────────
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()                 # upload even on failure
+        with:
+          name: test-results
+          path: ./TestResults/*.trx
+          retention-days: 14
+
+      # ── Summary ──────────────────────────────────────────────────────────
+      - name: Check for test failures
+        if: failure()
+        run: |
+          echo "::error::One or more tests failed. See the uploaded test-results artifact for details."
+          exit 1
