@@ -532,9 +532,22 @@ public partial class ShellWindow : Window
         e.Handled = true;
     }
 
-
-
-
+    private void UpdateApp_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "https://github.com/band72/RCS.Cogo.Enterprise.Modern/raw/master/Installer/RCS.ASBUILT.PRO.exe",
+                UseShellExecute = true
+            };
+            System.Diagnostics.Process.Start(psi);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Unable to launch update link: {ex.Message}");
+        }
+    }
 
     private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {

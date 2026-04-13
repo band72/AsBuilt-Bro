@@ -239,12 +239,39 @@
                     <MenuItem Header="T07: Full Road Design" Command="{Binding OpenTutorial07Command}"/>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Header="Azimuth Script" Command="{Binding OpenExampleCogoCommand}"/>
-                <MenuItem Header="Bearing Script" Command="{Binding OpenExampleBearingCommand}"/>
-                <MenuItem Header="Pipe Script" Command="{Binding OpenExamplePipeCommand}"/>
-                <MenuItem Header="Mix Script" Command="{Binding OpenExampleMixCommand}"/>
-                <MenuItem Header="Cogo Figures" Command="{Binding OpenExampleFiguresCommand}"/>
-                <MenuItem Header="Angle Script" Command="{Binding OpenExampleAngleCommand}"/>
+                <MenuItem Header="📐 Cogo &amp; Survey Reference Scripts" FontWeight="SemiBold" Foreground="{StaticResource BrTeal}">
+                    <MenuItem Header="Azimuth Script" Command="{Binding OpenExampleCogoCommand}"/>
+                    <MenuItem Header="Bearing Script" Command="{Binding OpenExampleBearingCommand}"/>
+                    <MenuItem Header="Angle Script" Command="{Binding OpenExampleAngleCommand}"/>
+                    <MenuItem Header="Cogo Figures" Command="{Binding OpenExampleFiguresCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Cogo Script V2 (Robust Test)" Command="{Binding OpenExampleCogoV2Command}"/>
+                </MenuItem>
+                
+                <MenuItem Header="🏗 Piping &amp; Utility Reference Scripts" FontWeight="SemiBold" Foreground="{StaticResource BrInfo}">
+                    <MenuItem Header="💧 Water &amp; Sewer">
+                        <MenuItem Header="Water Script" Command="{Binding OpenExampleWaterCommand}"/>
+                        <MenuItem Header="Water Script V2" Command="{Binding OpenExampleWaterV2Command}"/>
+                        <MenuItem Header="Waste Water Script" Command="{Binding OpenExampleWwCommand}"/>
+                        <MenuItem Header="Waste Water Script V2" Command="{Binding OpenExampleWwV2Command}"/>
+                        <MenuItem Header="Sewer Script V2" Command="{Binding OpenExampleSewerV2Command}"/>
+                    </MenuItem>
+                    <MenuItem Header="🌧 Storm &amp; Reuse">
+                        <MenuItem Header="Storm Script" Command="{Binding OpenExampleStormCommand}"/>
+                        <MenuItem Header="Storm Script V2" Command="{Binding OpenExampleStormV2Command}"/>
+                        <MenuItem Header="Reclaimed Script" Command="{Binding OpenExampleRcCommand}"/>
+                        <MenuItem Header="Chilled Script" Command="{Binding OpenExampleChCommand}"/>
+                    </MenuItem>
+                    <MenuItem Header="⚡ Electric &amp; Gas">
+                        <MenuItem Header="Electric Script" Command="{Binding OpenExampleElectricCommand}"/>
+                        <MenuItem Header="Electric Script V2" Command="{Binding OpenExampleElectricV2Command}"/>
+                        <MenuItem Header="Gas Script" Command="{Binding OpenExampleGasCommand}"/>
+                        <MenuItem Header="Gas Script V2" Command="{Binding OpenExampleGasV2Command}"/>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Mix Script" Command="{Binding OpenExampleMixCommand}"/>
+                    <MenuItem Header="Pipe Script (Generic)" Command="{Binding OpenExamplePipeCommand}"/>
+                </MenuItem>
                 <Separator/>
                 <MenuItem Header="🗃 Civil 3D Table Extraction" FontWeight="SemiBold" Foreground="{StaticResource BrAmber}">
                     <MenuItem.ToolTip>
@@ -291,27 +318,9 @@
                 <MenuItem Header="Test C++ Security Integration" Command="{Binding TestNativeSecurityCommand}"/>
                 <MenuItem Header="Licensing Agent Chat" Command="{Binding OpenLicensingAgentCommand}"/>
                 <Separator/>
-                <!-- Discipline Divider -->
-                <MenuItem Header="Discipline Examples" IsEnabled="False" FontWeight="Bold"/>
-                <MenuItem Header="Gas Script" Command="{Binding OpenExampleGasCommand}"/>
-                <MenuItem Header="Electric Script" Command="{Binding OpenExampleElectricCommand}"/>
-                <MenuItem Header="Water Script" Command="{Binding OpenExampleWaterCommand}"/>
-                <MenuItem Header="Waste Water Script" Command="{Binding OpenExampleWwCommand}"/>
-                <MenuItem Header="Storm Script" Command="{Binding OpenExampleStormCommand}"/>
-                <MenuItem Header="Reclaimed Script" Command="{Binding OpenExampleRcCommand}"/>
-                <MenuItem Header="Chilled Script" Command="{Binding OpenExampleChCommand}"/>
-                <Separator/>
-                <MenuItem Header="Robust Test Scripts V2" IsEnabled="False" FontWeight="Bold"/>
-                <MenuItem Header="Cogo Script V2" Command="{Binding OpenExampleCogoV2Command}"/>
-                <MenuItem Header="Water Script V2" Command="{Binding OpenExampleWaterV2Command}"/>
-                <MenuItem Header="Storm Script V2" Command="{Binding OpenExampleStormV2Command}"/>
-                <MenuItem Header="Sewer Script V2" Command="{Binding OpenExampleSewerV2Command}"/>
-                <MenuItem Header="Waste Water Script V2" Command="{Binding OpenExampleWwV2Command}"/>
-                <MenuItem Header="Gas Script V2" Command="{Binding OpenExampleGasV2Command}"/>
-                <MenuItem Header="Electric Script V2" Command="{Binding OpenExampleElectricV2Command}"/>
-                <Separator/>
                 <MenuItem Header="Report a Bug / Error..." Command="{Binding OpenErrorReportCommand}" Foreground="{StaticResource BrError}" FontWeight="Bold"/>
                 <MenuItem Header="_About" Command="{Binding AboutCommand}"/>
+                <MenuItem Header="📥 Check for Updates / Download Latest V3 Installer" Click="UpdateApp_Click" FontWeight="Bold" Foreground="{StaticResource BrInfo}"/>
             </MenuItem>
         </Menu>
 
