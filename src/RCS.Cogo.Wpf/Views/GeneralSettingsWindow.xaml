@@ -40,6 +40,17 @@
                                Foreground="{StaticResource BrTextSecondary}"/>
                 </Grid>
 
+                <!-- Application Branding -->
+                <TextBlock Style="{StaticResource TbSection}" Text="APPLICATION BRANDING"/>
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="APP BADGING / PROJECT NAME"/>
+                        <TextBox Text="{Binding AppBadgeName, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="This overrides the title displayed on the splash screen and window header."
+                                 Margin="0,0,0,8"/>
+                    </StackPanel>
+                </Border>
+
                 <!-- Options -->
                 <TextBlock Style="{StaticResource TbSection}" Text="DISPLAY OPTIONS"/>
                 <Border Style="{StaticResource Card}">

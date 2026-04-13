@@ -28,6 +28,7 @@ public partial class WelcomeWindow : Window
     {
         InitializeComponent();
         _vm = vm;
+        DataContext = _vm;
 
         // Version badge
         var ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;

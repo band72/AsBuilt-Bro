@@ -348,7 +348,14 @@ public partial class ShellViewModel : ViewModelBase
         }
     }
 
-    // ── Window Title ─────────────────────────────────────────────────────────
+    // ── Window Title & Badging ───────────────────────────────────────────────
+    private string _appBadgeName = "RCS COGO Enterprise";
+    public string AppBadgeName
+    {
+        get => _appBadgeName;
+        set { if (SetField(ref _appBadgeName, value)) UpdateWindowTitle(); }
+    }
+
     private string _windowTitle = "RCS COGO Enterprise";
     public string WindowTitle
     {
@@ -378,7 +385,7 @@ public partial class ShellViewModel : ViewModelBase
         string dirty = _isDirty ? " *" : "";
         string ver = System.Reflection.Assembly.GetExecutingAssembly()
             .GetCustomAttributes(typeof(System.Reflection.AssemblyFileVersionAttribute), false).OfType<System.Reflection.AssemblyFileVersionAttribute>().FirstOrDefault()?.Version ?? "2.x";
-        WindowTitle = $"{name}  [{file}]{dirty}  —  RCS COGO Enterprise v{ver}";
+        WindowTitle = $"{name}  [{file}]{dirty}  —  {AppBadgeName} v{ver}";
     }
 
     // ── Recent Files (MRU) ───────────────────────────────────────────────────
@@ -1316,6 +1323,7 @@ public partial class ShellViewModel : ViewModelBase
             // ── JEA settings ────────────────────────────────────────────────
             JeaTemplatePath   = RCS.Services.GlobalSettingsService.GetSetting("JeaTemplatePath",   string.Empty);
             JeaStatePlaneZone = RCS.Services.GlobalSettingsService.GetSetting("JeaStatePlaneZone", "Florida East (EPSG:2236)");
+            AppBadgeName      = RCS.Services.GlobalSettingsService.GetSetting("AppBadgeName", "RCS COGO Enterprise");
             // Initialise PointViewModel static so GPS columns are correct from the first load
             PointViewModel.ActiveZone = RCS.Geo.Core.StatePlaneProjection.NormalizeZone(JeaStatePlaneZone);
             // ── DXF Blocks Library ───────────────────────────────────────────

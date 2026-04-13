@@ -23,6 +23,7 @@ public partial class GeneralSettingsWindow : Window
             RCS.Services.GlobalSettingsService.SaveSetting("FigureLineWidth",            vm.FigureLineWidth.ToString());
             RCS.Services.GlobalSettingsService.SaveSetting("MapCheckClosureTolerance",   vm.MapCheckClosureTolerance.ToString());
             RCS.Services.GlobalSettingsService.SaveSetting("MinimumBoundaryArea",        vm.MinimumBoundaryArea.ToString());
+            RCS.Services.GlobalSettingsService.SaveSetting("AppBadgeName",               vm.AppBadgeName);
             // ── JEA settings ──────────────────────────────────────────────
             RCS.Services.GlobalSettingsService.SaveSetting("JeaTemplatePath",            vm.JeaTemplatePath);
             RCS.Services.GlobalSettingsService.SaveSetting("JeaStatePlaneZone",          vm.JeaStatePlaneZone);
