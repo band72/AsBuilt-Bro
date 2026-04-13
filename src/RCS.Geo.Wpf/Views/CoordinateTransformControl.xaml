@@ -6,7 +6,12 @@
              xmlns:vm="clr-namespace:RCS.Geo.Wpf.ViewModels"
              mc:Ignorable="d"
              d:DesignHeight="560" d:DesignWidth="430"
+             xmlns:local="clr-namespace:RCS.Geo.Wpf.Views"
              d:DataContext="{d:DesignInstance vm:CoordinateTransformViewModel}">
+
+    <UserControl.Resources>
+        <local:NullToCollapsedConverter x:Key="NullToCollapsed" />
+    </UserControl.Resources>
 
     <Border BorderBrush="#2A2A45" BorderThickness="1" CornerRadius="6"
             Background="#13132A" TextElement.Foreground="#D4D4F0">
@@ -117,11 +122,11 @@
                                    Text="{Binding OutputLabel1}"
                                    FontSize="11" Foreground="#8090B0" VerticalAlignment="Center" Margin="0,2"/>
                         <TextBox   Grid.Row="1" Grid.Column="1"
-                                   Text="{Binding Output1}" IsReadOnly="True"
+                                   Text="{Binding Output1, Mode=OneWay}" IsReadOnly="True"
                                    Background="#1A2535" Foreground="#98C379"
                                    BorderBrush="#1F2E50" Padding="4,2" FontSize="11" Margin="0,2,4,2"/>
                         <TextBox   Grid.Row="1" Grid.Column="2"
-                                   Text="{Binding Output1Dms}" IsReadOnly="True"
+                                   Text="{Binding Output1Dms, Mode=OneWay}" IsReadOnly="True"
                                    Background="#1A2535" Foreground="#98C379"
                                    BorderBrush="#1F2E50" Padding="4,2" FontSize="11" Margin="0,2"/>
 
@@ -130,11 +135,11 @@
                                    Text="{Binding OutputLabel2}"
                                    FontSize="11" Foreground="#8090B0" VerticalAlignment="Center" Margin="0,2"/>
                         <TextBox   Grid.Row="3" Grid.Column="1"
-                                   Text="{Binding Output2}" IsReadOnly="True"
+                                   Text="{Binding Output2, Mode=OneWay}" IsReadOnly="True"
                                    Background="#1A2535" Foreground="#61AFEF"
                                    BorderBrush="#1F2E50" Padding="4,2" FontSize="11" Margin="0,2,4,2"/>
                         <TextBox   Grid.Row="3" Grid.Column="2"
-                                   Text="{Binding Output2Dms}" IsReadOnly="True"
+                                   Text="{Binding Output2Dms, Mode=OneWay}" IsReadOnly="True"
                                    Background="#1A2535" Foreground="#61AFEF"
                                    BorderBrush="#1F2E50" Padding="4,2" FontSize="11" Margin="0,2"/>
                     </Grid>

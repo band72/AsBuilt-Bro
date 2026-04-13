@@ -65,8 +65,6 @@
                 <MenuItem Header="Pipe Characteristics..." Command="{Binding OpenPipeCharacteristicsCommand}"/>
             </MenuItem>
             <MenuItem Header="_Data">
-                <MenuItem Header="Convert Image..." Command="{Binding OpenConvertImageCommand}"/>
-                <Separator/>
                 <MenuItem Header="_Import">
                     <MenuItem Header="Process Batch Script..." Command="{Binding ImportBatchCommand}"/>
                     <MenuItem Header="Import DXF Linework..." Command="{Binding ImportDxfCommand}"/>
