@@ -57,6 +57,21 @@ public partial class DeliverablesPhaseView : UserControl
         }
     }
 
+    private void BtnPrintReport_Click(object s, RoutedEventArgs e)
+    {
+        if (Vm?.Job == null) return;
+        
+        // Show a prompt asking whether to Print or just Save XPS
+        MessageBoxResult res = MessageBox.Show(
+            "Do you want to send this report directly to a printer/print-to-pdf dialog?\n\nSelect 'No' to save it immediately as an XPS document.",
+            "Print Output Destination", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            
+        if (res == MessageBoxResult.Yes)
+            AsBuiltReportPrinter.Print(Vm.Job);
+        else if (res == MessageBoxResult.No)
+            AsBuiltReportPrinter.SaveAsXps(Vm.Job, Window.GetWindow(this));
+    }
+
     public void Load(AsBuiltJob job)
     {
         // Deliverables ItemsControl binds via DataContext -> no code-behind assignment needed

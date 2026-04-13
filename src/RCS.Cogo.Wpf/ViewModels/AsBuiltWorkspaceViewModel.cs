@@ -100,8 +100,29 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
     public AsBuiltJob Job
     {
         get => _job;
-        private set { SetField(ref _job, value); RefreshNavigatorStatus(); }
+        private set 
+        { 
+            SetField(ref _job, value); 
+            RefreshNavigatorStatus(); 
+            
+            // Re-initialize undo stack when job completely changes
+            _undoStack = new RCS.Cogo.Wpf.Services.AsBuiltUndoStack(_job, () =>
+            {
+                OnPropertyChanged(nameof(CanUndo));
+                OnPropertyChanged(nameof(CanRedo));
+                OnPropertyChanged(nameof(UndoDescription));
+                OnPropertyChanged(nameof(RedoDescription));
+            });
+        }
     }
+
+    // ── Undo / Redo State ─────────────────────────────────────────────────────
+    private RCS.Cogo.Wpf.Services.AsBuiltUndoStack? _undoStack;
+    public bool CanUndo => _undoStack?.CanUndo ?? false;
+    public bool CanRedo => _undoStack?.CanRedo ?? false;
+    public string UndoDescription => _undoStack?.UndoDescription ?? "Undo";
+    public string RedoDescription => _undoStack?.RedoDescription ?? "Redo";
+    public RCS.Cogo.Wpf.Services.AsBuiltUndoStack? UndoStack => _undoStack;
 
     // ── Navigator ─────────────────────────────────────────────────────────────
     public ObservableCollection<WorkflowStepViewModel> Steps { get; } = new(
@@ -202,6 +223,8 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
     public System.Windows.Input.ICommand ImportBatchCommand          { get; }
     public System.Windows.Input.ICommand ImportJeaTemplateCommand    { get; }
     public System.Windows.Input.ICommand ImportDxfCommand            { get; }
+    public System.Windows.Input.ICommand UndoCommand                 { get; }
+    public System.Windows.Input.ICommand RedoCommand                 { get; }
 
     // ── Constructor ───────────────────────────────────────────────────────────
     public AsBuiltWorkspaceViewModel()
@@ -217,8 +240,23 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
         ImportJeaTemplateCommand    = new AsBuiltAsyncRelayCommand(() => ImportFileAsync(IntakeFileType.JeaExcel));
         ImportDxfCommand            = new AsBuiltAsyncRelayCommand(() => ImportFileAsync(IntakeFileType.Dxf));
 
+        UndoCommand                 = new AsBuiltRelayCommand(() => { _undoStack?.Undo(); RequestRevalidation(); }, () => CanUndo);
+        RedoCommand                 = new AsBuiltRelayCommand(() => { _undoStack?.Redo(); RequestRevalidation(); }, () => CanRedo);
+
         // Select first step by default
         SelectedStep = Steps.First();
+        
+        // Ensure stack applies to current default job
+        _undoStack = new RCS.Cogo.Wpf.Services.AsBuiltUndoStack(_job, () =>
+        {
+            OnPropertyChanged(nameof(CanUndo));
+            OnPropertyChanged(nameof(CanRedo));
+            OnPropertyChanged(nameof(UndoDescription));
+            OnPropertyChanged(nameof(RedoDescription));
+            // Trigger ICommand CanExecuteChanged re-evals
+            (UndoCommand as AsBuiltRelayCommand)?.RaiseCanExecuteChanged();
+            (RedoCommand as AsBuiltRelayCommand)?.RaiseCanExecuteChanged();
+        });
     }
 
     // ── Public API ────────────────────────────────────────────────────────────

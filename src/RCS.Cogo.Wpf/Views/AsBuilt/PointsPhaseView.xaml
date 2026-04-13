@@ -20,6 +20,12 @@
                     <TextBlock Text="📍 Survey Points" FontSize="13" FontWeight="Bold"
                                Foreground="#E8E8F0" FontFamily="Segoe UI" VerticalAlignment="Center"/>
                     <Separator Width="1" Background="#2A2A45" Margin="12,0"/>
+                    <Button x:Name="BtnImportCsv" Content="📥 Import CSV" Padding="10,4"
+                            Background="#154360" Foreground="#AED6F1"
+                            BorderBrush="#1A5276" BorderThickness="1"
+                            FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
+                            Command="{Binding ImportPointsListCommand}"
+                            ToolTip="Import standard PNEZD CSV points file"/>
                     <Button x:Name="BtnAddPoint" Content="+ Add" Padding="10,4"
                             Background="#252545" Foreground="#E8E8F0"
                             BorderBrush="#3A3A5A" BorderThickness="1"

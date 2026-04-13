@@ -187,7 +187,7 @@
                         ToolTip="Build all enabled deliverables into the output folder"/>
 
                 <!-- Quick Report preview button -->
-                <Button Content="📄  Preview Report"
+                <Button Content="📄  Preview Text Report"
                         HorizontalAlignment="Stretch"
                         FontSize="12" FontWeight="SemiBold" FontFamily="Segoe UI"
                         Padding="0,8" Margin="0,6,0,0"
@@ -195,6 +195,17 @@
                         BorderBrush="#3A5075" BorderThickness="1"
                         Command="{Binding GenerateReportCommand}"
                         ToolTip="Generate a preview AS-BUILT SURVEY REPORT and open it (does not build DXF or PNEZD)"/>
+
+                <!-- Print to PDF button -->
+                <Button x:Name="BtnPrintReport"
+                        Content="🖨️  Print/PDF Deliverable"
+                        HorizontalAlignment="Stretch"
+                        FontSize="12" FontWeight="SemiBold" FontFamily="Segoe UI"
+                        Padding="0,8" Margin="0,6,0,0"
+                        Background="#8E44AD" Foreground="#F5EEF8"
+                        BorderBrush="#6C3483" BorderThickness="1"
+                        Click="BtnPrintReport_Click"
+                        ToolTip="Generate professional paginated PDF or send to printer"/>
 
                 <!-- Export history expander -->
                 <Expander Header="📋 Export History" Margin="0,10,0,0"

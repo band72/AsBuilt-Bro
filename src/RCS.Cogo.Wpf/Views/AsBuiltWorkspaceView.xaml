@@ -413,11 +413,23 @@
                                     </TextBlock.Style>
                                 </TextBlock>
                             </StackPanel>
-                            <Button Grid.Column="1"
-                                    Content="▶  Run Validation"
-                                    Style="{StaticResource ActionBtn}"
-                                    Command="{Binding ValidateNowCommand}"
-                                    VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Content="⎗ Undo"
+                                        Style="{StaticResource ActionBtn}"
+                                        Background="#3A3A5A" Foreground="#E8E8F0"
+                                        Command="{Binding UndoCommand}"
+                                        ToolTip="{Binding UndoDescription}"
+                                        Margin="0,0,8,0"/>
+                                <Button Content="⎘ Redo"
+                                        Style="{StaticResource ActionBtn}"
+                                        Background="#3A3A5A" Foreground="#E8E8F0"
+                                        Command="{Binding RedoCommand}"
+                                        ToolTip="{Binding RedoDescription}"
+                                        Margin="0,0,16,0"/>
+                                <Button Content="▶  Run Validation"
+                                        Style="{StaticResource ActionBtn}"
+                                        Command="{Binding ValidateNowCommand}"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
 

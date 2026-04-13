@@ -23,6 +23,7 @@ public partial class PointsPhaseView : UserControl
         if (Vm?.Job == null) return;
         var row = new PointRow { PointId = $"P{Vm.Job.PointRows.Count + 1}" };
         Vm.Job.PointRows.Add(row);
+        Vm.UndoStack?.Push(new RCS.Cogo.Wpf.Services.EditPointRowsAction("Add Point", added: new[] { row }));
         TxtPointCount.Text = $"{Vm.Job.PointRows.Count} points";
         Vm.RequestRevalidation();
     }
@@ -31,7 +32,9 @@ public partial class PointsPhaseView : UserControl
     {
         if (Vm?.Job == null) return;
         var selected = PointsGrid.SelectedItems.Cast<PointRow>().ToList();
+        if (selected.Count == 0) return;
         foreach (var r in selected) Vm.Job.PointRows.Remove(r);
+        Vm.UndoStack?.Push(new RCS.Cogo.Wpf.Services.EditPointRowsAction($"Delete {selected.Count} Point(s)", removed: selected));
         TxtPointCount.Text = $"{Vm.Job.PointRows.Count} points";
         Vm.RequestRevalidation();
     }
@@ -44,7 +47,9 @@ public partial class PointsPhaseView : UserControl
             .Where(g => g.Count() > 1)
             .SelectMany(g => g.Skip(1))
             .ToList();
+        if (dupes.Count == 0) return;
         foreach (var d in dupes) Vm.Job.PointRows.Remove(d);
+        Vm.UndoStack?.Push(new RCS.Cogo.Wpf.Services.EditPointRowsAction($"Merge {dupes.Count} Duplicate(s)", removed: dupes));
         TxtPointCount.Text = $"{Vm.Job.PointRows.Count} points ({dupes.Count} merged)";
         Vm.RequestRevalidation();
     }
@@ -75,13 +80,24 @@ public partial class PointsPhaseView : UserControl
     {
         if (Vm?.Job == null) return;
         int fixed_ = 0;
+        var changes = new List<(PointRow Row, string OldDesc, string NewDesc)>();
         foreach (var r in Vm.Job.PointRows)
         {
             var norm = r.Description?.Trim().ToUpper() ?? string.Empty;
-            if (norm != r.Description) { r.Description = norm; fixed_++; }
+            if (norm != r.Description) 
+            { 
+                changes.Add((r, r.Description ?? string.Empty, norm));
+                r.Description = norm; 
+                fixed_++; 
+            }
+        }
+        if (fixed_ > 0)
+        {
+            Vm.UndoStack?.Push(new RCS.Cogo.Wpf.Services.AutoFixDescriptionsAction($"Auto-Fix {fixed_} Desc(s)", changes));
         }
         PointsGrid.Items.Refresh();
         TxtPointCount.Text = $"{Vm.Job.PointRows.Count} points ({fixed_} descriptions normalised)";
+        Vm.RequestRevalidation();
     }
 
     private void TxtFilter_TextChanged(object s, TextChangedEventArgs e)
