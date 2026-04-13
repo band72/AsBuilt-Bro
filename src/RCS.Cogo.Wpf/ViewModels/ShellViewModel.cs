@@ -1075,20 +1075,20 @@ public partial class ShellViewModel : ViewModelBase
             // Resolve the active zone from the JEA/Project setting
             string zone = RCS.Geo.Core.StatePlaneProjection.NormalizeZone(JeaStatePlaneZone);
             int count = 0;
-            foreach (var pt in _context.GetAllPoints())
+            foreach (var pt in _context!.GetAllPoints())
             {
-                var p = _context.GetPoint(pt.Id);
+                var p = _context!.GetPoint(pt.Id);
                 if (p == null) continue;
                 string desc = pt.Description ?? string.Empty;
                 if (direction == GeoWpf.TransformDirection.StatePlaneToLatLon)
                 {
                     var (lat, lon) = RCS.Geo.Core.StatePlaneProjection.ToLatLon(p.Easting, p.Northing, zone);
-                    _context.AddPoint(pt.Id, new RCS.Cogo.Core.Primitives.Point3D(lat, lon, p.Elevation), desc);
+                    _context!.AddPoint(pt.Id, new RCS.Cogo.Core.Primitives.Point3D(lat, lon, p.Elevation), desc);
                 }
                 else
                 {
                     var (eft, nft) = RCS.Geo.Core.StatePlaneProjection.ToStatePlane(p.Northing, p.Easting, zone);
-                    _context.AddPoint(pt.Id, new RCS.Cogo.Core.Primitives.Point3D(nft, eft, p.Elevation), desc);
+                    _context!.AddPoint(pt.Id, new RCS.Cogo.Core.Primitives.Point3D(nft, eft, p.Elevation), desc);
                 }
                 count++;
             }
@@ -1109,7 +1109,7 @@ public partial class ShellViewModel : ViewModelBase
                 foreach (var rec in records)
                 {
                     var (eft, nft) = RCS.Geo.Core.StatePlaneProjection.ToStatePlane(rec.Latitude, rec.Longitude, zone);
-                    _context.AddPoint(rec.PointId, new RCS.Cogo.Core.Primitives.Point3D(nft, eft, rec.Elevation), rec.Description ?? string.Empty);
+                    _context!.AddPoint(rec.PointId, new RCS.Cogo.Core.Primitives.Point3D(nft, eft, rec.Elevation), rec.Description ?? string.Empty);
                 }
                 ResultLogText += $"GPS Import: {records.Count} point(s) loaded from {System.IO.Path.GetFileName(filePath)} [{zone}]{Environment.NewLine}";
                 OnPropertyChanged(nameof(Points));
@@ -1126,10 +1126,10 @@ public partial class ShellViewModel : ViewModelBase
         {
             try
             {
-                var allPts = _context.GetAllPoints().ToList();
+                var allPts = _context!.GetAllPoints().ToList();
                 var rows   = allPts.Select(pt =>
                 {
-                    var p3d = _context.GetPoint(pt.Id);
+                    var p3d = _context!.GetPoint(pt.Id);
                     return new RCS.Piping.Core.Workflow.PointRow
                     {
                         PointId     = pt.Id,
@@ -1580,6 +1580,7 @@ public partial class ShellViewModel : ViewModelBase
             RCS.Cogo.Wpf.Views.PointReportPrinter.Print(rows, projName, ShowGpsColumnsInGrid);
         });
 
+        ZoomInCommand = new RelayCommand(_ => ZoomInRequested?.Invoke(this, EventArgs.Empty));
         ZoomOutCommand = new RelayCommand(_ => ZoomOutRequested?.Invoke(this, EventArgs.Empty));
         ZoomExtentsCommand = new RelayCommand(_ => ZoomExtentsRequested?.Invoke(this, EventArgs.Empty));
         ZoomWindowCommand = new RelayCommand(_ => ZoomWindowRequested?.Invoke(this, EventArgs.Empty));
