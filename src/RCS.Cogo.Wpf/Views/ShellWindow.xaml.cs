@@ -810,9 +810,14 @@ public partial class ShellWindow : Window
             }
         }
 
-        int endOfSelectionLine = txt.Text.Length;
-        int checkEnd = end > 0 && txt.Text[end - 1] == '\n' ? end - 1 : end;
+        int checkEnd = end;
+        if (length > 0 && end > 0)
+        {
+             if (txt.Text[end - 1] == '\n') checkEnd = end - 1;
+             if (checkEnd > 0 && txt.Text[checkEnd - 1] == '\r') checkEnd = checkEnd - 1;
+        }
         
+        int endOfSelectionLine = txt.Text.Length;
         for (int i = checkEnd; i < txt.Text.Length; i++)
         {
             if (txt.Text[i] == '\r' || txt.Text[i] == '\n')
@@ -822,7 +827,10 @@ public partial class ShellWindow : Window
             }
         }
         
-        txt.Select(startOfSelectionLine, endOfSelectionLine - startOfSelectionLine);
+        int selectionLength = endOfSelectionLine - startOfSelectionLine;
+        if (selectionLength < 0) selectionLength = 0;
+
+        txt.Select(startOfSelectionLine, selectionLength);
     }
 
     private void btnCommentPipingScript_Click(object sender, RoutedEventArgs e)

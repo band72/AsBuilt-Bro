@@ -21,7 +21,14 @@ internal sealed class AsBuiltRelayCommand(System.Action execute, Func<bool>? can
 {
     public event EventHandler? CanExecuteChanged;
     public bool CanExecute(object? _) => canExecute?.Invoke() ?? true;
-    public void Execute(object? _) => execute();
+    public void Execute(object? _)
+    {
+        try { execute(); }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show($"Command execution failed:\n\n{ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+        }
+    }
     public void RaiseCanExecuteChanged() =>
         CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 }
@@ -36,6 +43,10 @@ internal sealed class AsBuiltAsyncRelayCommand(Func<Task> execute, Func<bool>? c
         _isRunning = true;
         CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         try   { await execute(); }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show($"Command execution failed:\n\n{ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+        }
         finally
         {
             _isRunning = false;

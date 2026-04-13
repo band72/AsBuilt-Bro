@@ -124,7 +124,11 @@ public class JobDashboardViewModel : ViewModelBase
             .Take(10)
             .ToList();
 
-        File.WriteAllText(_recentJobsPath, JsonSerializer.Serialize(records, new JsonSerializerOptions { WriteIndented = true }));
+        try
+        {
+            File.WriteAllText(_recentJobsPath, JsonSerializer.Serialize(records, new JsonSerializerOptions { WriteIndented = true }));
+        }
+        catch { /* gracefully skip if file locked */ }
         LoadRecentJobs();
     }
 

@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Linq;
 
 namespace RCS.Cogo.Wpf.Views;
 
@@ -69,18 +70,30 @@ public static class CogoSyntaxHighlighter
     /// </summary>
     public static void Attach(RichTextBox rtb)
     {
+        bool isColorizing = false;
+
         // Run once on attach to colour any pre-existing content
-        Colorize(rtb);
+        isColorizing = true;
+        try { Colorize(rtb); }
+        finally { isColorizing = false; }
 
         // Use a short-interval debounce timer to avoid re-painting on every keystroke
         var timer = new System.Windows.Threading.DispatcherTimer
         {
             Interval = TimeSpan.FromMilliseconds(300)
         };
-        timer.Tick += (_, _) => { timer.Stop(); Colorize(rtb); };
+        timer.Tick += (_, _) => 
+        { 
+            timer.Stop(); 
+            if (isColorizing) return;
+            isColorizing = true;
+            try { Colorize(rtb); }
+            finally { isColorizing = false; }
+        };
 
         rtb.TextChanged += (_, _) =>
         {
+            if (isColorizing) return;
             // Reset debounce on every keystroke
             timer.Stop();
             timer.Start();
@@ -103,7 +116,7 @@ public static class CogoSyntaxHighlighter
         clearRange.ApplyPropertyValue(TextElement.ForegroundProperty, BrDefault);
 
         // 2. Walk each paragraph (= line) and apply token colours
-        foreach (var block in doc.Blocks)
+        foreach (var block in doc.Blocks.ToList())
         {
             if (block is not Paragraph para) continue;
 

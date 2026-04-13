@@ -73,7 +73,7 @@
                                                              IsReadOnly="True"
                                                              BorderThickness="0"
                                                              Background="Transparent"
-                                                             ToolTip="{Binding RuleDescription}"/>
+                                                             ToolTip="{Binding RuleDescription, Mode=OneWay}"/>
                                                 </Grid>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>

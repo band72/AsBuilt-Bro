@@ -764,12 +764,12 @@
                         
                         <!-- Toolbar -->
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                            <Button Content="Import Script" Command="{Binding ImportBatchCommand}" 
-                                    Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White"/>
-                            <Button Content="Run Script" Command="{Binding RunBatchCommand}" 
-                                    Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrAccentDim}" Foreground="White" FontWeight="Bold"/>
-                            <Button Content="Walk Script" Command="{Binding WalkBatchCommand}" 
-                                    Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrSuccess}" Foreground="White" FontWeight="Bold"/>
+                            <Button Content="&#x1F4E5; Import" Command="{Binding ImportBatchCommand}" 
+                                    Padding="10,5" Margin="0,0,10,0" Background="#1A2535" Foreground="#98C379" BorderBrush="#3A6A3A" BorderThickness="1"/>
+                            <Button Content="&#x25B6; Run" Command="{Binding RunBatchCommand}" 
+                                    Padding="10,5" Margin="0,0,10,0" Background="#1D3025" Foreground="#5CD68D" BorderBrush="#2A6A4A" BorderThickness="1" FontWeight="Bold"/>
+                            <Button Content="&#x23E9; Walk" Command="{Binding WalkBatchCommand}" 
+                                    Padding="10,5" Margin="0,0,10,0" Background="#302C1D" Foreground="#E5C07B" BorderBrush="#6A5A2A" BorderThickness="1" FontWeight="Bold"/>
 
                             <ToggleButton Content="P" IsChecked="{Binding ShowPointNumbers}" 
                                     Width="30" Margin="0,0,5,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Toggle Point Numbers"/>
@@ -778,14 +778,14 @@
                             <ToggleButton Content="L" IsChecked="{Binding ShowFigureLabels}" 
                                     Width="30" Margin="0,0,10,0" Background="{StaticResource BrCard}" Foreground="White" FontWeight="Bold" ToolTip="Toggle Figure Labels"/>
 
-                            <Button Content="DXF" Command="{Binding ExportDxfCommand}" 
-                                    Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White"/>
-                            <Button Content="TXT" Command="{Binding ExportScriptCommand}" 
-                                    Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrHeader}" Foreground="White"/>
-                            <Button Content="Save Figures" Command="{Binding SaveFiguresCommand}" 
-                                    Padding="10,5" Margin="0,0,10,0" Background="{StaticResource BrAccentDim}" Foreground="White" FontWeight="Bold" ToolTip="Save all figures to database"/>
+                            <Button Content="&#x1F5FA; DXF" Command="{Binding ExportDxfCommand}" 
+                                    Padding="10,5" Margin="0,0,10,0" Background="#1A2535" Foreground="#61AFEF" BorderBrush="#1A4A6E" BorderThickness="1"/>
+                            <Button Content="&#x1F4DD; TXT" Command="{Binding ExportScriptCommand}" 
+                                    Padding="10,5" Margin="0,0,10,0" Background="#1A2535" Foreground="#61AFEF" BorderBrush="#1A4A6E" BorderThickness="1"/>
+                            <Button Content="&#x1F4BE; Save" Command="{Binding SaveFiguresCommand}" 
+                                    Padding="10,5" Margin="0,0,10,0" Background="#1A2535" Foreground="#D19A66" BorderBrush="#8A5A30" BorderThickness="1" FontWeight="Bold" ToolTip="Save all figures to database"/>
                             <Button Content="✨ AI" Command="{Binding AnalyzeScriptCommand}" 
-                                    Padding="10,5" Background="{StaticResource BrAccentDim}" Foreground="White" FontWeight="Bold" ToolTip="AI Script Validator"/>
+                                    Padding="10,5" Background="#26103A" Foreground="#C678DD" BorderBrush="#6A2A8A" BorderThickness="1" FontWeight="Bold" ToolTip="AI Script Validator"/>
                         </StackPanel>
                         
                         <!-- Editor -->

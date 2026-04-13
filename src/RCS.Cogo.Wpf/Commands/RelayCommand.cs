@@ -16,7 +16,16 @@ public class RelayCommand : ICommand
 
     public bool CanExecute(object? parameter) => _canExecute?.Invoke(parameter) ?? true;
 
-    public void Execute(object? parameter) => _execute(parameter);
+    public void Execute(object? parameter)
+    {
+        try { _execute(parameter); }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(
+                $"Command failed:\n{ex.Message}", "Application Error", 
+                System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+        }
+    }
 
     public event EventHandler? CanExecuteChanged
     {
