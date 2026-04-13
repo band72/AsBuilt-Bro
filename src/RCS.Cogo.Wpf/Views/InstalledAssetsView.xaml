@@ -20,6 +20,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBox x:Name="AssetsFilterBox"
                      Grid.Column="0"
@@ -35,6 +36,13 @@
                     BorderThickness="0" FontSize="11" Cursor="Hand"
                     Click="ClearAssetsFilter_Click"
                     ToolTip="Clear filter"/>
+            <Button Grid.Column="2"
+                    Content="📥 Export Assets"
+                    Padding="12,3" Margin="8,0,0,0"
+                    Background="#2B6B4C" Foreground="#FFF" FontWeight="Bold"
+                    BorderThickness="0" Cursor="Hand"
+                    Click="ExportAssets_Click"
+                    ToolTip="Export all loaded tables to an Excel Workbook (.xlsx) or CSV file"/>
         </Grid>
         
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">

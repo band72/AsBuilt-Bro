@@ -38,6 +38,50 @@ public partial class InstalledAssetsView : UserControl
             shellVm.AssetsFilter = string.Empty;
     }
 
+    private void ExportAssets_Click(object sender, RoutedEventArgs e)
+    {
+        var vm = DataContext as InstalledAssetsViewModel;
+        if (vm == null || !vm.HasActiveProject)
+        {
+            MessageBox.Show("You must have an open active project to export asset data.", "Active Project Required", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        var sfd = new Microsoft.Win32.SaveFileDialog
+        {
+            Filter = "Excel Workbook (*.xlsx)|*.xlsx|CSV Database (*.csv)|*.csv",
+            FileName = "Project_Installed_Assets_Export.xlsx",
+            Title = "Export All Project Assets"
+        };
+        
+        if (sfd.ShowDialog() == true)
+        {
+            try
+            {
+                // Give UI a chance to breathe, then execute long running export
+                Dispatcher.InvokeAsync(() =>
+                {
+                    try
+                    {
+                        string ext = System.IO.Path.GetExtension(sfd.FileName).TrimStart('.').ToLower();
+                        vm.ExportAllToSingleFile(sfd.FileName, ext == "csv" ? "csv" : "xlsx");
+                        vm.LogAction?.Invoke($"[ASSETS] Successfully exported all database assets to {sfd.FileName}");
+                        MessageBox.Show($"Successfully exported all pipeline, structural and generic assets natively to:\n{sfd.FileName}", "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        vm.LogAction?.Invoke($"[ASSETS_EXPORT_ERR] {ex.Message}");
+                        MessageBox.Show($"Failed to export data. Ensure the file is not currently open in Excel or another program.\n\nError details: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                });
+            }
+            catch(System.Exception ex)
+            {
+                MessageBox.Show($"File picker error: {ex.Message}", "Export Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+
     protected override void OnVisualParentChanged(DependencyObject oldParent)
     {
         base.OnVisualParentChanged(oldParent);
