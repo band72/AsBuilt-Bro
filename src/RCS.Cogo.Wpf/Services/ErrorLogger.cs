@@ -13,6 +13,9 @@ public static class ErrorLogger
 
     public static void LogException(Exception ex, string context = "Unhandled")
     {
+        string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ssZ");
+        
+        // 1. Local Logging (App Data)
         try
         {
             if (!Directory.Exists(LogDir))
@@ -20,7 +23,6 @@ public static class ErrorLogger
                 Directory.CreateDirectory(LogDir);
             }
 
-            string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ssZ");
             string entry = $"[{timestamp}] [{context}] {ex.GetType().Name}: {ex.Message}\n" +
                            $"{ex.StackTrace}\n";
             
@@ -34,8 +36,32 @@ public static class ErrorLogger
         }
         catch 
         {
-            // Failsafe - if we can't write to the error log, there's not much we can do
+            // Failsafe - if we can't write to the error log locally, swallow it
         }
+
+        // 2. Remote Telemetry (Backend Error Reporting)
+        try
+        {
+            // Unmanaged C++ string decryption call (Obfuscates destination API from memory scraping)
+            string endpoint = NativeSecurityWrapper.GetSecureTelemetryEndpoint();
+            if (!string.IsNullOrWhiteSpace(endpoint))
+            {
+                System.Threading.Tasks.Task.Run(async () =>
+                {
+                    try
+                    {
+                        using var client = new System.Net.Http.HttpClient();
+                        client.Timeout = TimeSpan.FromSeconds(5);
+                        var payload = new { Context = context, Type = ex.GetType().Name, Message = ex.Message, Stack = ex.StackTrace, Timestamp = timestamp };
+                        var json = System.Text.Json.JsonSerializer.Serialize(payload);
+                        var content = new System.Net.Http.StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                        await client.PostAsync(endpoint, content);
+                    }
+                    catch { /* Swallow telemetry drop if internet fails */ }
+                });
+            }
+        }
+        catch { }
     }
     
     public static void LogMessage(string message)

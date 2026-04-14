@@ -14,6 +14,10 @@ namespace RCS.Cogo.Wpf.Services
         [DllImport("SecurityCore.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         private static extern int GetMachineFingerprint(StringBuilder outputBuffer, int bufferSize);
 
+        [DllImport("SecurityCore.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        private static extern int GetTelemetryEndpoint(StringBuilder outputBuffer, int bufferSize);
+
+
         /// <summary>
         /// Retrieves the unique hardware ID from the unmanaged C++ DLL.
         /// This creates a strong locking mechanism tied to Motherboard/HDD/MAC Addresses.
@@ -72,6 +76,29 @@ namespace RCS.Cogo.Wpf.Services
             catch (Exception ex)
             {
                 return $"ERROR: {ex.Message}";
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the securely obfuscated backend telemetry API URL.
+        /// Extracts it directly from unmanaged memory rather than storing as a plain C# string.
+        /// </summary>
+        public static string GetSecureTelemetryEndpoint()
+        {
+            try
+            {
+                StringBuilder buffer = new StringBuilder(256);
+                int result = GetTelemetryEndpoint(buffer, buffer.Capacity);
+                
+                if (result == 1)
+                {
+                    return buffer.ToString();
+                }
+                return string.Empty;
+            }
+            catch
+            {
+                return string.Empty;
             }
         }
     }

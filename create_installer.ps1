@@ -2,6 +2,9 @@ $PublishDir = "src\RCS.Cogo.Wpf\bin\Release\net8.0-windows\win-x64\publish"
 $SetupScript = "Installer.iss"
 $InnoSetupCompiler = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
 
+Write-Host "Compiling Native Unmanaged DLL Elements..." -ForegroundColor Cyan
+Invoke-Expression "powershell -ExecutionPolicy Bypass -File src\RCS.Cogo.Security\BuildNative.ps1"
+
 Write-Host "Publishing the application..." -ForegroundColor Cyan
 dotnet publish "src\RCS.Cogo.Wpf\RCS.Cogo.Wpf.csproj" -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
 
@@ -9,6 +12,9 @@ if ($LASTEXITCODE -ne 0) {
     Write-Host "Publish failed. Aborting." -ForegroundColor Red
     exit $LASTEXITCODE
 }
+
+Write-Host "Injecting Unmanaged Security Output..." -ForegroundColor Magenta
+Copy-Item "src\RCS.Cogo.Wpf\bin\Debug\net8.0-windows\SecurityCore.dll" -Destination $PublishDir -Force
 
 Write-Host "Creating the installer using Inno Setup..." -ForegroundColor Cyan
 if (Test-Path $InnoSetupCompiler) {
