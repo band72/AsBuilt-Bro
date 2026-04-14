@@ -320,7 +320,7 @@
                 <Separator/>
                 <MenuItem Header="Report a Bug / Error..." Command="{Binding OpenErrorReportCommand}" Foreground="{StaticResource BrError}" FontWeight="Bold"/>
                 <MenuItem Header="_About" Command="{Binding AboutCommand}"/>
-                <MenuItem Header="📥 Check for Updates / Download Latest V3 Installer" Click="UpdateApp_Click" FontWeight="Bold" Foreground="{StaticResource BrInfo}"/>
+                <MenuItem Header="📥 Download Latest Windows EXE from Git" Click="UpdateApp_Click" FontWeight="Bold" Foreground="{StaticResource BrInfo}"/>
             </MenuItem>
         </Menu>
 
