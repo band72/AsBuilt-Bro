@@ -565,6 +565,10 @@ public partial class ShellWindow : Window
         // ── As-Built workspace overlay ────────────────────────────────────────
         bool isAsBuilt = vm.SelectedTabIndex == AsBuiltTabIndex;
         AsBuiltTabOverlay.Visibility = isAsBuilt ? Visibility.Visible : Visibility.Collapsed;
+        
+        // Ensure sidebar/bottom panels toggle cleanly when leaving AsBuilt tab
+        WorkflowNavigatorSidebar.Visibility = isAsBuilt ? Visibility.Visible : Visibility.Collapsed;
+        DiagnosticsPaneOverlay.Visibility   = isAsBuilt ? Visibility.Visible : Visibility.Collapsed;
 
         if (isAsBuilt)
         {
@@ -600,10 +604,6 @@ public partial class ShellWindow : Window
 
         // Put the view into the overlay slot
         AsBuiltOverlayContent.Content = _asBuiltView;
-
-        // ── Production UX: show navigator + diagnostics when workspace is active ──
-        WorkflowNavigatorSidebar.Visibility = Visibility.Visible;
-        DiagnosticsPaneOverlay.Visibility   = Visibility.Visible;
 
         // Seed job identity from the active project
         SyncProjectToAsBuiltJob();
