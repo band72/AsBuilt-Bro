@@ -915,15 +915,9 @@ public partial class ShellWindow : Window
 
     private static string ResolveDemoFolder()
     {
-        // Installed path: {app}\AsBuiltDemo  (bundled by Inno Setup)
-        var installed = System.IO.Path.Combine(
-            AppDomain.CurrentDomain.BaseDirectory, "AsBuiltDemo");
-        if (System.IO.Directory.Exists(installed)) return installed;
-
-        // Dev / manual fallback: Desktop\AsBuilt_Demo\JEA-2024-W-04471_Rev1_04122025
+        // Target path: {app}\AsBuiltDemo
         return System.IO.Path.Combine(
-            System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop),
-            "AsBuilt_Demo", "JEA-2024-W-04471_Rev1_04122025");
+            AppDomain.CurrentDomain.BaseDirectory, "AsBuiltDemo");
     }
 
     private void OpenAsBuiltDemoFolder_Click(object sender, RoutedEventArgs e)
