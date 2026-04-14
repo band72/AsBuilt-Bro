@@ -437,28 +437,28 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Import -->
-                            <Button Grid.Column="0" Content="Import Text..."
+                            <Button Grid.Column="0" Content="📥 Import Text..."
                                     Command="{Binding ImportPointsListCommand}"
                                     Padding="10,5" Margin="0,0,8,0"
                                     Background="{StaticResource BrHeader}" Foreground="White"/>
                             <!-- Export TXT -->
-                            <Button Grid.Column="1" Content="Export TXT"
+                            <Button Grid.Column="1" Content="📤 Export TXT"
                                     Command="{Binding ExportPointsTxtCommand}"
                                     Padding="10,5" Margin="0,0,8,0"
                                     Background="{StaticResource BrHeader}" Foreground="White"/>
                             <!-- Export XML -->
-                            <Button Grid.Column="2" Content="Export XML"
+                            <Button Grid.Column="2" Content="📤 Export XML"
                                     Command="{Binding ExportPointsXmlCommand}"
                                     Padding="10,5" Margin="0,0,8,0"
                                     Background="{StaticResource BrHeader}" Foreground="White"/>
                             <!-- Save -->
-                            <Button Grid.Column="3" Content="Save"
+                            <Button Grid.Column="3" Content="💾 Save"
                                     Command="{Binding SavePointsCommand}"
                                     Padding="10,5" Margin="0,0,8,0"
                                     Background="{StaticResource BrSuccess}" Foreground="White" FontWeight="Bold"
                                     ToolTip="Save Points to Database"/>
                             <!-- Refresh -->
-                            <Button Grid.Column="4" Content="Refresh"
+                            <Button Grid.Column="4" Content="🔄 Refresh"
                                     Command="{Binding RefreshPointsCommand}"
                                     Padding="10,5" Margin="0,0,0,0"
                                     Background="{StaticResource BrBg}" Foreground="White"
