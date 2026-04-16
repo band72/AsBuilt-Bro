@@ -4,6 +4,11 @@
     <ProjectReference Include="..\RCS.Cogo.Core\RCS.Cogo.Core.csproj" />
     <ProjectReference Include="..\RCS.Geo.Abstractions\RCS.Geo.Abstractions.csproj" />
     <ProjectReference Include="..\RCS.Geo.Core\RCS.Geo.Core.csproj" />
+    <ProjectReference Include="..\RCS.Geo.ProjNet\RCS.Geo.ProjNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PdfSharpCore" Version="1.3.67" />
   </ItemGroup>
 
   <PropertyGroup>

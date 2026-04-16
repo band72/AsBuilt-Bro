@@ -265,6 +265,42 @@ Use this checklist before sending deliverables to JEA:
 
 ---
 
+## Step 10 — Drag & Drop ASPRS LiDAR Intake
+If field drones have captured topographical data (`.las` or `.laz`), you can bypass manual ground-elevation entries.
+1. Drag and drop your massive binary `.las` or `.laz` file directly onto the **As-Built Workspace**.
+2. The **LiDAR Subsystem** will immediately parse the ASPRS binary stream.
+3. *Intelligent Coordinate Recognition:* If geographic coordinates (Lat/Long WGS84) are detected, the system uses `ProjNet` to apply Affine math, automatically aligning the point-cloud surface to your exact Local State Plane (NAD83).
+4. The system sweeps a Topographic Octree over the entire pipe network and instantly calculates structural **Depth of Cover**. Any runs violating the 36-inch minimum fall limit will turn red on the canvas.
+
+---
+
+## Step 11 — The Robust Civil Codes Library (Import/Export)
+The **Parts Mapping Phase** maps standard survey codes (like "WM" or "SAN-MH") to literal civil engineering constraints (`Materials`, `Diameters`, `Wall Thickness`).
+1. Click **📂 Import CSV** locally into the Parts Mapping grid to load a standardized agency Parts library (e.g. `FDOT-Standard-Specs.csv`). 
+2. Ensure you have physical columns mapping to: Default Diameter, Material (e.g. DIP vs PVC), and SDR Classes (SDR-35).
+3. If an import severely breaks the mapping dictionary due to formatting errors, simply use `Ctrl+Z` to trigger the `System.Text.Json` Undo-Snapshot, rolling back the data seamlessly without restarting.
+4. Click **💾 Export CSV** to share customized libraries structurally with your surveying field teams.
+
+---
+
+## Step 12 — Computer Vision Automation (AI Paper-to-Pipeline)
+For legacy As-Builts requiring digital reproduction:
+1. Locate your flat `.pdf`, `.png` or `.jpg` blueprint scans.
+2. Drag and drop the scanned document onto the WorkSpace.
+3. The integrated **AI Vision Extraction Engine** dynamically performs Moore-Neighbor trace routines and heuristic pipeline geometry snapping.
+4. The system automatically populates the Structures, Pipe Runs, Inverts, Diameters, and mapping geometries.
+5. Review the imported matrix on the **Dashboard** and hit run.
+
+---
+
+## Step 13 — Autonomous PDF Report Assemblies
+You no longer need to synthesize Microsoft Word packages manually.
+1. Once your Network is perfectly built and Closure is verified, click **File → Export → Deliverables Packages**.
+2. A sealed, paginated **Professional PDF Report** is systematically compiled alongside your DXF and XML output.
+3. This vectorized PDF automatically stamps the report with your `Job Number`, `Client Name`, `Field Dates` and formally prints the `System Validations`. Any capacity bottlenecks or LiDAR sub-surface pipe-clash violations are vividly detailed in red alert matrix tables for Engineering Record signoffs.
+
+---
+
 ## Key Command Reference for this Project
 
 ```text
@@ -313,4 +349,4 @@ LIST FIGS
 ---
 
 *This walkthrough corresponds to script version: `JEA_Oakwood_WaterMain_70498-W1A.cogo`*
-*RCS Cogo Enterprise Modern — Version 2.2.0*
+*RCS Cogo Enterprise Modern — Enterprise LiDAR & AI Release — Version 3.0.0*

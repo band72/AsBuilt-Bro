@@ -11,6 +11,7 @@ public class WorkflowManager
 
     public static readonly IReadOnlyList<WorkflowStepInfo> Steps =
     [
+        new(WorkflowPhase.Dashboard,     "0",  "Dashboard",     "📊"),
         new(WorkflowPhase.Intake,        "1",  "Intake",        "📥"),
         new(WorkflowPhase.PointsCleanup, "2",  "Points",        "📌"),
         new(WorkflowPhase.Structures,    "3",  "Structures",    "🏗"),

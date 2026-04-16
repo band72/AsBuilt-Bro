@@ -80,7 +80,7 @@ public sealed class PipeScriptCompiler
                     cmd == "REPORT" || cmd == "ABOUT" || cmd == "SET" || cmd == "SHOW" ||
                     cmd == "UNITS" || cmd == "ANGLES" ||
                     cmd == "BEG" || cmd == "CONT" || cmd == "CLOSE" || cmd == "END" ||
-                    cmd == "DEL" || cmd == "FIG" || cmd == "AREA" ||
+                    cmd == "DEL" || cmd == "FIG" || cmd == "AREA" || cmd == "FIGURE" || cmd == "CLOSURE" ||
                     cmd == "STN" || cmd == "BS" || cmd == "BD" || cmd == "AD" ||
                     cmd == "AZ" || cmd == "INV" || cmd == "INVERSE" || cmd == "DIST" ||
                     cmd == "ANG" || cmd == "TRAV" || cmd == "ZD" || cmd == "DD" ||
@@ -170,7 +170,7 @@ public sealed class PipeScriptCompiler
                         result.Diagnostics.Add(new ScriptDiagnostic { LineNumber = lineNo, Severity = "WARN", Message = $"Structure Code '{code}' is not recognized in the Master Database." });
                     }
 
-                    AddStructure(ptId, code, result);
+                    AddStructure(ptId, code, result, lineNo);
                     result.Diagnostics.Add(new ScriptDiagnostic { LineNumber = lineNo, Severity = "INFO", Message = $"Added Structure {code} at {ptId}." });
                     continue;
                 }
@@ -367,7 +367,7 @@ public sealed class PipeScriptCompiler
             prun.IsFigureActive = true;
             
             // Add structure at start
-            AddStructure(ptId, prun.UtilityType, result);
+            AddStructure(ptId, prun.UtilityType, result, lineNo);
             
             result.Diagnostics.Add(new ScriptDiagnostic { LineNumber = lineNo, Severity = "INFO", Message = $"{feature} begin at point {ptId}." });
             return;
@@ -406,7 +406,7 @@ public sealed class PipeScriptCompiler
             if (prev == ptId)
             {
                 // Just an explicit structural update on the same node
-                AddStructure(ptId, explicitType, result);
+                AddStructure(ptId, explicitType, result, lineNo);
                 return;
             }
 
@@ -417,7 +417,7 @@ public sealed class PipeScriptCompiler
             result.Runs.Add(run);
             
             // Add/Update structure at node
-            AddStructure(ptId, explicitType, result);
+            AddStructure(ptId, explicitType, result, lineNo);
             
             return;
         }
@@ -466,7 +466,7 @@ public sealed class PipeScriptCompiler
         result.Diagnostics.Add(new ScriptDiagnostic { LineNumber = lineNo, Severity = "WARN", Message = $"Directive {feature}-{directive} recognized but not implemented." });
     }
 
-    private static void AddStructure(string ptId, string type, ScriptCompileResult result)
+    private static void AddStructure(string ptId, string type, ScriptCompileResult result, int lineNo)
     {
         var existing = result.Structures.FirstOrDefault(s => s.PointId == ptId);
         if (existing == null)
@@ -474,7 +474,8 @@ public sealed class PipeScriptCompiler
             result.Structures.Add(new PipeStructure 
             { 
                PointId = ptId,
-               Type = type 
+               Type = type,
+               SourceLineNumber = lineNo
             });
         }
         else
@@ -578,7 +579,8 @@ public sealed class PipeScriptCompiler
                 Material = prun.Material ?? "",
                 InvertStart = invStart ?? 0,
                 InvertEnd = invEnd ?? 0,
-                PartKey = $"Pipe-{prun.UtilityType}-{prun.Diameter}" // Temporary PartKey
+                PartKey = $"Pipe-{prun.UtilityType}-{prun.Diameter}", // Temporary PartKey
+                SourceLineNumber = lineNo
             };
             result.Runs.Add(run);
             result.Diagnostics.Add(new ScriptDiagnostic { LineNumber = lineNo, Severity = "INFO", Message = $"Added Pipe {from}-{to}." });

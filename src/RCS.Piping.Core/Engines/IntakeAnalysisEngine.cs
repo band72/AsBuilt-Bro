@@ -127,6 +127,35 @@ public sealed class IntakeAnalysisEngine
     {
         var script = File.ReadAllText(path);
 
+        // Pre-parse 'NE' points from the COGO script to seed PointRows
+        // Syntax: NE <num> <N> <E> [<Z>] ["Desc"]
+        int extractedPoints = 0;
+        var neRegex = new System.Text.RegularExpressions.Regex(
+            @"(?im)^\s*NE\s+([A-Za-z0-9_-]+)\s+([0-9.-]+)\s+([0-9.-]+)(?:\s+([0-9.-]+))?(?:\s+""([^""]*)"")?");
+            
+        foreach (System.Text.RegularExpressions.Match match in neRegex.Matches(script))
+        {
+            if (!double.TryParse(match.Groups[2].Value, out double n) ||
+                !double.TryParse(match.Groups[3].Value, out double e))
+                continue;
+
+            double.TryParse(match.Groups[4].Value, out double z);
+            var desc = match.Groups[5].Success ? match.Groups[5].Value : string.Empty;
+
+            var existing = job.PointRows.FirstOrDefault(r => r.PointId == match.Groups[1].Value);
+            if (existing != null)
+            {
+                existing.Northing = n; existing.Easting = e; existing.Elevation = z; existing.Description = desc;
+            }
+            else
+            {
+                job.PointRows.Add(new PointRow { 
+                    PointId = match.Groups[1].Value, Northing = n, Easting = e, Elevation = z, Description = desc 
+                });
+            }
+            extractedPoints++;
+        }
+
         // Build a coordinate lookup from the current PointRows
         RCS.Cogo.Core.Primitives.Point3D? GetPoint(string id)
         {
@@ -167,14 +196,14 @@ public sealed class IntakeAnalysisEngine
 
         return new IntakeReport
         {
-            PointsLoaded    = 0,
+            PointsLoaded    = extractedPoints,
             RunsLoaded      = result.Runs.Count,
             StructuresFound = result.Structures.Count,
             Warnings        = warns,
             Success         = errors == 0,
             Summary         = errors > 0
-                ? $"COGO: {result.Runs.Count} run(s), {result.Structures.Count} structure(s) — ⚠ {errors} error(s), {warns} warning(s)."
-                : $"COGO: {result.Runs.Count} run(s), {result.Structures.Count} structure(s) — {warns} warning(s)."
+                ? $"COGO: {extractedPoints} point(s), {result.Runs.Count} run(s), {result.Structures.Count} structure(s) — ⚠ {errors} error(s)."
+                : $"COGO: {extractedPoints} point(s), {result.Runs.Count} run(s), {result.Structures.Count} structure(s) — {warns} warning(s)."
         };
     }
 

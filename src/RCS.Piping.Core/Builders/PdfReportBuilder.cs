@@ -1,241 +1,145 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using PdfSharpCore.Drawing;
+using PdfSharpCore.Pdf;
+using RCS.Piping.Core.Models;
 using RCS.Piping.Core.Workflow;
 
 namespace RCS.Piping.Core.Builders;
 
 /// <summary>
-/// Writes a minimal but spec-compliant binary PDF 1.4 document for an As-Built survey report.
-/// Uses raw PDF object streams — no third-party library required.
-///
-/// Structure: single page, Helvetica-based, wrapped text, header/footer, full report body.
+/// Autonomous PDF document assembly engine generating sealed Professional Grade Analysis Reports.
+/// Synthesizes Intake Metrics, Pipeline Capacities, Network Analytics, and Validations 
+/// to PDF utilizing PdfSharpCore, replacing legacy manual byte streaming.
 /// </summary>
 public sealed class PdfReportBuilder
 {
-    private const float PageW   = 612f;  // US Letter width  (pt)
-    private const float PageH   = 792f;  // US Letter height (pt)
-    private const float MarginL = 54f;
-    private const float MarginR = 558f;
-    private const float MarginT = 738f;
-    private const float MarginB = 54f;
-    private const float LineH   = 13f;
-    private const float FontSz  = 9f;
-    private const float TitleSz = 13f;
-    private const float HdrSz   = 10f;
-
-    // ── Public API ────────────────────────────────────────────────────────────
-
     public void Build(AsBuiltJob job, string outputPath)
     {
-        var pageContents = BuildPages(job);
-        int pageCount    = pageContents.Count;
+        var document = new PdfDocument();
+        document.Info.Title = "Enterprise As-Built Deliverable Report";
+        document.Info.Author = "BoundaryQC AI System";
+        document.Info.CreationDate = DateTime.Now;
 
-        // Object IDs:
-        // 1 = catalog, 2 = pages dictionary
-        // 3 .. 2+pageCount          = page page-dictionary objects
-        // 3+pageCount .. 2+2*pageCount = content stream objects
-        // 3+2*pageCount = font F1 (Helvetica regular)
-        // 4+2*pageCount = font F2 (Helvetica-Bold)
-        int fontR      = 3 + 2 * pageCount;
-        int fontB      = 4 + 2 * pageCount;
-        int totalObjs  = fontB;
+        // === COVER PAGE ===
+        var page = document.AddPage();
+        var gfx = XGraphics.FromPdfPage(page);
+        
+        var titleFont = new XFont("Segoe UI", 24, XFontStyle.Bold);
+        var subFont = new XFont("Segoe UI", 14, XFontStyle.Regular);
+        var bodyFont = new XFont("Segoe UI", 11, XFontStyle.Regular);
+        var boldFont = new XFont("Segoe UI", 11, XFontStyle.Bold);
+        var headerBrush = XBrushes.DarkSlateBlue;
 
-        using var ms = new MemoryStream();
+        gfx.DrawString("ENTERPRISE AS-BUILT REPORT", titleFont, headerBrush, 
+            new XRect(0, 80, page.Width, 50), XStringFormats.TopCenter);
+            
+        string jobNum = string.IsNullOrWhiteSpace(job.Identity.JobNumber) ? "DRAFT" : job.Identity.JobNumber;
+        gfx.DrawString($"Job Number: {jobNum} (Rev {job.Identity.RevisionNumber})", subFont, XBrushes.Black, 
+            new XRect(0, 130, page.Width, 50), XStringFormats.TopCenter);
+            
+        gfx.DrawString($"Client: {job.Identity.ClientName} | Field Date: {job.Identity.FieldDate:MM/dd/yyyy}", subFont, XBrushes.DarkGray, 
+            new XRect(0, 155, page.Width, 50), XStringFormats.TopCenter);
 
-        // helper – write raw string + flush
-        void W(string s)
+        gfx.DrawString($"Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss} | Coordinates: {job.Environment}", subFont, XBrushes.Gray, 
+            new XRect(0, 180, page.Width, 50), XStringFormats.TopCenter);
+
+        // Section 1: LiDAR & Intake Telemetry
+        int yPos = 260;
+        gfx.DrawString("1. System Intake & Topography Analytics", titleFont, XBrushes.Black, 50, yPos);
+        yPos += 30;
+        
+        bool hasLidar = job.BaseSurface != null && job.BaseSurface.Points.Count > 0;
+        gfx.DrawString($"LiDAR Surface Nodes: {(hasLidar ? job.BaseSurface!.Points.Count.ToString("N0") : "N/A")} Points Analyzed", boldFont, XBrushes.DarkOliveGreen, 50, yPos); yPos += 20;
+        gfx.DrawString($"Network Nodes: {job.Network.Structures.Count} Structures mapped", bodyFont, XBrushes.Black, 50, yPos); yPos += 20;
+        gfx.DrawString($"Network Matrix: {job.Network.Runs.Count} Pipeline Runs registered", bodyFont, XBrushes.Black, 50, yPos); yPos += 40;
+
+        // Section 2: Validation Results
+        gfx.DrawString("2. Engineering Validation Matrix", titleFont, XBrushes.Black, 50, yPos);
+        yPos += 30;
+
+        var engine = new ValidationEngine();
+        var report = engine.Validate(job);
+
+        int warnings = report.Issues.Count(i => i.Severity == IssueSeverity.Warning);
+        int errors = report.Issues.Count(i => i.Severity == IssueSeverity.Error);
+
+        gfx.DrawString($"Geometry & Hydrology Validations Completed. Errors: {errors} | Warnings: {warnings}", boldFont, 
+            errors > 0 ? XBrushes.DarkRed : XBrushes.DarkGreen, 50, yPos);
+        yPos += 30;
+
+        foreach (var issue in report.Issues)
         {
-            var b = Encoding.Latin1.GetBytes(s);
-            ms.Write(b);
+            if (yPos > page.Height - 80)
+            {
+                page = document.AddPage();
+                gfx = XGraphics.FromPdfPage(page);
+                yPos = 50;
+            }
+
+            XBrush br = issue.Severity == IssueSeverity.Error ? XBrushes.DarkRed : XBrushes.DarkGoldenrod;
+            gfx.DrawString($"[{issue.Severity.ToString().ToUpper()}] {issue.Category} // {issue.RuleName}", boldFont, br, 50, yPos);
+            yPos += 15;
+            
+            // Text wrapping primitive
+            string msg = issue.Message;
+            if (msg.Length > 85) 
+            {
+                gfx.DrawString(msg.Substring(0, 85), bodyFont, XBrushes.Black, 70, yPos); yPos += 15;
+                gfx.DrawString(msg.Substring(85), bodyFont, XBrushes.Black, 70, yPos); yPos += 25;
+            }
+            else
+            {
+                gfx.DrawString(msg, bodyFont, XBrushes.Black, 70, yPos);
+                yPos += 25;
+            }
         }
 
-        var xrefOffsets = new long[totalObjs];
-
-        void StartObj(int id)
+        if (report.Issues.Count == 0)
         {
-            xrefOffsets[id - 1] = ms.Position;
-            W($"{id} 0 obj\n");
+            gfx.DrawString("All systems completely clear. Zero structural or capacity violations detected.", bodyFont, XBrushes.DarkGreen, 50, yPos);
+            yPos += 40;
         }
 
-        void EndObj() => W("endobj\n");
-
-        // Header
-        W("%PDF-1.4\n%\xb5\xb6\n");
-
-        // Obj 1 – catalog
-        StartObj(1);
-        W("<< /Type /Catalog /Pages 2 0 R >>");
-        W("\n");
-        EndObj();
-
-        // Obj 2 – pages
-        StartObj(2);
-        var kids = string.Join(" ", Enumerable.Range(3, pageCount).Select(i => $"{i} 0 R"));
-        W($"<< /Type /Pages /Kids [{kids}] /Count {pageCount} >>\n");
-        EndObj();
-
-        // Obj 3..2+pageCount – page dictionaries
-        for (int p = 0; p < pageCount; p++)
+        // Add Table of Runs
+        if (yPos > page.Height - 150)
         {
-            int pgId       = 3 + p;
-            int contentId  = 3 + pageCount + p;
-            StartObj(pgId);
-            W($"<< /Type /Page /Parent 2 0 R\n" +
-              $"   /MediaBox [0 0 {(int)PageW} {(int)PageH}]\n" +
-              $"   /Resources << /Font << /F1 {fontR} 0 R /F2 {fontB} 0 R >> >>\n" +
-              $"   /Contents {contentId} 0 R >>\n");
-            EndObj();
+            page = document.AddPage();
+            gfx = XGraphics.FromPdfPage(page);
+            yPos = 50;
         }
 
-        // Obj 3+pageCount..2+2*pageCount – content streams
-        for (int p = 0; p < pageCount; p++)
-        {
-            int contentId = 3 + pageCount + p;
-            var bytes     = Encoding.Latin1.GetBytes(pageContents[p]);
-            StartObj(contentId);
-            W($"<< /Length {bytes.Length} >>\nstream\n");
-            ms.Write(bytes);
-            W("\nendstream\n");
-            EndObj();
-        }
-
-        // Font objects
-        StartObj(fontR);
-        W("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\n");
-        EndObj();
-
-        StartObj(fontB);
-        W("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>\n");
-        EndObj();
-
-        // xref
-        long xrefPos = ms.Position;
-        W($"xref\n0 {totalObjs + 1}\n");
-        W("0000000000 65535 f \n");
-        foreach (var o in xrefOffsets)
-            W($"{o:D10} 00000 n \n");
-
-        W($"trailer\n<< /Size {totalObjs + 1} /Root 1 0 R >>\n");
-        W($"startxref\n{xrefPos}\n%%EOF\n");
-
-        File.WriteAllBytes(outputPath, ms.ToArray());
-    }
-
-    // ── Page Content Builder ──────────────────────────────────────────────────
-
-    private List<string> BuildPages(AsBuiltJob job)
-    {
-        var lines = new List<(string text, bool bold, float size)>();
-
-        var id   = job.Identity;
+        gfx.DrawString("3. Pipeline Asset Inventory", titleFont, XBrushes.Black, 50, yPos);
+        yPos += 30;
+        
         var runs = job.Network.Runs.Values.ToList();
-        var strs = job.Network.Structures.Values.ToList();
+        gfx.DrawString("From Pt", boldFont, XBrushes.Black, 50, yPos);
+        gfx.DrawString("To Pt", boldFont, XBrushes.Black, 120, yPos);
+        gfx.DrawString("Diameter", boldFont, XBrushes.Black, 190, yPos);
+        gfx.DrawString("Length (ft)", boldFont, XBrushes.Black, 270, yPos);
+        gfx.DrawString("Slope %", boldFont, XBrushes.Black, 350, yPos);
+        gfx.DrawString("Capacity CFS", boldFont, XBrushes.Black, 430, yPos);
+        yPos += 20;
 
-        // Title block
-        lines.Add(("AS-BUILT UTILITY SURVEY REPORT", true,  TitleSz));
-        lines.Add(("",                                false, LineH));
-        lines.Add(($"Job Number   : {id.JobNumber}",           false, FontSz));
-        lines.Add(($"Client       : {id.ClientName}",          false, FontSz));
-        lines.Add(($"County       : {id.County}",              false, FontSz));
-        lines.Add(($"Utility Owner: {id.UtilityOwner}",        false, FontSz));
-        lines.Add(($"Field Date   : {id.FieldDate:MM/dd/yyyy}",false, FontSz));
-        lines.Add(($"Drafter      : {id.Drafter}",             false, FontSz));
-        lines.Add(($"Checker      : {id.Checker}",             false, FontSz));
-        lines.Add(($"Revision     : {id.RevisionNumber}",      false, FontSz));
-        lines.Add(($"Exported     : {DateTime.Now:MM/dd/yyyy HH:mm}", false, FontSz));
-        lines.Add(($"Coordinates  : {job.Environment}",        false, FontSz));
-        lines.Add(("", false, LineH));
-
-        // Structures
-        lines.Add(($"STRUCTURES  ({strs.Count})", true, HdrSz));
-        lines.Add(("Point    Type                  Rim Elev   Inv In    Inv Out", false, FontSz));
-        foreach (var st in strs)
-            lines.Add(($"{Pad(st.PointId, 8)}{Pad(st.Type ?? "", 22)}{Fmt(st.RimElevation),10}{Fmt(st.InvertIn),10}{Fmt(st.InvertOut),10}", false, FontSz));
-        lines.Add(("", false, LineH));
-
-        // Pipe runs
-        lines.Add(($"PIPE RUNS  ({runs.Count})", true, HdrSz));
-        lines.Add(("From  To    Type                Dia  Material      Length   Slope%  InvFr   InvTo", false, FontSz));
         foreach (var run in runs)
-            lines.Add(($"{Pad(run.FromPointId, 6)}{Pad(run.ToPointId, 6)}{Pad(run.Type, 20)}{run.Diameter,5:F1}{Pad(run.Material, 14)}{run.ComputedLength,8:F2}{run.SlopePercent,8:F2}{Fmt(run.InvertStart),8}{Fmt(run.InvertEnd),8}", false, FontSz));
-        lines.Add(("", false, LineH));
-
-        // Summary
-        lines.Add(("SUMMARY", true, HdrSz));
-        lines.Add(($"  Total Structures : {strs.Count}",                                         false, FontSz));
-        lines.Add(($"  Total Pipe Runs  : {runs.Count}",                                         false, FontSz));
-        lines.Add(($"  Total Run Length : {runs.Sum(r => r.ComputedLength):F2} ft",              false, FontSz));
-        lines.Add(($"  Unique Utilities : {runs.Select(r => r.Type).Distinct().Count()}",        false, FontSz));
-        lines.Add(("END OF REPORT", true, FontSz));
-
-        return Paginate(lines, id.JobNumber);
-    }
-
-    // ── Pagination ────────────────────────────────────────────────────────────
-
-    private static List<string> Paginate(
-        List<(string text, bool bold, float size)> lines,
-        string jobNum)
-    {
-        var pages = new List<string>();
-        var sb    = new StringBuilder();
-        float y   = MarginT;
-        int   pgN = 1;
-
-        void BeginPage()
         {
-            sb.Clear();
-            y = MarginT;
-            // page header rule
-            sb.Append($"BT /F2 8 Tf {MarginL:F0} {(MarginT + 16):F0} Td (RCS As-Built Pro  —  {EscPdf(jobNum)}) Tj ET ");
-        }
-
-        void EndPage()
-        {
-            // footer
-            sb.Append($"BT /F1 7 Tf {(PageW / 2 - 30):F0} {(MarginB - 14):F0} Td (Page {pgN}) Tj ET ");
-            pages.Add(sb.ToString());
-            pgN++;
-        }
-
-        BeginPage();
-
-        foreach (var (text, bold, sz) in lines)
-        {
-            if (y - (sz + 3f) < MarginB)
+            if (yPos > page.Height - 60)
             {
-                EndPage();
-                BeginPage();
+                page = document.AddPage();
+                gfx = XGraphics.FromPdfPage(page);
+                yPos = 50;
             }
 
-            if (string.IsNullOrEmpty(text))
-            {
-                y -= LineH * 0.5f;
-                continue;
-            }
-
-            string font = bold ? "F2" : "F1";
-            sb.Append($"BT /{font} {sz:F1} Tf {MarginL:F1} {y:F1} Td ({EscPdf(text)}) Tj ET ");
-            y -= sz + 4f;
+            gfx.DrawString(run.FromPointId ?? "-", bodyFont, XBrushes.DimGray, 50, yPos);
+            gfx.DrawString(run.ToPointId ?? "-", bodyFont, XBrushes.DimGray, 120, yPos);
+            gfx.DrawString($"{run.Diameter}\"", bodyFont, XBrushes.DimGray, 190, yPos);
+            gfx.DrawString($"{run.ComputedLength:F2}", bodyFont, XBrushes.DimGray, 270, yPos);
+            gfx.DrawString($"{run.SlopePercent:F2}%", bodyFont, XBrushes.DimGray, 350, yPos);
+            gfx.DrawString($"{run.MaxFlowCfs:F2}", bodyFont, XBrushes.DimGray, 430, yPos);
+            yPos += 15;
         }
 
-        EndPage();
-        return pages;
+        document.Save(outputPath);
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private static string EscPdf(string s)
-        => s.Replace("\\", "\\\\").Replace("(", "\\(").Replace(")", "\\)");
-
-    private static string Pad(string? s, int w)
-    {
-        s ??= "";
-        return s.Length >= w ? s[..w] : s.PadRight(w);
-    }
-
-    private static string Fmt(double? v) => v.HasValue ? $"{v:F2}" : "---";
 }

@@ -6,28 +6,32 @@
              xmlns:vm="clr-namespace:RCS.Cogo.Wpf.ViewModels"
              xmlns:ab="clr-namespace:RCS.Cogo.Wpf.Views.AsBuilt"
              mc:Ignorable="d"
-             Background="#12121F"
+             Background="#0F0F17"
+             AllowDrop="True" Drop="OnWorkspaceDrop"
              d:DesignHeight="800" d:DesignWidth="1400">
 
     <UserControl.Resources>
 
         <!-- ── Color Tokens ──────────────────────────────────────────────── -->
-        <SolidColorBrush x:Key="Surface0"   Color="#12121F"/>
-        <SolidColorBrush x:Key="Surface1"   Color="#1A1A2E"/>
-        <SolidColorBrush x:Key="Surface2"   Color="#22223A"/>
-        <SolidColorBrush x:Key="Accent"     Color="#4A90E2"/>
+        <SolidColorBrush x:Key="Surface0"   Color="#0F0F17"/>
+        <SolidColorBrush x:Key="Surface1"   Color="#11111B"/>
+        <SolidColorBrush x:Key="Surface2"   Color="#1E1E2E"/>
+        <SolidColorBrush x:Key="Accent"     Color="#89B4FA"/>
         <SolidColorBrush x:Key="AccentDark" Color="#2E6CB8"/>
-        <SolidColorBrush x:Key="TextPrimary"   Color="#E8E8F0"/>
-        <SolidColorBrush x:Key="TextSecondary" Color="#7A7A9A"/>
-        <SolidColorBrush x:Key="StatusGreen"   Color="#2ECC71"/>
-        <SolidColorBrush x:Key="StatusYellow"  Color="#F39C12"/>
-        <SolidColorBrush x:Key="StatusRed"     Color="#E74C3C"/>
-        <SolidColorBrush x:Key="Border0"       Color="#2A2A45"/>
+        <SolidColorBrush x:Key="TextPrimary"   Color="#CDD6F4"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#BAC2DE"/>
+        <SolidColorBrush x:Key="StatusGreen"   Color="#A6E3A1"/>
+        <SolidColorBrush x:Key="StatusYellow"  Color="#FAB387"/>
+        <SolidColorBrush x:Key="StatusRed"     Color="#F38BA8"/>
+        <SolidColorBrush x:Key="Border0"       Color="#1E1E2E"/>
 
         <!-- ── Converters ─────────────────────────────────────────────────── -->
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
 
         <!-- ── Phase View Templates ──────────────────────────────────────── -->
+        <DataTemplate x:Key="DashboardTemplate">
+            <ab:DashboardPhaseView/>
+        </DataTemplate>
         <DataTemplate x:Key="IntakeTemplate">
             <ab:IntakePhaseView/>
         </DataTemplate>
@@ -52,6 +56,7 @@
 
         <!-- ── Phase Selector ────────────────────────────────────────────── -->
         <ab:PhaseViewSelector x:Key="PhaseSelector"
+            DashboardTemplate     ="{StaticResource DashboardTemplate}"
             IntakeTemplate        ="{StaticResource IntakeTemplate}"
             PointsCleanupTemplate ="{StaticResource PointsCleanupTemplate}"
             StructuresTemplate    ="{StaticResource StructuresTemplate}"
@@ -80,7 +85,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Brd" Property="Background" Value="#252545"/>
+                                <Setter TargetName="Brd" Property="Background" Value="#1C1C2E"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="Brd" Property="Background" Value="#1C3A6E"/>
@@ -93,7 +98,7 @@
 
         <!-- ── Deliverable Card ───────────────────────────────────────────── -->
         <DataTemplate x:Key="DeliverableCardTemplate">
-            <Border Background="#1E1E35"
+            <Border Background="#181825"
                     CornerRadius="8"
                     BorderThickness="1"
                     Margin="0,4"
@@ -102,10 +107,10 @@
                     <Style TargetType="Border">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsBlocked}" Value="True">
-                                <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                <Setter Property="BorderBrush" Value="#F38BA8"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding IsBlocked}" Value="False">
-                                <Setter Property="BorderBrush" Value="#2ECC71"/>
+                                <Setter Property="BorderBrush" Value="#A6E3A1"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -150,11 +155,11 @@
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsBlocked}" Value="True">
                                             <Setter Property="Text"       Value="Blocked"/>
-                                            <Setter Property="Foreground" Value="#E74C3C"/>
+                                            <Setter Property="Foreground" Value="#F38BA8"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding IsBlocked}" Value="False">
                                             <Setter Property="Text"       Value="Ready"/>
-                                            <Setter Property="Foreground" Value="#2ECC71"/>
+                                            <Setter Property="Foreground" Value="#A6E3A1"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -167,7 +172,7 @@
 
         <!-- ── Primary Action Button ──────────────────────────────────────── -->
         <Style x:Key="ActionBtn" TargetType="Button">
-            <Setter Property="Background"   Value="#4A90E2"/>
+            <Setter Property="Background"   Value="#89B4FA"/>
             <Setter Property="Foreground"   Value="White"/>
             <Setter Property="Padding"      Value="16,8"/>
             <Setter Property="FontFamily"   Value="{StaticResource FfBody}"/>
@@ -189,7 +194,7 @@
                                 <Setter Property="Background" Value="#2E6CB8"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="#2A2A45"/>
+                                <Setter Property="Background" Value="#1E1E2E"/>
                                 <Setter Property="Foreground" Value="#4A4A6A"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -199,7 +204,7 @@
         </Style>
 
         <Style x:Key="ExportBtn" TargetType="Button" BasedOn="{StaticResource ActionBtn}">
-            <Setter Property="Background" Value="#2ECC71"/>
+            <Setter Property="Background" Value="#A6E3A1"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#27AE60"/>
@@ -287,7 +292,7 @@
                                     <!-- Step number circle -->
                                     <Border Grid.Column="0" Width="22" Height="22"
                                             CornerRadius="11"
-                                            Background="#252545"
+                                            Background="#1C1C2E"
                                             HorizontalAlignment="Left">
                                         <TextBlock Text="{Binding StepNumber}"
                                                    FontSize="10" FontWeight="SemiBold"
@@ -318,46 +323,24 @@
                     <!-- Bottom nav buttons -->
                     <StackPanel Grid.Row="2" Margin="8,8">
                         <Button Content="◀  Back"
-                                Style="{StaticResource ActionBtn}"
-                                Background="#252545"
+                                Style="{StaticResource BtnOutlineBlue}"
                                 Command="{Binding GoToPrevStepCommand}"
                                 Margin="0,0,0,4"/>
                         <Button Content="Next  ▶"
-                                Style="{StaticResource ActionBtn}"
+                                Style="{StaticResource BtnOutlineGreen}"
                                 Command="{Binding GoToNextStepCommand}"
                                 Margin="0,0,0,8"/>
                         <!-- Separator line -->
-                        <Rectangle Height="1" Fill="#2A2A45" Margin="0,0,0,8"/>
+                        <Rectangle Height="1" Fill="#1E1E2E" Margin="0,0,0,8"/>
                         <!-- Exit As-Built workspace -->
                         <Button x:Name="BtnCloseWorkspace"
                                 Content="✕  Close As-Built"
                                 Click="BtnCloseWorkspace_Click"
-                                Background="#3A1A1A"
-                                Foreground="#E74C3C"
-                                BorderBrush="#E74C3C"
-                                BorderThickness="1"
-                                FontSize="11"
-                                FontWeight="SemiBold"
+                                Style="{StaticResource BtnOutlineRed}"
                                 Height="30"
                                 Cursor="Hand"
                                 ToolTip="Return to COGO / Piping tabs">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="bd"
-                                            Background="{TemplateBinding Background}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            CornerRadius="6">
-                                        <ContentPresenter HorizontalAlignment="Center"
-                                                          VerticalAlignment="Center"/>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="bd" Property="Background" Value="#5A1A1A"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
+                            <!-- Removed bespoke template to inherit deep global design cascade -->
                         </Button>
                     </StackPanel>
                 </Grid>
@@ -365,7 +348,7 @@
 
             <GridSplitter Grid.Column="1" Width="5"
                           HorizontalAlignment="Stretch"
-                          Background="#2A2A45"/>
+                          Background="#1E1E2E"/>
 
             <!-- ── CENTER: Step Editor (content swapped by phase) ─────── -->
             <Border Grid.Column="2"
@@ -399,7 +382,7 @@
                                         <Style TargetType="TextBlock">
                                             <!-- Default: visible (non-empty blocker message shows) -->
                                             <Setter Property="Visibility" Value="Visible"/>
-                                            <Setter Property="Foreground" Value="#E74C3C"/>
+                                            <Setter Property="Foreground" Value="#F38BA8"/>
                                             <Style.Triggers>
                                                 <!-- Collapse when empty or null -->
                                                 <DataTrigger Binding="{Binding TransitionBlockerMessage}" Value="">
@@ -415,19 +398,17 @@
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                                 <Button Content="⎗ Undo"
-                                        Style="{StaticResource ActionBtn}"
-                                        Background="#3A3A5A" Foreground="#E8E8F0"
+                                        Style="{StaticResource BtnOutlineOrange}"
                                         Command="{Binding UndoCommand}"
                                         ToolTip="{Binding UndoDescription}"
                                         Margin="0,0,8,0"/>
                                 <Button Content="⎘ Redo"
-                                        Style="{StaticResource ActionBtn}"
-                                        Background="#3A3A5A" Foreground="#E8E8F0"
+                                        Style="{StaticResource BtnOutlineBlue}"
                                         Command="{Binding RedoCommand}"
                                         ToolTip="{Binding RedoDescription}"
                                         Margin="0,0,16,0"/>
                                 <Button Content="▶  Run Validation"
-                                        Style="{StaticResource ActionBtn}"
+                                        Style="{StaticResource BtnOutlineGreen}"
                                         Command="{Binding ValidateNowCommand}"/>
                             </StackPanel>
                         </Grid>
@@ -443,7 +424,7 @@
 
             <GridSplitter Grid.Column="3" Width="5"
                           HorizontalAlignment="Stretch"
-                          Background="#2A2A45"/>
+                          Background="#1E1E2E"/>
 
             <!-- ── RIGHT: Live CAD Viewer ──────────────────────────────────────── -->
             <Border Grid.Column="4"
@@ -485,7 +466,7 @@
                         <!-- The live geometry canvas is injected here at runtime.
                              Fallback watermark is visible only when no job data is loaded. -->
                         <TextBlock Text="Live CAD Viewer"
-                                   Foreground="#252545"
+                                   Foreground="#1C1C2E"
                                    FontSize="20" FontWeight="Bold"
                                    FontFamily="Segoe UI"
                                    HorizontalAlignment="Center"
@@ -498,7 +479,7 @@
         <!-- ── Horizontal splitter ──────────────────────────────────────── -->
         <GridSplitter Grid.Row="1" Height="5"
                       HorizontalAlignment="Stretch"
-                      Background="#2A2A45"/>
+                      Background="#1E1E2E"/>
 
         <!-- ══ BOTTOM: Diagnostics Panel ══════════════════════════════════ -->
         <Border Grid.Row="2"
@@ -568,13 +549,13 @@
                                             <Style TargetType="TextBlock">
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding Severity}" Value="Error">
-                                                        <Setter Property="Foreground" Value="#E74C3C"/>
+                                                        <Setter Property="Foreground" Value="#F38BA8"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding Severity}" Value="Warning">
-                                                        <Setter Property="Foreground" Value="#F39C12"/>
+                                                        <Setter Property="Foreground" Value="#FAB387"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding Severity}" Value="Info">
-                                                        <Setter Property="Foreground" Value="#4A90E2"/>
+                                                        <Setter Property="Foreground" Value="#89B4FA"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -611,6 +592,33 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </Grid>
+        </Border>
+
+        <!-- ── Toast Snackbar Overlay ────────────────────────────────────── -->
+        <Border x:Name="SnackbarOverlay" 
+                Background="#2B2B36" 
+                CornerRadius="6" 
+                Padding="24,12" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,-100" 
+                Opacity="0"
+                IsHitTestVisible="False"
+                Panel.ZIndex="999">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="12" Opacity="0.5" ShadowDepth="4" Color="Black"/>
+            </Border.Effect>
+            <TextBlock x:Name="SnackbarText" 
+                       Text="Success Message" 
+                       Foreground="#A6E3A1" 
+                       FontFamily="Segoe UI" 
+                       FontWeight="SemiBold" 
+                       FontSize="14"/>
+        </Border>
+        
+        <!-- Drag Drop Target Overlay -->
+        <Border x:Name="DragDropOverlay" Background="#990F0F17" Visibility="Collapsed" Panel.ZIndex="1000">
+            <TextBlock Text="DROP FILES TO IMPORT" Foreground="#A6E3A1" FontSize="48" FontWeight="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
 
     </Grid>

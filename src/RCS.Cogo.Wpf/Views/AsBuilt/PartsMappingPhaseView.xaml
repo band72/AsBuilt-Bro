@@ -10,48 +10,58 @@
         </Grid.RowDefinitions>
 
         <!-- Toolbar -->
-        <Border Grid.Row="0" Background="#1A1A2E" Padding="10,6"
-                BorderBrush="#2A2A45" BorderThickness="0,0,0,1">
+        <Border Grid.Row="0" Background="#11111B" Padding="10,6"
+                BorderBrush="#1E1E2E" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="🔧 Parts Mapping" FontSize="13" FontWeight="Bold"
-                           Foreground="#E8E8F0" FontFamily="Segoe UI" VerticalAlignment="Center"/>
-                <Separator Width="1" Background="#2A2A45" Margin="12,0"/>
+                           Foreground="#CDD6F4" FontFamily="Segoe UI" VerticalAlignment="Center"/>
+                <Separator Width="1" Background="#1E1E2E" Margin="12,0"/>
                 <Button x:Name="BtnAutoMap" Content="⚡ Auto-Map All" Padding="10,4"
-                        Background="#4A90E2" Foreground="White"
+                        Background="#89B4FA" Foreground="White"
                         BorderThickness="0" FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
                         Click="BtnAutoMap_Click"/>
                 <Button x:Name="BtnFilterUnmapped" Content="🔍 Show Unmapped Only" Padding="10,4"
-                        Background="#252545" Foreground="#F39C12"
-                        BorderBrush="#3A3A5A" BorderThickness="1"
+                        Background="#1C1C2E" Foreground="#FAB387"
+                        BorderBrush="#313244" BorderThickness="1"
                         FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
                         Click="BtnFilterUnmapped_Click"/>
                 <Button x:Name="BtnMarkSkipped" Content="⏭ Mark Skipped" Padding="10,4"
-                        Background="#252545" Foreground="#7A7A9A"
-                        BorderBrush="#3A3A5A" BorderThickness="1"
-                        FontFamily="Segoe UI" FontSize="11"
+                        Background="#1C1C2E" Foreground="#BAC2DE"
+                        BorderBrush="#313244" BorderThickness="1"
+                        FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
                         Click="BtnMarkSkipped_Click"/>
-                <Separator Width="1" Background="#2A2A45" Margin="12,0"/>
+                <Button x:Name="BtnExport" Content="💾 Export CSV" Padding="10,4"
+                        Background="#2B2B3E" Foreground="#BAC2DE"
+                        BorderBrush="#45475A" BorderThickness="1"
+                        FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
+                        Click="BtnExport_Click"/>
+                <Button x:Name="BtnImport" Content="📂 Import CSV" Padding="10,4"
+                        Background="#2B2B3E" Foreground="#BAC2DE"
+                        BorderBrush="#45475A" BorderThickness="1"
+                        FontFamily="Segoe UI" FontSize="11"
+                        Click="BtnImport_Click"/>
+                <Separator Width="1" Background="#1E1E2E" Margin="12,0"/>
                 <!-- Status counters -->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <Border Background="#1A4D2E" CornerRadius="3" Padding="6,2" Margin="0,0,6,0">
                         <TextBlock x:Name="TxtMapped" Text="0 Mapped" FontSize="10"
-                                   Foreground="#2ECC71" FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                                   Foreground="#A6E3A1" FontFamily="Segoe UI" FontWeight="SemiBold"/>
                     </Border>
                     <Border Background="#4D3D1A" CornerRadius="3" Padding="6,2" Margin="0,0,6,0">
                         <TextBlock x:Name="TxtPending" Text="0 Pending" FontSize="10"
-                                   Foreground="#F39C12" FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                                   Foreground="#FAB387" FontFamily="Segoe UI" FontWeight="SemiBold"/>
                     </Border>
                     <Border Background="#4D1A1A" CornerRadius="3" Padding="6,2">
                         <TextBlock x:Name="TxtError" Text="0 Error" FontSize="10"
-                                   Foreground="#E74C3C" FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                                   Foreground="#F38BA8" FontFamily="Segoe UI" FontWeight="SemiBold"/>
                     </Border>
                 </StackPanel>
             </StackPanel>
         </Border>
 
         <!-- Confidence progress bar -->
-        <Border Grid.Row="1" Background="#12121F" Padding="10,6"
-                BorderBrush="#2A2A45" BorderThickness="0,0,0,1">
+        <Border Grid.Row="1" Background="#0F0F17" Padding="10,6"
+                BorderBrush="#1E1E2E" BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -59,13 +69,13 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Mapping Progress:" FontSize="11"
-                           Foreground="#7A7A9A" FontFamily="Segoe UI" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                           Foreground="#BAC2DE" FontFamily="Segoe UI" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <ProgressBar Grid.Column="1" x:Name="MappingProgress"
                              Height="8" Value="0" Maximum="100"
-                             Foreground="#2ECC71" Background="#2A2A45"
+                             Foreground="#A6E3A1" Background="#1E1E2E"
                              BorderThickness="0"/>
                 <TextBlock Grid.Column="2" x:Name="TxtMappingPct" Text="0%"
-                           FontSize="11" Foreground="#7A7A9A"
+                           FontSize="11" Foreground="#BAC2DE"
                            FontFamily="Segoe UI" VerticalAlignment="Center" Margin="10,0,0,0"/>
             </Grid>
         </Border>
@@ -75,21 +85,22 @@
                   AutoGenerateColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False" SelectionMode="Extended"
                   GridLinesVisibility="Horizontal"
-                  Background="#12121F" RowBackground="#1A1A2E"
-                  AlternatingRowBackground="#1E1E35"
-                  Foreground="#E8E8F0" BorderThickness="0"
+                  Background="#0F0F17" RowBackground="#11111B"
+                  AlternatingRowBackground="#181825"
+                  Foreground="#CDD6F4" BorderThickness="0"
                   FontFamily="Segoe UI" FontSize="12"
                   ColumnHeaderHeight="30" RowHeight="28"
+                  PreparingCellForEdit="MappingGrid_PreparingCellForEdit"
                   CellEditEnding="MappingGrid_CellEditEnding">
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="DataGridColumnHeader">
-                    <Setter Property="Background" Value="#22223A"/>
-                    <Setter Property="Foreground" Value="#7A7A9A"/>
+                    <Setter Property="Background" Value="#1E1E2E"/>
+                    <Setter Property="Foreground" Value="#BAC2DE"/>
                     <Setter Property="FontFamily" Value="Segoe UI"/>
                     <Setter Property="FontSize"   Value="10"/>
                     <Setter Property="FontWeight" Value="SemiBold"/>
                     <Setter Property="Padding"    Value="8,0"/>
-                    <Setter Property="BorderBrush" Value="#2A2A45"/>
+                    <Setter Property="BorderBrush" Value="#1E1E2E"/>
                     <Setter Property="BorderThickness" Value="0,0,1,1"/>
                 </Style>
             </DataGrid.ColumnHeaderStyle>
@@ -106,10 +117,14 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Asset ID"     Binding="{Binding AssetId}"       Width="100" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Detected Desc" Binding="{Binding DetectedDesc}"  Width="160" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Proposed Part" Binding="{Binding ProposedPartKey}" Width="140"/>
-                <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}"   Width="120"/>
+                <DataGridTextColumn Header="Asset ID"     Binding="{Binding AssetId}"       Width="90" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Detected Desc" Binding="{Binding DetectedDesc}"  Width="150" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Proposed Part" Binding="{Binding ProposedPartKey}" Width="130"/>
+                <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}"   Width="110"/>
+                <DataGridTextColumn Header="Dia (in)"     Binding="{Binding NominalDiameter}" Width="75"/>
+                <DataGridTextColumn Header="Material"     Binding="{Binding PartMaterial}"   Width="85"/>
+                <DataGridTextColumn Header="Class/SDR"    Binding="{Binding SDRClass}"       Width="90"/>
+                <DataGridTextColumn Header="Notes"        Binding="{Binding Notes}"          Width="120"/>
                 <DataGridTextColumn Header="Confidence"   Binding="{Binding Confidence, StringFormat=P0}" Width="85" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Status"       Binding="{Binding Status}"         Width="80" IsReadOnly="True"/>
             </DataGrid.Columns>

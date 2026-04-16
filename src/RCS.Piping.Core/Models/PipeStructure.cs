@@ -15,4 +15,7 @@ public class PipeStructure
     public double? InvertOut { get; set; }
     
     public override string ToString() => $"Structure {Id} (Pt:{PointId}) Type:{Type}";
+
+    // Navigation tracking
+    public int SourceLineNumber { get; set; }
 }

@@ -61,8 +61,11 @@ public partial class ValidationPhaseView : UserControl
 
     private void BtnZoomTo_Click(object s, RoutedEventArgs e)
     {
-        if (s is Button btn && btn.Tag is string id)
-            Vm?.OnCanvasStructureClicked(id);   // generalised — canvas zooms to structure or run
+        if (s is Button btn && btn.Tag is ValidationIssue issue)
+        {
+            if (issue.TargetId != null) Vm?.OnCanvasStructureClicked(issue.TargetId);
+            if (issue.SourceLineNumber > 0) Vm?.OnSourceLineZoomRequested(issue.SourceLineNumber);
+        }
     }
 
     private void BtnAutoFix_Click(object s, RoutedEventArgs e)

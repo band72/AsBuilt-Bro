@@ -11,36 +11,43 @@
         </Grid.RowDefinitions>
 
         <!-- Toolbar -->
-        <Border Grid.Row="0" Background="#1A1A2E" Padding="10,6"
-                BorderBrush="#2A2A45" BorderThickness="0,0,0,1">
+        <Border Grid.Row="0" Background="#11111B" Padding="10,6"
+                BorderBrush="#1E1E2E" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="ðŸ”— Pipe Runs" FontSize="13" FontWeight="Bold"
-                           Foreground="#E8E8F0" FontFamily="Segoe UI" VerticalAlignment="Center"/>
-                <Separator Width="1" Background="#2A2A45" Margin="12,0"/>
+                           Foreground="#CDD6F4" FontFamily="Segoe UI" VerticalAlignment="Center"/>
+                <Separator Width="1" Background="#1E1E2E" Margin="12,0"/>
                 <Button x:Name="BtnAddRun" Content="+ Add Run" Padding="10,4"
-                        Background="#252545" Foreground="#E8E8F0"
-                        BorderBrush="#3A3A5A" BorderThickness="1"
+                        Background="#1C1C2E" Foreground="#CDD6F4"
+                        BorderBrush="#313244" BorderThickness="1"
                         FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
                         Click="BtnAddRun_Click"/>
                 <Button x:Name="BtnComputeSlopes" Content="ðŸ“ Compute Slopes" Padding="10,4"
-                        Background="#252545" Foreground="#56CCF2"
-                        BorderBrush="#3A3A5A" BorderThickness="1"
+                        Background="#1C1C2E" Foreground="#89DCEB"
+                        BorderBrush="#313244" BorderThickness="1"
                         FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
                         Click="BtnComputeSlopes_Click"/>
-                <Button x:Name="BtnReverseFlow" Content="â†” Flip Flow" Padding="10,4"
-                        Background="#252545" Foreground="#F39C12"
-                        BorderBrush="#3A3A5A" BorderThickness="1"
-                        FontFamily="Segoe UI" FontSize="11"
-                        Click="BtnReverseFlow_Click"/>
                 <Button x:Name="BtnAutoChain" Content="🔗 Auto-Chain" Padding="10,4"
-                        Background="#252545" Foreground="#9B59B6"
-                        BorderBrush="#3A3A5A" BorderThickness="1"
+                        Background="#1C1C2E" Foreground="#9B59B6"
+                        BorderBrush="#313244" BorderThickness="1"
                         FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
                         Click="BtnAutoChain_Click"
                         ToolTip="Sort runs into a continuous chain using shared structure points"/>
-                <Separator Width="1" Background="#2A2A45" Margin="12,0"/>
+                <Button x:Name="BtnReverseFlow" Content="↔ Flip Flow" Padding="10,4"
+                        Background="#1C1C2E" Foreground="#FAB387"
+                        BorderBrush="#313244" BorderThickness="1"
+                        FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
+                        Click="BtnReverseFlow_Click"/>
+                <Button x:Name="BtnGraphProfile" Content="📈 Graph Profile" Padding="10,4"
+                        Background="#1E1E2E" Foreground="#F5C2E7"
+                        BorderBrush="#F5C2E7" BorderThickness="1"
+                        FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
+                        Click="BtnGraphProfile_Click"
+                        ToolTip="View interactive 2D profile and intersection cross-sections."/>
+
+                <Separator Width="1" Background="#1E1E2E" Margin="12,0"/>
                 <TextBlock x:Name="TxtRunCount" Text="0 runs"
-                           FontSize="11" Foreground="#7A7A9A"
+                           FontSize="11" Foreground="#BAC2DE"
                            FontFamily="Segoe UI" VerticalAlignment="Center"/>
             </StackPanel>
         </Border>
@@ -50,21 +57,21 @@
                   AutoGenerateColumns="False" CanUserAddRows="True"
                   CanUserDeleteRows="True" SelectionMode="Single"
                   GridLinesVisibility="Horizontal"
-                  Background="#12121F" RowBackground="#1A1A2E"
-                  AlternatingRowBackground="#1E1E35"
-                  Foreground="#E8E8F0" BorderThickness="0"
+                  Background="#0F0F17" RowBackground="#11111B"
+                  AlternatingRowBackground="#181825"
+                  Foreground="#CDD6F4" BorderThickness="0"
                   FontFamily="Consolas" FontSize="12"
                   ColumnHeaderHeight="30" RowHeight="26"
                   SelectionChanged="RunsGrid_SelectionChanged">
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="DataGridColumnHeader">
-                    <Setter Property="Background" Value="#22223A"/>
-                    <Setter Property="Foreground" Value="#7A7A9A"/>
+                    <Setter Property="Background" Value="#1E1E2E"/>
+                    <Setter Property="Foreground" Value="#BAC2DE"/>
                     <Setter Property="FontFamily" Value="Segoe UI"/>
                     <Setter Property="FontSize"   Value="10"/>
                     <Setter Property="FontWeight" Value="SemiBold"/>
                     <Setter Property="Padding"    Value="8,0"/>
-                    <Setter Property="BorderBrush" Value="#2A2A45"/>
+                    <Setter Property="BorderBrush" Value="#1E1E2E"/>
                     <Setter Property="BorderThickness" Value="0,0,1,1"/>
                 </Style>
             </DataGrid.ColumnHeaderStyle>
@@ -82,21 +89,21 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" Background="#2A2A45"/>
+        <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" Background="#1E1E2E"/>
 
         <!-- Calculation trace for selected run -->
-        <Border Grid.Row="3" Background="#1A1A2E"
-                BorderBrush="#2A2A45" BorderThickness="0,1,0,0" Padding="12,8">
+        <Border Grid.Row="3" Background="#11111B"
+                BorderBrush="#1E1E2E" BorderThickness="0,1,0,0" Padding="12,8">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Text="RUN DETAILS" FontSize="9" FontWeight="SemiBold"
-                           Foreground="#7A7A9A" FontFamily="Segoe UI" Margin="0,0,0,8"/>
+                           Foreground="#BAC2DE" FontFamily="Segoe UI" Margin="0,0,0,8"/>
                 <TextBlock Grid.Row="1" x:Name="TxtRunDetail"
                            Text="Select a run to see calculated properties."
-                           Foreground="#7A7A9A" FontFamily="Consolas" FontSize="11"
+                           Foreground="#BAC2DE" FontFamily="Consolas" FontSize="11"
                            TextWrapping="Wrap"/>
             </Grid>
         </Border>

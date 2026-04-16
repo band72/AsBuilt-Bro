@@ -54,6 +54,63 @@ public partial class AsBuiltWorkspaceView : UserControl
 
         // Redraw when canvas resizes
         _liveCanvas.SizeChanged += (_, _) => RefreshLiveViewer();
+
+        // Register for drag drop overlay triggers
+        AllowDrop = true;
+        DragEnter += (s, e) => { if (e.Data.GetDataPresent(DataFormats.FileDrop)) DragDropOverlay.Visibility = Visibility.Visible; };
+        DragLeave += (s, e) => { DragDropOverlay.Visibility = Visibility.Collapsed; };
+    }
+
+    // ── Snackbar / Toasts ───────────────────────────────────────────────────
+    public void ShowSnackbar(string message, bool isError = false)
+    {
+        SnackbarText.Text = message;
+        SnackbarText.Foreground = isError ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F38BA8")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#A6E3A1"));
+        
+        var slideIn = new System.Windows.Media.Animation.ThicknessAnimation
+        {
+            From = new Thickness(0, 0, 0, -100),
+            To = new Thickness(0, 0, 0, 24),
+            Duration = TimeSpan.FromMilliseconds(300),
+            DecelerationRatio = 0.9
+        };
+        var fadeIn = new System.Windows.Media.Animation.DoubleAnimation
+        {
+            From = 0.0, To = 1.0, Duration = TimeSpan.FromMilliseconds(300)
+        };
+        
+        var sb = new System.Windows.Media.Animation.Storyboard();
+        sb.Children.Add(slideIn);
+        sb.Children.Add(fadeIn);
+        System.Windows.Media.Animation.Storyboard.SetTarget(slideIn, SnackbarOverlay);
+        System.Windows.Media.Animation.Storyboard.SetTargetProperty(slideIn, new PropertyPath("Margin"));
+        System.Windows.Media.Animation.Storyboard.SetTarget(fadeIn, SnackbarOverlay);
+        System.Windows.Media.Animation.Storyboard.SetTargetProperty(fadeIn, new PropertyPath("Opacity"));
+        
+        sb.Completed += async (_, _) => 
+        {
+            await System.Threading.Tasks.Task.Delay(3500);
+            var fadeOut = new System.Windows.Media.Animation.DoubleAnimation { To = 0.0, Duration = TimeSpan.FromMilliseconds(300) };
+            SnackbarOverlay.BeginAnimation(OpacityProperty, fadeOut);
+        };
+        
+        sb.Begin();
+    }
+
+    // ── Drag & Drop Intake ──────────────────────────────────────────────────
+    private async void OnWorkspaceDrop(object sender, DragEventArgs e)
+    {
+        DragDropOverlay.Visibility = Visibility.Collapsed;
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files.Length > 0 && _vm != null)
+            {
+                ShowSnackbar($"Extracting {System.IO.Path.GetFileName(files[0])}...", false);
+                await _vm.LoadDragDropFileAsync(files[0]);
+                ShowSnackbar("Extraction Complete! Dashboard Live.", false);
+            }
+        }
     }
 
     // ── Canvas Injection ──────────────────────────────────────────────────────
@@ -189,6 +246,7 @@ public partial class AsBuiltWorkspaceView : UserControl
         {
             _vm.StructureSelectionChanged -= OnStructureSelectionChanged;
             _vm.RunSelectionChanged       -= OnRunSelectionChanged;
+            _vm.ShowSnackbarRequested     -= ShowSnackbar;
         }
 
         _vm = e.NewValue as AsBuiltWorkspaceViewModel;
@@ -196,6 +254,7 @@ public partial class AsBuiltWorkspaceView : UserControl
 
         _vm.StructureSelectionChanged += OnStructureSelectionChanged;
         _vm.RunSelectionChanged       += OnRunSelectionChanged;
+        _vm.ShowSnackbarRequested     += ShowSnackbar;
     }
 
     private void OnStructureSelectionChanged(object? sender,

@@ -63,6 +63,13 @@ public partial class PipeRunsPhaseView : UserControl
         Vm?.RequestRevalidation();
     }
 
+    private void BtnGraphProfile_Click(object s, System.Windows.RoutedEventArgs e)
+    {
+        if (Vm?.Job == null || RunsGrid.SelectedItem is not PipeRun run) return;
+        var win = new ProfileVisualizerWindow(Vm.Job, run) { Owner = System.Windows.Application.Current.MainWindow };
+        win.ShowDialog();
+    }
+
     private void RunsGrid_SelectionChanged(object s, SelectionChangedEventArgs e)
     {
         if (RunsGrid.SelectedItem is not PipeRun run) { TxtRunDetail.Text = ""; return; }
@@ -82,28 +89,59 @@ public partial class PipeRunsPhaseView : UserControl
     private void BtnAutoChain_Click(object s, System.Windows.RoutedEventArgs e)
     {
         if (Vm?.Job == null) return;
-        var runs     = Vm.Job.Network.GetAllRuns().ToList();
-        var structs  = Vm.Job.Network.GetAllStructures().Select(s2 => s2.PointId).ToHashSet();
-        int chained  = 0;
+        var runs = Vm.Job.Network.GetAllRuns().ToList();
+        if (runs.Count == 0) return;
 
-        // Link runs sequentially: if run[i].ToPointId matches a structure point that
-        // also appears as run[i+1].FromPointId, the chain is already correct.
-        // If not, we attempt to reorder by tracing the shared-point graph.
-        for (int i = 0; i < runs.Count - 1; i++)
+        // Reset stationing
+        foreach(var r in runs) r.PartKey = "";
+
+        // Find the most upstream point (source) by finding a FromPointId that is never a ToPointId
+        var toPoints = runs.Select(r => r.ToPointId).ToHashSet();
+        var sources = runs.Where(r => !toPoints.Contains(r.FromPointId)).ToList();
+        
+        if (sources.Count == 0) sources = new List<RCS.Piping.Core.Models.PipeRun> { runs[0] };
+
+        double totalStationing = 0;
+        int chained = 0;
+        var finalOrder = new System.Collections.Generic.List<RCS.Piping.Core.Models.PipeRun>();
+        var visited = new System.Collections.Generic.HashSet<string>();
+
+        // DFS Traversal
+        foreach(var source in sources)
         {
-            var current = runs[i];
-            var next    = runs.FirstOrDefault(r => r.FromPointId == current.ToPointId && r != current);
-            if (next != null && runs.IndexOf(next) != i + 1)
+            var stack = new System.Collections.Generic.Stack<RCS.Piping.Core.Models.PipeRun>();
+            stack.Push(source);
+            
+            while(stack.Count > 0)
             {
-                // Promote 'next' to be immediately after 'current'
-                runs.Remove(next);
-                runs.Insert(i + 1, next);
+                var cur = stack.Pop();
+                if (visited.Contains(cur.Id)) continue;
+                
+                visited.Add(cur.Id);
+                finalOrder.Add(cur);
+                
+                double runLen = cur.ComputedLength > 0 ? cur.ComputedLength : 10.0;
+                cur.PartKey = $"STA {Math.Floor(totalStationing / 100):00}+{totalStationing % 100:00.00} to {Math.Floor((totalStationing + runLen) / 100):00}+{(totalStationing + runLen) % 100:00.00}";
+                totalStationing += runLen;
                 chained++;
+
+                // find children (laterals pushed first, mainlines last so they pop first)
+                var children = runs.Where(r => r.FromPointId == cur.ToPointId && !visited.Contains(r.Id)).ToList();
+                foreach(var child in children) stack.Push(child);
             }
         }
+        
+        // Unconnected stragglers
+        foreach(var r in runs.Where(x => !visited.Contains(x.Id))) finalOrder.Add(r);
+        
+        // Re-write dictionary in order
+        Vm.Job.Network.Runs.Clear();
+        foreach(var r in finalOrder) Vm.Job.Network.Runs[r.Id] = r;
+        
+        Vm.Job.AuditLog.Add(new RCS.Piping.Core.Workflow.AuditEntry { Action = "Auto-Chain Executed", Details = $"Dendritic DFS Pathfinding applied to {chained} runs" });
 
         TxtRunDetail.Text = chained > 0
-            ? $"✅ Auto-chained {chained} run(s) into a continuous linear sequence."
+            ? $"✅ Auto-chained {chained} run(s). Dendritic Stationing established."
             : "ℹ Runs are already in chain order — no reordering needed.";
         RefreshGrid();
         Vm.RequestRevalidation();

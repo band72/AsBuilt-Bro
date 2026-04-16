@@ -139,3 +139,19 @@ public sealed class AsBuiltUndoStack
         _onChanged();
     }
 }
+    public sealed class GenericDelegateAction : IAsBuiltUndoAction
+    {
+        private readonly Action<AsBuiltJob> _undo;
+        private readonly Action<AsBuiltJob> _redo;
+        public string Description { get; }
+
+        public GenericDelegateAction(string desc, Action<AsBuiltJob> undo, Action<AsBuiltJob> redo)
+        {
+            Description = desc;
+            _undo = undo;
+            _redo = redo;
+        }
+
+        public void Undo(AsBuiltJob job) => _undo(job);
+        public void Redo(AsBuiltJob job) => _redo(job);
+    }

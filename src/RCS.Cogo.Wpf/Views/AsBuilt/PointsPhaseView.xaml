@@ -9,8 +9,8 @@
         </Grid.RowDefinitions>
 
         <!-- Toolbar -->
-        <Border Grid.Row="0" Background="#1A1A2E" Padding="10,6"
-                BorderBrush="#2A2A45" BorderThickness="0,0,0,1">
+        <Border Grid.Row="0" Background="#11111B" Padding="10,6"
+                BorderBrush="#1E1E2E" BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -18,8 +18,8 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="📍 Survey Points" FontSize="13" FontWeight="Bold"
-                               Foreground="#E8E8F0" FontFamily="Segoe UI" VerticalAlignment="Center"/>
-                    <Separator Width="1" Background="#2A2A45" Margin="12,0"/>
+                               Foreground="#CDD6F4" FontFamily="Segoe UI" VerticalAlignment="Center"/>
+                    <Separator Width="1" Background="#1E1E2E" Margin="12,0"/>
                     <Button x:Name="BtnImportCsv" Content="📥 Import CSV" Padding="10,4"
                             Background="#154360" Foreground="#AED6F1"
                             BorderBrush="#1A5276" BorderThickness="1"
@@ -27,47 +27,47 @@
                             Command="{Binding ImportPointsListCommand}"
                             ToolTip="Import standard PNEZD CSV points file"/>
                     <Button x:Name="BtnAddPoint" Content="+ Add" Padding="10,4"
-                            Background="#252545" Foreground="#E8E8F0"
-                            BorderBrush="#3A3A5A" BorderThickness="1"
+                            Background="#1C1C2E" Foreground="#CDD6F4"
+                            BorderBrush="#313244" BorderThickness="1"
                             FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
                             Click="BtnAddPoint_Click"/>
                     <Button x:Name="BtnDeletePoint" Content="🗑 Remove" Padding="10,4"
-                            Background="#252545" Foreground="#E74C3C"
-                            BorderBrush="#3A3A5A" BorderThickness="1"
+                            Background="#1C1C2E" Foreground="#F38BA8"
+                            BorderBrush="#313244" BorderThickness="1"
                             FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
                             Click="BtnDeletePoint_Click"/>
                     <Button x:Name="BtnMergeDuplicates" Content="⚡ Merge Dupes" Padding="10,4"
-                            Background="#252545" Foreground="#F39C12"
-                            BorderBrush="#3A3A5A" BorderThickness="1"
+                            Background="#1C1C2E" Foreground="#FAB387"
+                            BorderBrush="#313244" BorderThickness="1"
                             FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
                             Click="BtnMergeDuplicates_Click"/>
                     <Button x:Name="BtnFindDuplicates" Content="🔍 Find Dupes" Padding="10,4"
-                            Background="#252545" Foreground="#56CCF2"
-                            BorderBrush="#3A3A5A" BorderThickness="1"
+                            Background="#1C1C2E" Foreground="#89DCEB"
+                            BorderBrush="#313244" BorderThickness="1"
                             FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
                             Click="BtnFindDuplicates_Click"
                             ToolTip="Highlight points within 0.01 ft proximity"/>
                     <Button x:Name="BtnAutoFixDesc" Content="🔤 Fix Descs" Padding="10,4"
-                            Background="#252545" Foreground="#B2BEFF"
-                            BorderBrush="#3A3A5A" BorderThickness="1"
+                            Background="#1C1C2E" Foreground="#B2BEFF"
+                            BorderBrush="#313244" BorderThickness="1"
                             FontFamily="Segoe UI" FontSize="11"
                             Click="BtnAutoFixDesc_Click"
                             ToolTip="Normalise descriptions to upper-case trimmed codes"/>
-                    <Separator Width="1" Background="#2A2A45" Margin="12,0"/>
+                    <Separator Width="1" Background="#1E1E2E" Margin="12,0"/>
                     <TextBlock x:Name="TxtPointCount" Text="0 points"
-                               FontSize="11" Foreground="#7A7A9A"
+                               FontSize="11" Foreground="#BAC2DE"
                                FontFamily="Segoe UI" VerticalAlignment="Center"/>
                     <TextBlock x:Name="TxtDupeCount" Text=""
-                               FontSize="11" Foreground="#F39C12"
+                               FontSize="11" Foreground="#FAB387"
                                FontFamily="Segoe UI" VerticalAlignment="Center" Margin="8,0,0,0"/>
                 </StackPanel>
                 <!-- Live filter -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="Filter:" Foreground="#7A7A9A" FontSize="11"
+                    <TextBlock Text="Filter:" Foreground="#BAC2DE" FontSize="11"
                                FontFamily="Segoe UI" VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <TextBox x:Name="TxtFilter" Width="160" Padding="4,3"
-                             Background="#12121F" Foreground="#E8E8F0"
-                             BorderBrush="#3A3A5A" BorderThickness="1"
+                             Background="#0F0F17" Foreground="#CDD6F4"
+                             BorderBrush="#313244" BorderThickness="1"
                              FontFamily="Segoe UI" FontSize="11"
                              TextChanged="TxtFilter_TextChanged"
                              ToolTip="Filter by Point# or Description"/>
@@ -85,10 +85,10 @@
                   CanUserResizeColumns="True"
                   SelectionMode="Extended"
                   GridLinesVisibility="Horizontal"
-                  Background="#12121F"
-                  RowBackground="#1A1A2E"
-                  AlternatingRowBackground="#1E1E35"
-                  Foreground="#E8E8F0"
+                  Background="#0F0F17"
+                  RowBackground="#11111B"
+                  AlternatingRowBackground="#181825"
+                  Foreground="#CDD6F4"
                   BorderThickness="0"
                   FontFamily="Consolas"
                   FontSize="12"
@@ -98,13 +98,13 @@
                   SelectionChanged="PointsGrid_SelectionChanged">
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="DataGridColumnHeader">
-                    <Setter Property="Background" Value="#22223A"/>
-                    <Setter Property="Foreground" Value="#7A7A9A"/>
+                    <Setter Property="Background" Value="#1E1E2E"/>
+                    <Setter Property="Foreground" Value="#BAC2DE"/>
                     <Setter Property="FontFamily" Value="Segoe UI"/>
                     <Setter Property="FontSize"   Value="10"/>
                     <Setter Property="FontWeight" Value="SemiBold"/>
                     <Setter Property="Padding"    Value="8,0"/>
-                    <Setter Property="BorderBrush" Value="#2A2A45"/>
+                    <Setter Property="BorderBrush" Value="#1E1E2E"/>
                     <Setter Property="BorderThickness" Value="0,0,1,1"/>
                 </Style>
             </DataGrid.ColumnHeaderStyle>

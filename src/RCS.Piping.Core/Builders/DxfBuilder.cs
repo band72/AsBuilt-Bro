@@ -224,6 +224,7 @@ public sealed class DxfBuilder
                           $"Rim={st.RimElevation:F2}'", LayerLabels, 0.5);
         }
 
+        WriteProfileViews(sb, job);
         WriteTitleBlock(sb, job);
         sb.AppendLine("  0\nENDSEC");
     }
@@ -270,17 +271,142 @@ public sealed class DxfBuilder
         sb.AppendLine($"  1\n{text}");
     }
 
+    private static void WriteTextWithPS(StringBuilder sb, double x, double y, string text, string layer, double height)
+    {
+        sb.AppendLine("  0\nTEXT");
+        sb.AppendLine($"  8\n{layer}");
+        sb.AppendLine(" 67\n     1"); // Paper Space
+        sb.AppendLine($" 10\n{x:F6}");
+        sb.AppendLine($" 20\n{y:F6}");
+        sb.AppendLine($" 30\n0.000000");
+        sb.AppendLine($" 40\n{height:F4}");
+        sb.AppendLine($"  1\n{text}");
+    }
+
     private static void WriteTitleBlock(StringBuilder sb, AsBuiltJob job)
     {
+        // Original Model Space text fallback
         double bx = -200.0, by = -50.0;
         double ht = 1.2;
-
         WriteText(sb, bx, by + ht * 5, $"JOB: {job.Identity.JobNumber}",      LayerAnnot, ht);
         WriteText(sb, bx, by + ht * 4, $"CLIENT: {job.Identity.ClientName}",   LayerAnnot, ht);
-        WriteText(sb, bx, by + ht * 3, $"DATE: {job.Identity.FieldDate:MM/dd/yyyy}", LayerAnnot, ht);
-        WriteText(sb, bx, by + ht * 2, $"DRAFTER: {job.Identity.Drafter}",     LayerAnnot, ht);
-        WriteText(sb, bx, by + ht * 1, $"CHECKER: {job.Identity.Checker}",     LayerAnnot, ht);
-        WriteText(sb, bx, by,          $"REV: {job.Identity.RevisionNumber}",   LayerAnnot, ht);
+        
+        // Advanced Paper Space P&P Generation Layout
+        sb.AppendLine("  0\nVIEWPORT");
+        sb.AppendLine("  8\nVIEWPORTS");
+        sb.AppendLine(" 67\n     1"); // Paper Space
+        sb.AppendLine(" 10\n17.0");   // Center X
+        sb.AppendLine(" 20\n11.0");   // Center Y
+        sb.AppendLine(" 30\n0.0");
+        sb.AppendLine(" 40\n32.0");   // Width
+        sb.AppendLine(" 41\n20.0");   // Height
+        sb.AppendLine(" 68\n     2");   // ID
+        sb.AppendLine(" 69\n     1");   // Status (on)
+        sb.AppendLine(" 12\n0.0");    // View Center X
+        sb.AppendLine(" 22\n0.0");    // View Center Y
+
+        WriteTextWithPS(sb, 31.0,  3.0, $"BOUNDARY QC",                 LayerAnnot, 0.4);
+        WriteTextWithPS(sb, 31.0,  2.5, $"JOB: {job.Identity.JobNumber}",      LayerAnnot, 0.3);
+        WriteTextWithPS(sb, 31.0,  2.0, $"CLIENT: {job.Identity.ClientName}",   LayerAnnot, 0.3);
+        WriteTextWithPS(sb, 31.0,  1.5, $"DATE: {job.Identity.FieldDate:MM/dd/yyyy}", LayerAnnot, 0.3);
+        WriteTextWithPS(sb, 31.0,  1.0, $"DRAFTER: {job.Identity.Drafter}",     LayerAnnot, 0.3);
+        WriteTextWithPS(sb, 31.0,  0.5, $"CHECKER: {job.Identity.Checker}",     LayerAnnot, 0.3);
+        WriteTextWithPS(sb, 31.0,  0.0, $"REV: {job.Identity.RevisionNumber}",   LayerAnnot, 0.3);
+
+        // Draw Paper Space Title Block borders
+        sb.AppendLine("  0\nLWPOLYLINE");
+        sb.AppendLine("  8\nTITLE_BLOCK");
+        sb.AppendLine(" 67\n     1");
+        sb.AppendLine(" 90\n     4");
+        sb.AppendLine(" 70\n     1"); // Closed
+        sb.AppendLine(" 10\n0.0"); sb.AppendLine(" 20\n0.0");
+        sb.AppendLine(" 10\n34.0"); sb.AppendLine(" 20\n0.0");
+        sb.AppendLine(" 10\n34.0"); sb.AppendLine(" 20\n22.0");
+        sb.AppendLine(" 10\n0.0"); sb.AppendLine(" 20\n22.0");
+    }
+
+    private void WriteProfileViews(StringBuilder sb, AsBuiltJob job)
+    {
+        double xOffset = job.PointRows.Any() ? job.PointRows.Max(r => r.Easting) + 200 : 500;
+        double yOffset = job.PointRows.Any() ? job.PointRows.Min(r => r.Northing) : 0;
+        
+        WriteText(sb, xOffset, yOffset + 50, "AS-BUILT STRUCTURAL PROFILES (5X VERTICAL EXAGGERATION)", LayerAnnot, 5.0);
+        
+        foreach (var run in job.Network.Runs.Values)
+        {
+            var p1 = job.PointRows.FirstOrDefault(r => r.PointId == run.FromPointId);
+            var p2 = job.PointRows.FirstOrDefault(r => r.PointId == run.ToPointId);
+            if (p1 == null || p2 == null) continue;
+            
+            double len = run.ComputedLength;
+            if (len == 0) len = System.Math.Sqrt(System.Math.Pow(p2.Easting - p1.Easting, 2) + System.Math.Pow(p2.Northing - p1.Northing, 2));
+
+            double startZ = run.InvertStart ?? p1.Elevation;
+            double endZ   = run.InvertEnd ?? p2.Elevation;
+            
+            // Determine vertical baseline
+            double baseZ = Math.Min(startZ, endZ) - 5;
+            
+            // Draw profile local axes
+            WritePipeLine(sb, xOffset, yOffset, 0, xOffset + Math.Max(len, 50), yOffset, 0, LayerAnnot, 1); // X Axis
+            WritePipeLine(sb, xOffset, yOffset, 0, xOffset, yOffset + 50, 0, LayerAnnot, 1); // Y Axis
+            
+            var (layer, color) = ResolveLayerForRun(run.Type ?? "");
+            
+            // X goes from 0 to len. Y is (elevation - baseZ) * Exaggeration (x5).
+            WritePipeLine(sb, xOffset, yOffset + ((startZ - baseZ) * 5), 0, xOffset + len, yOffset + ((endZ - baseZ) * 5), 0, layer, color);
+            
+            WriteText(sb, xOffset, yOffset - 5, $"Profile: Run {run.Id} ({run.Type}) L={len:F2}ft", LayerAnnot, 2.0);
+            WriteText(sb, xOffset, yOffset + ((startZ - baseZ) * 5) + 2, $"Inv: {startZ:F2}", LayerLabels, 1.0);
+            WriteText(sb, xOffset + len, yOffset + ((endZ - baseZ) * 5) + 2, $"Inv: {endZ:F2}", LayerLabels, 1.0);
+            
+            // Render Crossing Interferences
+            foreach (var r2 in job.Network.Runs.Values)
+            {
+                if (r2.Id == run.Id) continue;
+                if (r2.FromPointId == run.FromPointId || r2.ToPointId == run.ToPointId || r2.FromPointId == run.ToPointId || r2.ToPointId == run.FromPointId) continue;
+
+                var p3 = job.PointRows.FirstOrDefault(r => r.PointId == r2.FromPointId);
+                var p4 = job.PointRows.FirstOrDefault(r => r.PointId == r2.ToPointId);
+                if (p3 == null || p4 == null) continue;
+
+                double E1 = p1.Easting, N1 = p1.Northing;
+                double E2 = p2.Easting,   N2 = p2.Northing;
+                double E3 = p3.Easting, N3 = p3.Northing;
+                double E4 = p4.Easting,   N4 = p4.Northing;
+
+                double denom = (N4 - N3) * (E2 - E1) - (E4 - E3) * (N2 - N1);
+                if (Math.Abs(denom) < 1e-9) continue;
+
+                double uA = ((E4 - E3) * (N1 - N3) - (N4 - N3) * (E1 - E3)) / denom;
+                double uB = ((E2 - E1) * (N1 - N3) - (N2 - N1) * (E1 - E3)) / denom;
+
+                if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1)
+                {
+                    double r2StartZ = r2.InvertStart ?? p3.Elevation;
+                    double r2EndZ   = r2.InvertEnd ?? p4.Elevation;
+                    double z2AtCross = r2StartZ + uB * (r2EndZ - r2StartZ);
+                    
+                    double zPlot = yOffset + ((z2AtCross - baseZ) * 5);
+                    double xPlot = xOffset + (uA * len);
+                    
+                    var (r2Layer, r2Color) = ResolveLayerForRun(r2.Type ?? "");
+                    
+                    // Draw crossing as a scaled circle
+                    double r2DiamFt = (r2.Diameter / 2.0) / 12.0;
+                    WriteCircle(sb, xPlot, zPlot, Math.Max(0.5, r2DiamFt * 5), r2Layer, r2Color);
+                    
+                    // Draw vertical clearance line
+                    double z1AtCross = startZ + uA * (endZ - startZ);
+                    double zPlot1 = yOffset + ((z1AtCross - baseZ) * 5);
+                    WritePipeLine(sb, xPlot, zPlot, 0, xPlot, zPlot1, 0, LayerAnnot, 8); // Gray line connecting them
+                        
+                    WriteText(sb, xPlot + 1.5, zPlot, $"X-ing Run {r2.Id} ({r2.Type} Inv:{z2AtCross:F2}')", LayerLabels, 0.8);
+                }
+            }
+
+            yOffset += 100; // Next profile shifted up
+        }
     }
 
     private static void WriteEof(StringBuilder sb) => sb.AppendLine("  0\nEOF");

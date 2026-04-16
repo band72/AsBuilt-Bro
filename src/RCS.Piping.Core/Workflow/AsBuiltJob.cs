@@ -1,6 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
 using RCS.Piping.Core.Models;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace RCS.Piping.Core.Workflow;
 
@@ -8,6 +10,7 @@ namespace RCS.Piping.Core.Workflow;
 
 public enum WorkflowPhase
 {
+    Dashboard      = -1,
     Intake         = 0,
     PointsCleanup  = 1,
     Structures     = 2,
@@ -56,16 +59,69 @@ public class ProjectIdentity
 
 // ── Parts Mapping ─────────────────────────────────────────────────────────────
 
-public class PartMappingEntry
+public class PartMappingEntry : INotifyPropertyChanged
 {
+    private string _proposedPartKey = string.Empty;
+    private string _manufacturer = string.Empty;
+    private double _nominalDiameter = 0.0;
+    private string _partMaterial = "PVC";
+    private string _sdrClass = string.Empty;
+    private string _notes = string.Empty;
+    private MappingStatus _status = MappingStatus.Pending;
+
     public string AssetId          { get; set; } = string.Empty;
-    public string DisplayName      { get; set; } = string.Empty;  // UI-friendly label
+    public string DisplayName      { get; set; } = string.Empty;
     public string DetectedDesc     { get; set; } = string.Empty;
-    public string? ProposedPartKey { get; set; }
-    public string  PartKey         { get; set; } = string.Empty;  // Resolved catalog key
-    public string  Manufacturer    { get; set; } = string.Empty;
-    public double  Confidence      { get; set; }     // 0.0 – 1.0
-    public MappingStatus Status    { get; set; } = MappingStatus.Pending;
+    
+    public string ProposedPartKey 
+    { 
+        get => _proposedPartKey; 
+        set { _proposedPartKey = value; OnPC(); } 
+    }
+    
+    public string PartKey { get; set; } = string.Empty;
+    
+    public string Manufacturer    
+    { 
+        get => _manufacturer; 
+        set { _manufacturer = value; OnPC(); } 
+    }
+
+    public double NominalDiameter 
+    { 
+        get => _nominalDiameter; 
+        set { _nominalDiameter = value; OnPC(); } 
+    }
+
+    public string PartMaterial    
+    { 
+        get => _partMaterial; 
+        set { _partMaterial = value; OnPC(); } 
+    }
+
+    public string SDRClass        
+    { 
+        get => _sdrClass; 
+        set { _sdrClass = value; OnPC(); } 
+    }
+
+    public string Notes           
+    { 
+        get => _notes; 
+        set { _notes = value; OnPC(); } 
+    }
+
+    public double Confidence { get; set; }
+
+    public MappingStatus Status    
+    { 
+        get => _status; 
+        set { _status = value; OnPC(); } 
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    private void OnPC([CallerMemberName] string? n = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));
 }
 
 // ── Deliverable Readiness ─────────────────────────────────────────────────────
@@ -108,6 +164,10 @@ public class AsBuiltJob
     // ── Core Network ──────────────────────────────────────────────────────────
     public PipeNetwork Network { get; set; } = new();
 
+    // ── Advanced Computations ──────────────────────────────────────────────────
+    public RCS.Piping.Core.Models.TopographicSurface BaseSurface { get; set; }
+    public AsBuiltJob DesignBaseline { get; set; }
+
     // ── Parts Mapping ─────────────────────────────────────────────────────────
     public ObservableCollection<PartMappingEntry> PartMappings { get; set; } = new();
 
@@ -116,7 +176,7 @@ public class AsBuiltJob
     {
         new() { Type = "DXF Drawing",      TypeEnum = DeliverableType.Dxf },
         new() { Type = "PDF Report",       TypeEnum = DeliverableType.PdfReport },
-        new() { Type = "LandXML",          TypeEnum = DeliverableType.LandXml,   IsEnabled = false },
+        new() { Type = "LandXML",          TypeEnum = DeliverableType.LandXml,   IsEnabled = true },
         new() { Type = "PNEZD",            TypeEnum = DeliverableType.Pnezd },
         new() { Type = "Parts Report",     TypeEnum = DeliverableType.PartsReport }
     };
@@ -129,6 +189,9 @@ public class AsBuiltJob
 
     // ── Export History ────────────────────────────────────────────────────────
     public List<ExportRecord> ExportHistory { get; set; } = new();
+
+    // ── Immutable Audit Trail ─────────────────────────────────────────────────
+    public List<AuditEntry> AuditLog { get; set; } = new();
 
     // ── Convenience Accessors ─────────────────────────────────────────────────
     public bool AllPartsMapped =>
@@ -144,3 +207,12 @@ public class ExportRecord
     public int      RevisionNumber { get; set; }
     public List<string> FilesGenerated { get; set; } = new();
 }
+
+public class AuditEntry
+{
+    public DateTime Timestamp { get; set; } = DateTime.Now;
+    public string User { get; set; } = Environment.UserName;
+    public string Action { get; set; } = string.Empty;
+    public string Details { get; set; } = string.Empty;
+}
+

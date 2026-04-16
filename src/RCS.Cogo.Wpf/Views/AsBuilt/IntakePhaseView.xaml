@@ -7,13 +7,13 @@
             <!-- ── Header ─────────────────────────────────────── -->
             <TextBlock Text="📥  Import Field / Design Data"
                        FontSize="15" FontWeight="Bold"
-                       Foreground="#E8E8F0" FontFamily="Segoe UI"
+                       Foreground="#CDD6F4" FontFamily="Segoe UI"
                        Margin="0,0,0,16"/>
 
             <!-- ── Import cards ──────────────────────────────── -->
             <!-- PNEZD / CSV -->
-            <Border Background="#1E1E35" CornerRadius="8"
-                    BorderBrush="#2A2A45" BorderThickness="1"
+            <Border Background="#181825" CornerRadius="8"
+                    BorderBrush="#1E1E2E" BorderThickness="1"
                     Padding="14,10" Margin="0,0,0,8">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -23,9 +23,9 @@
                     <StackPanel>
                         <TextBlock Text="PNEZD / CSV Point File"
                                    FontSize="13" FontWeight="SemiBold"
-                                   Foreground="#E8E8F0" FontFamily="Segoe UI"/>
+                                   Foreground="#CDD6F4" FontFamily="Segoe UI"/>
                         <TextBlock Text="Point#, Northing, Easting, Elevation, Description"
-                                   FontSize="11" Foreground="#7A7A9A"
+                                   FontSize="11" Foreground="#BAC2DE"
                                    FontFamily="Segoe UI" Margin="0,2,0,0"/>
                     </StackPanel>
                     <Button Grid.Column="1"
@@ -33,16 +33,16 @@
                             Command="{Binding DataContext.ImportPointsListCommand,
                                       RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Padding="12,6"
-                            Background="#252545" Foreground="#E8E8F0"
-                            BorderBrush="#3A3A5A" BorderThickness="1"
+                            Background="#1C1C2E" Foreground="#CDD6F4"
+                            BorderBrush="#313244" BorderThickness="1"
                             FontFamily="Segoe UI" FontSize="11"
                             VerticalAlignment="Center"/>
                 </Grid>
             </Border>
 
             <!-- COGO Script -->
-            <Border Background="#1E1E35" CornerRadius="8"
-                    BorderBrush="#2A2A45" BorderThickness="1"
+            <Border Background="#181825" CornerRadius="8"
+                    BorderBrush="#1E1E2E" BorderThickness="1"
                     Padding="14,10" Margin="0,0,0,8">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -52,9 +52,9 @@
                     <StackPanel>
                         <TextBlock Text="COGO Script (.cogo / .txt)"
                                    FontSize="13" FontWeight="SemiBold"
-                                   Foreground="#E8E8F0" FontFamily="Segoe UI"/>
+                                   Foreground="#CDD6F4" FontFamily="Segoe UI"/>
                         <TextBlock Text="ST / BD / PIPE commands — full batch script"
-                                   FontSize="11" Foreground="#7A7A9A"
+                                   FontSize="11" Foreground="#BAC2DE"
                                    FontFamily="Segoe UI" Margin="0,2,0,0"/>
                     </StackPanel>
                     <Button Grid.Column="1"
@@ -62,16 +62,16 @@
                             Command="{Binding DataContext.ImportBatchCommand,
                                       RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Padding="12,6"
-                            Background="#252545" Foreground="#E8E8F0"
-                            BorderBrush="#3A3A5A" BorderThickness="1"
+                            Background="#1C1C2E" Foreground="#CDD6F4"
+                            BorderBrush="#313244" BorderThickness="1"
                             FontFamily="Segoe UI" FontSize="11"
                             VerticalAlignment="Center"/>
                 </Grid>
             </Border>
 
             <!-- JEA Excel Template -->
-            <Border Background="#1E1E35" CornerRadius="8"
-                    BorderBrush="#2A2A45" BorderThickness="1"
+            <Border Background="#181825" CornerRadius="8"
+                    BorderBrush="#1E1E2E" BorderThickness="1"
                     Padding="14,10" Margin="0,0,0,8">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -81,9 +81,9 @@
                     <StackPanel>
                         <TextBlock Text="🏛  JEA As-Built Template (.xlsx)"
                                    FontSize="13" FontWeight="SemiBold"
-                                   Foreground="#56CCF2" FontFamily="Segoe UI"/>
+                                   Foreground="#89DCEB" FontFamily="Segoe UI"/>
                         <TextBlock Text="Import filled JEA Excel as-built form"
-                                   FontSize="11" Foreground="#7A7A9A"
+                                   FontSize="11" Foreground="#BAC2DE"
                                    FontFamily="Segoe UI" Margin="0,2,0,0"/>
                     </StackPanel>
                     <Button Grid.Column="1"
@@ -91,16 +91,16 @@
                             Command="{Binding DataContext.ImportJeaTemplateCommand,
                                       RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Padding="12,6"
-                            Background="#252545" Foreground="#56CCF2"
-                            BorderBrush="#3A3A5A" BorderThickness="1"
+                            Background="#1C1C2E" Foreground="#89DCEB"
+                            BorderBrush="#313244" BorderThickness="1"
                             FontFamily="Segoe UI" FontSize="11"
                             VerticalAlignment="Center"/>
                 </Grid>
             </Border>
 
             <!-- DXF Linework -->
-            <Border Background="#1E1E35" CornerRadius="8"
-                    BorderBrush="#2A2A45" BorderThickness="1"
+            <Border Background="#181825" CornerRadius="8"
+                    BorderBrush="#1E1E2E" BorderThickness="1"
                     Padding="14,10" Margin="0,0,0,8">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -110,9 +110,9 @@
                     <StackPanel>
                         <TextBlock Text="Import DXF Linework"
                                    FontSize="13" FontWeight="SemiBold"
-                                   Foreground="#E8E8F0" FontFamily="Segoe UI"/>
+                                   Foreground="#CDD6F4" FontFamily="Segoe UI"/>
                         <TextBlock Text="Read polylines from existing CAD drawing"
-                                   FontSize="11" Foreground="#7A7A9A"
+                                   FontSize="11" Foreground="#BAC2DE"
                                    FontFamily="Segoe UI" Margin="0,2,0,0"/>
                     </StackPanel>
                     <Button Grid.Column="1"
@@ -120,18 +120,18 @@
                             Command="{Binding DataContext.ImportDxfCommand,
                                       RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Padding="12,6"
-                            Background="#252545" Foreground="#E8E8F0"
-                            BorderBrush="#3A3A5A" BorderThickness="1"
+                            Background="#1C1C2E" Foreground="#CDD6F4"
+                            BorderBrush="#313244" BorderThickness="1"
                             FontFamily="Segoe UI" FontSize="11"
                             VerticalAlignment="Center"/>
                 </Grid>
             </Border>
 
             <!-- ── Project meta ──────────────────────────────── -->
-            <Rectangle Fill="#2A2A45" Height="1" Margin="0,16,0,12"/>
+            <Rectangle Fill="#1E1E2E" Height="1" Margin="0,16,0,12"/>
             <TextBlock Text="PROJECT IDENTITY"
                        FontSize="9" FontWeight="SemiBold"
-                       Foreground="#7A7A9A" FontFamily="Segoe UI"
+                       Foreground="#BAC2DE" FontFamily="Segoe UI"
                        Margin="0,0,0,10"/>
 
             <!-- Job Number -->
@@ -141,12 +141,12 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Job Number"
-                           FontSize="12" Foreground="#7A7A9A"
+                           FontSize="12" Foreground="#BAC2DE"
                            FontFamily="Segoe UI" VerticalAlignment="Center"/>
                 <TextBox Grid.Column="1"
                          Text="{Binding Job.Identity.JobNumber, UpdateSourceTrigger=PropertyChanged}"
-                         Background="#1A1A2E" Foreground="#E8E8F0"
-                         BorderBrush="#3A3A5A" BorderThickness="1"
+                         Background="#11111B" Foreground="#CDD6F4"
+                         BorderBrush="#313244" BorderThickness="1"
                          FontFamily="Segoe UI" FontSize="12" Padding="6,4"/>
             </Grid>
 
@@ -157,12 +157,12 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Contractor"
-                           FontSize="12" Foreground="#7A7A9A"
+                           FontSize="12" Foreground="#BAC2DE"
                            FontFamily="Segoe UI" VerticalAlignment="Center"/>
                 <TextBox Grid.Column="1"
                          Text="{Binding Job.Identity.Contractor, UpdateSourceTrigger=PropertyChanged}"
-                         Background="#1A1A2E" Foreground="#E8E8F0"
-                         BorderBrush="#3A3A5A" BorderThickness="1"
+                         Background="#11111B" Foreground="#CDD6F4"
+                         BorderBrush="#313244" BorderThickness="1"
                          FontFamily="Segoe UI" FontSize="12" Padding="6,4"/>
             </Grid>
 
@@ -173,7 +173,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Description"
-                           FontSize="12" Foreground="#7A7A9A"
+                           FontSize="12" Foreground="#BAC2DE"
                            FontFamily="Segoe UI" VerticalAlignment="Top"
                            Margin="0,4,0,0"/>
                 <TextBox Grid.Column="1"
@@ -181,8 +181,8 @@
                          AcceptsReturn="True" Height="60"
                          TextWrapping="Wrap"
                          VerticalScrollBarVisibility="Auto"
-                         Background="#1A1A2E" Foreground="#E8E8F0"
-                         BorderBrush="#3A3A5A" BorderThickness="1"
+                         Background="#11111B" Foreground="#CDD6F4"
+                         BorderBrush="#313244" BorderThickness="1"
                          FontFamily="Segoe UI" FontSize="12" Padding="6,4"/>
             </Grid>
 

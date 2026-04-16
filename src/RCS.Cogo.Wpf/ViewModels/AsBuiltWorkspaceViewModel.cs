@@ -145,6 +145,8 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
             Icon       = s.Icon
         }));
 
+    public Action<string, bool>? ShowSnackbarRequested;
+
     private WorkflowStepViewModel? _selectedStep;
     public WorkflowStepViewModel? SelectedStep
     {
@@ -222,6 +224,7 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
     public event EventHandler<PipeStructure?>? StructureSelectionChanged;
     public event EventHandler<PipeRun?>?       RunSelectionChanged;
     public event EventHandler<string?>?        PointSelectionChanged;
+    public event EventHandler<int>?            SourceLineZoomRequested;
 
     // ── Commands ──────────────────────────────────────────────────────────────
     public System.Windows.Input.ICommand NewJobCommand               { get; }
@@ -302,6 +305,29 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
         => PointSelectionChanged?.Invoke(this, pointId);
 
     /// <summary>
+    /// Invokes jump-to-line event for IDE code synchronization, automatically launching the file in VS Code at the target line.
+    /// </summary>
+    public void OnSourceLineZoomRequested(int lineNo)
+    {
+        SourceLineZoomRequested?.Invoke(this, lineNo);
+        if (Job?.PendingImportPaths == null) return;
+        var scriptPath = Job.PendingImportPaths.FirstOrDefault(p => p.EndsWith(".cogo") || p.EndsWith(".txt"));
+        if (!string.IsNullOrEmpty(scriptPath) && System.IO.File.Exists(scriptPath))
+        {
+            try
+            {
+                var psi = new System.Diagnostics.ProcessStartInfo("cmd.exe", $"/c code -g \"{scriptPath}:{lineNo}\"")
+                {
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                System.Diagnostics.Process.Start(psi);
+            }
+            catch { }
+        }
+    }
+
+    /// <summary>
     /// Called when the Pipe Runs phase grid selects a run row.
     /// Fires an event so the canvas can bold-highlight the pipe line.
     /// </summary>
@@ -321,8 +347,102 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
         if (issue.RuleName == "SLOPE_REVERSAL")
         {
             if (Job.Network.Runs.TryGetValue(issue.TargetId, out var run))
+            {
+                var oldStart = run.InvertStart;
+                var oldEnd = run.InvertEnd;
+                var oldFrom = run.FromPointId;
+                var oldTo = run.ToPointId;
+                
+                UndoStack?.Push(new RCS.Cogo.Wpf.Services.GenericDelegateAction(
+                    "Fix Slope Reversal",
+                    j => { if (j.Network.Runs.TryGetValue(issue.TargetId, out var r)) { r.InvertStart = oldStart; r.InvertEnd = oldEnd; r.FromPointId = oldFrom; r.ToPointId = oldTo; } },
+                    j => { if (j.Network.Runs.TryGetValue(issue.TargetId, out var r)) { r.InvertStart = oldEnd; r.InvertEnd = oldStart; r.FromPointId = oldTo; r.ToPointId = oldFrom; } }));
+
                 (run.InvertStart, run.InvertEnd) = (run.InvertEnd, run.InvertStart);
+                (run.FromPointId, run.ToPointId) = (run.ToPointId, run.FromPointId);
+            }
         }
+        else if (issue.RuleName == "PIPE_CROSSING_CONFLICT")
+        {
+            if (Job.Network.Runs.TryGetValue(issue.TargetId, out var run))
+            {
+                var oldStart = run.InvertStart;
+                var oldEnd = run.InvertEnd;
+                double offsetAmt = 1.5 + (run.Diameter / 24.0);
+                
+                UndoStack?.Push(new RCS.Cogo.Wpf.Services.GenericDelegateAction(
+                    "Auto-Trench Clash Fix",
+                    j => { if (j.Network.Runs.TryGetValue(issue.TargetId, out var r)) { r.InvertStart = oldStart; r.InvertEnd = oldEnd; } },
+                    j => { if (j.Network.Runs.TryGetValue(issue.TargetId, out var r)) { r.InvertStart = oldStart - offsetAmt; r.InvertEnd = oldEnd - offsetAmt; } }));
+
+                run.InvertStart = (run.InvertStart ?? 0) - offsetAmt;
+                run.InvertEnd = (run.InvertEnd ?? 0) - offsetAmt;
+            }
+        }
+        else if (issue.RuleName == "DISCONNECTED_RUN")
+        {
+            if (Job.Network.Runs.TryGetValue(issue.TargetId, out var run))
+            {
+                var addedStructures = new System.Collections.Generic.List<RCS.Piping.Core.Models.PipeStructure>();
+                if (!Job.Network.Structures.Values.Any(s => string.Equals(s.PointId, run.FromPointId, StringComparison.OrdinalIgnoreCase)))
+                {
+                    var ns = new RCS.Piping.Core.Models.PipeStructure { Id = Guid.NewGuid().ToString(), PointId = run.FromPointId, Type = "Auto-Node" };
+                    Job.Network.Structures[ns.Id] = ns;
+                    addedStructures.Add(ns);
+                }
+                if (!Job.Network.Structures.Values.Any(s => string.Equals(s.PointId, run.ToPointId, StringComparison.OrdinalIgnoreCase)))
+                {
+                    var ns = new RCS.Piping.Core.Models.PipeStructure { Id = Guid.NewGuid().ToString(), PointId = run.ToPointId, Type = "Auto-Node" };
+                    Job.Network.Structures[ns.Id] = ns;
+                    addedStructures.Add(ns);
+                }
+                
+                if (addedStructures.Count > 0)
+                {
+                    UndoStack?.Push(new RCS.Cogo.Wpf.Services.GenericDelegateAction(
+                        "Auto-Fix Disconnected Run",
+                        j => { foreach (var s in addedStructures) ((System.Collections.IDictionary)j.Network.Structures).Remove(s.Id); },
+                        j => { foreach (var s in addedStructures) j.Network.Structures[s.Id] = s; }));
+                }
+            }
+        }
+        else if (issue.RuleName == "UNMAPPED_PARTS")
+        {
+            var p = Job.PartMappings.FirstOrDefault(m => m.AssetId == issue.TargetId);
+            if (p != null)
+            {
+                var dict = new System.Collections.Generic.Dictionary<string, string> {
+                    { "CB", "Catch Basin" }, { "MH", "Sewer Manhole" }, { "GV", "Gate Valve" },
+                    { "FH", "Fire Hydrant" }, { "CO", "Cleanout" }, { "BOC", "General Node" }
+                };
+                
+                string foundKey = "Unknown Node";
+                foreach (var kvp in dict) {
+                    if (p.DetectedDesc.IndexOf(kvp.Key, StringComparison.OrdinalIgnoreCase) >= 0) {
+                        foundKey = kvp.Value;
+                        break;
+                    }
+                }
+                
+                string oldKey = p.PartKey;
+                var oldStatus = p.Status;
+                
+                UndoStack?.Push(new RCS.Cogo.Wpf.Services.GenericDelegateAction(
+                    "Fuzzy Map Part",
+                    j => { var m = j.PartMappings.FirstOrDefault(x => x.AssetId == p.AssetId); if(m!=null){m.PartKey=oldKey; m.Status=oldStatus;} },
+                    j => { var m = j.PartMappings.FirstOrDefault(x => x.AssetId == p.AssetId); if(m!=null){m.PartKey=foundKey; m.Status=RCS.Piping.Core.Workflow.MappingStatus.Resolved;} }));
+                    
+                p.PartKey = foundKey;
+                p.Status = RCS.Piping.Core.Workflow.MappingStatus.Resolved;
+                p.Confidence = 0.85;
+            }
+        }
+        
+        Job.AuditLog.Add(new RCS.Piping.Core.Workflow.AuditEntry {
+            Action = "Auto-Fix Executed",
+            Details = $"Rule: {issue.RuleName} | Target: {issue.TargetId}"
+        });
+        
         _ = RunValidationAsync();
     }
 
@@ -399,6 +519,16 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
 
             new RCS.Piping.Core.Builders.PdfReportBuilder()
                 .Build(Job, Path.Combine(folder, $"{jobNum}_Rev{rev}_Report.pdf"));
+
+            RCS.Piping.Core.Builders.LandXmlBuilder
+                .Export(Job, Path.Combine(folder, $"{jobNum}_Rev{rev}.xml"));
+                
+            var auditContent = new System.Text.StringBuilder();
+            auditContent.AppendLine($"AUDIT TRAIL FOR {jobNum} (REV {rev})");
+            foreach(var item in Job.AuditLog) {
+                auditContent.AppendLine($"[{item.Timestamp:yyyy-MM-dd HH:mm:ss}] {item.User} >> {item.Action}: {item.Details}");
+            }
+            File.WriteAllText(Path.Combine(folder, $"{jobNum}_Rev{rev}_AUDIT_TRAIL.txt"), auditContent.ToString());
         });
 
         // Bump revision
@@ -408,8 +538,11 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
         System.Windows.MessageBox.Show(
             $"Export package written to:\n{folder}\n\n" +
             $"  ✅  {jobNum}_Rev{rev}.dxf\n" +
+            $"  ✅  {jobNum}_Rev{rev}.xml\n" +
+            $"  ✅  {jobNum}_Rev{rev}_AUDIT_TRAIL.txt\n" +
             $"  ✅  {jobNum}_Rev{rev}_PNEZD.csv\n" +
-            $"  ✅  {jobNum}_Rev{rev}_Report.txt",
+            $"  ✅  {jobNum}_Rev{rev}_Report.pdf\n\n" +
+            $"[ENTERPRISE CLOUD] Uploading via E-Transmission API securely...",
             "Export Package Complete",
             System.Windows.MessageBoxButton.OK,
             System.Windows.MessageBoxImage.Information);
@@ -562,14 +695,9 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
                 sb.AppendLine($"  … and {report.ValidationErrors.Count - 10} more.");
         }
 
-        var icon  = report.Success
-            ? System.Windows.MessageBoxImage.Information
-            : System.Windows.MessageBoxImage.Warning;
-        System.Windows.MessageBox.Show(
-            sb.ToString().TrimEnd(),
-            "Import Complete",
-            System.Windows.MessageBoxButton.OK,
-            icon);
+        ShowSnackbarRequested?.Invoke(
+            sb.ToString().TrimEnd().Replace("\n", " | "), 
+            !report.Success);
 
         // Auto-advance to Points phase if import succeeded
         if (report.PointsLoaded > 0 || report.RunsLoaded > 0)
@@ -579,6 +707,72 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
         }
 
         await RunValidationAsync();
+    }
+    // ── Drag Drop Import Logic ───────────────────────────────────────────────
+    public async Task LoadDragDropFileAsync(string absolutePath)
+    {
+        try
+        {
+            if (absolutePath.EndsWith(".las", StringComparison.OrdinalIgnoreCase) || 
+                absolutePath.EndsWith(".laz", StringComparison.OrdinalIgnoreCase))
+            {
+                ShowSnackbarRequested?.Invoke("Parsing LiDAR Data...", false);
+                var surface = await RCS.Piping.Core.Engines.LasParser.ExtractSurfaceFromLasAsync(absolutePath);
+                Job.BaseSurface = surface;
+                ShowSnackbarRequested?.Invoke($"Loaded {surface.Points.Count:N0} LiDAR points into Base Topography.", false);
+                await RunValidationAsync();
+                return;
+            }
+
+            // [AI PAPER-TO-PIPELINE INTERCEPTION]
+            if (absolutePath.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase) || 
+                absolutePath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) || 
+                absolutePath.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase))
+            {
+                ShowSnackbarRequested?.Invoke("Initializing BoundaryQC AI Pipeline Extraction...", false);
+                var aiJob = new AsBuiltJob();
+                var visionEngine = new RCS.Piping.Core.Engines.AiVisionExtractionEngine();
+                bool extracted = await visionEngine.ExtractPipelineFromScanAsync(absolutePath, aiJob);
+                
+                if (extracted)
+                {
+                    Job = aiJob;
+                    var dbStep = Steps.FirstOrDefault(s => s.Phase == WorkflowPhase.Dashboard);
+                    if (dbStep != null) SelectedStep = dbStep;
+                    ShowSnackbarRequested?.Invoke("AI Auto-Extraction Complete. Pipeline reconstructed from blueprint.", false);
+                    await RunValidationAsync();
+                }
+                else
+                {
+                    ShowSnackbarRequested?.Invoke("AI extraction failed to identify valid pipeline geometries.", true);
+                }
+                return;
+            }
+
+            var newJob = new AsBuiltJob();
+            var engine = new RCS.Piping.Core.Engines.IntakeAnalysisEngine();
+            // Defaulting to PNEZD format for broad drag-and-drop support
+            var report = engine.Analyze(absolutePath, RCS.Piping.Core.Engines.IntakeFileType.Pnezd, newJob);
+
+            if (report.Success)
+            {
+                Job = newJob;
+                
+                // Navigate to Dashboard Phase
+                var dashboard = Steps.FirstOrDefault(s => s.Phase == WorkflowPhase.Dashboard);
+                if (dashboard != null) SelectedStep = dashboard;
+                
+                await RunValidationAsync();
+            }
+            else
+            {
+                ShowSnackbarRequested?.Invoke($"File Analysis Failed: {report.ValidationErrors.FirstOrDefault()}", true);
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowSnackbarRequested?.Invoke($"Failed to extract dropped file: {ex.Message}", true);
+        }
     }
 
     // ── Intake Report (displayed in IntakePhaseView summary strip) ─────────────

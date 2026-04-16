@@ -1,0 +1,21 @@
+<Window x:Class="RCS.Cogo.Wpf.Views.AsBuilt.ProfileVisualizerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Profile Viewer (5x Exaggeration)" Height="400" Width="800" WindowStartupLocation="CenterOwner"
+        Background="#1E1E2E" Foreground="#CDD6F4" FontFamily="Consolas">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10,6" Background="#181825">
+            <TextBlock Text="{Binding RunTitle}" FontSize="16" FontWeight="Bold" Margin="0,0,20,0"/>
+            <TextBlock Text="Note: Vertically Exaggerated 5X" Foreground="#A6ADC8" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" Margin="20" BorderBrush="#45475A" BorderThickness="1" Background="#11111B" ClipToBounds="True">
+            <Canvas x:Name="ProfileCanvas" Margin="10"/>
+        </Border>
+    </Grid>
+</Window>

@@ -13,6 +13,7 @@ namespace RCS.Cogo.Wpf.Views.AsBuilt;
 public class PhaseViewSelector : DataTemplateSelector
 {
     // Each property receives a DataTemplate set in XAML via property element syntax.
+    public DataTemplate? DashboardTemplate     { get; set; }
     public DataTemplate? IntakeTemplate        { get; set; }
     public DataTemplate? PointsCleanupTemplate { get; set; }
     public DataTemplate? StructuresTemplate    { get; set; }
@@ -32,6 +33,7 @@ public class PhaseViewSelector : DataTemplateSelector
 
         return phase switch
         {
+            WorkflowPhase.Dashboard     => DashboardTemplate,
             WorkflowPhase.Intake        => IntakeTemplate,
             WorkflowPhase.PointsCleanup => PointsCleanupTemplate,
             WorkflowPhase.Structures    => StructuresTemplate,

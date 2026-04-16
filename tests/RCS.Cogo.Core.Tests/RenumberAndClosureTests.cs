@@ -195,7 +195,7 @@ public class RenumberCommandTests
         var ctx = BuildContext(10, 15);
         await Run(ctx, "RENUMBER 10 15 100");
 
-        Assert.True(ctx.Messages.Any(l => l.Contains("6")));   // 6 points renamed
+        Assert.Contains(ctx.Messages, l => l.Contains("6"));   // 6 points renamed
     }
 
     // ── Collision guard ───────────────────────────────────────────────────────
@@ -211,7 +211,7 @@ public class RenumberCommandTests
         // Nothing moved
         Assert.NotNull(ctx.GetPoint("1"));
         Assert.NotNull(ctx.GetPoint("2"));
-        Assert.True(ctx.Messages.Any(l => l.Contains("Aborting")));
+        Assert.Contains(ctx.Messages, l => l.Contains("Aborting"));
     }
 
     // ── Validation errors ─────────────────────────────────────────────────────
@@ -221,7 +221,7 @@ public class RenumberCommandTests
     {
         var ctx = BuildContext(1, 5);
         await Run(ctx, "RENUMBER 5 1 100");
-        Assert.True(ctx.Messages.Any(l => l.Contains("≤")));
+        Assert.Contains(ctx.Messages, l => l.Contains("≤"));
         Assert.NotNull(ctx.GetPoint("1")); // unchanged
     }
 
@@ -230,7 +230,7 @@ public class RenumberCommandTests
     {
         var ctx = new StubCogoContext();
         await new RenumberCommand().ExecuteAsync(["RENUMBER", "1"], ctx);
-        Assert.True(ctx.Messages.Any(l => l.Contains("Usage")));
+        Assert.Contains(ctx.Messages, l => l.Contains("Usage"));
     }
 
     [Fact]
@@ -238,9 +238,9 @@ public class RenumberCommandTests
     {
         var ctx = new StubCogoContext(); // empty
         await Run(ctx, "RENUMBER 1 5 100");
-        Assert.True(ctx.Messages.Any(l => l.ToLower().Contains("nothing") ||
+        Assert.Contains(ctx.Messages, l => l.ToLower().Contains("nothing") ||
                                      l.ToLower().Contains("not found") ||
-                                     l.ToLower().Contains("none")));
+                                     l.ToLower().Contains("none"));
     }
 
     [Fact]
@@ -248,7 +248,7 @@ public class RenumberCommandTests
     {
         var ctx = new StubCogoContext();
         await new RenumberCommand().ExecuteAsync(["RENUMBER", "A", "5", "100"], ctx);
-        Assert.True(ctx.Messages.Any(l => l.ToLower().Contains("integer") || l.ToLower().Contains("usage")));
+        Assert.Contains(ctx.Messages, l => l.ToLower().Contains("integer") || l.ToLower().Contains("usage"));
     }
 }
 
