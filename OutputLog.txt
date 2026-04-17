@@ -1,3 +1,0 @@
-Curve Solved: R=1.000, T=5.000, L=2.747, C=1.961, D=157.380135 (157° 22' 48.5")
-[AUDIT] Switched to tab: Curve Solver
-[AUDIT] Loaded 181 codes and 96 materials from Master Database.

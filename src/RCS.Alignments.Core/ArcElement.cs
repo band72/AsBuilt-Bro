@@ -67,19 +67,41 @@ public class ArcElement : HorizontalElement
         if (endRadialAz < 0) endRadialAz += 360.0;
         if (endRadialAz > 360) endRadialAz -= 360.0;
 
-        // Simplify bound checking logic (assuming small arcs)
-        // More robust checking needed for production
+        // Rigorous Sector Containment (Cross-Product Math)
+        // Vector from Center to Start, Center to End, Center to Point
+        double startAzRad = startRadialAz * Math.PI / 180.0;
+        double endAzRad   = endRadialAz * Math.PI / 180.0;
         
-        double angleDiff = IsClockwise 
-            ? azToPoint - startRadialAz 
-            : startRadialAz - azToPoint;
+        double vStartX = Math.Sin(startAzRad);
+        double vStartY = Math.Cos(startAzRad);
+        double vEndX   = Math.Sin(endAzRad);
+        double vEndY   = Math.Cos(endAzRad);
+        
+        // Normalize dx, dy for cross product comparison
+        double nDx = dx / distFromCenter;
+        double nDy = dy / distFromCenter;
 
-        if (angleDiff < 0) angleDiff += 360.0;
-
+        bool isInside = false;
         double arcAngle = IsClockwise ? endRadialAz - startRadialAz : startRadialAz - endRadialAz;
         if (arcAngle < 0) arcAngle += 360.0;
 
-        if (angleDiff > arcAngle) return null; // Outside segment
+        if (arcAngle <= 180.0)
+        {
+            double cross1 = vStartX * nDy - vStartY * nDx; // VStart x VPoint
+            double cross2 = nDx * vEndY - nDy * vEndX;     // VPoint x VEnd
+            isInside = IsClockwise ? (cross1 <= 0 && cross2 <= 0) : (cross1 >= 0 && cross2 >= 0);
+        }
+        else
+        {
+            double cross1 = vStartX * nDy - vStartY * nDx; 
+            double cross2 = nDx * vEndY - nDy * vEndX;     
+            isInside = IsClockwise ? (cross1 <= 0 || cross2 <= 0) : (cross1 >= 0 || cross2 >= 0);
+        }
+
+        if (!isInside) return null; // Outside mathematically defined sector
+
+        double angleDiff = IsClockwise ? azToPoint - startRadialAz : startRadialAz - azToPoint;
+        if (angleDiff < 0) angleDiff += 360.0;
 
         double distAlongArc = (angleDiff * Math.PI / 180.0) * Radius;
         double station = StartStation + distAlongArc;
