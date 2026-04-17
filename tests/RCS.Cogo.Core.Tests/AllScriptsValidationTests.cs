@@ -14,10 +14,29 @@ namespace RCS.Cogo.Core.Tests
         [Fact]
         public void ValidateAllSampleScripts()
         {
-            var baseDir = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..");
-            var sampleDir = Path.Combine(baseDir, "SampleScripts");
-            var docsDir = Path.Combine(baseDir, "docs", "examples");
-            
+            // Walk up from the test binary directory until we find the repo root
+            // (identified by the presence of the SampleScripts folder).
+            // This works on both local dev boxes and CI runners regardless of
+            // how many levels deep the test output directory is.
+            static string? FindRepoRoot(string start)
+            {
+                var dir = new DirectoryInfo(start);
+                while (dir != null)
+                {
+                    if (Directory.Exists(Path.Combine(dir.FullName, "SampleScripts")))
+                        return dir.FullName;
+                    dir = dir.Parent;
+                }
+                return null;
+            }
+
+            var repoRoot = FindRepoRoot(AppContext.BaseDirectory)
+                ?? throw new DirectoryNotFoundException(
+                    $"Could not locate repo root containing SampleScripts/ from: {AppContext.BaseDirectory}");
+
+            var sampleDir = Path.Combine(repoRoot, "SampleScripts");
+            var docsDir   = Path.Combine(repoRoot, "docs", "examples");
+
             var files = Directory.GetFiles(sampleDir, "*.txt", SearchOption.AllDirectories)
                 .Concat(Directory.GetFiles(sampleDir, "*.cogo", SearchOption.AllDirectories))
                 .Concat(Directory.GetFiles(docsDir, "*.cogo", SearchOption.AllDirectories))
