@@ -127,6 +127,40 @@
                 </Grid>
             </Border>
 
+            <!-- AI Blueprint Scan -->
+            <Border Background="#1A1525" CornerRadius="8"
+                    BorderBrush="#6C3483" BorderThickness="1"
+                    Padding="14,10" Margin="0,0,0,8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                            <TextBlock Text="🤖" FontSize="14" Margin="0,0,6,0"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Text="AI Blueprint Scanner  (Gemini Vision)"
+                                       FontSize="13" FontWeight="SemiBold"
+                                       Foreground="#C39BDA" FontFamily="Segoe UI"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="Drop a PDF / PNG scan — AI extracts structures &amp; pipe runs automatically"
+                                   FontSize="11" Foreground="#9B59B6"
+                                   FontFamily="Segoe UI"/>
+                    </StackPanel>
+                    <Button Grid.Column="1"
+                            Content="Scan…"
+                            Command="{Binding DataContext.ImportBlueprintCommand,
+                                      RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Padding="12,6"
+                            Background="#2C1840" Foreground="#C39BDA"
+                            BorderBrush="#6C3483" BorderThickness="1"
+                            FontFamily="Segoe UI" FontSize="11"
+                            VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+
             <!-- ── Project meta ──────────────────────────────── -->
             <Rectangle Fill="#1E1E2E" Height="1" Margin="0,16,0,12"/>
             <TextBlock Text="PROJECT IDENTITY"

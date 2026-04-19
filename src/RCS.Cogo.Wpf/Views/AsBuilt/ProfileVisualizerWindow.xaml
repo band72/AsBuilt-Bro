@@ -1,21 +1,139 @@
 <Window x:Class="RCS.Cogo.Wpf.Views.AsBuilt.ProfileVisualizerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Profile Viewer (5x Exaggeration)" Height="400" Width="800" WindowStartupLocation="CenterOwner"
-        Background="#1E1E2E" Foreground="#CDD6F4" FontFamily="Consolas">
+        Title="📈 Pipe Profile Viewer" Height="560" Width="1000"
+        MinHeight="420" MinWidth="700"
+        WindowStartupLocation="CenterOwner"
+        Background="#0F0F17" Foreground="#CDD6F4" FontFamily="Consolas"
+        SizeChanged="Window_SizeChanged">
+
+    <Window.Resources>
+        <Style x:Key="ToolBtn" TargetType="Button">
+            <Setter Property="Background"   Value="#1E1E2E"/>
+            <Setter Property="Foreground"   Value="#CDD6F4"/>
+            <Setter Property="BorderBrush"  Value="#45475A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontFamily"   Value="Segoe UI"/>
+            <Setter Property="FontSize"     Value="11"/>
+            <Setter Property="Padding"      Value="10,4"/>
+            <Setter Property="Cursor"       Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#313244"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>  <!-- Title bar -->
+            <RowDefinition Height="Auto"/>  <!-- Toolbar -->
+            <RowDefinition Height="*"/>     <!-- Main canvas area -->
+            <RowDefinition Height="Auto"/>  <!-- Status bar -->
         </Grid.RowDefinitions>
-        
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10,6" Background="#181825">
-            <TextBlock Text="{Binding RunTitle}" FontSize="16" FontWeight="Bold" Margin="0,0,20,0"/>
-            <TextBlock Text="Note: Vertically Exaggerated 5X" Foreground="#A6ADC8" VerticalAlignment="Center"/>
-        </StackPanel>
 
-        <Border Grid.Row="1" Margin="20" BorderBrush="#45475A" BorderThickness="1" Background="#11111B" ClipToBounds="True">
-            <Canvas x:Name="ProfileCanvas" Margin="10"/>
+        <!-- ── Title Block ─────────────────────────────────────────────────── -->
+        <Border Grid.Row="0" Background="#11111B" BorderBrush="#313244" BorderThickness="0,0,0,1" Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock x:Name="TxtTitle" Text="Pipe Profile" FontSize="15" FontWeight="Bold"
+                               Foreground="#F5C2E7" FontFamily="Segoe UI"/>
+                    <TextBlock x:Name="TxtSubtitle" Text="" FontSize="11" Foreground="#A6ADC8"
+                               FontFamily="Segoe UI" Margin="0,2,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Legend -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,20,0">
+                        <Rectangle Width="28" Height="4" Fill="#2ECC71" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBlock Text="Pipe CL" FontSize="10" Foreground="#A6ADC8" VerticalAlignment="Center" FontFamily="Segoe UI"/>
+                        <Rectangle Width="28" Height="4" Fill="#A6E3A1" VerticalAlignment="Center" Margin="12,0,5,0"/>
+                        <TextBlock Text="Crown" FontSize="10" Foreground="#A6ADC8" VerticalAlignment="Center" FontFamily="Segoe UI"/>
+                        <Rectangle Width="28" Height="4" Fill="#74C7EC" VerticalAlignment="Center" Margin="12,0,5,0"/>
+                        <TextBlock Text="Existing Grade" FontSize="10" Foreground="#A6ADC8" VerticalAlignment="Center" FontFamily="Segoe UI"/>
+                        <Ellipse Width="10" Height="10" Fill="#F38BA8" Margin="12,0,5,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="X-ing" FontSize="10" Foreground="#A6ADC8" VerticalAlignment="Center" FontFamily="Segoe UI"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ── Toolbar ──────────────────────────────────────────────────────── -->
+        <Border Grid.Row="1" Background="#11111B" BorderBrush="#313244" BorderThickness="0,0,0,1" Padding="10,5">
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="BtnExaggerate"   Content="5× Vert. Exaggeration"  Style="{StaticResource ToolBtn}" Margin="0,0,6,0"
+                        Click="BtnExaggerate_Click" ToolTip="Toggle vertical exaggeration: 1x / 2x / 5x / 10x"/>
+                <Button x:Name="BtnShowAll"      Content="🔍 Show All Runs"        Style="{StaticResource ToolBtn}" Margin="0,0,6,0"
+                        Click="BtnShowAll_Click" ToolTip="Show all runs on this profile"/>
+                <Button x:Name="BtnResetZoom"    Content="⊙ Reset View"            Style="{StaticResource ToolBtn}" Margin="0,0,6,0"
+                        Click="BtnResetZoom_Click"/>
+                <Separator Width="1" Background="#45475A" Margin="6,0"/>
+                <Button x:Name="BtnSaveImage"    Content="💾 Save PNG"              Style="{StaticResource ToolBtn}" Margin="0,0,6,0"
+                        Foreground="#A6E3A1" BorderBrush="#A6E3A1"
+                        Click="BtnSaveImage_Click"/>
+                <Separator Width="1" Background="#45475A" Margin="6,0"/>
+                <TextBlock x:Name="TxtExagLabel" Text="Exag: 5×" FontSize="11" Foreground="#89DCEB"
+                           FontFamily="Segoe UI" VerticalAlignment="Center" Margin="4,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Profile Canvas Area ─────────────────────────────────────────── -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="56"/>  <!-- Y-axis labels -->
+                <ColumnDefinition Width="*"/>   <!-- Canvas -->
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="32"/>    <!-- X-axis labels -->
+            </Grid.RowDefinitions>
+
+            <!-- Y-axis label column -->
+            <Canvas x:Name="YAxisCanvas" Grid.Column="0" Grid.Row="0"
+                    Background="#0F0F17" ClipToBounds="True"/>
+
+            <!-- X-axis label row -->
+            <Canvas x:Name="XAxisCanvas" Grid.Column="1" Grid.Row="1"
+                    Background="#0F0F17" ClipToBounds="True"/>
+
+            <!-- Main drawing canvas -->
+            <Border Grid.Column="1" Grid.Row="0"
+                    BorderBrush="#313244" BorderThickness="1,1,0,0"
+                    Background="#11111B" ClipToBounds="True">
+                <Canvas x:Name="ProfileCanvas" ClipToBounds="True"
+                        MouseMove="ProfileCanvas_MouseMove"
+                        MouseLeave="ProfileCanvas_MouseLeave"/>
+            </Border>
+
+            <!-- Crosshair tooltip label -->
+            <TextBlock x:Name="TxtCrosshair" Grid.Column="1" Grid.Row="0"
+                       IsHitTestVisible="False"
+                       FontSize="10" FontFamily="Consolas" Foreground="#CDD6F4"
+                       Background="#1E1E2E" Padding="4,2"
+                       Visibility="Collapsed"
+                       Panel.ZIndex="100"/>
+        </Grid>
+
+        <!-- ── Status Bar ───────────────────────────────────────────────────── -->
+        <Border Grid.Row="3" Background="#11111B" BorderBrush="#313244" BorderThickness="0,1,0,0" Padding="12,4">
+            <TextBlock x:Name="TxtStatus" Text="Select a run in the Pipe Runs grid, then click 📈 Graph Profile."
+                       FontSize="10" Foreground="#585B70" FontFamily="Segoe UI"/>
         </Border>
     </Grid>
 </Window>

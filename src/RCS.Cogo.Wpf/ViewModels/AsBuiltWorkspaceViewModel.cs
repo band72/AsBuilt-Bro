@@ -237,6 +237,7 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
     public System.Windows.Input.ICommand ImportBatchCommand          { get; }
     public System.Windows.Input.ICommand ImportJeaTemplateCommand    { get; }
     public System.Windows.Input.ICommand ImportDxfCommand            { get; }
+    public System.Windows.Input.ICommand ImportBlueprintCommand      { get; }
     public System.Windows.Input.ICommand UndoCommand                 { get; }
     public System.Windows.Input.ICommand RedoCommand                 { get; }
 
@@ -253,6 +254,7 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
         ImportBatchCommand          = new AsBuiltAsyncRelayCommand(() => ImportFileAsync(IntakeFileType.CogoScript));
         ImportJeaTemplateCommand    = new AsBuiltAsyncRelayCommand(() => ImportFileAsync(IntakeFileType.JeaExcel));
         ImportDxfCommand            = new AsBuiltAsyncRelayCommand(() => ImportFileAsync(IntakeFileType.Dxf));
+        ImportBlueprintCommand      = new AsBuiltAsyncRelayCommand(ImportBlueprintAsync);
 
         UndoCommand                 = new AsBuiltRelayCommand(() => { _undoStack?.Undo(); RequestRevalidation(); }, () => CanUndo);
         RedoCommand                 = new AsBuiltRelayCommand(() => { _undoStack?.Redo(); RequestRevalidation(); }, () => CanRedo);
@@ -635,6 +637,63 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
             (WorkflowPhase.Deliverables,  IssueCategory.ExportReadiness) => true,
             _ => false
         };
+
+    // ── AI Blueprint Import ──────────────────────────────────────────────────────
+
+    private async Task ImportBlueprintAsync()
+    {
+        var dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Title  = "Select Blueprint / As-Built Scan for AI Extraction",
+            Filter = "Blueprint Images|*.pdf;*.png;*.jpg;*.jpeg|PDF Documents|*.pdf|PNG Images|*.png|JPEG Images|*.jpg;*.jpeg|All|*.*"
+        };
+        if (dlg.ShowDialog() != true) return;
+
+        ShowSnackbarRequested?.Invoke("🤖  Gemini Vision AI extracting pipeline from blueprint…", false);
+
+        var aiJob    = new AsBuiltJob();
+        var engine   = new RCS.Piping.Core.Engines.AiVisionExtractionEngine();
+        bool success = false;
+
+        try
+        {
+            success = await engine.ExtractPipelineFromScanAsync(dlg.FileName, aiJob);
+        }
+        catch (Exception ex)
+        {
+            ShowSnackbarRequested?.Invoke($"AI extraction error: {ex.Message}", true);
+            return;
+        }
+
+        if (success && (aiJob.Network.Structures.Count + aiJob.Network.Runs.Count) > 0)
+        {
+            Job = aiJob;
+            IntakeReport = new RCS.Piping.Core.Engines.IntakeReport
+            {
+                Success         = true,
+                PointsLoaded    = aiJob.PointRows.Count,
+                RunsLoaded      = aiJob.Network.Runs.Count,
+                StructuresFound = aiJob.Network.Structures.Count,
+                Summary         = $"AI Vision: {aiJob.Network.Structures.Count} structure(s), " +
+                                  $"{aiJob.Network.Runs.Count} run(s), " +
+                                  $"{aiJob.PointRows.Count} point(s) extracted from blueprint."
+            };
+            OnPropertyChanged(nameof(IntakeReport));
+
+            // Auto-navigate to Structures phase if pipeline data found
+            var targetStep = Steps.FirstOrDefault(s => s.Phase == WorkflowPhase.Structures) ?? Steps.First();
+            SelectedStep = targetStep;
+
+            ShowSnackbarRequested?.Invoke(
+                $"✅  AI extracted {aiJob.Network.Structures.Count} structures + {aiJob.Network.Runs.Count} runs", false);
+        }
+        else
+        {
+            ShowSnackbarRequested?.Invoke("AI found no recognisable pipeline geometry in the blueprint.", true);
+        }
+
+        await RunValidationAsync();
+    }
 
     // ── Intake File Import ─────────────────────────────────────────────────────
 
