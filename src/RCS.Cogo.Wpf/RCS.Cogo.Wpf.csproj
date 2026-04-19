@@ -9,6 +9,9 @@
     <Content Include="validation_rules.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="SecurityCore.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\..\AsBuiltDemo\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>AsBuiltDemo\%(RecursiveDir)%(Filename)%(Extension)</Link>

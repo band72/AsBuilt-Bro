@@ -808,6 +808,32 @@ public class AsBuiltWorkspaceViewModel : ViewModelBase
                 return;
             }
 
+            // [LEGACY WORD DOCUMENT BOUNDARY / ALIGNMENT EXTRACTION]
+            if (absolutePath.EndsWith(".doc", StringComparison.OrdinalIgnoreCase) || 
+                absolutePath.EndsWith(".docx", StringComparison.OrdinalIgnoreCase))
+            {
+                ShowSnackbarRequested?.Invoke("Extracting Legacy Legal Description Document...", false);
+                var wdEngine = new RCS.Piping.Core.Engines.IntakeAnalysisEngine();
+                var wdJob = new AsBuiltJob();
+                var wdReport = await Task.Run(() => wdEngine.Analyze(absolutePath, RCS.Piping.Core.Engines.IntakeFileType.WordDoc, wdJob));
+                
+                if (wdReport.Success)
+                {
+                    Job = wdJob;
+                    IntakeReport = wdReport;
+                    OnPropertyChanged(nameof(IntakeReport));
+                    var dbStep = Steps.FirstOrDefault(s => s.Phase == WorkflowPhase.Dashboard);
+                    if (dbStep != null) SelectedStep = dbStep;
+                    ShowSnackbarRequested?.Invoke(wdReport.Summary, false);
+                    await RunValidationAsync();
+                }
+                else
+                {
+                    ShowSnackbarRequested?.Invoke($"Word extraction failed: {wdReport.Summary}", true);
+                }
+                return;
+            }
+
             var newJob = new AsBuiltJob();
             var engine = new RCS.Piping.Core.Engines.IntakeAnalysisEngine();
             // Defaulting to PNEZD format for broad drag-and-drop support

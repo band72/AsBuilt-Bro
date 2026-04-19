@@ -5,7 +5,7 @@ namespace RCS.Piping.Core.Engines;
 // Defined in RCS.Piping.Core so the engine has no dependency on the WPF layer.
 // ─────────────────────────────────────────────────────────────────────────────
 
-public enum IntakeFileType { Pnezd, CogoScript, JeaExcel, Dxf }
+public enum IntakeFileType { Pnezd, CogoScript, JeaExcel, Dxf, WordDoc }
 
 public class IntakeReport
 {
