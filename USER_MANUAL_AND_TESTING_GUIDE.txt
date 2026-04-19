@@ -685,4 +685,63 @@ full hydraulic connectivity network readable by EPA standards.
   for the engineer to rapidly QA before producing broken models.
 
 ================================================================================
+PART 12: AS-BUILT ENTERPRISE MODERNIZATION (VERSION 3.0.x)
+================================================================================
+
+12.1 The As-Built Workspace Engine
+--------------------------------------------------------------------------------
+The central dashboard has been overhauled to streamline field-to-finish operations.
+Access via the newly designed 'As-Built Hub' tabs. Here, users no longer need to 
+manually write COGO scripts or translate points. The Intake Engine automatically 
+reads dragged-and-dropped files.
+
+Supported natively via Drag-and-Drop:
+- PNEZD (.csv/.txt)
+- RCS COGO Scripts (.cogo)
+- Vector DXFs (.dxf)
+- JEA Template Specifications (.csv)
+- Legacy Word Documents (.doc/.docx) - See 12.3
+- Blueprint Scans (.pdf/.png/.jpg) - See 12.4
+
+12.2 Live CAD Visualization & Reactive Rendering
+--------------------------------------------------------------------------------
+The 'Review' phase hosts a completely rewritten Live CAD Viewer. 
+Rather than requiring the user to issue exact ST, B, L, C figure commands, the 
+Visualizer syncs reactively to the 'AsBuiltJob' source of truth in memory.
+- Dynamic Color Coding: Sanitary pipes map to green, Water to blue, etc.
+- Flow Vectors: Animated flow arrows are drawn intrinsically from Start to End Invert.
+- Geometry Structures: Vaults and manholes render parametrically based on diameter.
+All updates from the dashboard grid reflect immediately onto the CAD canvas via 
+`INotifyCollectionChanged` logic without requiring manual DXF generation.
+
+12.3 Legal Description Ingestion (Word Documents)
+--------------------------------------------------------------------------------
+To support boundary extraction and BoundaryQC validation rules, the architecture 
+now natively hooks `.docx` and legacy `.doc` files directly into the Intake Engine. 
+The system breaks apart the archived XML `word/document.xml` layer and invokes 
+advanced layout regex filters to preserve the unbroken text of metes & bounds. 
+This output is passed to the AI Deed analysis queue (utilizing Moore-Neighbor 
+Boundary routines, Bowtie Checks, and Sequence Order prevention algorithms) to 
+generate perfect line-and-curve geometries straight from surveyor deeds.
+
+12.4 AI Blueprint Vision Extraction
+--------------------------------------------------------------------------------
+The most powerful addition in v3.0.x. Users can now simply drag and drop 
+flattened raster prints (PDF, PNG, JPG) of utility plans into the As-Built 
+workspace. 
+The 'AiVisionExtractionEngine' spins up Gemini Vision APIs to execute OCR, layout, 
+and topological interpretation. It maps callouts (e.g., '12" PVC W.M.') directly 
+into structured `PipeRun` objects arrayed geometrically, auto-building the database.
+
+12.5 Secure Execution (Hardware Licensing via C++ DRM)
+--------------------------------------------------------------------------------
+The application now bundles `SecurityCore.dll` — a natively compiled unmanaged 
+C++ boundary wall. 
+Rather than simple C# license obfuscation that can be rewritten with dnSpy, the 
+DRM logic (such as `CalculateSecretCurveTolerance()` and telemetry endpoint generation) 
+is embedded at the machine-code level. It calculates explicit hardware geometry 
+(fingerprints) unique to the installation user, guaranteeing licensing restrictions 
+cannot easily be decoupled from the RCS Enterprise distribution.
+
+================================================================================
 (End of Document)
