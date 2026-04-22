@@ -1,6 +1,7 @@
 <UserControl x:Class="RCS.Cogo.Wpf.Views.AsBuilt.PipeRunsPhaseView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              Background="Transparent">
     <Grid>
         <Grid.RowDefinitions>
@@ -14,36 +15,40 @@
         <Border Grid.Row="0" Background="#11111B" Padding="10,6"
                 BorderBrush="#1E1E2E" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="ðŸ”— Pipe Runs" FontSize="13" FontWeight="Bold"
+                <iconPacks:PackIconMaterial Kind="Pipe" Foreground="#CDD6F4" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <TextBlock Text="Pipe Runs" FontSize="13" FontWeight="Bold"
                            Foreground="#CDD6F4" FontFamily="Segoe UI" VerticalAlignment="Center"/>
                 <Separator Width="1" Background="#1E1E2E" Margin="12,0"/>
-                <Button x:Name="BtnAddRun" Content="+ Add Run" Padding="10,4"
-                        Background="#1C1C2E" Foreground="#CDD6F4"
-                        BorderBrush="#313244" BorderThickness="1"
-                        FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
-                        Click="BtnAddRun_Click"/>
-                <Button x:Name="BtnComputeSlopes" Content="ðŸ“ Compute Slopes" Padding="10,4"
-                        Background="#1C1C2E" Foreground="#89DCEB"
-                        BorderBrush="#313244" BorderThickness="1"
-                        FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
-                        Click="BtnComputeSlopes_Click"/>
-                <Button x:Name="BtnAutoChain" Content="🔗 Auto-Chain" Padding="10,4"
-                        Background="#1C1C2E" Foreground="#9B59B6"
-                        BorderBrush="#313244" BorderThickness="1"
-                        FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
-                        Click="BtnAutoChain_Click"
-                        ToolTip="Sort runs into a continuous chain using shared structure points"/>
-                <Button x:Name="BtnReverseFlow" Content="↔ Flip Flow" Padding="10,4"
-                        Background="#1C1C2E" Foreground="#FAB387"
-                        BorderBrush="#313244" BorderThickness="1"
-                        FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
-                        Click="BtnReverseFlow_Click"/>
-                <Button x:Name="BtnGraphProfile" Content="📈 Graph Profile" Padding="10,4"
-                        Background="#1E1E2E" Foreground="#F5C2E7"
-                        BorderBrush="#F5C2E7" BorderThickness="1"
-                        FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
-                        Click="BtnGraphProfile_Click"
-                        ToolTip="View interactive 2D profile and intersection cross-sections."/>
+                <Button x:Name="BtnAddRun" Padding="10,4" Background="#1C1C2E" Foreground="#CDD6F4" BorderBrush="#313244" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0" Click="BtnAddRun_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="Plus" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                        <TextBlock Text="Add Run" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="BtnComputeSlopes" Padding="10,4" Background="#1C1C2E" Foreground="#89DCEB" BorderBrush="#313244" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0" Click="BtnComputeSlopes_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="Calculator" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                        <TextBlock Text="Compute Slopes" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="BtnAutoChain" Padding="10,4" Background="#1C1C2E" Foreground="#9B59B6" BorderBrush="#313244" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0" Click="BtnAutoChain_Click" ToolTip="Sort runs into a continuous chain using shared structure points">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="Link" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                        <TextBlock Text="Auto-Chain" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="BtnReverseFlow" Padding="10,4" Background="#1C1C2E" Foreground="#FAB387" BorderBrush="#313244" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0" Click="BtnReverseFlow_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="SwapHorizontal" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                        <TextBlock Text="Flip Flow" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="BtnGraphProfile" Padding="10,4" Background="#1E1E2E" Foreground="#F5C2E7" BorderBrush="#F5C2E7" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0" Click="BtnGraphProfile_Click" ToolTip="View interactive 2D profile and intersection cross-sections.">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="ChartLine" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                        <TextBlock Text="Graph Profile" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
 
                 <Separator Width="1" Background="#1E1E2E" Margin="12,0"/>
                 <TextBlock x:Name="TxtRunCount" Text="0 runs"

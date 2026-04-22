@@ -6,6 +6,7 @@
         xmlns:vm="clr-namespace:RCS.Cogo.Wpf.ViewModels"
         xmlns:views="clr-namespace:RCS.Cogo.Wpf.Views"
         xmlns:geo="clr-namespace:RCS.Geo.Wpf.Views;assembly=RCS.Geo.Wpf"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         Title="{Binding WindowTitle}" Height="800" Width="1200">
 
@@ -414,43 +415,47 @@
                         </Grid.RowDefinitions>
                         
                         <!-- Toolbar -->
-                        <Grid Grid.Row="0" Margin="0,0,0,10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                 <ColumnDefinition Width="Auto"/>
-                                 <ColumnDefinition Width="Auto"/>
-                                 <ColumnDefinition Width="Auto"/>
-                                 <ColumnDefinition Width="Auto"/>
-                                 <ColumnDefinition Width="Auto"/>
-                                  <!-- CSV, Print, Undo, Redo -->
-                                  <ColumnDefinition Width="Auto"/>
-                                  <ColumnDefinition Width="Auto"/>
-                                  <ColumnDefinition Width="Auto"/>
-                                  <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                            <Grid Margin="0,0,0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
                             <!-- Import -->
-                            <Button Grid.Column="0" Content="📥 Import Text..."
+                            <Button Grid.Column="0"
                                     Command="{Binding ImportPointsListCommand}"
                                     Padding="10,5" Margin="0,0,8,0"
-                                    Background="{StaticResource BrHeader}" Foreground="White"/>
+                                    Background="{StaticResource BrHeader}" Foreground="White"
+                                    ToolTip="Import Text...">
+                                <iconPacks:PackIconMaterial Kind="Import" Foreground="{StaticResource BrSuccess}" Width="16" Height="16" VerticalAlignment="Center"/>
+                            </Button>
                             <!-- Export TXT -->
-                            <Button Grid.Column="1" Content="📤 Export TXT"
+                            <Button Grid.Column="1"
                                     Command="{Binding ExportPointsTxtCommand}"
                                     Padding="10,5" Margin="0,0,8,0"
-                                    Background="{StaticResource BrHeader}" Foreground="White"/>
+                                    Background="{StaticResource BrHeader}" Foreground="White">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="Export" Foreground="{StaticResource BrError}" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="TXT" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
                             <!-- Export XML -->
-                            <Button Grid.Column="2" Content="📤 Export XML"
+                            <Button Grid.Column="2"
                                     Command="{Binding ExportPointsXmlCommand}"
                                     Padding="10,5" Margin="0,0,8,0"
-                                    Background="{StaticResource BrHeader}" Foreground="White"/>
+                                    Background="{StaticResource BrHeader}" Foreground="White">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="Export" Foreground="{StaticResource BrError}" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="XML" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
                             <!-- Save -->
                             <Button Grid.Column="3" Content="💾 Save"
                                     Command="{Binding SavePointsCommand}"
@@ -497,88 +502,81 @@
                                     Background="{StaticResource BrBorder}" Foreground="{StaticResource BrTextMuted}"
                                     BorderThickness="0" FontWeight="Bold"
                                     ToolTip="Clear filter"/>
+                            </Grid>
 
+                            <WrapPanel Orientation="Horizontal">
+                                <!-- ── KML Export ── -->
+                                <Button Content="&#x1F5FA; KML"
+                                        Command="{Binding ExportKmlCommand}"
+                                        Padding="8,5" Margin="0,0,8,0"
+                                        ToolTip="Export all points as KML for Google Earth / Maps"
+                                        Background="#1A2535" Foreground="#61AFEF"
+                                        BorderBrush="#1A4A6E" BorderThickness="1"/>
+                                <!-- ── KML Import ── -->
+                                <Button Content="&#x1F4E5; KML"
+                                        Command="{Binding ImportKmlCommand}"
+                                        Padding="8,5" Margin="0,0,8,0"
+                                        ToolTip="Import points from a KML file (Google Earth / Maps)"
+                                        Background="#1A2535" Foreground="#98C379"
+                                        BorderBrush="#3A6A3A" BorderThickness="1"/>
 
-                            <!-- ── KML Export ── -->
-                            <Button Grid.Column="8"
-                                    Content="&#x1F5FA; KML"
-                                    Command="{Binding ExportKmlCommand}"
-                                    Padding="8,5" Margin="4,0,0,0"
-                                    ToolTip="Export all points as KML for Google Earth / Maps"
-                                    Background="#1A2535" Foreground="#61AFEF"
-                                    BorderBrush="#1A4A6E" BorderThickness="1"/>
-                            <!-- ── KML Import ── -->
-                            <Button Grid.Column="9"
-                                    Content="&#x1F4E5; KML"
-                                    Command="{Binding ImportKmlCommand}"
-                                    Padding="8,5" Margin="4,0,0,0"
-                                    ToolTip="Import points from a KML file (Google Earth / Maps)"
-                                    Background="#1A2535" Foreground="#98C379"
-                                    BorderBrush="#3A6A3A" BorderThickness="1"/>
+                                <!-- ── Delete Selected ── -->
+                                <Button Content="&#x1F5D9; Del"
+                                        Command="{Binding DeleteSelectedPointsCommand}"
+                                        CommandParameter="{Binding SelectedItems, ElementName=PointsDataGrid}"
+                                        Padding="8,5" Margin="0,0,8,0"
+                                        ToolTip="Delete all selected points (Ctrl+A to select all)"
+                                        Background="#3A1010" Foreground="#E06C75"
+                                        BorderBrush="#6A2020" BorderThickness="1"/>
+                                <!-- ── Renumber ── -->
+                                <Button Content="&#x2116;"
+                                        Command="{Binding RenumberPointsCommand}"
+                                        Padding="8,5" Margin="0,0,8,0"
+                                        ToolTip="Renumber all points sequentially from a base number"
+                                        Background="#1A2535" Foreground="#C678DD"
+                                        BorderBrush="#3A2A55" BorderThickness="1"/>
 
-                            <!-- ── Delete Selected ── -->
-                            <Button Grid.Column="10"
-                                    Content="&#x1F5D9; Del"
-                                    Command="{Binding DeleteSelectedPointsCommand}"
-                                    CommandParameter="{Binding SelectedItems, ElementName=PointsDataGrid}"
-                                    Padding="8,5" Margin="4,0,0,0"
-                                    ToolTip="Delete all selected points (Ctrl+A to select all)"
-                                    Background="#3A1010" Foreground="#E06C75"
-                                    BorderBrush="#6A2020" BorderThickness="1"/>
-                            <!-- ── Renumber ── -->
-                            <Button Grid.Column="11"
-                                    Content="&#x2116;"
-                                    Command="{Binding RenumberPointsCommand}"
-                                    Padding="8,5" Margin="4,0,0,0"
-                                    ToolTip="Renumber all points sequentially from a base number"
-                                    Background="#1A2535" Foreground="#C678DD"
-                                    BorderBrush="#3A2A55" BorderThickness="1"/>
+                                <!-- ── GPS Columns toggle ── -->
+                                <ToggleButton Content="&#x1F30D; GPS"
+                                              IsChecked="{Binding ShowGpsColumnsInGrid}"
+                                              Padding="8,5" Margin="0,0,8,0"
+                                              ToolTip="Show / hide Latitude &amp; Longitude columns"
+                                              Background="#1A2535" Foreground="#98C379"
+                                              BorderBrush="#3A6A3A" BorderThickness="1"/>
 
-                            <!-- ── GPS Columns toggle ── -->
-                            <ToggleButton Grid.Column="12"
-                                          Content="&#x1F30D; GPS"
-                                          IsChecked="{Binding ShowGpsColumnsInGrid}"
-                                          Padding="8,5" Margin="4,0,0,0"
-                                          ToolTip="Show / hide Latitude &amp; Longitude columns"
-                                          Background="#1A2535" Foreground="#98C379"
-                                          BorderBrush="#3A6A3A" BorderThickness="1"/>
+                                <!-- ── CSV Import ── -->
+                                <Button Content="&#x1F4E5; CSV"
+                                        Command="{Binding ImportCsvCommand}"
+                                        Padding="8,5" Margin="0,0,8,0"
+                                        ToolTip="Import points from a CSV file (Pt#, N, E, Elev, Desc)"
+                                        Background="#1A2535" Foreground="#98C379"
+                                        BorderBrush="#3A6A3A" BorderThickness="1"/>
 
-                            <!-- ── CSV Import ── -->
-                            <Button Grid.Column="13"
-                                    Content="&#x1F4E5; CSV"
-                                    Command="{Binding ImportCsvCommand}"
-                                    Padding="8,5" Margin="4,0,0,0"
-                                    ToolTip="Import points from a CSV file (Pt#, N, E, Elev, Desc)"
-                                    Background="#1A2535" Foreground="#98C379"
-                                    BorderBrush="#3A6A3A" BorderThickness="1"/>
+                                <!-- ── Print Report ── -->
+                                <Button Content="&#x1F5A8; Print"
+                                        Command="{Binding PrintPointsCommand}"
+                                        Padding="8,5" Margin="0,0,8,0"
+                                        ToolTip="Print / save a paginated PDF point report"
+                                        Background="#1A2535" Foreground="#61AFEF"
+                                        BorderBrush="#2A5A8A" BorderThickness="1"/>
 
-                            <!-- ── Print Report ── -->
-                            <Button Grid.Column="14"
-                                    Content="&#x1F5A8; Print"
-                                    Command="{Binding PrintPointsCommand}"
-                                    Padding="8,5" Margin="4,0,0,0"
-                                    ToolTip="Print / save a paginated PDF point report"
-                                    Background="#1A2535" Foreground="#61AFEF"
-                                    BorderBrush="#2A5A8A" BorderThickness="1"/>
+                                <!-- ── Undo ── -->
+                                <Button Content="&#x21A9;"
+                                        Command="{Binding UndoPointCommand}"
+                                        Padding="8,5" Margin="0,0,8,0"
+                                        ToolTip="{Binding UndoDescription}"
+                                        Background="#1A2535" Foreground="#E5C07B"
+                                        BorderBrush="#5A4A20" BorderThickness="1"/>
 
-                            <!-- ── Undo ── -->
-                            <Button Grid.Column="15"
-                                    Content="&#x21A9;"
-                                    Command="{Binding UndoPointCommand}"
-                                    Padding="8,5" Margin="4,0,0,0"
-                                    ToolTip="{Binding UndoDescription}"
-                                    Background="#1A2535" Foreground="#E5C07B"
-                                    BorderBrush="#5A4A20" BorderThickness="1"/>
-
-                            <!-- ── Redo ── -->
-                            <Button Grid.Column="16"
-                                    Content="&#x21AA;"
-                                    Command="{Binding RedoPointCommand}"
-                                    Padding="8,5" Margin="4,0,0,0"
-                                    ToolTip="{Binding RedoDescription}"
-                                    Background="#1A2535" Foreground="#E5C07B"
-                                    BorderBrush="#5A4A20" BorderThickness="1"/>
-                        </Grid>
+                                <!-- ── Redo ── -->
+                                <Button Content="&#x21AA;"
+                                        Command="{Binding RedoPointCommand}"
+                                        Padding="8,5" Margin="0,0,8,0"
+                                        ToolTip="{Binding RedoDescription}"
+                                        Background="#1A2535" Foreground="#E5C07B"
+                                        BorderBrush="#5A4A20" BorderThickness="1"/>
+                            </WrapPanel>
+                        </StackPanel>
 
                         <!-- ── GPS Zone Warning Banner ── -->
                         <Border Grid.Row="1" Background="#2A2000" CornerRadius="4" Margin="0,4,0,0" Padding="10,6"

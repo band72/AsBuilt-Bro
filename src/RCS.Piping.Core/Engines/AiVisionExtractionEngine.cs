@@ -321,11 +321,50 @@ public sealed class AiVisionExtractionEngine
                 }
             }
 
+            // ── Bow-Tie / Topological self-intersection Validation ─────────────
+            int bowTieCount = 0;
+            var runsList = job.Network.Runs.Values.ToList();
+            for (int i = 0; i < runsList.Count; i++)
+            {
+                for (int j = i + 1; j < runsList.Count; j++)
+                {
+                    var r1 = runsList[i];
+                    var r2 = runsList[j];
+                    if (r1.FromPointId == r2.FromPointId || r1.ToPointId == r2.ToPointId ||
+                        r1.FromPointId == r2.ToPointId || r1.ToPointId == r2.FromPointId)
+                        continue; // Shared nodes can't bow-tie
+
+                    var p1A = job.PointRows.FirstOrDefault(p => p.PointId == r1.FromPointId);
+                    var p1B = job.PointRows.FirstOrDefault(p => p.PointId == r1.ToPointId);
+                    var p2A = job.PointRows.FirstOrDefault(p => p.PointId == r2.FromPointId);
+                    var p2B = job.PointRows.FirstOrDefault(p => p.PointId == r2.ToPointId);
+
+                    if (p1A != null && p1B != null && p2A != null && p2B != null)
+                    {
+                        if (SegmentsIntersect(p1A.Easting, p1A.Northing, p1B.Easting, p1B.Northing,
+                                              p2A.Easting, p2A.Northing, p2B.Easting, p2B.Northing))
+                        {
+                            bowTieCount++;
+                            job.AuditLog.Add(new AuditEntry
+                            {
+                                Action = "Topological BOW-TIE Warning",
+                                Details = $"Run {r1.Diameter}\" {r1.Material} cross-intersects Run {r2.Diameter}\" {r2.Material} without a junction node."
+                            });
+                            // Reduce confidence for mapped parts as AI hallucination flag
+                            var m1 = job.PartMappings.FirstOrDefault(m => m.AssetId == $"RUN:{r1.Id}");
+                            var m2 = job.PartMappings.FirstOrDefault(m => m.AssetId == $"RUN:{r2.Id}");
+                            if (m1 != null) m1.Confidence = 0.20;
+                            if (m2 != null) m2.Confidence = 0.20;
+                        }
+                    }
+                }
+            }
+
             job.AuditLog.Add(new AuditEntry
             {
                 Action  = "AI Vision Extraction Complete",
                 Details = $"Gemini extracted {job.Network.Structures.Count} structures, " +
-                          $"{job.Network.Runs.Count} runs from blueprint."
+                          $"{job.Network.Runs.Count} runs from blueprint. Topological conflicts: {bowTieCount}"
             });
 
             return job.Network.Structures.Count + job.Network.Runs.Count > 0;
@@ -435,5 +474,16 @@ public sealed class AiVisionExtractionEngine
         if (text.EndsWith("```"))
             text = text[..^3];
         return text.Trim();
+    }
+
+    private static bool SegmentsIntersect(double ax, double ay, double bx, double by, double cx, double cy, double dx, double dy)
+    {
+        double denom = ((dy - cy) * (bx - ax)) - ((dx - cx) * (by - ay));
+        if (denom == 0) return false;
+
+        double ua = (((dx - cx) * (ay - cy)) - ((dy - cy) * (ax - cx))) / denom;
+        double ub = (((bx - ax) * (ay - cy)) - ((by - ay) * (ax - cx))) / denom;
+
+        return (ua > 0 && ua < 1 && ub > 0 && ub < 1);
     }
 }

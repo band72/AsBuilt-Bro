@@ -1,5 +1,5 @@
 #define MyAppName "RCS COGO Enterprise"
-#define MyAppVersion "3.0.5"
+#define MyAppVersion "3.0.6"
 #define MyAppPublisher "BANKS & BANKS CONSULTING"
 #define MyAppExeName "RCS.Cogo.Wpf.exe"
 #define MyAppAssocName MyAppName + " Project"
@@ -21,6 +21,7 @@ OutputBaseFilename=RCS.ASBUILT.PRO
 OutputDir=.\Installer
 SolidCompression=yes
 WizardStyle=modern
+SetupIconFile=rcs_cogo_icon.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -30,6 +31,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 ; ── Core application (self-contained publish) ──────────────────────────────────
+Source: "rcs_cogo_icon.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "src\RCS.Cogo.Wpf\bin\Release\net8.0-windows\win-x64\publish\RCS.Cogo.Wpf.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "src\RCS.Cogo.Wpf\bin\Release\net8.0-windows\win-x64\publish\*";               DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
@@ -77,8 +79,8 @@ Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\DefaultIcon"; ValueType: s
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{autodesktop}\{#MyAppName}";  Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\rcs_cogo_icon.ico"
+Name: "{autodesktop}\{#MyAppName}";  Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\rcs_cogo_icon.ico"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent

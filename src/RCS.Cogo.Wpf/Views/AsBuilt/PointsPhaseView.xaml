@@ -1,6 +1,7 @@
 <UserControl x:Class="RCS.Cogo.Wpf.Views.AsBuilt.PointsPhaseView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              Background="Transparent">
     <Grid>
         <Grid.RowDefinitions>
@@ -17,42 +18,46 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="📍 Survey Points" FontSize="13" FontWeight="Bold"
+                    <iconPacks:PackIconMaterial Kind="MapMarker" Foreground="#CDD6F4" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <TextBlock Text="Survey Points" FontSize="13" FontWeight="Bold"
                                Foreground="#CDD6F4" FontFamily="Segoe UI" VerticalAlignment="Center"/>
                     <Separator Width="1" Background="#1E1E2E" Margin="12,0"/>
-                    <Button x:Name="BtnImportCsv" Content="📥 Import CSV" Padding="10,4"
-                            Background="#154360" Foreground="#AED6F1"
-                            BorderBrush="#1A5276" BorderThickness="1"
-                            FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
-                            Command="{Binding ImportPointsListCommand}"
-                            ToolTip="Import standard PNEZD CSV points file"/>
-                    <Button x:Name="BtnAddPoint" Content="+ Add" Padding="10,4"
-                            Background="#1C1C2E" Foreground="#CDD6F4"
-                            BorderBrush="#313244" BorderThickness="1"
-                            FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
-                            Click="BtnAddPoint_Click"/>
-                    <Button x:Name="BtnDeletePoint" Content="🗑 Remove" Padding="10,4"
-                            Background="#1C1C2E" Foreground="#F38BA8"
-                            BorderBrush="#313244" BorderThickness="1"
-                            FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
-                            Click="BtnDeletePoint_Click"/>
-                    <Button x:Name="BtnMergeDuplicates" Content="⚡ Merge Dupes" Padding="10,4"
-                            Background="#1C1C2E" Foreground="#FAB387"
-                            BorderBrush="#313244" BorderThickness="1"
-                            FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
-                            Click="BtnMergeDuplicates_Click"/>
-                    <Button x:Name="BtnFindDuplicates" Content="🔍 Find Dupes" Padding="10,4"
-                            Background="#1C1C2E" Foreground="#89DCEB"
-                            BorderBrush="#313244" BorderThickness="1"
-                            FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0"
-                            Click="BtnFindDuplicates_Click"
-                            ToolTip="Highlight points within 0.01 ft proximity"/>
-                    <Button x:Name="BtnAutoFixDesc" Content="🔤 Fix Descs" Padding="10,4"
-                            Background="#1C1C2E" Foreground="#B2BEFF"
-                            BorderBrush="#313244" BorderThickness="1"
-                            FontFamily="Segoe UI" FontSize="11"
-                            Click="BtnAutoFixDesc_Click"
-                            ToolTip="Normalise descriptions to upper-case trimmed codes"/>
+                    <Button x:Name="BtnImportCsv" Padding="10,4" Background="#154360" Foreground="#AED6F1" BorderBrush="#1A5276" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0" Command="{Binding ImportPointsListCommand}" ToolTip="Import standard PNEZD CSV points file">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="Import" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <TextBlock Text="Import CSV" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="BtnAddPoint" Padding="10,4" Background="#1C1C2E" Foreground="#CDD6F4" BorderBrush="#313244" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0" Click="BtnAddPoint_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="Plus" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <TextBlock Text="Add" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="BtnDeletePoint" Padding="10,4" Background="#1C1C2E" Foreground="#F38BA8" BorderBrush="#313244" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0" Click="BtnDeletePoint_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="TrashCanOutline" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <TextBlock Text="Remove" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="BtnMergeDuplicates" Padding="10,4" Background="#1C1C2E" Foreground="#FAB387" BorderBrush="#313244" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0" Click="BtnMergeDuplicates_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="CallMerge" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <TextBlock Text="Merge Dupes" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="BtnFindDuplicates" Padding="10,4" Background="#1C1C2E" Foreground="#89DCEB" BorderBrush="#313244" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Margin="0,0,6,0" Click="BtnFindDuplicates_Click" ToolTip="Highlight points within 0.01 ft proximity">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="Magnify" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <TextBlock Text="Find Dupes" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="BtnAutoFixDesc" Padding="10,4" Background="#1C1C2E" Foreground="#B2BEFF" BorderBrush="#313244" BorderThickness="1" FontFamily="Segoe UI" FontSize="11" Click="BtnAutoFixDesc_Click" ToolTip="Normalise descriptions to upper-case trimmed codes">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="AutoFix" Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <TextBlock Text="Fix Descs" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                     <Separator Width="1" Background="#1E1E2E" Margin="12,0"/>
                     <TextBlock x:Name="TxtPointCount" Text="0 points"
                                FontSize="11" Foreground="#BAC2DE"
