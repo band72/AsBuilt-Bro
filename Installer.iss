@@ -1,5 +1,5 @@
 #define MyAppName "RCS COGO Enterprise"
-#define MyAppVersion "3.0.6"
+#define MyAppVersion "3.0.8"
 #define MyAppPublisher "BANKS & BANKS CONSULTING"
 #define MyAppExeName "RCS.Cogo.Wpf.exe"
 #define MyAppAssocName MyAppName + " Project"
@@ -20,6 +20,8 @@ ChangesAssociations=yes
 OutputBaseFilename=RCS.ASBUILT.PRO
 OutputDir=.\Installer
 SolidCompression=yes
+Compression=lzma2/ultra64
+LZMAUseSeparateProcess=yes
 WizardStyle=modern
 SetupIconFile=rcs_cogo_icon.ico
 

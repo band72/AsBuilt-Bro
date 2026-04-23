@@ -58,7 +58,7 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </StackPanel>
-                <Button Grid.Column="1" Command="{Binding ValidateNowCommand}" Background="#89B4FA" Foreground="White" BorderThickness="0" FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold" Padding="14,8" VerticalAlignment="Center">
+                <Button Grid.Column="1" Command="{Binding ValidateNowCommand}" Style="{StaticResource BtnPhaseActionBlue}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconMaterial Kind="Play" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBlock Text="Run Validation" VerticalAlignment="Center"/>
@@ -177,7 +177,7 @@
                 </Grid>
 
                 <!-- Build button -->
-                <Button x:Name="BtnBuildPackage" HorizontalAlignment="Stretch" Padding="0,12" Background="#A6E3A1" Foreground="#0A1F12" BorderThickness="0" Click="BtnBuildPackage_Click" ToolTip="Build all enabled deliverables into the output folder">
+                <Button x:Name="BtnBuildPackage" HorizontalAlignment="Stretch" Padding="0,12" Style="{StaticResource BtnPhaseActionGreen}" Click="BtnBuildPackage_Click" ToolTip="Build all enabled deliverables into the output folder">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="RocketLaunch" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
                         <TextBlock Text="Build Export Package" FontSize="14" FontWeight="Bold" FontFamily="Segoe UI" VerticalAlignment="Center"/>
@@ -185,7 +185,7 @@
                 </Button>
 
                 <!-- Quick Report preview button -->
-                <Button HorizontalAlignment="Stretch" Padding="0,8" Margin="0,6,0,0" Background="#1C2A4A" Foreground="#A0B8E8" BorderBrush="#3A5075" BorderThickness="1" Command="{Binding GenerateReportCommand}" ToolTip="Generate a preview AS-BUILT SURVEY REPORT and open it (does not build DXF or PNEZD)">
+                <Button HorizontalAlignment="Stretch" Padding="0,8" Margin="0,6,0,0" Style="{StaticResource BtnPhaseActionDarkBlue}" Command="{Binding GenerateReportCommand}" ToolTip="Generate a preview AS-BUILT SURVEY REPORT and open it (does not build DXF or PNEZD)">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="FileDocumentOutline" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,8,0"/>
                         <TextBlock Text="Preview Text Report" FontSize="12" FontWeight="SemiBold" FontFamily="Segoe UI" VerticalAlignment="Center"/>
@@ -193,7 +193,7 @@
                 </Button>
 
                 <!-- Print to PDF button -->
-                <Button x:Name="BtnPrintReport" HorizontalAlignment="Stretch" Padding="0,8" Margin="0,6,0,0" Background="#8E44AD" Foreground="#F5EEF8" BorderBrush="#6C3483" BorderThickness="1" Click="BtnPrintReport_Click" ToolTip="Generate professional paginated PDF or send to printer">
+                <Button x:Name="BtnPrintReport" HorizontalAlignment="Stretch" Padding="0,8" Margin="0,6,0,0" Style="{StaticResource BtnPhaseActionPurple}" Click="BtnPrintReport_Click" ToolTip="Generate professional paginated PDF or send to printer">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <iconPacks:PackIconMaterial Kind="Printer" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,8,0"/>
                         <TextBlock Text="Print/PDF Deliverable" FontSize="12" FontWeight="SemiBold" FontFamily="Segoe UI" VerticalAlignment="Center"/>

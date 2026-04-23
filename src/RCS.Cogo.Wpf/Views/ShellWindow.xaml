@@ -347,21 +347,30 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="TabItem">
-                                    <Border Name="Border" BorderThickness="0,0,0,2" BorderBrush="Transparent" Margin="2">
+                                    <Border Name="Border" BorderThickness="4,0,0,0" BorderBrush="Transparent" Margin="0,1">
                                         <ContentPresenter x:Name="ContentSite"
                                             VerticalAlignment="Center"
-                                            HorizontalAlignment="Center"
+                                            HorizontalAlignment="Left"
                                             ContentSource="Header"
-                                            Margin="10,2"/>
+                                            Margin="12,8,15,8"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsSelected" Value="True">
                                             <Setter TargetName="Border" Property="BorderBrush" Value="#007ACC" />
+                                            <Setter TargetName="Border" Property="Background" Value="#1AFFFFFF" />
                                             <Setter Property="Foreground" Value="White"/>
                                         </Trigger>
                                         <Trigger Property="IsSelected" Value="False">
                                             <Setter Property="Foreground" Value="#CCCCCC"/>
                                         </Trigger>
+                                        <MultiTrigger>
+                                            <MultiTrigger.Conditions>
+                                                <Condition Property="IsMouseOver" Value="True"/>
+                                                <Condition Property="IsSelected" Value="False"/>
+                                            </MultiTrigger.Conditions>
+                                            <Setter TargetName="Border" Property="Background" Value="#0AFFFFFF" />
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </MultiTrigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
                             </Setter.Value>
@@ -372,28 +381,28 @@
                             <Setter.Value>
                                 <ControlTemplate TargetType="TabControl">
                                     <Grid Background="{StaticResource BrSurface}">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
-                                        <!-- Tab strip — WrapPanel lets tabs flow to a second row -->
-                                        <Border Grid.Row="0"
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" MinWidth="110"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <!-- Tab strip — Vertical stack on the left -->
+                                        <Border Grid.Column="0"
                                                 Background="{StaticResource BrHeader}"
                                                 BorderBrush="{StaticResource BrBorder}"
-                                                BorderThickness="0,0,0,1">
-                                            <WrapPanel IsItemsHost="True"
-                                                       Background="Transparent"
-                                                       Orientation="Horizontal"/>
+                                                BorderThickness="0,0,1,0">
+                                            <StackPanel IsItemsHost="True"
+                                                        Background="Transparent"
+                                                        Orientation="Vertical"/>
                                         </Border>
-                                        <!-- Content row -->
-                                        <Border Grid.Row="1"
+                                        <!-- Content column -->
+                                        <Border Grid.Column="1"
                                                 Background="{TemplateBinding Background}"
                                                 BorderThickness="{TemplateBinding BorderThickness}"
                                                 BorderBrush="{TemplateBinding BorderBrush}">
                                             <ScrollViewer VerticalScrollBarVisibility="Auto"
                                                           HorizontalScrollBarVisibility="Disabled"
                                                           Background="Transparent"
-                                                          Padding="0,0,10,0">
+                                                          Padding="10,0,10,0">
                                                 <ContentPresenter ContentSource="SelectedContent"/>
                                             </ScrollViewer>
                                         </Border>

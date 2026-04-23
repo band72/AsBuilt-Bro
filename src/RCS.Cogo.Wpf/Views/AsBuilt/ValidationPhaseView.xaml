@@ -80,7 +80,7 @@
                                        FontFamily="Segoe UI" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
-                    <Button Padding="14,8" Background="#89B4FA" Foreground="White" BorderThickness="0" FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold" Click="BtnRunValidation_Click">
+                    <Button Style="{StaticResource BtnPhaseActionBlue}" Click="BtnRunValidation_Click">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="Play" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
                             <TextBlock Text="Run Validation Now" VerticalAlignment="Center"/>
@@ -210,19 +210,19 @@
 
                             <!-- Action buttons -->
                             <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
-                                <Button Padding="8,4" Background="#1C1C2E" Foreground="#89B4FA" BorderBrush="#313244" BorderThickness="1" FontFamily="Segoe UI" FontSize="10" Margin="0,0,4,0" Tag="{Binding}" Click="BtnZoomTo_Click">
+                                <Button Style="{StaticResource BtnActionSmallBlue}" Margin="0,0,4,0" Tag="{Binding}" Click="BtnZoomTo_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconMaterial Kind="Magnify" Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,4,0"/>
                                         <TextBlock Text="Zoom" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Padding="8,4" Background="#1A3D25" Foreground="#A6E3A1" BorderBrush="#2A5A35" BorderThickness="1" FontFamily="Segoe UI" FontSize="10" Tag="{Binding}" Click="BtnAutoFix_Click">
+                                <Button Tag="{Binding}" Click="BtnAutoFix_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconMaterial Kind="Check" Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,4,0"/>
                                         <TextBlock Text="Fix" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <Button.Style>
-                                        <Style TargetType="Button">
+                                        <Style TargetType="Button" BasedOn="{StaticResource BtnActionSmallGreen}">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding AutoFixable}" Value="False">
                                                     <Setter Property="Visibility" Value="Collapsed"/>

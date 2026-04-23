@@ -42,6 +42,14 @@
     <Color x:Key="ClrAmber">#F2C94C</Color>
     <Color x:Key="ClrAmberDim">#7A5E1A</Color>
 
+    <!-- Pastel Accents (Phase Action Buttons) -->
+    <Color x:Key="ClrPastelBlue">#89B4FA</Color>
+    <Color x:Key="ClrPastelGreen">#A6E3A1</Color>
+    <Color x:Key="ClrPastelRed">#F38BA8</Color>
+    <Color x:Key="ClrPastelPurple">#8E44AD</Color>
+    <Color x:Key="ClrPastelDarkBlue">#1C2A4A</Color>
+
+
     <!-- Semantic -->
     <Color x:Key="ClrSuccess">#27AE60</Color>
     <Color x:Key="ClrError">#E94560</Color>
@@ -72,6 +80,11 @@
     <SolidColorBrush x:Key="BrTealDim"       Color="{StaticResource ClrTealDim}"/>
     <SolidColorBrush x:Key="BrAmber"         Color="{StaticResource ClrAmber}"/>
     <SolidColorBrush x:Key="BrAmberDim"      Color="{StaticResource ClrAmberDim}"/>
+    <SolidColorBrush x:Key="BrPastelBlue"    Color="{StaticResource ClrPastelBlue}"/>
+    <SolidColorBrush x:Key="BrPastelGreen"   Color="{StaticResource ClrPastelGreen}"/>
+    <SolidColorBrush x:Key="BrPastelRed"     Color="{StaticResource ClrPastelRed}"/>
+    <SolidColorBrush x:Key="BrPastelPurple"  Color="{StaticResource ClrPastelPurple}"/>
+    <SolidColorBrush x:Key="BrPastelDarkBlue" Color="{StaticResource ClrPastelDarkBlue}"/>
     <SolidColorBrush x:Key="BrSuccess"       Color="{StaticResource ClrSuccess}"/>
     <SolidColorBrush x:Key="BrError"         Color="{StaticResource ClrError}"/>
     <SolidColorBrush x:Key="BrWarning"       Color="{StaticResource ClrWarning}"/>
@@ -326,6 +339,117 @@
                 <Setter Property="Foreground" Value="#FFFFFF"/>
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <!-- ── Button — Phase Action (Unified Icon Buttons) ────────────────────── -->
+    <Style x:Key="BtnPhaseActionBase" TargetType="Button">
+        <Setter Property="Padding" Value="14,8"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontFamily" Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize" Value="{StaticResource FsBase}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="#FFFFFF"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Sleek hover effect -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Opacity" Value="0.85"/>
+                        </Trigger>
+                        <!-- Click press effect -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Opacity" Value="0.65"/>
+                        </Trigger>
+                        <!-- Disabled effect -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="border" Property="Opacity" Value="0.4"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Specific Color Variations -->
+    <Style x:Key="BtnPhaseActionBlue" TargetType="Button" BasedOn="{StaticResource BtnPhaseActionBase}">
+        <Setter Property="Background" Value="{StaticResource BrPastelBlue}"/>
+        <Setter Property="Foreground" Value="#FFFFFF"/>
+    </Style>
+
+    <Style x:Key="BtnPhaseActionGreen" TargetType="Button" BasedOn="{StaticResource BtnPhaseActionBase}">
+        <Setter Property="Background" Value="{StaticResource BrPastelGreen}"/>
+        <Setter Property="Foreground" Value="#0A1F12"/>
+    </Style>
+
+    <Style x:Key="BtnPhaseActionPurple" TargetType="Button" BasedOn="{StaticResource BtnPhaseActionBase}">
+        <Setter Property="Background" Value="{StaticResource BrPastelPurple}"/>
+        <Setter Property="Foreground" Value="#F5EEF8"/>
+    </Style>
+
+    <Style x:Key="BtnPhaseActionDarkBlue" TargetType="Button" BasedOn="{StaticResource BtnPhaseActionBase}">
+        <Setter Property="Background" Value="{StaticResource BrPastelDarkBlue}"/>
+        <Setter Property="Foreground" Value="#A0B8E8"/>
+        <Setter Property="BorderBrush" Value="#3A5075"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <!-- ── Button — Small / Dense DataGrid Actions ─────────────────────────── -->
+    <Style x:Key="BtnActionSmallBase" TargetType="Button">
+        <Setter Property="Padding" Value="8,4"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FontFamily" Value="{StaticResource FfBody}"/>
+        <Setter Property="FontSize" Value="{StaticResource FsXs}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Hover effect -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{TemplateBinding BorderBrush}"/>
+                            <Setter Property="Foreground" Value="#FFFFFF"/>
+                        </Trigger>
+                        <!-- Click effect -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Opacity" Value="0.7"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="BtnActionSmallBlue" TargetType="Button" BasedOn="{StaticResource BtnActionSmallBase}">
+        <Setter Property="Background" Value="#1C1C2E"/>
+        <Setter Property="Foreground" Value="{StaticResource BrPastelBlue}"/>
+        <Setter Property="BorderBrush" Value="#313244"/>
+    </Style>
+
+    <Style x:Key="BtnActionSmallGreen" TargetType="Button" BasedOn="{StaticResource BtnActionSmallBase}">
+        <Setter Property="Background" Value="#1A3D25"/>
+        <Setter Property="Foreground" Value="{StaticResource BrPastelGreen}"/>
+        <Setter Property="BorderBrush" Value="#2A5A35"/>
     </Style>
 
     <!-- ── ComboBox ─────────────────────────────────────────────────────────── -->
