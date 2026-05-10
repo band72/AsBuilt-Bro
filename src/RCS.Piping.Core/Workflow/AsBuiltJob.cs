@@ -165,8 +165,8 @@ public class AsBuiltJob
     public PipeNetwork Network { get; set; } = new();
 
     // ── Advanced Computations ──────────────────────────────────────────────────
-    public RCS.Piping.Core.Models.TopographicSurface BaseSurface { get; set; }
-    public AsBuiltJob DesignBaseline { get; set; }
+    public RCS.Piping.Core.Models.TopographicSurface? BaseSurface { get; set; }
+    public AsBuiltJob? DesignBaseline { get; set; }
 
     // ── Parts Mapping ─────────────────────────────────────────────────────────
     public ObservableCollection<PartMappingEntry> PartMappings { get; set; } = new();

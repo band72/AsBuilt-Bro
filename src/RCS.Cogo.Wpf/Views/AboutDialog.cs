@@ -31,8 +31,8 @@ public sealed class AboutDialog : Window
         string buildDate;
         try
         {
-            var loc   = asm.Location;
-            var ts    = System.IO.File.GetLastWriteTime(string.IsNullOrEmpty(loc) ? Environment.ProcessPath ?? "" : loc);
+            var path  = Environment.ProcessPath ?? string.Empty;
+            var ts    = System.IO.File.GetLastWriteTime(path);
             buildDate = ts.ToString("yyyy-MM-dd");
         }
         catch { buildDate = "—"; }

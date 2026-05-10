@@ -291,7 +291,6 @@ public sealed class PipeCrossingRule : IValidationRule
 
                 // 3D Volumetric Clearance Sampling
                 double min3dClearance = double.MaxValue;
-                bool clashDetected = false;
                 
                 double r2StartZ = r2.InvertStart ?? p2Start.Elevation;
                 double r2EndZ   = r2.InvertEnd ?? p2End.Elevation;
