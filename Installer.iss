@@ -1,6 +1,6 @@
 #define MyAppName "RCS COGO Enterprise"
 #define MyAppVersion "3.0.8"
-#define MyAppPublisher "BANKS & BANKS CONSULTING"
+#define MyAppPublisher "thebluemind.com"
 #define MyAppExeName "RCS.Cogo.Wpf.exe"
 #define MyAppAssocName MyAppName + " Project"
 #define MyAppAssocExt ".cogo"
