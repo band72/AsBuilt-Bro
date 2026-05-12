@@ -686,6 +686,10 @@ public partial class ShellViewModel : ViewModelBase
         set => SetField(ref _showGpsColumnsInGrid, value);
     }
 
+    /// <summary>Toggles the GPS Latitude/Longitude columns in the Points DataGrid (used by the column-header context menu).</summary>
+    public System.Windows.Input.ICommand ToggleGpsColumnsCommand =>
+        new RelayCommand(_ => ShowGpsColumnsInGrid = !ShowGpsColumnsInGrid);
+
     // ── Live Coordinate Readout ──────────────────────────────────────────────
     private string _mouseWorldCoords = "N: —  E: —";
     /// <summary>World-space cursor coordinates shown in the viewport status bar.</summary>

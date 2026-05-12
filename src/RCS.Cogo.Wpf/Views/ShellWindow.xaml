@@ -431,7 +431,6 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
@@ -445,34 +444,30 @@
                                     ToolTip="Import Text...">
                                 <iconPacks:PackIconMaterial Kind="Import" Foreground="{StaticResource BrSuccess}" Width="16" Height="16" VerticalAlignment="Center"/>
                             </Button>
-                            <!-- Export TXT -->
-                            <Button Grid.Column="1"
-                                    Command="{Binding ExportPointsTxtCommand}"
-                                    Padding="10,5" Margin="0,0,8,0"
-                                    Background="{StaticResource BrHeader}" Foreground="White">
-                                <StackPanel Orientation="Horizontal">
-                                    <iconPacks:PackIconMaterial Kind="Export" Foreground="{StaticResource BrError}" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                    <TextBlock Text="TXT" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
-                            <!-- Export XML -->
-                            <Button Grid.Column="2"
-                                    Command="{Binding ExportPointsXmlCommand}"
-                                    Padding="10,5" Margin="0,0,8,0"
-                                    Background="{StaticResource BrHeader}" Foreground="White">
-                                <StackPanel Orientation="Horizontal">
-                                    <iconPacks:PackIconMaterial Kind="Export" Foreground="{StaticResource BrError}" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                    <TextBlock Text="XML" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
+                            <!-- Undo / Redo -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,8,0">
+                                <Button Content="&#x21A9;"
+                                        Command="{Binding UndoPointCommand}"
+                                        Padding="8,5" Margin="0,0,4,0"
+                                        ToolTip="{Binding UndoDescription}"
+                                        Background="#1A2535" Foreground="#E5C07B"
+                                        BorderBrush="#5A4A20" BorderThickness="1"/>
+                                <Button Content="&#x21AA;"
+                                        Command="{Binding RedoPointCommand}"
+                                        Padding="8,5"
+                                        ToolTip="{Binding RedoDescription}"
+                                        Background="#1A2535" Foreground="#E5C07B"
+                                        BorderBrush="#5A4A20" BorderThickness="1"/>
+                            </StackPanel>
+
                             <!-- Save -->
-                            <Button Grid.Column="3" Content="💾 Save"
+                            <Button Grid.Column="2" Content="💾 Save"
                                     Command="{Binding SavePointsCommand}"
                                     Padding="10,5" Margin="0,0,8,0"
                                     Background="{StaticResource BrSuccess}" Foreground="White" FontWeight="Bold"
                                     ToolTip="Save Points to Database"/>
                             <!-- Refresh -->
-                            <Button Grid.Column="4" Content="🔄 Refresh"
+                            <Button Grid.Column="3" Content="🔄 Refresh"
                                     Command="{Binding RefreshPointsCommand}"
                                     Padding="10,5" Margin="0,0,0,0"
                                     Background="{StaticResource BrBg}" Foreground="White"
@@ -480,7 +475,7 @@
                                     ToolTip="Validate points against local codes"/>
 
                             <!-- ── Live Quick-Filter ─────────────────────────────── -->
-                            <Grid Grid.Column="6" Width="220" Margin="8,0,0,0" VerticalAlignment="Center">
+                            <Grid Grid.Column="5" Width="220" Margin="8,0,0,0" VerticalAlignment="Center">
                                 <TextBox x:Name="PointsFilterBox"
                                          Text="{Binding PointsFilter, UpdateSourceTrigger=PropertyChanged}"
                                          Padding="4,3" FontFamily="Segoe UI" FontSize="13"
@@ -505,7 +500,7 @@
                             </Grid>
 
                             <!-- Clear filter button -->
-                            <Button Grid.Column="7" Content="✕"
+                            <Button Grid.Column="6" Content="✕"
                                     Command="{Binding ClearPointsFilterCommand}"
                                     Width="26" Margin="4,0,0,0"
                                     Background="{StaticResource BrBorder}" Foreground="{StaticResource BrTextMuted}"
@@ -513,78 +508,7 @@
                                     ToolTip="Clear filter"/>
                             </Grid>
 
-                            <WrapPanel Orientation="Horizontal">
-                                <!-- ── KML Export ── -->
-                                <Button Content="&#x1F5FA; KML"
-                                        Command="{Binding ExportKmlCommand}"
-                                        Padding="8,5" Margin="0,0,8,0"
-                                        ToolTip="Export all points as KML for Google Earth / Maps"
-                                        Background="#1A2535" Foreground="#61AFEF"
-                                        BorderBrush="#1A4A6E" BorderThickness="1"/>
-                                <!-- ── KML Import ── -->
-                                <Button Content="&#x1F4E5; KML"
-                                        Command="{Binding ImportKmlCommand}"
-                                        Padding="8,5" Margin="0,0,8,0"
-                                        ToolTip="Import points from a KML file (Google Earth / Maps)"
-                                        Background="#1A2535" Foreground="#98C379"
-                                        BorderBrush="#3A6A3A" BorderThickness="1"/>
 
-                                <!-- ── Delete Selected ── -->
-                                <Button Content="&#x1F5D9; Del"
-                                        Command="{Binding DeleteSelectedPointsCommand}"
-                                        CommandParameter="{Binding SelectedItems, ElementName=PointsDataGrid}"
-                                        Padding="8,5" Margin="0,0,8,0"
-                                        ToolTip="Delete all selected points (Ctrl+A to select all)"
-                                        Background="#3A1010" Foreground="#E06C75"
-                                        BorderBrush="#6A2020" BorderThickness="1"/>
-                                <!-- ── Renumber ── -->
-                                <Button Content="&#x2116;"
-                                        Command="{Binding RenumberPointsCommand}"
-                                        Padding="8,5" Margin="0,0,8,0"
-                                        ToolTip="Renumber all points sequentially from a base number"
-                                        Background="#1A2535" Foreground="#C678DD"
-                                        BorderBrush="#3A2A55" BorderThickness="1"/>
-
-                                <!-- ── GPS Columns toggle ── -->
-                                <ToggleButton Content="&#x1F30D; GPS"
-                                              IsChecked="{Binding ShowGpsColumnsInGrid}"
-                                              Padding="8,5" Margin="0,0,8,0"
-                                              ToolTip="Show / hide Latitude &amp; Longitude columns"
-                                              Background="#1A2535" Foreground="#98C379"
-                                              BorderBrush="#3A6A3A" BorderThickness="1"/>
-
-                                <!-- ── CSV Import ── -->
-                                <Button Content="&#x1F4E5; CSV"
-                                        Command="{Binding ImportCsvCommand}"
-                                        Padding="8,5" Margin="0,0,8,0"
-                                        ToolTip="Import points from a CSV file (Pt#, N, E, Elev, Desc)"
-                                        Background="#1A2535" Foreground="#98C379"
-                                        BorderBrush="#3A6A3A" BorderThickness="1"/>
-
-                                <!-- ── Print Report ── -->
-                                <Button Content="&#x1F5A8; Print"
-                                        Command="{Binding PrintPointsCommand}"
-                                        Padding="8,5" Margin="0,0,8,0"
-                                        ToolTip="Print / save a paginated PDF point report"
-                                        Background="#1A2535" Foreground="#61AFEF"
-                                        BorderBrush="#2A5A8A" BorderThickness="1"/>
-
-                                <!-- ── Undo ── -->
-                                <Button Content="&#x21A9;"
-                                        Command="{Binding UndoPointCommand}"
-                                        Padding="8,5" Margin="0,0,8,0"
-                                        ToolTip="{Binding UndoDescription}"
-                                        Background="#1A2535" Foreground="#E5C07B"
-                                        BorderBrush="#5A4A20" BorderThickness="1"/>
-
-                                <!-- ── Redo ── -->
-                                <Button Content="&#x21AA;"
-                                        Command="{Binding RedoPointCommand}"
-                                        Padding="8,5" Margin="0,0,8,0"
-                                        ToolTip="{Binding RedoDescription}"
-                                        Background="#1A2535" Foreground="#E5C07B"
-                                        BorderBrush="#5A4A20" BorderThickness="1"/>
-                            </WrapPanel>
                         </StackPanel>
 
                         <!-- ── GPS Zone Warning Banner ── -->
@@ -601,6 +525,77 @@
                                    SelectionMode="Extended" SelectionUnit="FullRow"
                                    x:Name="PointsDataGrid"
                                   BorderThickness="1" BorderBrush="{StaticResource BrBorder}">
+
+                            <!-- ── Column-Header Right-Click Menu ─────────────────────────────── -->
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                                    <Setter Property="ContextMenu">
+                                        <Setter.Value>
+                                            <ContextMenu>
+                                                <!-- TXT Export -->
+                                                <MenuItem Header="&#x1F4DD;  Export TXT"
+                                                          Command="{Binding PlacementTarget.DataContext.ExportPointsTxtCommand,
+                                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                          ToolTip="Export all points as a text file"
+                                                          Foreground="#D19A66"/>
+                                                <!-- XML Export -->
+                                                <MenuItem Header="&#x1F4C4;  Export XML"
+                                                          Command="{Binding PlacementTarget.DataContext.ExportPointsXmlCommand,
+                                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                          ToolTip="Export all points as XML"
+                                                          Foreground="#D19A66"/>
+                                                <!-- KML Export -->
+                                                <MenuItem Header="&#x1F5FA;  Export KML"
+                                                          Command="{Binding PlacementTarget.DataContext.ExportKmlCommand,
+                                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                          ToolTip="Export all points as KML for Google Earth / Maps"
+                                                          Foreground="#61AFEF"/>
+                                                <!-- KML Import -->
+                                                <MenuItem Header="&#x1F4E5;  Import KML"
+                                                          Command="{Binding PlacementTarget.DataContext.ImportKmlCommand,
+                                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                          ToolTip="Import points from a KML file (Google Earth / Maps)"
+                                                          Foreground="#98C379"/>
+                                                <Separator/>
+                                                <!-- Delete Selected -->
+                                                <MenuItem Header="&#x1F5D9;  Delete Selected Points"
+                                                          Command="{Binding PlacementTarget.DataContext.DeleteSelectedPointsCommand,
+                                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                          CommandParameter="{Binding SelectedItems, ElementName=PointsDataGrid}"
+                                                          ToolTip="Delete all selected points (Ctrl+A to select all)"
+                                                          Foreground="#E06C75"/>
+                                                <!-- Renumber -->
+                                                <MenuItem Header="&#x2116;  Renumber Points"
+                                                          Command="{Binding PlacementTarget.DataContext.RenumberPointsCommand,
+                                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                          ToolTip="Renumber all points sequentially from a base number"
+                                                          Foreground="#C678DD"/>
+                                                <Separator/>
+                                                <!-- GPS Toggle -->
+                                                <MenuItem Header="&#x1F30D;  Toggle GPS Columns"
+                                                          Command="{Binding PlacementTarget.DataContext.ToggleGpsColumnsCommand,
+                                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                          ToolTip="Show / hide Latitude &amp; Longitude columns"
+                                                          Foreground="#98C379"/>
+                                                <!-- CSV Import -->
+                                                <MenuItem Header="&#x1F4E5;  Import CSV"
+                                                          Command="{Binding PlacementTarget.DataContext.ImportCsvCommand,
+                                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                          ToolTip="Import points from a CSV file (Pt#, N, E, Elev, Desc)"
+                                                          Foreground="#98C379"/>
+                                                <Separator/>
+                                                <!-- Print Report -->
+                                                <MenuItem Header="&#x1F5A8;  Print Point Report"
+                                                          Command="{Binding PlacementTarget.DataContext.PrintPointsCommand,
+                                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                          ToolTip="Print / save a paginated PDF point report"
+                                                          Foreground="#61AFEF"/>
+                                            </ContextMenu>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn Header="Point Number" SortMemberPath="NumericId" Width="80" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
