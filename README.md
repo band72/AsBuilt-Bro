@@ -74,7 +74,24 @@ For a comprehensive guide on all available COGO commands, UI references, and adv
 - 📖 [Comprehensive User Manual & Testing Guide](./USER_MANUAL_AND_TESTING_GUIDE.txt)
 - 📝 [Sample Scripts](./SampleScripts) - Collection of basic configuration and network capability scripts.
 
-For troubleshooting UI freezes, database locks, or specialized integrations (like custom native security DLL configurations), please contact the **RCS Enterprise Technical Deployment Team**.
+---
+
+## Python COGO & Vision Application (Cross-Platform)
+
+A cross-platform Python implementation of the RCS COGO & AI Vision engine is available inside the `python/` directory.
+
+### Quick Start
+```bash
+cd python
+pip install -r requirements.txt
+python3 app.py
+```
+
+### Key Python Features:
+- **Tkinter Desktop GUI**: A clean dark-themed CAD viewport with live drawing canvas, console logger, JEA validation reports, and interactive COGO calculator panels.
+- **Dual AI vision**: Built-in support for **Gemini Cloud** and local **Ollama** vision models to transcribe plat maps or blueprint tables on your local machine.
+- **LandXML Data Exchange**: Robust import and export of LandXML v1.2 files including coordinate lists (`CgPoints`), closed lot boundaries (`Parcels`), and open centerlines (`Alignments`).
+- **State Plane Mapping**: UtilizesStatePlane EPSG:2236 geographic projection checks to validate survey bounds.
 
 ---
 
