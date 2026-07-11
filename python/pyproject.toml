@@ -1,0 +1,32 @@
+[tool.briefcase]
+project_name = "AsBuilt-Bro"
+bundle = "com.band72"
+version = "2.1.0"
+url = "https://github.com/band72/AsBuilt-Bro"
+author = "Band72"
+author_email = "assistant@gemini.google"
+
+[tool.briefcase.app.asbuiltbro]
+formal_name = "AsBuilt-Bro"
+description = "Professional Land Surveying COGO and Vision Utility Engine"
+sources = ["app.py", "rcs_cogo"]
+requires = [
+    "ezdxf>=1.1.0",
+    "pyshp>=2.3.0",
+    "requests>=2.28.0",
+]
+
+[tool.briefcase.app.asbuiltbro.macOS]
+requires = []
+
+[tool.briefcase.app.asbuiltbro.linux]
+requires = []
+
+[tool.briefcase.app.asbuiltbro.windows]
+requires = []
+
+[tool.briefcase.app.asbuiltbro.android]
+requires = []
+
+[tool.briefcase.app.asbuiltbro.iOS]
+requires = []

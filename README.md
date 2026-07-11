@@ -91,7 +91,25 @@ python3 app.py
 - **Tkinter Desktop GUI**: A clean dark-themed CAD viewport with live drawing canvas, console logger, JEA validation reports, and interactive COGO calculator panels.
 - **Dual AI vision**: Built-in support for **Gemini Cloud** and local **Ollama** vision models to transcribe plat maps or blueprint tables on your local machine.
 - **LandXML Data Exchange**: Robust import and export of LandXML v1.2 files including coordinate lists (`CgPoints`), closed lot boundaries (`Parcels`), and open centerlines (`Alignments`).
-- **State Plane Mapping**: UtilizesStatePlane EPSG:2236 geographic projection checks to validate survey bounds.
+- **State Plane Mapping**: Utilizes StatePlane EPSG:2236 geographic projection checks to validate survey bounds.
+
+### Packaging for Windows, Mobile, and Tablet
+An automated packaging helper script [build_packages.py](file:///home/artwalk/.gemini/antigravity-ide/scratch/AsBuilt-Bro/python/build_packages.py) is provided to compile application bundles for all platforms:
+
+```bash
+# Build standalone Windows desktop executable (.exe)
+python3 build_packages.py windows
+
+# Build Android package for mobile/tablet (.apk)
+python3 build_packages.py android
+
+# Build iOS archive for mobile/tablet (.ipa)
+python3 build_packages.py ios
+
+# Build all packages sequentially
+python3 build_packages.py all
+```
+Briefcase handles downloading SDK tools (like Android SDK, Gradle, Xcode templates) automatically on compile.
 
 ---
 
