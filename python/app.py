@@ -19,6 +19,92 @@ COLOR_ACCENT = "#007acc"
 COLOR_TEXT = "#d4d4d4"
 COLOR_LOG_BG = "#1e1e1e"
 COLOR_CANVAS_BG = "#151515"
+import random
+
+def transpile_microstation_to_cogo(ms_script):
+    lines = ms_script.split('\n')
+    cogo_lines = [
+        '// ====================================================================',
+        '//  TRANSPILED FROM BENTLEY MICROSTATION KEY-IN SCRIPT',
+        '// ====================================================================',
+        'RESET'
+    ]
+    pt_counter = 1
+    active_figure = None
+    current_occupied = None
+    occupied_coords = None
+
+    for line in lines:
+        cleaned = line.strip()
+        if not cleaned or cleaned.startswith('#') or cleaned.startswith('//') or cleaned.startswith(';'):
+            continue
+
+        lower = cleaned.lower()
+
+        if lower.startswith('active color') or lower.startswith('co='):
+            cogo_lines.append(f'// Color style changed: {cleaned}')
+            continue
+
+        if lower.startswith('place line') or lower.startswith('place smartline'):
+            if active_figure:
+                cogo_lines.append('C')
+            suffix = "".join(random.choices("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", k=4))
+            active_figure = f'MS_LINE_{suffix}'
+            cogo_lines.append(f'B {active_figure}')
+            continue
+
+        if lower.startswith('xy='):
+            coords_part = cleaned[3:].strip()
+            coords = coords_part.split(',')
+            if len(coords) >= 2:
+                try:
+                    x = float(coords[0])
+                    y = float(coords[1])
+                    z = float(coords[2]) if len(coords) > 2 else 0.0
+                    pt_id = pt_counter
+                    pt_counter += 1
+                    cogo_lines.append(f'NE {pt_id} {x:.4f} {y:.4f} {z:.2f} "MicroStation Point"')
+                    current_occupied = pt_id
+                    occupied_coords = (x, y, z)
+                    if active_figure:
+                        cogo_lines.append(f'L {pt_id}')
+                except ValueError:
+                    pass
+            continue
+
+        if lower.startswith('dx='):
+            coords_part = cleaned[3:].strip()
+            coords = coords_part.split(',')
+            if len(coords) >= 2 and current_occupied is not None and occupied_coords is not None:
+                try:
+                    dx = float(coords[0])
+                    dy = float(coords[1])
+                    pt_id = pt_counter
+                    pt_counter += 1
+                    nx = occupied_coords[0] + dx
+                    ny = occupied_coords[1] + dy
+                    nz = occupied_coords[2]
+                    cogo_lines.append(f'NE {pt_id} {nx:.4f} {ny:.4f} {nz:.2f} "Offset point"')
+                    current_occupied = pt_id
+                    occupied_coords = (nx, ny, nz)
+                    if active_figure:
+                        cogo_lines.append(f'L {pt_id}')
+                except ValueError:
+                    pass
+            continue
+
+        if lower.startswith('active angle') or lower.startswith('aa='):
+            parts = cleaned.split('=')
+            val = parts[1] if len(parts) > 1 else cleaned.replace('active angle', '').strip()
+            cogo_lines.append(f'// Active rotation angle: {val}')
+            continue
+
+        cogo_lines.append(f'// MS_KEYIN: {cleaned}')
+
+    if active_figure:
+        cogo_lines.append('C')
+
+    return '\n'.join(cogo_lines)
 
 class CogoGuiApp:
     def __init__(self, root: tk.Tk):
@@ -78,6 +164,20 @@ class CogoGuiApp:
 
         lbl_editor = ttk.Label(self.left_frame, text="Utility Run Script Compiler", style="SidebarHeader.TLabel")
         lbl_editor.pack(anchor=tk.W, padx=10, pady=8)
+
+        # Script Format Radio Buttons
+        self.script_format = tk.StringVar(value="cogo")
+        f_format = ttk.Frame(self.left_frame, style="Sidebar.TFrame")
+        f_format.pack(anchor=tk.W, padx=10, pady=2)
+        
+        lbl_fmt = ttk.Label(f_format, text="Format:", font=("Segoe UI", 9, "bold"), foreground="#bbbbbb")
+        lbl_fmt.pack(side=tk.LEFT, padx=(0, 6))
+        
+        rb_cogo = ttk.Radiobutton(f_format, text="JEA COGO", variable=self.script_format, value="cogo", command=self.handle_format_toggle)
+        rb_cogo.pack(side=tk.LEFT, padx=4)
+        
+        rb_ms = ttk.Radiobutton(f_format, text="MicroStation", variable=self.script_format, value="microstation", command=self.handle_format_toggle)
+        rb_ms.pack(side=tk.LEFT, padx=4)
 
         # Text area
         self.editor = tk.Text(
@@ -353,6 +453,30 @@ class CogoGuiApp:
                 self.ollama_model_var.set(models[0])
         else:
             self.cb_ollama_model['values'] = ["llama3.2-vision", "llava"]
+    def handle_format_toggle(self):
+        fmt = self.script_format.get()
+        self.editor.delete("1.0", tk.END)
+        if fmt == "microstation":
+            demo = (
+                "# ====================================================================\n"
+                "#  BENTLEY MICROSTATION KEY-IN SCRIPT DEMO\n"
+                "# ====================================================================\n"
+                "# Configure styling\n"
+                "active color 3\n"
+                "active angle=45\n\n"
+                "# Draw first segment\n"
+                "place line\n"
+                "xy=37.7749,-122.4194\n"
+                "xy=37.7800,-122.4100\n"
+                "dx=0.0050,-0.0050\n\n"
+                "# Draw second segment\n"
+                "place line\n"
+                "xy=37.7850,-122.4050\n"
+                "xy=37.7900,-122.4000\n"
+            )
+            self.editor.insert(tk.END, demo)
+        else:
+            self._load_sample_script()
 
     def _load_sample_script(self):
         sample = """// RCS AsBuilt-Bro Utility Network Simulation
@@ -396,6 +520,8 @@ MAPCHK WORK_SITE
 
     def run_script(self):
         script = self.editor.get("1.0", tk.END)
+        if self.script_format.get() == "microstation":
+            script = transpile_microstation_to_cogo(script)
         self.engine = CogoEngine()
         
         self.engine.execute_batch(script)
@@ -654,12 +780,14 @@ MAPCHK WORK_SITE
             messagebox.showerror("Error", f"Failed to save CSV file: {str(ex)}")
 
     def open_cogo_script(self):
-        path = filedialog.askopenfilename(filetypes=[("COGO Scripts", "*.cogo;*.txt"), ("All Files", "*.*")])
+        path = filedialog.askopenfilename(filetypes=[("COGO Scripts", "*.cogo;*.txt;*.key"), ("All Files", "*.*")])
         if not path:
             return
         try:
             with open(path, "r") as f:
                 text = f.read()
+            if self.script_format.get() == "microstation":
+                text = transpile_microstation_to_cogo(text)
             self.editor.delete("1.0", tk.END)
             self.editor.insert(tk.END, text)
             messagebox.showinfo("Success", f"Loaded script: {os.path.basename(path)}")
@@ -667,7 +795,7 @@ MAPCHK WORK_SITE
             messagebox.showerror("Error", f"Failed to open script: {str(ex)}")
 
     def save_cogo_script(self):
-        path = filedialog.asksaveasfilename(defaultextension=".cogo", filetypes=[("COGO Scripts", "*.cogo;*.txt")])
+        path = filedialog.asksaveasfilename(defaultextension=".cogo", filetypes=[("COGO Scripts", "*.cogo;*.txt;*.key")])
         if not path:
             return
         try:

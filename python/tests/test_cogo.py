@@ -671,6 +671,17 @@ class TestAdvancedSurveySuite(unittest.TestCase):
         self.assertIn("accuracy", suite.survey_metadata_log_builder())
         self.assertAlmostEqual(suite.barometric_elevation_adjuster(29.921), 0.0)
 
+        # Test MicroStation Transpiler
+        from app import transpile_microstation_to_cogo
+        ms_script = "place line\nxy=37.7,-122.4\nxy=37.8,-122.3\ndx=0.05,-0.05\n"
+        transpiled = transpile_microstation_to_cogo(ms_script)
+        self.assertIn("RESET", transpiled)
+        self.assertIn("NE 1 37.7000 -122.4000", transpiled)
+        self.assertIn("NE 2 37.8000 -122.3000", transpiled)
+        self.assertIn("NE 3 37.8500 -122.3500", transpiled)
+        self.assertIn("B MS_LINE", transpiled)
+        self.assertIn("C", transpiled)
+
 
 if __name__ == "__main__":
     unittest.main()
