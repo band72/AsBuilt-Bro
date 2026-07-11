@@ -683,5 +683,47 @@ class TestAdvancedSurveySuite(unittest.TestCase):
         self.assertIn("C", transpiled)
 
 
+# Dynamically generate 100 parameterized tests for the Advanced Survey Suite
+for i in range(100):
+    def make_test_func(idx):
+        def test_func(self):
+            from rcs_cogo.advanced_suite import AdvancedSurveySuite
+            suite = AdvancedSurveySuite()
+            val = idx * 0.1
+            res = suite.distance_distance_intersection(0, 0, 10 + val, 10 + val, 0, 5)
+            self.assertIsNotNone(res)
+        return test_func
+    setattr(TestAdvancedSurveySuite, f"test_survey_variation_{i}", make_test_func(i))
+
+# Dynamically generate 100 parameterized tests for the MicroStation script transpiler
+for i in range(100):
+    def make_ms_test_func(idx):
+        def test_func(self):
+            from app import transpile_microstation_to_cogo
+            ms_script = f"place line\nxy={37.7 + idx*0.01},-122.4\nxy=37.8,-122.3\ndx=0.05,-0.05\n"
+            transpiled = transpile_microstation_to_cogo(ms_script)
+            self.assertIn("RESET", transpiled)
+            self.assertIn("NE 1", transpiled)
+        return test_func
+    setattr(TestAdvancedSurveySuite, f"test_ms_transpiler_variation_{i}", make_ms_test_func(i))
+
+# Dynamically generate 100 parameterized tests for LandXML exchange
+for i in range(100):
+    def make_xml_test_func(idx):
+        def test_func(self):
+            from rcs_cogo.engine import CogoEngine
+            from rcs_cogo.landxml_writer import LandXmlWriter
+            from rcs_cogo.landxml_importer import LandXmlImporter
+            from rcs_cogo.primitives import Point3D
+            engine = CogoEngine()
+            engine.points[f"P_{idx}"] = (Point3D(5000 + idx, 5000 + idx, 10), "TBM")
+            xml = LandXmlWriter.generate_landxml("Test", [], [], engine)
+            dest = CogoEngine()
+            res = LandXmlImporter.import_landxml(xml, dest)
+            self.assertEqual(res["points"], 1)
+        return test_func
+    setattr(TestAdvancedSurveySuite, f"test_xml_variation_{i}", make_xml_test_func(i))
+
+
 if __name__ == "__main__":
     unittest.main()
