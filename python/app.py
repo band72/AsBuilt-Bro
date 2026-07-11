@@ -296,6 +296,11 @@ class CogoGuiApp:
         self.notebook.add(self.tab_cogo, text="🧮 COGO Calculator")
         self._build_cogo_calculator_tab()
 
+        # Tab 8: Advanced Geoprocessing Suite
+        self.tab_advanced = ttk.Frame(self.notebook)
+        self.notebook.add(self.tab_advanced, text="🛠️ Advanced Suite")
+        self._build_advanced_suite_tab()
+
     def _build_points_list_tab(self):
         columns = ("id", "northing", "easting", "elevation", "desc")
         self.tree_pts = ttk.Treeview(self.tab_points, columns=columns, show="headings")
@@ -1449,6 +1454,126 @@ MAPCHK WORK_SITE
             self.txt_curve_res.insert(tk.END, f"{end_sta:<11.2f} {calc(end_sta):.2f}\n")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to solve vertical curve:\n{str(e)}")
+
+    def _build_advanced_suite_tab(self):
+        fr = ttk.Frame(self.tab_advanced, padding=10)
+        fr.pack(fill=tk.BOTH, expand=True)
+
+        lbl_title = ttk.Label(fr, text="Civil 3D & ESRI Advanced Calculations", font=("Segoe UI", 12, "bold"))
+        lbl_title.pack(anchor=tk.W, pady=(0, 6))
+
+        # Dropdown selection
+        f_select = ttk.Frame(fr)
+        f_select.pack(fill=tk.X, pady=4)
+        
+        ttk.Label(f_select, text="Select Tool:").pack(side=tk.LEFT, padx=(0, 6))
+        
+        from rcs_cogo.advanced_suite import AdvancedSurveySuite
+        self.suite = AdvancedSurveySuite()
+        suite_methods = sorted([attr for attr in dir(self.suite) if callable(getattr(self.suite, attr)) and not attr.startswith('_')])
+        
+        self.cb_tool = ttk.Combobox(f_select, values=suite_methods, width=50, state="readonly")
+        self.cb_tool.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.cb_tool.bind("<<ComboboxSelected>>", self.on_tool_selected)
+        
+        # Metadata / Parameter Names label
+        self.lbl_tool_params = ttk.Label(fr, text="Expected Parameters: Select a tool...", font=("Segoe UI", 9, "italic"), foreground="#89d4f5")
+        self.lbl_tool_params.pack(anchor=tk.W, pady=6)
+
+        # Arguments input
+        f_args = ttk.LabelFrame(fr, text="Input Arguments (comma-separated list, e.g. 0, 0, 50)", padding=10)
+        f_args.pack(fill=tk.X, pady=5)
+        
+        self.ent_tool_args = ttk.Entry(f_args, font=("Consolas", 10))
+        self.ent_tool_args.pack(fill=tk.X, expand=True)
+        
+        # Run Button
+        self.btn_run_tool = ttk.Button(fr, text="⚡ Run Geoprocessing Calculation", command=self.run_advanced_tool)
+        self.btn_run_tool.pack(fill=tk.X, pady=6)
+
+        # Output box
+        lbl_out = ttk.Label(fr, text="Output Result:")
+        lbl_out.pack(anchor=tk.W, pady=(6, 2))
+        
+        self.txt_tool_output = tk.Text(fr, height=12, bg="#2d2d2d", fg="#a6e22e", font=("Consolas", 9), bd=0, highlightthickness=1, highlightcolor=COLOR_ACCENT)
+        self.txt_tool_output.pack(fill=tk.BOTH, expand=True)
+
+        if suite_methods:
+            self.cb_tool.set(suite_methods[0])
+            self.on_tool_selected(None)
+
+    def on_tool_selected(self, event):
+        method_name = self.cb_tool.get()
+        if not method_name: return
+        
+        import inspect
+        method = getattr(self.suite, method_name)
+        try:
+            sig = inspect.signature(method)
+            params = [name for name in sig.parameters.keys() if name != 'self']
+            self.lbl_tool_params.configure(text=f"Expected Parameters: {', '.join(params)}")
+            
+            # Intelligently set default inputs to make testing easy for the user!
+            defaults = []
+            for p in params:
+                p_lower = p.lower()
+                if "x" in p_lower or "east" in p_lower: defaults.append("10000.00")
+                elif "y" in p_lower or "north" in p_lower: defaults.append("10000.00")
+                elif "z" in p_lower or "elev" in p_lower: defaults.append("10.0")
+                elif "radius" in p_lower or "rad" in p_lower or p in ("r", "r1", "r2"): defaults.append("150.0")
+                elif "bearing" in p_lower or "brg" in p_lower: defaults.append("n45.0000e")
+                elif "dist" in p_lower or p in ("d", "dist"): defaults.append("250.0")
+                elif "slope" in p_lower or p == "s": defaults.append("1.5")
+                elif "diameter" in p_lower or "dia" in p_lower: defaults.append("8")
+                elif "material" in p_lower: defaults.append("PVC")
+                elif "pts" in p_lower or "coords" in p_lower or "list" in p_lower: defaults.append("[(10000, 10000), (10100, 10050), (10050, 10150)]")
+                else: defaults.append("0")
+            
+            self.ent_tool_args.delete(0, tk.END)
+            self.ent_tool_args.insert(0, ", ".join(defaults))
+        except Exception:
+            self.lbl_tool_params.configure(text="Expected Parameters: Unknown")
+
+    def run_advanced_tool(self):
+        method_name = self.cb_tool.get()
+        if not method_name: return
+        
+        raw_args = self.ent_tool_args.get().strip()
+        
+        import ast
+        try:
+            if not raw_args:
+                parsed = ()
+            else:
+                parsed = ast.literal_eval(f"({raw_args},)")
+        except Exception:
+            parsed = []
+            for item in raw_args.split(','):
+                item_str = item.strip()
+                try:
+                    parsed.append(float(item_str))
+                except ValueError:
+                    parsed.append(item_str)
+            parsed = tuple(parsed)
+
+        self.txt_tool_output.delete("1.0", tk.END)
+        try:
+            method = getattr(self.suite, method_name)
+            if len(parsed) == 1 and not raw_args.endswith(','):
+                arg_val = parsed[0]
+                result = method(arg_val)
+            else:
+                import inspect
+                sig = inspect.signature(method)
+                params = [name for name in sig.parameters.keys() if name != 'self']
+                if len(params) == 1 and len(parsed) > 1:
+                    result = method(list(parsed))
+                else:
+                    result = method(*parsed)
+
+            self.txt_tool_output.insert(tk.END, f"SUCCESS:\n{str(result)}")
+        except Exception as e:
+            self.txt_tool_output.insert(tk.END, f"ERROR EXECUTING TOOL:\n{str(e)}")
 
 if __name__ == "__main__":
     root = tk.Tk()
