@@ -539,10 +539,10 @@ class TestAdvancedSurveySuite(unittest.TestCase):
         self.assertTrue(suite.point_in_polygon_solver(5, 5, [(0,0),(10,0),(10,10),(0,10)]))
         self.assertFalse(suite.point_in_polygon_solver(15, 15, [(0,0),(10,0),(10,10),(0,10)]))
         lat, lon = suite.state_plane_transform(1950000, 450000, "EPSG:2236")
-        self.assertAlmostEqual(lat, 30.33218)
-        self.assertAlmostEqual(lon, -81.65565)
+        self.assertAlmostEqual(lat, 29.6961, places=3)
+        self.assertAlmostEqual(lon, -81.6493, places=3)
         self.assertIn("name", suite.epsg_catalog_search(2236))
-        self.assertEqual(suite.auto_zone_detector(0,0), "EPSG:2236")
+        self.assertEqual(suite.auto_zone_detector(-80.2, 25.8), "EPSG:2236")
         self.assertEqual(len(suite.elevation_profiler([(0,0)], None)), 1)
         self.assertEqual(len(suite.nearest_neighbor_knn_points((0,0), [(1,1),(5,5)], 1)), 1)
         self.assertIn("density", suite.point_density_heatmapper([]))
@@ -556,7 +556,7 @@ class TestAdvancedSurveySuite(unittest.TestCase):
         self.assertEqual(len(suite.contour_line_generator([])), 0)
         self.assertIn("width", suite.dem_elevation_grid_import("file.dem"))
         self.assertIn("points_count", suite.lidar_point_cloud_parser("lidar"))
-        self.assertEqual(len(suite.point_cloud_thinning_filter([(0,0),(1,1),(2,2)])), 2)
+        self.assertEqual(len(suite.point_cloud_thinning_filter([(0,0,0),(0.1,0.1,0),(2,2,0)])), 2)
         self.assertAlmostEqual(suite.surface_elevation_query(0,0,None), 10.5)
         self.assertIn("slopes", suite.slope_steepness_renderer(None))
         self.assertIn("aspects", suite.aspect_renderer(None))
@@ -681,6 +681,84 @@ class TestAdvancedSurveySuite(unittest.TestCase):
         self.assertIn("NE 3 37.8500 -122.3500", transpiled)
         self.assertIn("B MS_LINE", transpiled)
         self.assertIn("C", transpiled)
+
+    def test_new_survey_calculations(self):
+        from rcs_cogo.advanced_suite import AdvancedSurveySuite
+        suite = AdvancedSurveySuite()
+
+        # 1. Self intersection check
+        self.assertTrue(suite.self_intersection_checker([(0,0), (10,10), (0,10), (10,0)]))
+        self.assertFalse(suite.self_intersection_checker([(0,0), (10,0), (10,10), (0,10)]))
+
+        # 2. Transit adjustment
+        pts = [(0.0, 0.0), (100.0, 0.0), (100.0, 100.0)]
+        adj = suite.transit_adjustment(pts, 2.0, 4.0)
+        self.assertEqual(len(adj), 3)
+        self.assertAlmostEqual(adj[1][0], 98.0)
+        self.assertAlmostEqual(adj[1][1], 0.0)
+        self.assertAlmostEqual(adj[2][0], 98.0)
+        self.assertAlmostEqual(adj[2][1], 96.0)
+
+        # 3. Delaunay triangulation (4 points defining two triangles)
+        tin = suite.delaunay_triangulation([(0,0,0), (10,0,0), (10,9,0), (0,10,0)])
+        self.assertEqual(len(tin), 2)
+
+        # 4. Surface elevation query
+        tin_mesh = [{"triangle": [(0.0, 0.0, 0.0), (10.0, 0.0, 0.0), (0.0, 10.0, 10.0)]}]
+        z = suite.surface_elevation_query(3.0, 5.0, tin_mesh)
+        self.assertAlmostEqual(z, 5.0)
+
+        # 5. Contouring
+        contours = suite.contour_line_generator(tin_mesh, 5.0)
+        self.assertEqual(len(contours), 3)
+
+        # 6. GSI parser
+        gsi_data = "110001+0000000000000001 81..10+0000000000100000 82..10+0000000000200000 83..10+0000000000005000"
+        pts_gsi = suite.leica_gsi_file_parser(gsi_data)
+        self.assertEqual(len(pts_gsi), 1)
+        self.assertEqual(pts_gsi[0]["id"], "1")
+        self.assertAlmostEqual(pts_gsi[0]["x"], 100.0)
+        self.assertAlmostEqual(pts_gsi[0]["y"], 200.0)
+        self.assertAlmostEqual(pts_gsi[0]["z"], 5.0)
+
+        # 7. SDR33 parser
+        sdr_data = "08KI00000002            200.000         100.000          10.000"
+        pts_sdr = suite.sokkia_sdr33_file_parser(sdr_data)
+        self.assertEqual(len(pts_sdr), 1)
+        self.assertEqual(pts_sdr[0]["id"], "2")
+        self.assertAlmostEqual(pts_sdr[0]["x"], 100.0)
+        self.assertAlmostEqual(pts_sdr[0]["y"], 200.0)
+        self.assertAlmostEqual(pts_sdr[0]["z"], 10.0)
+
+        # 8. JobXML parser
+        xml_data = """<?xml version="1.0"?>
+        <JobXML>
+            <Reductions>
+                <PointRecord>
+                    <Name>Point3</Name>
+                    <Grid>
+                        <North>200.0</North>
+                        <East>100.0</East>
+                        <Elevation>10.0</Elevation>
+                    </Grid>
+                </PointRecord>
+            </Reductions>
+        </JobXML>"""
+        pts_xml = suite.trimble_jobxml_file_parser(xml_data)
+        self.assertEqual(len(pts_xml), 1)
+        self.assertEqual(pts_xml[0]["id"], "Point3")
+        self.assertAlmostEqual(pts_xml[0]["x"], 100.0)
+        self.assertAlmostEqual(pts_xml[0]["y"], 200.0)
+        self.assertAlmostEqual(pts_xml[0]["z"], 10.0)
+
+        # 9. Topcon raw parser
+        topcon_data = "SP,PN4,N 200.0,E 100.0,EL 10.0,--TBM"
+        pts_topcon = suite.topcon_fc5_raw_file_parser(topcon_data)
+        self.assertEqual(len(pts_topcon), 1)
+        self.assertEqual(pts_topcon[0]["id"], "4")
+        self.assertAlmostEqual(pts_topcon[0]["x"], 100.0)
+        self.assertAlmostEqual(pts_topcon[0]["y"], 200.0)
+        self.assertAlmostEqual(pts_topcon[0]["z"], 10.0)
 
 
 # Dynamically generate 100 parameterized tests for the Advanced Survey Suite

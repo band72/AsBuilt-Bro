@@ -89,22 +89,34 @@ class StatePlaneProjection:
     @classmethod
     def to_lat_lon(cls, easting_ft: float, northing_ft: float, zone: str = "EPSG:2236") -> Tuple[float, float]:
         zone = cls.normalize_zone(zone)
-        if zone == "EPSG:2238":
-            return cls._lcc_inverse(easting_ft, northing_ft)
-        elif zone == "EPSG:2237":
-            return cls._tm_inverse(easting_ft, northing_ft, cls.TM_WEST, cls.TM_M0_WEST)
-        else:
-            return cls._tm_inverse(easting_ft, northing_ft, cls.TM_EAST, cls.TM_M0_EAST)
+        try:
+            from pyproj import Transformer
+            transformer = Transformer.from_crs(zone, "EPSG:4326", always_xy=True)
+            lon, lat = transformer.transform(easting_ft, northing_ft)
+            return lat, lon
+        except Exception:
+            if zone == "EPSG:2238":
+                return cls._lcc_inverse(easting_ft, northing_ft)
+            elif zone == "EPSG:2237":
+                return cls._tm_inverse(easting_ft, northing_ft, cls.TM_WEST, cls.TM_M0_WEST)
+            else:
+                return cls._tm_inverse(easting_ft, northing_ft, cls.TM_EAST, cls.TM_M0_EAST)
 
     @classmethod
     def to_state_plane(cls, lat_deg: float, lon_deg: float, zone: str = "EPSG:2236") -> Tuple[float, float]:
         zone = cls.normalize_zone(zone)
-        if zone == "EPSG:2238":
-            return cls._lcc_forward(lat_deg, lon_deg)
-        elif zone == "EPSG:2237":
-            return cls._tm_forward(lat_deg, lon_deg, cls.TM_WEST, cls.TM_M0_WEST)
-        else:
-            return cls._tm_forward(lat_deg, lon_deg, cls.TM_EAST, cls.TM_M0_EAST)
+        try:
+            from pyproj import Transformer
+            transformer = Transformer.from_crs("EPSG:4326", zone, always_xy=True)
+            easting, northing = transformer.transform(lon_deg, lat_deg)
+            return easting, northing
+        except Exception:
+            if zone == "EPSG:2238":
+                return cls._lcc_forward(lat_deg, lon_deg)
+            elif zone == "EPSG:2237":
+                return cls._tm_forward(lat_deg, lon_deg, cls.TM_WEST, cls.TM_M0_WEST)
+            else:
+                return cls._tm_forward(lat_deg, lon_deg, cls.TM_EAST, cls.TM_M0_EAST)
 
     @classmethod
     def _tm_inverse(cls, easting_ft: float, northing_ft: float, z: Tuple, m0: float) -> Tuple[float, float]:
