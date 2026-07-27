@@ -357,4 +357,90 @@ public class AsBuiltJobTests
         var j2 = new AsBuiltJob();
         Assert.NotEqual(j1.JobId, j2.JobId);
     }
+
+    [Fact]
+    public void AutoResolvePendingMappings_ResolvesUnmappedAssets()
+    {
+        var job = new AsBuiltJob();
+        job.PartMappings.Add(new PartMappingEntry { AssetId = "S1", DetectedDesc = "CB-1 STORM CATCH BASIN", Status = MappingStatus.Pending });
+        job.PartMappings.Add(new PartMappingEntry { AssetId = "S2", DetectedDesc = "MH-3 SEWER MANHOLE", Status = MappingStatus.Pending });
+        job.PartMappings.Add(new PartMappingEntry { AssetId = "S3", DetectedDesc = "WMET WATER METER", Status = MappingStatus.Pending });
+
+        int resolved = job.AutoResolvePendingMappings();
+
+        Assert.Equal(3, resolved);
+        Assert.True(job.AllPartsMapped);
+        Assert.Equal("Catch Basin", job.PartMappings[0].PartKey);
+        Assert.Equal("Sewer Manhole", job.PartMappings[1].PartKey);
+        Assert.Equal("Water Meter", job.PartMappings[2].PartKey);
+    }
+
+    [Fact]
+    public void AutoRepairSlopeReversals_CorrectsInvertedGravityRuns()
+    {
+        var job = new AsBuiltJob();
+        var run = new PipeRun { Id = "R1", Diameter = 12, InvertStart = 50.0, InvertEnd = 55.0, ComputedLength = 100.0 };
+        job.Network.AddRun(run);
+
+        // Pre-condition: Validation flags reversed flow error
+        var validator = new ValidationEngine();
+        var initialResult = validator.Validate(job);
+        Assert.Contains(initialResult.Issues, i => i.RuleName == "SLOPE_REVERSAL");
+
+        // Act: Auto-repair slope reversal
+        int repaired = job.AutoRepairSlopeReversals(0.50);
+
+        // Assert: InvertEnd is recalculated to positive slope (50 - (100 * 0.005) = 49.5)
+        Assert.Equal(1, repaired);
+        Assert.Equal(49.5, run.InvertEnd);
+
+        var finalResult = validator.Validate(job);
+        Assert.DoesNotContain(finalResult.Issues, i => i.RuleName == "SLOPE_REVERSAL");
+    }
+
+    [Fact]
+    public void WorkflowPhaseTransitions_EnforceQualityGates()
+    {
+        var mgr = new WorkflowManager();
+        var job = new AsBuiltJob();
+        job.Identity.JobNumber = "JOB-70498";
+
+        // Without structures/runs, PartsMapping transition has blockers
+        Assert.False(mgr.CanTransitionTo(job, WorkflowPhase.PartsMapping));
+
+        // Add a structure and resolve mappings
+        job.Network.AddStructure(new PipeStructure { Id = "S1", PointId = "100" });
+        job.PartMappings.Add(new PartMappingEntry { Status = MappingStatus.Resolved });
+
+        // Now validation, preview, and deliverables gates pass
+        Assert.True(mgr.CanTransitionTo(job, WorkflowPhase.Validation));
+        Assert.True(mgr.CanTransitionTo(job, WorkflowPhase.Preview));
+        Assert.True(mgr.CanTransitionTo(job, WorkflowPhase.Deliverables));
+        Assert.True(mgr.CanTransitionTo(job, WorkflowPhase.ExportPackage));
+    }
+
+    [Theory]
+    [InlineData("pvc", RCS.Piping.Core.Models.PipeMaterial.Pvc, "PVC")]
+    [InlineData("p.v.c.", RCS.Piping.Core.Models.PipeMaterial.Pvc, "PVC")]
+    [InlineData("DIP", RCS.Piping.Core.Models.PipeMaterial.DuctileIron, "DIP")]
+    [InlineData("hdpe", RCS.Piping.Core.Models.PipeMaterial.Hdpe, "HDPE")]
+    [InlineData("rcp", RCS.Piping.Core.Models.PipeMaterial.ReinforcedConcrete, "RCP")]
+    public void PipeMaterialParser_NormalizesRawAliases(string raw, RCS.Piping.Core.Models.PipeMaterial expectedEnum, string expectedCode)
+    {
+        var mat = RCS.Piping.Core.Models.PipeMaterialParser.Parse(raw);
+        var code = RCS.Piping.Core.Models.PipeMaterialParser.ToStandardCode(mat);
+
+        Assert.Equal(expectedEnum, mat);
+        Assert.Equal(expectedCode, code);
+    }
+
+    [Fact]
+    public void MaterialCatalogCache_ValidatesStandardCodes()
+    {
+        var cache = new RCS.Piping.Core.Services.MaterialCatalogCache();
+        Assert.True(cache.IsValidMaterial("PVC"));
+        Assert.True(cache.IsValidMaterial("p.v.c."));
+        Assert.True(cache.IsValidMaterial("DIP"));
+        Assert.Equal("HDPE", cache.GetCanonicalCode("hdpe"));
+    }
 }

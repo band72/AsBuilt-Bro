@@ -18,9 +18,20 @@ namespace RCS.Cogo.Core.Tests
             var job = new AsBuiltJob();
             job.Identity.JobNumber = "70498-W1A HEADLESS TEST";
 
-            string scriptPath = @"C:\Users\Daryl Banks\source\repos\RCS.Cogo.Enterprise.Modern\SampleScripts\JEA_Oakwood_WaterMain_70498-W1A.cogo";
-            if (!File.Exists(scriptPath)) 
-                scriptPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "SampleScripts", "JEA_Oakwood_WaterMain_70498-W1A.cogo");
+            static string FindRepoRoot(string start)
+            {
+                var dir = new DirectoryInfo(start);
+                while (dir != null)
+                {
+                    if (Directory.Exists(Path.Combine(dir.FullName, "SampleScripts")))
+                        return dir.FullName;
+                    dir = dir.Parent;
+                }
+                return start;
+            }
+
+            string repoRoot = FindRepoRoot(AppContext.BaseDirectory);
+            string scriptPath = Path.Combine(repoRoot, "SampleScripts", "JEA_Oakwood_WaterMain_70498-W1A.cogo");
 
             // 2. Run Intake Engine
             var intake = new IntakeAnalysisEngine();
@@ -125,6 +136,43 @@ namespace RCS.Cogo.Core.Tests
             
             // Assert Deviation Violation (As-built 98 - Design 94 = 4ft deviation > 0.5ft tolerance)
             Assert.Contains(result.Issues, i => i.RuleName == "DESIGN_DEVIATION");
+        }
+
+        [Fact]
+        public void ExportBundleBuilderTest()
+        {
+            // Arrange
+            var job = new AsBuiltJob();
+            job.Identity.JobNumber = "BUNDLE-TEST-70498";
+            
+            job.Network.Structures["S1"] = new PipeStructure { Id = "S1", PointId = "100", Type = "Catch Basin" };
+            job.PointRows.Add(new PointRow { PointId = "100", Easting = 1000, Northing = 1000, Elevation = 10.0, Description = "CB-1" });
+            
+            var dxfBuilder = new RCS.Piping.Core.Builders.DxfBuilder();
+            var pdfBuilder = new RCS.Piping.Core.Builders.PdfReportBuilder();
+            var csvBuilder = new RCS.Piping.Core.Builders.PnezdExportBuilder();
+            var bundleBuilder = new RCS.Piping.Core.Builders.ExportBundleBuilder(dxfBuilder, pdfBuilder, csvBuilder);
+
+            string targetDir = Path.Combine(Path.GetTempPath(), "ExportBundleTest_" + Guid.NewGuid().ToString("N"));
+
+            try
+            {
+                // Act
+                var result = bundleBuilder.Build(job, targetDir);
+
+                // Assert all 4 deliverable files exist
+                Assert.True(File.Exists(result.DxfPath), "DXF file must exist");
+                Assert.True(File.Exists(result.LandXmlPath), "LandXML file must exist");
+                Assert.True(File.Exists(result.PdfReportPath), "PDF report file must exist");
+                Assert.True(File.Exists(result.PnezdCsvPath), "PNEZD CSV file must exist");
+            }
+            finally
+            {
+                if (Directory.Exists(targetDir))
+                {
+                    Directory.Delete(targetDir, recursive: true);
+                }
+            }
         }
     }
 }

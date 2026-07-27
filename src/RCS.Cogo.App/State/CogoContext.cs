@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using RCS.Cogo.App.Scripting;
@@ -8,9 +9,9 @@ namespace RCS.Cogo.App.State;
 
 public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProvider
 {
-    private readonly Dictionary<string, (Point3D Point, string Description)> _points = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, Figure> _figures = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, RCS.Alignments.Core.Alignment> _alignments = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ConcurrentDictionary<string, (Point3D Point, string Description)> _points = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ConcurrentDictionary<string, Figure> _figures = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ConcurrentDictionary<string, RCS.Alignments.Core.Alignment> _alignments = new(StringComparer.OrdinalIgnoreCase);
     private readonly Action<string> _logger;
 
     public Point3D? CurrentStation { get; set; }
@@ -65,25 +66,23 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
 
     public void AddPoint(string pointId, Point3D point, string description = "")
     {
-        // Enforce numeric Point IDs? User allows non-numeric via suffixes (e.g. 100_L).
         _points[pointId] = (point, description);
     }
 
-    public bool RemovePoint(string pointId) => _points.Remove(pointId);
+    public bool RemovePoint(string pointId) => _points.TryRemove(pointId, out _);
 
     public bool RenamePoint(string oldId, string newId)
     {
         if (!_points.TryGetValue(oldId, out var data)) return false;
         if (_points.ContainsKey(newId)) return false;
-        _points.Remove(oldId);
-        _points[newId] = data;
+        if (!_points.TryRemove(oldId, out var removedData)) return false;
+        _points[newId] = removedData;
         return true;
     }
 
     
     public int GetNextPointId()
     {
-        // Find max integer ID
         int maxId = 0;
         foreach(var key in _points.Keys)
         {
@@ -113,7 +112,7 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
     
     public bool DeletePoint(string pointId)
     {
-        return _points.Remove(pointId);
+        return _points.TryRemove(pointId, out _);
     }
     
     public bool DeleteFigure(string name)
@@ -122,12 +121,11 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
         {
             CurrentFigure = null;
         }
-        return _figures.Remove(name);
+        return _figures.TryRemove(name, out _);
     }
     
     public void ClearLog()
     {
-        // Special signal to logger
         _logger?.Invoke("[CLEAR]");
     }
 
@@ -143,12 +141,12 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
 
     public IEnumerable<(string Id, Point3D Point, string Description)> GetAllPoints()
     {
-        return _points.Select(kvp => (kvp.Key, kvp.Value.Point, kvp.Value.Description));
+        return _points.Select(kvp => (kvp.Key, kvp.Value.Point, kvp.Value.Description)).ToList();
     }
 
     public IEnumerable<Figure> GetAllFigures()
     {
-        return _figures.Values;
+        return _figures.Values.ToList();
     }
 
     public void AddAlignment(RCS.Alignments.Core.Alignment alignment)
@@ -163,7 +161,7 @@ public class CogoContext : ICogoContext, RCS.Piping.Core.Abstractions.IPointProv
 
     public IEnumerable<RCS.Alignments.Core.Alignment> GetAllAlignments()
     {
-        return _alignments.Values;
+        return _alignments.Values.ToList();
     }
 
     public void ClearState()

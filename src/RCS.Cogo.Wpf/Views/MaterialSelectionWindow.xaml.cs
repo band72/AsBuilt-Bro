@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using RCS.Data;
 using RCS.Data.Entities;
+using RCS.Piping.Core.Models;
 
 namespace RCS.Cogo.Wpf.Views
 {
@@ -28,7 +29,6 @@ namespace RCS.Cogo.Wpf.Views
                 using var db = new AppDbContext();
                 _allMaterials = db.Materials.ToList();
 
-                // Clean up the initial query to find tokens. We support '-', '|', and spaces as delimiters.
                 if (!string.IsNullOrWhiteSpace(_initialQuery))
                 {
                     var cleanQuery = _initialQuery.Replace("-", " ").Replace("|", " ");
@@ -52,14 +52,12 @@ namespace RCS.Cogo.Wpf.Views
             var query = SearchBox.Text.ToLower().Trim();
             if (string.IsNullOrWhiteSpace(query))
             {
-                MaterialsGrid.ItemsSource = _allMaterials;
+                MaterialsGrid.ItemsSource = _allMaterials.Take(100).ToList();
                 return;
             }
 
-            // Split query by spaces
             var tokens = query.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            // We order by the number of matches the material has with the tokens, then take those that have at least 1 match.
             var matchedMaterials = _allMaterials
                 .Select(m => new
                 {
@@ -71,11 +69,13 @@ namespace RCS.Cogo.Wpf.Views
                         (m.Discipline?.ToLower().Contains(t) == true) ||
                         (m.Size?.ToLower().Contains(t) == true) ||
                         (m.Notes?.ToLower().Contains(t) == true) ||
-                        (m.Manufacturer?.ToLower().Contains(t) == true))
+                        (m.Manufacturer?.ToLower().Contains(t) == true) ||
+                        (PipeMaterialParser.Parse(t) != PipeMaterial.Unknown && PipeMaterialParser.Parse(m.Material) == PipeMaterialParser.Parse(t)))
                 })
                 .Where(x => x.Score > 0)
                 .OrderByDescending(x => x.Score)
                 .Select(x => x.Material)
+                .Take(100)
                 .ToList();
 
             MaterialsGrid.ItemsSource = matchedMaterials;

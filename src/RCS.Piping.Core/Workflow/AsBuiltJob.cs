@@ -197,6 +197,71 @@ public class AsBuiltJob
     public bool AllPartsMapped =>
         PartMappings.Count == 0 ||
         PartMappings.All(p => p.Status == MappingStatus.Resolved || p.Status == MappingStatus.Skipped);
+
+    /// <summary>
+    /// Automated catalog resolution heuristic that resolves pending asset mappings
+    /// based on field survey codes (e.g. CB -> Catch Basin, MH -> Sewer Manhole).
+    /// </summary>
+    public int AutoResolvePendingMappings()
+    {
+        int resolvedCount = 0;
+        var heuristics = new (string Pattern, string TargetKey)[]
+        {
+            ("CB", "Catch Basin"),
+            ("MH", "Sewer Manhole"),
+            ("MANHOLE", "Sewer Manhole"),
+            ("WMET", "Water Meter"),
+            ("WV", "Water Valve"),
+            ("VALVE", "Water Valve"),
+            ("HYD", "Fire Hydrant"),
+            ("WM", "Water Main"),
+            ("SAN", "Sanitary Sewer Pipe"),
+            ("STORM", "Storm Drain Pipe")
+        };
+
+        foreach (var entry in PartMappings)
+        {
+            if (entry.Status != MappingStatus.Pending && entry.Status != MappingStatus.Error)
+                continue;
+
+            string desc = entry.DetectedDesc ?? "";
+            foreach (var (pattern, targetKey) in heuristics)
+            {
+                if (desc.IndexOf(pattern, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    entry.PartKey = targetKey;
+                    entry.ProposedPartKey = targetKey;
+                    entry.Status = MappingStatus.Resolved;
+                    resolvedCount++;
+                    break;
+                }
+            }
+        }
+
+        return resolvedCount;
+    }
+
+    /// <summary>
+    /// Automated design repair engine that corrects slope reversal errors in gravity runs
+    /// by recalculating downstream inverts to enforce continuous positive slope.
+    /// </summary>
+    public int AutoRepairSlopeReversals(double defaultSlopePercent = 0.50)
+    {
+        int repairedCount = 0;
+        double minSlopeFraction = defaultSlopePercent / 100.0;
+
+        foreach (var run in Network.GetAllRuns())
+        {
+            if (run.InvertStart.HasValue && run.InvertEnd.HasValue && run.InvertEnd > run.InvertStart)
+            {
+                double length = run.ComputedLength > 0 ? run.ComputedLength : 50.0;
+                run.InvertEnd = run.InvertStart.Value - (length * minSlopeFraction);
+                repairedCount++;
+            }
+        }
+
+        return repairedCount;
+    }
 }
 
 
